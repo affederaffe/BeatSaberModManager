@@ -32,8 +32,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.Build.outputs.filename }}
-          path: ${{ steps.Build.outputs.artifactpath }}
+          name: BeatSaberModManager-linux-x64
+          path: bin/Release/linux-x64/publish/BeatSaberModManager
   build_windows:
     name: Build Windows
     runs-on: windows-latest
@@ -47,9 +47,9 @@ jobs:
           dotnet-version: "6.0.x"
           include-prerelease: true
       - name: Build
-        run: dotnet publish -c Release -r win10-x64
+        run: dotnet publish -c Release -r win-x64
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ steps.Build.outputs.filename }}
-          path: ${{ steps.Build.outputs.artifactpath }}
+          name: BeatSaberModManager-win-x64
+          path: bin/Release/win-x64/publish/BeatSaberModManager.exe
