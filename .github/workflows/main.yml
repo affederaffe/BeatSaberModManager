@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v1.8.1
+        with: 
+          dotnet-version: "6.0.x"
+          include-prerelease: true
+      - name: Build Windows
+        run: dotnet publish -c Release -r win10-x64
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.Build.outputs.filename }}
+          path: ${{ steps.Build.outputs.artifactpath }}
+      - name: Build Linux
+        run: dotnet publish -c Release -r linux-x64
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.Build.outputs.filename }}
+          path: ${{ steps.Build.outputs.artifactpath }}

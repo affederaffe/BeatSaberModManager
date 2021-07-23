@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+    
+    <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
+    <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
+    <sys:String x:Key="MainWindow:OptionsHeader">Optionen</sys:String>
+    <sys:String x:Key="MainWindow:MoreInfoButton">Weitere Infos</sys:String>
+    <sys:String x:Key="MainWindow:RefreshModsButton">Mods Aktualisieren</sys:String>
+    <sys:String x:Key="MainWindow:InstallModText">Installiere:</sys:String>
+    <sys:String x:Key="MainWindow:UninstallModText">Deinstalliere:</sys:String>
+    
+    <sys:String x:Key="IntroView:Name">Beat Saber Mod Manager</sys:String>
+    
+    <sys:String x:Key="ModsView:ModNameHeader">Name</sys:String>
+    <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>
+    <sys:String x:Key="ModsView:LatestVersionHeader">Neuste</sys:String>
+    <sys:String x:Key="ModsView:ModDescriptionHeader">Beschreibung</sys:String>
+    
+    <sys:String x:Key="OptionsView:InstallFolderPathText">Installationsordner</sys:String>
+    <sys:String x:Key="OptionsView:OpenInstallFolderButton">Ordner öffnen</sys:String>
+    <sys:String x:Key="OptionsView:SelectInstallFolderButton">Ordner auswählen</sys:String>
+    <sys:String x:Key="OptionsView:UninstallModLoaderButton">Deinstalliere BSIPA</sys:String>
+    <sys:String x:Key="OptionsView:ColorThemeLabel">Farbthema:</sys:String>
+    
+    <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Weiter</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:CancelButtonText">Abbrechen</sys:String>
+</ResourceDictionary>

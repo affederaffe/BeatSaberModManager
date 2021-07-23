@@ -1,0 +1,94 @@
+<Window xmlns="https://github.com/avaloniaui"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                     xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+                     xmlns:v="clr-namespace:BeatSaberModManager.Views"
+                     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                     x:Class="BeatSaberModManager.Views.MainWindow"
+                     Title="BeatSaberModManager"
+                     TransparencyLevelHint="AcrylicBlur"
+                     Background="Transparent"
+                     ExtendClientAreaToDecorationsHint="True"
+                     Width="1080"
+                     Height="580" >
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel />
+    </Design.DataContext>
+
+    <Panel>
+        <Grid ColumnDefinitions="Auto, *" IsHitTestVisible="False">
+            <Rectangle Grid.Column="0"
+                       DockPanel.Dock="Left"
+                       Width="240"
+                       Opacity="0.875"
+                       Fill="{DynamicResource SystemChromeLowColor}"
+                       Stroke="{DynamicResource SystemControlBackgroundChromeLowBrush}" />
+            <Rectangle Grid.Column="1"
+                       Opacity="0.975"
+                       Fill="{DynamicResource SystemChromeMediumColor}"
+                       Stroke="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <TextBlock Grid.Column="1"
+                       Margin="50, 12.5"
+                       FontSize="32"
+                       Text="{Binding #TabControl.SelectedItem.Header}" />
+        </Grid>
+
+        <Grid RowDefinitions="17.5*, *">
+            <TabControl Grid.Row="0"
+                        Name="TabControl"
+                        Classes="SideBar"
+                        Margin="0, 30, 0, 0">
+                <TabItem Header="{DynamicResource MainWindow:IntroHeader}">
+                    <v:IntroView />
+                </TabItem>
+                <TabItem Header="{DynamicResource MainWindow:ModsHeader}">
+                    <v:ModsView />
+                </TabItem>
+                <TabItem Header="{DynamicResource MainWindow:OptionsHeader}">
+                    <v:OptionsView />
+                </TabItem>
+            </TabControl>
+            
+            <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto" Margin="240, 0, 0, 0">
+                <ProgressBar Grid.Column="0"
+                             Margin="10, 0, 5, 0"
+                             MaxHeight="40"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"
+                             Value="{Binding ProgressBarValue}">
+                </ProgressBar>
+                <Label Grid.Column="0"
+                       Name="ProgressBarLabel"
+                       Margin="10, 0, 5, 0"
+                       ZIndex="1"
+                       MaxHeight="40"
+                       HorizontalAlignment="Stretch"
+                       VerticalAlignment="Stretch"
+                       HorizontalContentAlignment="Center"
+                       VerticalContentAlignment="Center" />
+                <Button Grid.Column="1"
+                        Margin="5, 0, 5, 0"
+                        MaxHeight="40"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="{DynamicResource MainWindow:MoreInfoButton}"
+                        IsEnabled="{Binding MoreInfoButtonEnabled}"
+                        Command="{Binding MoreInfoButtonCommand}" />
+                <Button Grid.Column="2"
+                        Margin="5, 0, 10, 0"
+                        MaxHeight="40"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="{DynamicResource MainWindow:RefreshModsButton}"
+                        IsEnabled="{Binding InstallButtonEnabled}"
+                        Command="{Binding InstallButtonCommand}" />
+            </Grid>
+        </Grid>
+    </Panel>
+</Window>
