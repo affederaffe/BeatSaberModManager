@@ -2,21 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:viewModels="clr-namespace:BeatSaberModManager.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.OptionsView">
 
     <Design.DataContext>
-        <vm:OptionsViewModel />
+        <viewModels:OptionsViewModel/>
     </Design.DataContext>
-
+    
     <Grid VerticalAlignment="Top"
           ColumnDefinitions="*, 4*, Auto, Auto, *"
-          RowDefinitions="*, *, *, *">
+          RowDefinitions="*, *, *, *, *">
         <Label Grid.Column="1"
                Grid.Row="0"
                Margin="10"
-               Content="{DynamicResource OptionsView:InstallFolderPathText}" />
+               FontWeight="Bold"
+               Content="{DynamicResource OptionsView:InstallFolderPathLabel}" />
         <TextBox
             Grid.Column="1"
             Grid.Row="1"
@@ -44,5 +45,30 @@
                 HorizontalAlignment="Center"
                 Content="{DynamicResource OptionsView:UninstallModLoaderButton}"
                 Command="{Binding UninstallModLoaderCommand}" />
+        <Label Grid.Column="1"
+               Grid.Row="3"
+               Margin="10"
+               FontWeight="Bold"
+               Content="{DynamicResource OptionsView:OneClickHandlerLabel}" />
+        <Grid Grid.Column="1"
+              Grid.Row="4"
+              Margin="10"
+              RowDefinitions="*, * ,*"
+              ColumnDefinitions="Auto, 20">
+            <Label Grid.Column="0"
+                   Grid.Row="0"
+                   VerticalAlignment="Center"
+                   Content="{DynamicResource OptionsView:BeatSaverLabel}" />
+            <CheckBox Grid.Column="1"
+                      Grid.Row="0"
+                      IsChecked="{Binding BeatSaverOneClickCheckboxChecked}" />
+            <Label Grid.Column="0"
+                   Grid.Row="1"
+                   VerticalAlignment="Center"
+                   Content="{DynamicResource OptionsView:ModelSaberLabel}" />
+            <CheckBox Grid.Column="1"
+                      Grid.Row="1"
+                      IsChecked="{Binding ModelSaberOneClickCheckboxChecked}" />
+        </Grid>
     </Grid>
 </UserControl>

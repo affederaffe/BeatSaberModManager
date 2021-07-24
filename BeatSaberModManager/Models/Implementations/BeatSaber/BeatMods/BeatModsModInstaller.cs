@@ -50,7 +50,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     return await UninstallBSIPAWindowsAsync(modToUninstall);
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    return UninstallBSIPALinuxAsync(modToUninstall);
+                    return UninstallBSIPALinux(modToUninstall);
             }
 
             string pendingDirPath = Path.Combine(_settings.InstallDir!, "IPA", "Pending");
@@ -142,7 +142,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             return true;
         }
 
-        private bool UninstallBSIPALinuxAsync(IMod bsipa)
+        private bool UninstallBSIPALinux(IMod bsipa)
         {
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(_settings.InstallDir!);

@@ -9,7 +9,7 @@ namespace BeatSaberModManager.Models.Interfaces
     {
         string ModLoaderName { get; }
         IMod[]? AvailableMods { get; }
-        List<IMod>? InstalledMods { get; }
+        HashSet<IMod>? InstalledMods { get; }
         Dictionary<IMod, HashSet<IMod>> Dependencies { get; }
         void ResolveDependencies(IMod modToResolveFor);
         void UnresolveDependencies(IMod modToUnresolveFor);

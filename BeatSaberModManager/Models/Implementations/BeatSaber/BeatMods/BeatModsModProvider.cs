@@ -38,7 +38,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public string ModLoaderName => "bsipa";
         public IMod[]? AvailableMods { get; private set; }
-        public List<IMod>? InstalledMods { get; private set; }
+        public HashSet<IMod>? InstalledMods { get; private set; }
         public Dictionary<IMod, HashSet<IMod>> Dependencies { get; } = new();
 
         public void ResolveDependencies(IMod modToResolveFor)
@@ -74,7 +74,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                 filesToCheck.AddRange(files);
             }
 
-            InstalledMods = new List<IMod>(filesToCheck.Count);
+            InstalledMods = new HashSet<IMod>(filesToCheck.Count);
             foreach (string file in filesToCheck)
             {
                 if (!File.Exists(file)) continue;
@@ -85,7 +85,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                     {
                         foreach (IHash downloadHash in download.Hashes!)
                         {
-                            if (downloadHash.Hash == hash && !InstalledMods.Contains(mod))
+                            if (downloadHash.Hash == hash)
                                 InstalledMods.Add(mod);
                         }
                     }

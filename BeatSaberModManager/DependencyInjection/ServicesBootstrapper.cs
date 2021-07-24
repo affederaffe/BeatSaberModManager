@@ -6,6 +6,8 @@ using System.Text.Json;
 using BeatSaberModManager.Models;
 using BeatSaberModManager.Models.Implementations.BeatSaber;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
+using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
+using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
 
@@ -24,7 +26,7 @@ namespace BeatSaberModManager.DependencyInjection
             {
                 HttpClientHandler clientHandler = new() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
                 HttpClient client = new(clientHandler) { Timeout = TimeSpan.FromSeconds(30) };
-                client.DefaultRequestHeaders.Add("User-Agent", $"BeatSaberModManager/{typeof(App).Assembly.GetName().Version}");
+                client.DefaultRequestHeaders.Add("User-Agent", $"BeatSaberModManager/{Environment.Version}");
                 return client;
             });
 
@@ -38,8 +40,7 @@ namespace BeatSaberModManager.DependencyInjection
                     new ConcreteConverter<IDownload, BeatModsDownload>(),
                     new ConcreteConverter<IDependency, BeatModsDependency>()
                 }
-            }
-            );
+            });
 
             services.RegisterLazySingleton(() =>
                 new MD5HashProvider(),
@@ -74,6 +75,16 @@ namespace BeatSaberModManager.DependencyInjection
             services.RegisterLazySingleton(() =>
                 new BeatModsModInstaller(resolver.GetService<Settings>(), resolver.GetService<IModProvider>(), resolver.GetService<IHashProvider>()),
                 typeof(IModInstaller)
+            );
+
+            services.RegisterLazySingleton(() =>
+                new ModelSaberAssetProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()),
+                typeof(IAssetProvider)
+            );
+
+            services.RegisterLazySingleton(() =>
+                new BeatSaverAssetProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()),
+                typeof(IAssetProvider)
             );
         }
     }

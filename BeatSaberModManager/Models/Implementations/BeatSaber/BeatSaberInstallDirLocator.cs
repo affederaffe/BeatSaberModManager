@@ -42,10 +42,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
 
         private static string? LocateWindowsSteamInstallDir()
         {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                   ? Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam")?.GetValue("InstallPath")?.ToString() ??
-                     Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam")?.GetValue("InstallPath")?.ToString()
-                   : null;
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
+            using Microsoft.Win32.RegistryKey? steamInstallDirKey = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam") ??
+                  Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
+            return steamInstallDirKey?.GetValue("InstallPath")?.ToString();
         }
 
         private static string? LocateLinuxSteamInstallDir()
@@ -98,7 +98,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
         private static string? LocateWindowsOculusBeatSaberDir()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
-            string? oculusInstallDir = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config")?.GetValue("InitialAppLibrary")?.ToString();
+            using Microsoft.Win32.RegistryKey? oculusInstallDirKey = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
+            string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
             if (string.IsNullOrEmpty(oculusInstallDir)) return null;
 
             if (!string.IsNullOrEmpty(oculusInstallDir) && File.Exists(Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber", "Beat Saber.exe")))

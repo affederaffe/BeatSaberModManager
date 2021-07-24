@@ -17,10 +17,13 @@
     <sys:String x:Key="ModsView:LatestVersionHeader">Latest</sys:String>
     <sys:String x:Key="ModsView:ModDescriptionHeader">Description</sys:String>
     
-    <sys:String x:Key="OptionsView:InstallFolderPathText">Installation Folder</sys:String>
+    <sys:String x:Key="OptionsView:InstallFolderPathLabel">Installation Folder</sys:String>
     <sys:String x:Key="OptionsView:OpenInstallFolderButton">Open Folder</sys:String>
     <sys:String x:Key="OptionsView:SelectInstallFolderButton">Select Folder</sys:String>
     <sys:String x:Key="OptionsView:UninstallModLoaderButton">Uninstall BSIPA</sys:String>
+    <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Installs</sys:String>
+    <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver:</sys:String>
+    <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber:</sys:String>
     <sys:String x:Key="OptionsView:ColorThemeLabel">Color Theme:</sys:String>
     <sys:String x:Key="OptionsView:DarkTheme">Dark</sys:String>
     <sys:String x:Key="OptionsView:LightTheme">Light</sys:String>
@@ -28,4 +31,6 @@
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">It looks like you haven't set your installation directory yet, would you like to do so?</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Continue</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:CancelButtonText">Cancel</sys:String>
+    
+    <sys:String x:Key="AssetInstallWindow:InstallText">Installing:</sys:String>
 </ResourceDictionary>

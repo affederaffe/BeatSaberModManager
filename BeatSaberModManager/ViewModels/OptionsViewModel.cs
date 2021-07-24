@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -19,6 +18,8 @@ namespace BeatSaberModManager.ViewModels
         private readonly IInstallDirValidator _installDirValidator;
         private readonly ObservableAsPropertyHelper<bool> _openFolderButtonActive;
 
+        private const string kProtocolProviderName = "BeatSaberModManager";
+
         public OptionsViewModel(ModsViewModel modsViewModel, Settings settings, IInstallDirValidator installDirValidator)
         {
             _settings = settings;
@@ -33,6 +34,18 @@ namespace BeatSaberModManager.ViewModels
         {
             get => _settings.InstallDir;
             set => ValidateRaiseAndSetDir(value);
+        }
+
+        public bool BeatSaverOneClickCheckboxChecked
+        {
+            get => PlatformUtils.IsProtocolHandlerRegistered("BeatSaver", kProtocolProviderName);
+            set => ToggleOneClickHandler(nameof(BeatSaverOneClickCheckboxChecked), value, "beatsaver", "URI:BeatSaver OneClick Install");
+        }
+
+        public bool ModelSaberOneClickCheckboxChecked
+        {
+            get => PlatformUtils.IsProtocolHandlerRegistered("ModelSaber", kProtocolProviderName);
+            set => ToggleOneClickHandler(nameof(BeatSaverOneClickCheckboxChecked), value, "modelsaber", "URI:ModelSaber OneClick Install");
         }
 
         public ReactiveCommand<Unit, Unit> OpenInstallDirCommand { get; }
@@ -50,6 +63,15 @@ namespace BeatSaberModManager.ViewModels
             _settings.VRPlatform = _installDirValidator.DetectVRPlatform(path!);
             _settings.InstallDir = path;
             this.RaisePropertyChanged(nameof(InstallDir));
+        }
+
+        private void ToggleOneClickHandler(string propertyName, bool checkboxChecked, string protocol, string description)
+        {
+            if (checkboxChecked)
+                PlatformUtils.RegisterProtocolHandler(protocol, description, kProtocolProviderName);
+            else
+                PlatformUtils.UnregisterProtocolHandler(protocol, kProtocolProviderName);
+            this.RaisePropertyChanged(propertyName);
         }
     }
 }
