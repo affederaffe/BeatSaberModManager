@@ -38,13 +38,13 @@ namespace BeatSaberModManager.ViewModels
 
         public bool BeatSaverOneClickCheckboxChecked
         {
-            get => PlatformUtils.IsProtocolHandlerRegistered("BeatSaver", kProtocolProviderName);
+            get => PlatformUtils.IsProtocolHandlerRegistered("beatsaver", kProtocolProviderName);
             set => ToggleOneClickHandler(nameof(BeatSaverOneClickCheckboxChecked), value, "beatsaver", "URI:BeatSaver OneClick Install");
         }
 
         public bool ModelSaberOneClickCheckboxChecked
         {
-            get => PlatformUtils.IsProtocolHandlerRegistered("ModelSaber", kProtocolProviderName);
+            get => PlatformUtils.IsProtocolHandlerRegistered("modelsaber", kProtocolProviderName);
             set => ToggleOneClickHandler(nameof(BeatSaverOneClickCheckboxChecked), value, "modelsaber", "URI:ModelSaber OneClick Install");
         }
 

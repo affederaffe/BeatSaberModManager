@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading.Tasks;
@@ -10,7 +12,7 @@ namespace BeatSaberModManager.Utils
 {
     public static class PlatformUtils
     {
-        private static readonly bool? _isWindowsAdmin = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator) : null;
+        private static readonly bool _isWindowsAdmin = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
         public static async Task OpenBrowserOrFileExplorer(string uri)
         {
@@ -18,13 +20,17 @@ namespace BeatSaberModManager.Utils
                 await Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true })!.WaitForExitAsync();
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 await Process.Start("xdg-open", $"\"{uri}\"")!.WaitForExitAsync();
+            else
+                throw new PlatformNotSupportedException();
         }
 
         public static bool IsProtocolHandlerRegistered(string protocol, string providerName)
         {
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? IsWindowsProtocolHandlerRegistered(protocol, providerName)
-                 : RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? IsLinuxProtocolHandlerRegistered(protocol, providerName)
-                 : throw new PlatformNotSupportedException();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return IsWindowsProtocolHandlerRegistered(protocol, providerName);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return IsLinuxProtocolHandlerRegistered(protocol, providerName);
+            throw new PlatformNotSupportedException();
         }
 
         public static void RegisterProtocolHandler(string protocol, string description, string providerName)
@@ -33,6 +39,8 @@ namespace BeatSaberModManager.Utils
                 RegisterWindowsProtocolHandler(protocol, description, providerName);
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 RegisterLinuxProtocolHandler(protocol, description, providerName);
+            else
+                throw new PlatformNotSupportedException();
         }
 
         public static void UnregisterProtocolHandler(string protocol, string providerName)
@@ -41,12 +49,14 @@ namespace BeatSaberModManager.Utils
                 UnregisterWindowsProtocolHandler(protocol, providerName);
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 UnregisterLinuxProtocolHandler(protocol, providerName);
+            else
+                throw new PlatformNotSupportedException();
         }
 
         private static void RegisterWindowsProtocolHandler(string protocol, string description, string providerName)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || IsWindowsProtocolHandlerRegistered(protocol, providerName)) return;
-            if (!_isWindowsAdmin.GetValueOrDefault())
+            if (!_isWindowsAdmin)
             {
                 RunProcessAsWindowsAdmin($"\"--register\" \"{protocol}\" \"{description}\" \"{providerName}\"");
                 return;
@@ -67,7 +77,7 @@ namespace BeatSaberModManager.Utils
         private static void UnregisterWindowsProtocolHandler(string protocol, string providerName)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || !IsWindowsProtocolHandlerRegistered(protocol, providerName)) return;
-            if (!_isWindowsAdmin.GetValueOrDefault())
+            if (!_isWindowsAdmin)
             {
                 RunProcessAsWindowsAdmin($"\"--unregister\" \"{protocol}\" \"{providerName}\"");
                 return;
@@ -111,17 +121,11 @@ namespace BeatSaberModManager.Utils
             string handlerDesktopFilePath = Path.Combine(localApplicationsPath, handlerDesktopFileName);
             if (!File.Exists(handlerDesktopFilePath))
             {
-                File.WriteAllText(handlerDesktopFilePath, $"[Desktop Entry]\nType=Application\nName={providerName}\nComment={description}\nExec={Environment.ProcessPath} --install %u\nType=Application\nTerminal=false\nMimeType=x-scheme-handler/{protocol};");
+                File.WriteAllText(handlerDesktopFilePath, $"[Desktop Entry]\nType=Application\nCategories=Utility;\nName={providerName}\nComment={description}\nExec={Environment.ProcessPath} --install %u\nType=Application\nTerminal=false\nMimeType=x-scheme-handler/{protocol};");
                 return;
             }
 
-            string[] lines = File.ReadAllLines(handlerDesktopFilePath);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (!lines[i].StartsWith("MimeType", StringComparison.Ordinal)) continue;
-                lines[i] = lines[i] + $"x-scheme-handler/{protocol};";
-            }
-
+            IEnumerable<string> lines = File.ReadAllLines(handlerDesktopFilePath).Select(x => x.StartsWith("MimeType", StringComparison.Ordinal) ? $"{x}x-scheme-handler/{protocol}" : x);
             File.WriteAllLines(handlerDesktopFilePath, lines);
             Process.Start("xdg-mime", $"\"default\" \"{handlerDesktopFileName}\" \"x-scheme-handler/{protocol}\"").WaitForExit();
         }
@@ -132,23 +136,23 @@ namespace BeatSaberModManager.Utils
             string localApplicationsPath = Path.Combine(localAppDataPath, "applications");
             string handlerDesktopFilePath = Path.Combine(localApplicationsPath, providerName + ".desktop");
             if (!File.Exists(handlerDesktopFilePath)) return;
-            string[] lines = File.ReadAllLines(handlerDesktopFilePath);
-            for (int i = 0; i < lines.Length; i++)
-            {
-                if (!lines[i].StartsWith("MimeType", StringComparison.Ordinal)) continue;
-                lines[i] = lines[i].Replace($"x-scheme-handler/{protocol};", string.Empty);
-            }
-
+            IEnumerable<string> lines = File.ReadAllLines(handlerDesktopFilePath).Select(x => x.StartsWith("MimeType", StringComparison.Ordinal) ? x.Replace($"x-scheme-handler/{protocol};", string.Empty) : x);
             File.WriteAllLines(handlerDesktopFilePath, lines);
-            // TODO: Remove mimeapps.list entry
+            string configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string mimeappsListFilePath = Path.Combine(configPath, "mimeapps.list");
+            if (!File.Exists(mimeappsListFilePath)) return;
+            string target = $"x-scheme-handler/{protocol}={providerName}.desktop";
+            lines = File.ReadAllLines(mimeappsListFilePath).Where(x => x != target);
+            File.WriteAllLines(mimeappsListFilePath, lines);
         }
 
         private static bool IsLinuxProtocolHandlerRegistered(string protocol, string providerName)
         {
-            Process process = Process.Start("xdg-mime", $"\"query\" \"default\" \"x-scheme-handler/{protocol}\"");
-            string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            return !string.IsNullOrEmpty(output) && output == providerName + ".desktop";
+            string configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string mimeappsListFilePath = Path.Combine(configPath, "mimeapps.list");
+            if (!File.Exists(mimeappsListFilePath)) return false;
+            string target = $"x-scheme-handler/{protocol}={providerName}.desktop";
+            return File.ReadAllLines(mimeappsListFilePath).Any(x => x == target);
         }
     }
 }

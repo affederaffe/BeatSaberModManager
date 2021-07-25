@@ -22,11 +22,11 @@
             <Rectangle Grid.Column="0"
                        DockPanel.Dock="Left"
                        Width="240"
-                       Opacity="0.875"
+                       Opacity="0.8"
                        Fill="{DynamicResource SystemChromeLowColor}"
                        Stroke="{DynamicResource SystemControlBackgroundChromeLowBrush}" />
             <Rectangle Grid.Column="1"
-                       Opacity="0.975"
+                       Opacity="0.9"
                        Fill="{DynamicResource SystemChromeMediumColor}"
                        Stroke="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
             <TextBlock Grid.Column="1"

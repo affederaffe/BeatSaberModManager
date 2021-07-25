@@ -5,7 +5,7 @@ using BeatSaberModManager.Models.Interfaces;
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
-    public class SemVerModVersionComparer : IModVersionComparer
+    public class SystemVersionComparer : IModVersionComparer
     {
         public int CompareVersions(string? availableVersion, string? installedVersion)
         {

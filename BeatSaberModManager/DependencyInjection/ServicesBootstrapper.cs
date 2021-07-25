@@ -48,7 +48,7 @@ namespace BeatSaberModManager.DependencyInjection
             );
 
             services.RegisterLazySingleton(() =>
-                new SemVerModVersionComparer(),
+                new SystemVersionComparer(),
                 typeof(IModVersionComparer)
             );
 
