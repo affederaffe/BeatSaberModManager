@@ -32,8 +32,6 @@ namespace BeatSaberModManager
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
             if (desktop.Args.Length > 0)
             {
-                foreach (string arg in desktop.Args)
-                    Console.WriteLine(arg);
                 switch (desktop.Args[0])
                 {
                     case "--register" when desktop.Args.Length > 3:
