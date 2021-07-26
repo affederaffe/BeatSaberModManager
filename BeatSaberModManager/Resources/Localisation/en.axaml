@@ -21,6 +21,7 @@
     <sys:String x:Key="OptionsView:OpenFolderButton">Open Folder</sys:String>
     <sys:String x:Key="OptionsView:SelectFolderButton">Select Folder</sys:String>
     <sys:String x:Key="OptionsView:UninstallModLoaderButton">Uninstall BSIPA</sys:String>
+    <sys:String x:Key="OptionsView:UninstallAllModsButton">Uninstall all mods</sys:String>
     <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Support</sys:String>
     <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver:</sys:String>
     <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber:</sys:String>

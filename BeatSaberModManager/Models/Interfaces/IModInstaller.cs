@@ -7,5 +7,6 @@ namespace BeatSaberModManager.Models.Interfaces
     {
         Task<bool> InstallModAsync(IMod modToInstall);
         Task<bool> UninstallModAsync(IMod modToUninstall);
+        void RemoveAllMods();
     }
 }

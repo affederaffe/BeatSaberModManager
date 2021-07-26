@@ -10,7 +10,7 @@
         CanResize="False">
     
         <Panel>
-            <Rectangle Opacity="0.925"
+            <Rectangle Opacity="0.975"
                        IsHitTestVisible="False"
                        Fill="{DynamicResource SystemChromeMediumColor}"
                        Stroke="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />

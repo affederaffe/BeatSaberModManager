@@ -42,11 +42,9 @@ namespace BeatSaberModManager
                 {
                     case "--register" when desktop.Args.Length > 3:
                         PlatformUtils.RegisterProtocolHandler(desktop.Args[1], desktop.Args[2], desktop.Args[3]);
-                        Environment.Exit(0);
                         break;
                     case "--unregister" when desktop.Args.Length > 2:
                         PlatformUtils.UnregisterProtocolHandler(desktop.Args[1], desktop.Args[2]);
-                        Environment.Exit(0);
                         break;
                     case "--install" when desktop.Args.Length > 1:
                         desktop.MainWindow = new AssetInstallWindow { Uri = desktop.Args[1] };

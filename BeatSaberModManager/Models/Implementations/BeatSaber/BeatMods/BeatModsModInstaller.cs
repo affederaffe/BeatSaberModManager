@@ -67,6 +67,16 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             return true;
         }
 
+        public void RemoveAllMods()
+        {
+            string pluginsDirPath = Path.Combine(_settings.InstallDir!, "Plugins");
+            string libsDirPath = Path.Combine(_settings.InstallDir!, "Libs");
+            string ipaDirPath = Path.Combine(_settings.InstallDir!, "IPA");
+            if (Directory.Exists(pluginsDirPath)) Directory.Delete(pluginsDirPath, true);
+            if (Directory.Exists(libsDirPath)) Directory.Delete(libsDirPath, true);
+            if (Directory.Exists(ipaDirPath)) Directory.Delete(ipaDirPath, true);
+        }
+
         private bool ValidateDownload(IDownload download, ZipArchive archive)
         {
             foreach (IHash hash in download.Hashes!)

@@ -122,6 +122,14 @@ namespace BeatSaberModManager.ViewModels
             _mainWindowViewModel.ProgressBarValue = 100;
         }
 
+        public async Task UninstallAllModsAsyn()
+        {
+            if (GridItems is not null)
+                foreach (ModGridItemViewModel gridItem in GridItems)
+                    await UninstallModAsync(gridItem);
+            _modInstaller.RemoveAllMods();
+        }
+
         private async Task InstallModAsync(ModGridItemViewModel gridItem)
         {
             bool success = await Task.Run(() => _modInstaller.InstallModAsync(gridItem.AvailableMod));
@@ -131,7 +139,8 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task UninstallModAsync(ModGridItemViewModel gridItem)
         {
-            bool success = await Task.Run(() => _modInstaller.UninstallModAsync(gridItem.InstalledMod!));
+            if (gridItem.InstalledMod is null) return;
+            bool success = await Task.Run(() => _modInstaller.UninstallModAsync(gridItem.InstalledMod));
             if (!success) return;
             gridItem.InstalledMod = null;
         }

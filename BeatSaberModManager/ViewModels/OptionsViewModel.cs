@@ -26,6 +26,7 @@ namespace BeatSaberModManager.ViewModels
             OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.InstallDir!));
             OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.ThemesDir!));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
+            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsyn);
             this.WhenAnyValue(x => x.InstallDir).Select(x => x is not null).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
             this.WhenAnyValue(x => x.ThemesDir).Select(x => x is not null).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
@@ -72,16 +73,16 @@ namespace BeatSaberModManager.ViewModels
 
         public ReactiveCommand<Unit, Unit> UninstallModLoaderCommand { get; }
 
+        public ReactiveCommand<Unit, Unit> UninstallAllModsCommand { get; }
+
         public bool OpenInstallDirButtonActive => _openInstallDirButtonActive.Value;
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
         private void ToggleOneClickHandler(string propertyName, bool checkboxChecked, string protocol, string description)
         {
-            if (checkboxChecked)
-                PlatformUtils.RegisterProtocolHandler(protocol, description, kProtocolProviderName);
-            else
-                PlatformUtils.UnregisterProtocolHandler(protocol, kProtocolProviderName);
+            if (checkboxChecked) PlatformUtils.RegisterProtocolHandler(protocol, description, kProtocolProviderName);
+            else PlatformUtils.UnregisterProtocolHandler(protocol, kProtocolProviderName);
             this.RaisePropertyChanged(propertyName);
         }
     }

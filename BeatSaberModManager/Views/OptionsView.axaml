@@ -41,12 +41,20 @@
                 HorizontalAlignment="Center"
                 Content="{DynamicResource OptionsView:SelectFolderButton}"
                 Click="OnSelectInstallFolderButtonClicked" />
-        <Button Grid.Column="1"
-                Grid.Row="2"
-                Margin="10, 10, 10, 0"
-                HorizontalAlignment="Center"
+        <StackPanel Grid.Column="1"
+                    Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button 
+                Margin="10"
                 Content="{DynamicResource OptionsView:UninstallModLoaderButton}"
                 Command="{Binding UninstallModLoaderCommand}" />
+            <Button Margin="10"
+                    HorizontalAlignment="Center"
+                    Background="#FFBB0000"
+                    Content="{DynamicResource OptionsView:UninstallAllModsButton}"
+                    Command="{Binding UninstallAllModsCommand}" />
+        </StackPanel>
         <Label Grid.Column="1"
                Grid.Row="3"
                Margin="10, 10, 10, 0"
