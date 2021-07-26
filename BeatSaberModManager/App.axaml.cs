@@ -1,10 +1,13 @@
 using System;
+using System.Linq;
 
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using BeatSaberModManager.ThemeManagement;
 
 using BeatSaberModManager.DependencyInjection;
+using BeatSaberModManager.Models;
 using BeatSaberModManager.Utils;
 using BeatSaberModManager.Views;
 
@@ -15,16 +18,19 @@ namespace BeatSaberModManager
 {
     public class App : Application
     {
-        public override void Initialize()
-        {
-            AvaloniaXamlLoader.Load(this);
-        }
-
         public override void RegisterServices()
         {
             ServicesBootstrapper.RegisterServices(Locator.CurrentMutable, Locator.Current);
             ViewModelBootstrapper.RegisterServices(Locator.CurrentMutable, Locator.Current);
             base.RegisterServices();
+        }
+
+        public override void Initialize()
+        {
+            AvaloniaXamlLoader.Load(this);
+            ThemeSwitcher themeSwitcher = Locator.Current.GetService<ThemeSwitcher>();
+            Settings settings = Locator.Current.GetService<Settings>();
+            themeSwitcher.SelectedTheme = themeSwitcher.Themes.FirstOrDefault(x => x.Name == settings.ThemeName) ?? themeSwitcher.Themes.First();
         }
 
         public override void OnFrameworkInitializationCompleted()

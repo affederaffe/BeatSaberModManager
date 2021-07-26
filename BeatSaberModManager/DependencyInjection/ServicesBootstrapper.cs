@@ -9,6 +9,7 @@ using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.ThemeManagement;
 using BeatSaberModManager.Utils;
 
 using Splat;
@@ -21,6 +22,12 @@ namespace BeatSaberModManager.DependencyInjection
         public static void RegisterServices(IMutableDependencyResolver services, IReadonlyDependencyResolver resolver)
         {
             services.RegisterLazySingleton(Settings.Load);
+
+            services.RegisterLazySingleton(() =>
+            {
+                Settings settings = resolver.GetService<Settings>();
+                return new ThemeSwitcher(settings.ThemesDir);
+            });
 
             services.RegisterLazySingleton(() =>
             {

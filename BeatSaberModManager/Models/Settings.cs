@@ -14,6 +14,10 @@ namespace BeatSaberModManager.Models
 
         public string? VRPlatform { get; set; }
 
+        public string? ThemesDir { get; set; }
+
+        public string? ThemeName { get; set; }
+
         public Settings()
         {
             if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

@@ -2,22 +2,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:v="clr-namespace:BeatSaberModManager.Views"
+             xmlns:ts="clr-namespace:BeatSaberModManager.ThemeManagement"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.OptionsView">
 
     <Design.DataContext>
-        <viewModels:OptionsViewModel/>
+        <vm:OptionsViewModel/>
     </Design.DataContext>
     
     <Grid VerticalAlignment="Top"
           ColumnDefinitions="*, 4*, Auto, Auto, *"
-          RowDefinitions="*, *, *, *, *">
+          RowDefinitions="*, *, *, *, *, *, *, *">
         <Label Grid.Column="1"
                Grid.Row="0"
-               Margin="10"
+               Margin="10, 10, 10, 0"
                FontWeight="Bold"
-               Content="{DynamicResource OptionsView:InstallFolderPathLabel}" />
+               Content="{DynamicResource OptionsView:InstallationLabel}" />
         <TextBox
             Grid.Column="1"
             Grid.Row="1"
@@ -30,31 +32,32 @@
             Grid.Row="1"
             Margin="10"
             HorizontalAlignment="Center"
-            Content="{DynamicResource OptionsView:OpenInstallFolderButton}"
-            IsEnabled="{Binding OpenFolderButtonActive}"
+            Content="{DynamicResource OptionsView:OpenFolderButton}"
+            IsEnabled="{Binding OpenInstallDirButtonActive}"
             Command="{Binding OpenInstallDirCommand}" />
         <Button Grid.Column="3"
                 Grid.Row="1"
                 Margin="10"
                 HorizontalAlignment="Center"
-                Content="{DynamicResource OptionsView:SelectInstallFolderButton}"
+                Content="{DynamicResource OptionsView:SelectFolderButton}"
                 Click="OnSelectInstallFolderButtonClicked" />
         <Button Grid.Column="1"
                 Grid.Row="2"
-                Margin="10"
+                Margin="10, 10, 10, 0"
                 HorizontalAlignment="Center"
                 Content="{DynamicResource OptionsView:UninstallModLoaderButton}"
                 Command="{Binding UninstallModLoaderCommand}" />
         <Label Grid.Column="1"
                Grid.Row="3"
-               Margin="10"
+               Margin="10, 10, 10, 0"
                FontWeight="Bold"
                Content="{DynamicResource OptionsView:OneClickHandlerLabel}" />
         <Grid Grid.Column="1"
               Grid.Row="4"
-              Margin="10"
+              Margin="50, 10, 10, 10"
               RowDefinitions="*, * ,*"
-              ColumnDefinitions="Auto, 20">
+              ColumnDefinitions="Auto, 20"
+              VerticalAlignment="Center">
             <Label Grid.Column="0"
                    Grid.Row="0"
                    VerticalAlignment="Center"
@@ -70,5 +73,44 @@
                       Grid.Row="1"
                       IsChecked="{Binding ModelSaberOneClickCheckboxChecked}" />
         </Grid>
+        <Label Grid.Column="1"
+               Grid.Row="5"
+               Margin="10, 10, 10, 0"
+               FontWeight="Bold"
+               Content="{DynamicResource OptionsView:ThemesLabel}" />
+        <TextBox
+            Grid.Column="1"
+            Grid.Row="6"
+            Margin="10"
+            IsHitTestVisible="False"
+            HorizontalAlignment="Stretch"
+            Text="{Binding ThemesDir}" />
+        <Button
+            Grid.Column="2"
+            Grid.Row="6"
+            Margin="10"
+            HorizontalAlignment="Center"
+            Content="{DynamicResource OptionsView:OpenFolderButton}"
+            IsEnabled="{Binding OpenThemesDirButtonActive}"
+            Command="{Binding OpenThemesDirCommand}" />
+        <Button Grid.Column="3"
+                Grid.Row="6"
+                Margin="10"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource OptionsView:SelectFolderButton}"
+                Click="OnSelectThemesFolderButtonClicked" />
+        <ComboBox Grid.Column="1"
+                  Grid.Row="7"
+                  Margin="10"
+                  VerticalAlignment="Center"
+                  DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:OptionsView}}"
+                  Items="{Binding ThemeSwitcher.Themes}"
+                  SelectedItem="{Binding SelectedTheme}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="ts:Theme">
+                    <Label Content="{Binding Name}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
     </Grid>
 </UserControl>

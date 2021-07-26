@@ -1,6 +1,6 @@
 # BeatSaberModManager
 
-### What is this?
+### About
 BeatSaberModManager is yet another mod installer for Beat Saber, heavily inspired by [ModAssistant](https://github.com/Assistant/ModAssistant). \
 It strives to look more visually appealing and support both Windows and Linux, while still being as feature-rich as ModAssistant.
 

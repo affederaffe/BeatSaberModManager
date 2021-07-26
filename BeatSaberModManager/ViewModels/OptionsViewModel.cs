@@ -1,7 +1,5 @@
-﻿using System;
-using System.Reactive;
+﻿using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 using BeatSaberModManager.Models;
 using BeatSaberModManager.Models.Interfaces;
@@ -16,7 +14,8 @@ namespace BeatSaberModManager.ViewModels
     {
         private readonly Settings _settings;
         private readonly IInstallDirValidator _installDirValidator;
-        private readonly ObservableAsPropertyHelper<bool> _openFolderButtonActive;
+        private readonly ObservableAsPropertyHelper<bool> _openInstallDirButtonActive;
+        private readonly ObservableAsPropertyHelper<bool> _openThemesDirButtonActive;
 
         private const string kProtocolProviderName = "BeatSaberModManager";
 
@@ -24,16 +23,35 @@ namespace BeatSaberModManager.ViewModels
         {
             _settings = settings;
             _installDirValidator = installDirValidator;
-            OpenInstallDirCommand = ReactiveCommand.CreateFromTask(OpenInstallDir);
+            OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.InstallDir!));
+            OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.ThemesDir!));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
-            IObservable<string?> installDirObservable = this.WhenAnyValue(x => x.InstallDir);
-            installDirObservable.Select(x => x is not null).ToProperty(this, nameof(OpenFolderButtonActive), out _openFolderButtonActive);
+            this.WhenAnyValue(x => x.InstallDir).Select(x => x is not null).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
+            this.WhenAnyValue(x => x.ThemesDir).Select(x => x is not null).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
 
         public string? InstallDir
         {
             get => _settings.InstallDir;
-            set => ValidateRaiseAndSetDir(value);
+            set
+            {
+                if (!_installDirValidator.ValidateInstallDir(value)) return;
+                this.RaisePropertyChanging(nameof(InstallDir));
+                _settings.VRPlatform = _installDirValidator.DetectVRPlatform(value!);
+                _settings.InstallDir = value;
+                this.RaisePropertyChanged(nameof(InstallDir));
+            }
+        }
+
+        public string? ThemesDir
+        {
+            get => _settings.ThemesDir;
+            set
+            {
+                this.RaisePropertyChanging(nameof(ThemesDir));
+                _settings.ThemesDir = value;
+                this.RaisePropertyChanged(nameof(ThemesDir));
+            }
         }
 
         public bool BeatSaverOneClickCheckboxChecked
@@ -50,20 +68,13 @@ namespace BeatSaberModManager.ViewModels
 
         public ReactiveCommand<Unit, Unit> OpenInstallDirCommand { get; }
 
+        public ReactiveCommand<Unit, Unit> OpenThemesDirCommand { get; }
+
         public ReactiveCommand<Unit, Unit> UninstallModLoaderCommand { get; }
 
-        public bool OpenFolderButtonActive => _openFolderButtonActive.Value;
+        public bool OpenInstallDirButtonActive => _openInstallDirButtonActive.Value;
 
-        private async Task OpenInstallDir() => await PlatformUtils.OpenBrowserOrFileExplorer(_settings.InstallDir!);
-
-        private void ValidateRaiseAndSetDir(string? path)
-        {
-            if (!_installDirValidator.ValidateInstallDir(path)) return;
-            this.RaisePropertyChanging(nameof(InstallDir));
-            _settings.VRPlatform = _installDirValidator.DetectVRPlatform(path!);
-            _settings.InstallDir = path;
-            this.RaisePropertyChanged(nameof(InstallDir));
-        }
+        public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
         private void ToggleOneClickHandler(string propertyName, bool checkboxChecked, string protocol, string description)
         {

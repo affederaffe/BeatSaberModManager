@@ -10,18 +10,15 @@
         CanResize="False">
     
         <Panel>
-            <ExperimentalAcrylicBorder>
-                <ExperimentalAcrylicBorder.Material>
-                    <ExperimentalAcrylicMaterial TintColor="{DynamicResource SystemAltLowColor}" TintOpacity="1" MaterialOpacity="0.1" />
-                </ExperimentalAcrylicBorder.Material>
-            </ExperimentalAcrylicBorder>
-            
+            <Rectangle Opacity="0.925"
+                       IsHitTestVisible="False"
+                       Fill="{DynamicResource SystemChromeMediumColor}"
+                       Stroke="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
             <TextBlock Margin="20"
                        TextWrapping="Wrap"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Top"
                        Text="{DynamicResource InstallDirDialogWindow:NoInstallDirText}" />
-            
             <Grid ColumnDefinitions="*, *"
                   Margin="20"
                   HorizontalAlignment="Center"
