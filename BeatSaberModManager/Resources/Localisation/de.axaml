@@ -17,13 +17,20 @@
     <sys:String x:Key="ModsView:LatestVersionHeader">Neuste</sys:String>
     <sys:String x:Key="ModsView:ModDescriptionHeader">Beschreibung</sys:String>
     
-    <sys:String x:Key="OptionsView:InstallFolderPathText">Installationsordner</sys:String>
-    <sys:String x:Key="OptionsView:OpenInstallFolderButton">Ordner öffnen</sys:String>
-    <sys:String x:Key="OptionsView:SelectInstallFolderButton">Ordner auswählen</sys:String>
+    <sys:String x:Key="OptionsView:InstallationLabel">Installationsordner</sys:String>
+    <sys:String x:Key="OptionsView:OpenFolderButton">Ordner öffnen</sys:String>
+    <sys:String x:Key="OptionsView:SelectFolderButton">Ordner auswählen</sys:String>
     <sys:String x:Key="OptionsView:UninstallModLoaderButton">Deinstalliere BSIPA</sys:String>
-    <sys:String x:Key="OptionsView:ColorThemeLabel">Farbthema:</sys:String>
+    <sys:String x:Key="OptionsView:UninstallAllModsButton">Deinstalliere alle Mods</sys:String>
+    <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Unterstützung</sys:String>
+    <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver:</sys:String>
+    <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber:</sys:String>
+    <sys:String x:Key="OptionsView:LanguageLabel">Sprache</sys:String>
+    <sys:String x:Key="OptionsView:ThemesLabel">Themen</sys:String>
     
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Weiter</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:CancelButtonText">Abbrechen</sys:String>
+    
+    <sys:String x:Key="AssetInstallWindow:InstallText">Installiere:</sys:String>
 </ResourceDictionary>

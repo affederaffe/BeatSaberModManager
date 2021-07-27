@@ -20,15 +20,12 @@
     <Panel>
         <Grid ColumnDefinitions="Auto, *" IsHitTestVisible="False">
             <Rectangle Grid.Column="0"
-                       DockPanel.Dock="Left"
                        Width="240"
-                       Opacity="0.825"
-                       Fill="{DynamicResource SystemChromeLowColor}"
-                       Stroke="{DynamicResource SystemControlBackgroundChromeLowBrush}" />
+                       Opacity="0.875"
+                       Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
             <Rectangle Grid.Column="1"
-                       Opacity="0.925"
-                       Fill="{DynamicResource SystemChromeMediumColor}"
-                       Stroke="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+                       Opacity="0.975"
+                       Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
             <TextBlock Grid.Column="1"
                        Margin="50, 12.5"
                        FontSize="32"

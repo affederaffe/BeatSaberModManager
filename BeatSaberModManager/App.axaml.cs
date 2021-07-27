@@ -4,9 +4,10 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using BeatSaberModManager.ThemeManagement;
+using BeatSaberModManager.Theming;
 
 using BeatSaberModManager.DependencyInjection;
+using BeatSaberModManager.Localisation;
 using BeatSaberModManager.Models;
 using BeatSaberModManager.Utils;
 using BeatSaberModManager.Views;
@@ -28,8 +29,10 @@ namespace BeatSaberModManager
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-            ThemeSwitcher themeSwitcher = Locator.Current.GetService<ThemeSwitcher>();
             Settings settings = Locator.Current.GetService<Settings>();
+            LanguageSwitcher languageSwitcher = Locator.Current.GetService<LanguageSwitcher>();
+            languageSwitcher.SelectedLanguage = languageSwitcher.Languages.FirstOrDefault(x => x.Name == settings.LanguageName) ?? languageSwitcher.Languages.First();
+            ThemeSwitcher themeSwitcher = Locator.Current.GetService<ThemeSwitcher>();
             themeSwitcher.SelectedTheme = themeSwitcher.Themes.FirstOrDefault(x => x.Name == settings.ThemeName) ?? themeSwitcher.Themes.First();
         }
 

@@ -18,10 +18,9 @@
     </Design.DataContext>
 
     <Panel>
-        <Rectangle Opacity="0.975"
-                   IsHitTestVisible="False"
-                   Fill="{DynamicResource SystemChromeMediumColor}"
-                   Stroke="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+        <Rectangle IsHitTestVisible="False"
+                   Opacity="0.975"
+                   Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
         <Grid ColumnDefinitions="*"
               RowDefinitions="4*, *">
             <progrRing:ProgressRing Grid.Row="0"

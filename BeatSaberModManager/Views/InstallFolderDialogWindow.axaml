@@ -10,10 +10,9 @@
         CanResize="False">
     
         <Panel>
-            <Rectangle Opacity="0.975"
-                       IsHitTestVisible="False"
-                       Fill="{DynamicResource SystemChromeMediumColor}"
-                       Stroke="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+            <Rectangle IsHitTestVisible="False"
+                       Opacity="0.975"
+                       Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
             <TextBlock Margin="20"
                        TextWrapping="Wrap"
                        HorizontalAlignment="Center"

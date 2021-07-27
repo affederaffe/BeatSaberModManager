@@ -27,8 +27,8 @@ namespace BeatSaberModManager.ViewModels
             OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.ThemesDir!));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsyn);
-            this.WhenAnyValue(x => x.InstallDir).Select(x => x is not null).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
-            this.WhenAnyValue(x => x.ThemesDir).Select(x => x is not null).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
+            this.WhenAnyValue(x => x.InstallDir).Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
+            this.WhenAnyValue(x => x.ThemesDir).Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
 
         public string? InstallDir

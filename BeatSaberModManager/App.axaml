@@ -3,7 +3,8 @@
              x:Class="BeatSaberModManager.App">
 
     <Application.Styles>
-        <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml"/>
+        <FluentTheme Mode="Dark" />
+        <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
         <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
     </Application.Styles>
 

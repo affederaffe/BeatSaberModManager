@@ -8,18 +8,20 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 
+using BeatSaberModManager.Models;
+
 using ReactiveUI;
 
 
-namespace BeatSaberModManager.ThemeManagement
+namespace BeatSaberModManager.Theming
 {
     public class ThemeSwitcher : ReactiveObject
     {
-        private readonly Uri _styleIncludeUri = new("avares://Avalonia.ThemeManager/Styles");
+        private static readonly Uri _styleIncludeUri = new("avares://Avalonia.ThemeManager/Styles");
 
-        public ThemeSwitcher(string? directoryPath)
+        public ThemeSwitcher(Settings settings)
         {
-            _themes = new ObservableCollection<Theme>
+            Themes = new ObservableCollection<Theme>
             {
                 LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultLight.axaml"),
                 LoadBuildInTheme("Default Dark", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseDark.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultDark.axaml"),
@@ -27,18 +29,22 @@ namespace BeatSaberModManager.ThemeManagement
                 LoadBuildInTheme("Fluent Dark", "avares://Avalonia.Themes.Fluent/FluentDark.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
             };
 
-            if (Directory.Exists(directoryPath))
+            if (Directory.Exists(settings.ThemesDir))
             {
-                foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*.xaml"))
+                foreach (string filePath in Directory.EnumerateFiles(settings.ThemesDir, "*.xaml"))
                 {
                     Theme? theme = LoadTheme(filePath);
                     if (theme is null) continue;
-                    _themes.Add(theme);
+                    Themes.Add(theme);
                 }
             }
 
-            this.WhenAnyValue(x => x.SelectedTheme).Subscribe(b => Application.Current.Styles[0] = b.Style);
+            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme);
+            selectedThemeObservable.Subscribe(t => Application.Current.Styles[0] = t.Style);
+            selectedThemeObservable.Subscribe(t => settings.ThemeName = t.Name);
         }
+
+        public ObservableCollection<Theme> Themes { get; }
 
         private Theme? _selectedTheme;
         public Theme SelectedTheme
@@ -47,14 +53,7 @@ namespace BeatSaberModManager.ThemeManagement
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
-        private ObservableCollection<Theme> _themes;
-        public ObservableCollection<Theme> Themes
-        {
-            get => _themes;
-            set => this.RaiseAndSetIfChanged(ref _themes, value);
-        }
-
-        public Theme? LoadTheme(string filePath)
+        public static Theme? LoadTheme(string filePath)
         {
             if (!File.Exists(filePath)) return null;
             string name = Path.GetFileNameWithoutExtension(filePath);
@@ -63,7 +62,7 @@ namespace BeatSaberModManager.ThemeManagement
             return new Theme(name, style);
         }
 
-        private Theme LoadBuildInTheme(string name, params string[] uris)
+        private static Theme LoadBuildInTheme(string name, params string[] uris)
         {
             Styles styles = new();
             foreach (string uri in uris)

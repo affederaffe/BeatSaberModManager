@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
              xmlns:v="clr-namespace:BeatSaberModManager.Views"
-             xmlns:ts="clr-namespace:BeatSaberModManager.ThemeManagement"
+             xmlns:t="clr-namespace:BeatSaberModManager.Theming"
+             xmlns:l="clr-namespace:BeatSaberModManager.Localisation"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.OptionsView">
 
@@ -14,11 +15,12 @@
     
     <Grid VerticalAlignment="Top"
           ColumnDefinitions="*, 4*, Auto, Auto, *"
-          RowDefinitions="*, *, *, *, *, *, *, *">
+          RowDefinitions="*, *, *, *, *, *, *, *, *, *">
         <Label Grid.Column="1"
                Grid.Row="0"
                Margin="10, 10, 10, 0"
                FontWeight="Bold"
+               HorizontalAlignment="Stretch"
                Content="{DynamicResource OptionsView:InstallationLabel}" />
         <TextBox
             Grid.Column="1"
@@ -85,37 +87,57 @@
                Grid.Row="5"
                Margin="10, 10, 10, 0"
                FontWeight="Bold"
+               Content="{DynamicResource OptionsView:LanguageLabel}"/>
+        <StackPanel Grid.Column="1"
+                    Grid.Row="6"
+                    Margin="50, 10, 10, 10"
+                    Orientation="Horizontal">
+            <Label Content="A 文" FontSize="22" />
+            <ComboBox DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:OptionsView}}"
+                      Items="{Binding LanguageSwitcher.Languages}"
+                      SelectedItem="{Binding LanguageSwitcher.SelectedLanguage}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="l:Language">
+                        <Label Content="{Binding Name}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <Label Grid.Column="1"
+               Grid.Row="7"
+               Margin="10, 10, 10, 0"
+               FontWeight="Bold"
                Content="{DynamicResource OptionsView:ThemesLabel}" />
         <TextBox
             Grid.Column="1"
-            Grid.Row="6"
+            Grid.Row="8"
             Margin="10"
             IsHitTestVisible="False"
             HorizontalAlignment="Stretch"
             Text="{Binding ThemesDir}" />
         <Button
             Grid.Column="2"
-            Grid.Row="6"
+            Grid.Row="8"
             Margin="10"
             HorizontalAlignment="Center"
             Content="{DynamicResource OptionsView:OpenFolderButton}"
             IsEnabled="{Binding OpenThemesDirButtonActive}"
             Command="{Binding OpenThemesDirCommand}" />
         <Button Grid.Column="3"
-                Grid.Row="6"
+                Grid.Row="8"
                 Margin="10"
                 HorizontalAlignment="Center"
                 Content="{DynamicResource OptionsView:SelectFolderButton}"
                 Click="OnSelectThemesFolderButtonClicked" />
         <ComboBox Grid.Column="1"
-                  Grid.Row="7"
+                  Grid.Row="9"
                   Margin="10"
                   VerticalAlignment="Center"
                   DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:OptionsView}}"
                   Items="{Binding ThemeSwitcher.Themes}"
-                  SelectedItem="{Binding SelectedTheme}">
+                  SelectedItem="{Binding ThemeSwitcher.SelectedTheme}">
             <ComboBox.ItemTemplate>
-                <DataTemplate DataType="ts:Theme">
+                <DataTemplate DataType="t:Theme">
                     <Label Content="{Binding Name}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>

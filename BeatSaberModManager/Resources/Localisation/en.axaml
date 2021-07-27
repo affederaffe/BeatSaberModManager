@@ -25,6 +25,7 @@
     <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Support</sys:String>
     <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver:</sys:String>
     <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber:</sys:String>
+    <sys:String x:Key="OptionsView:LanguageLabel">Language</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themes</sys:String>
     
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">It looks like you haven't set your installation directory yet, would you like to do so?</sys:String>

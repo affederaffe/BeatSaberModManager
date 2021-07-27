@@ -3,13 +3,14 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 
+using BeatSaberModManager.Localisation;
 using BeatSaberModManager.Models;
 using BeatSaberModManager.Models.Implementations.BeatSaber;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Models.Interfaces;
-using BeatSaberModManager.ThemeManagement;
+using BeatSaberModManager.Theming;
 using BeatSaberModManager.Utils;
 
 using Splat;
@@ -26,7 +27,13 @@ namespace BeatSaberModManager.DependencyInjection
             services.RegisterLazySingleton(() =>
             {
                 Settings settings = resolver.GetService<Settings>();
-                return new ThemeSwitcher(settings.ThemesDir);
+                return new LanguageSwitcher(settings);
+            });
+
+            services.RegisterLazySingleton(() =>
+            {
+                Settings settings = resolver.GetService<Settings>();
+                return new ThemeSwitcher(settings);
             });
 
             services.RegisterLazySingleton(() =>
