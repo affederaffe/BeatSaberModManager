@@ -16,10 +16,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
         private readonly HttpClient _httpClient;
 
         private const string kModelSaberUrlPrefix = "https://modelsaber.com/files/";
-        private const string kCustomAvatarsFolder = "CustomAvatars";
-        private const string kCustomSabersFolder = "CustomSabers";
-        private const string kCustomPlatformsFolder = "CustomPlatforms";
-        private const string kCustomBloqsFolder = "CustomNotes";
 
         public ModelSaberAssetProvider(Settings settings, HttpClient httpClient)
         {
@@ -34,10 +30,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
             if (_settings.InstallDir is null) return false;
             string? folderName = uri.Host switch
             {
-                "avatar" => kCustomAvatarsFolder,
-                "saber" => kCustomSabersFolder,
-                "platform" => kCustomPlatformsFolder,
-                "bloq" => kCustomBloqsFolder,
+                "avatar" => "CustomAvatars",
+                "saber" => "CustomSabers",
+                "platform" => "CustomPlatforms",
+                "bloq" => "CustomNotes",
                 _ => null
             };
 

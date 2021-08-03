@@ -11,6 +11,7 @@
     </Design.DataContext>
 
     <DataGrid Name="ModsDataGrid"
+              Margin="10"
               SelectionMode="Single"
               HorizontalAlignment="Stretch"
               SelectedItem="{Binding SelectedGridItem}">
@@ -41,7 +42,7 @@
                 </DataGridTemplateColumn.Header>
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate DataType="vm:ModGridItemViewModel">
-                        <Label VerticalContentAlignment="Center" Content="{Binding InstalledMod.Version}" />
+                        <Label VerticalContentAlignment="Center" Foreground="{Binding }" Content="{Binding InstalledMod.Version}" />
                     </DataTemplate>
                 </DataGridTemplateColumn.CellTemplate>
             </DataGridTemplateColumn>

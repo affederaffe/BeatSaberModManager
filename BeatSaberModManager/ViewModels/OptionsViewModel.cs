@@ -15,50 +15,51 @@ namespace BeatSaberModManager.ViewModels
     public class OptionsViewModel : ReactiveObject
     {
         private readonly Settings _settings;
+        private readonly IInstallDirValidator _installDirValidator;
         private readonly ObservableAsPropertyHelper<bool> _openInstallDirButtonActive;
         private readonly ObservableAsPropertyHelper<bool> _openThemesDirButtonActive;
-
-        private const string kProtocolProviderName = "BeatSaberModManager";
 
         public OptionsViewModel(ModsViewModel modsViewModel, Settings settings, IInstallDirValidator installDirValidator)
         {
             _settings = settings;
+            _installDirValidator = installDirValidator;
             OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.InstallDir!));
             OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.ThemesDir!));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
-            ToggleBeatSaverOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => Task.Run(() => ToggleOneClickHandler(BeatSaverOneClickCheckboxChecked, "beatsaver", "URI:BeatSaver OneClick Install")));
-            ToggleModelSaberOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => Task.Run(() => ToggleOneClickHandler(BeatSaverOneClickCheckboxChecked, "modelsaber", "URI:ModelSaber OneClick Install")));
+            ToggleBeatSaverOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(BeatSaverOneClickCheckboxChecked, "beatsaver", "URI:BeatSaver OneClick Install"));
+            ToggleModelSaberOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(BeatSaverOneClickCheckboxChecked, "modelsaber", "URI:ModelSaber OneClick Install"));
             IObservable<string?> installDirObservable = this.WhenAnyValue(x => x.InstallDir);
-            IObservable<string> validatedDirObservable = installDirObservable.Where(installDirValidator.ValidateInstallDir)!;
-            validatedDirObservable.Subscribe(x => _settings.InstallDir = x);
-            validatedDirObservable.Subscribe(x => _settings.VRPlatform = installDirValidator.DetectVRPlatform(x));
+            installDirObservable.BindTo(_settings, x => x.InstallDir);
+            installDirObservable.Subscribe(x => _settings.VRPlatform = _installDirValidator.DetectVRPlatform(x!));
             installDirObservable.Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
-            this.WhenAnyValue(x => x.ThemesDir).Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
+            IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir);
+            themesDirObservable.BindTo(_settings, x => x.ThemesDir);
+            themesDirObservable.Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
 
         private string? _installDir;
         public string? InstallDir
         {
             get => _installDir ??= _settings.InstallDir;
-            set => this.RaiseAndSetIfChanged(ref _installDir, value);
+            set => this.RaiseAndSetIfChangedConditional(ref _installDir, value, _installDirValidator.ValidateInstallDir);
         }
 
         private string? _themesDir;
         public string? ThemesDir
         {
             get => _themesDir ??= _settings.ThemesDir;
-            set => this.RaiseAndSetIfChanged(ref _themesDir, value);
+            set => this.RaiseAndSetIfChangedConditional(ref _themesDir, value, x => !string.IsNullOrEmpty(x));
         }
 
-        private bool _beatSaverOneClickCheckboxChecked = PlatformUtils.IsProtocolHandlerRegistered("beatsaver", kProtocolProviderName);
+        private bool _beatSaverOneClickCheckboxChecked = PlatformUtils.IsProtocolHandlerRegistered("beatsaver", nameof(BeatSaberModManager));
         public bool BeatSaverOneClickCheckboxChecked
         {
             get => _beatSaverOneClickCheckboxChecked;
             set => this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
         }
 
-        private bool _modelSaberOneClickCheckboxChecked = PlatformUtils.IsProtocolHandlerRegistered("modelsaber", kProtocolProviderName);
+        private bool _modelSaberOneClickCheckboxChecked = PlatformUtils.IsProtocolHandlerRegistered("modelsaber", nameof(BeatSaberModManager));
         public bool ModelSaberOneClickCheckboxChecked
         {
             get => _modelSaberOneClickCheckboxChecked;
@@ -81,10 +82,10 @@ namespace BeatSaberModManager.ViewModels
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
-        private static void ToggleOneClickHandler(bool active, string protocol, string description)
+        private static async Task ToggleOneClickHandler(bool active, string protocol, string description)
         {
-            if (active) PlatformUtils.RegisterProtocolHandler(protocol, description, kProtocolProviderName);
-            else PlatformUtils.UnregisterProtocolHandler(protocol, kProtocolProviderName);
+            if (active) await Task.Run(() => PlatformUtils.RegisterProtocolHandler(protocol, description, nameof(BeatSaberModManager)));
+            else await Task.Run(() => PlatformUtils.UnregisterProtocolHandler(protocol, nameof(BeatSaberModManager)));
         }
     }
 }

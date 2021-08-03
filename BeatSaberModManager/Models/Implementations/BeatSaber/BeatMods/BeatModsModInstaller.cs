@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -39,9 +40,11 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             }
 
             archive.ExtractToDirectory(_settings.InstallDir!, true);
-            return RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? await InstallBSIPAWindowsAsync()
-                : RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && InstallBSIPALinux();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return await InstallBSIPAWindowsAsync();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return InstallBSIPALinux();
+            throw new PlatformNotSupportedException();
         }
 
         public async Task<bool> UninstallModAsync(IMod modToUninstall)
@@ -53,6 +56,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                     return await UninstallBSIPAWindowsAsync(beatModsMod);
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                     return UninstallBSIPALinux(beatModsMod);
+                throw new PlatformNotSupportedException();
             }
 
             string pendingDirPath = Path.Combine(_settings.InstallDir!, "IPA", "Pending");

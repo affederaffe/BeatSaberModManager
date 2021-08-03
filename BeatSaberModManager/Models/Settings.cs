@@ -27,7 +27,7 @@ namespace BeatSaberModManager.Models
         static Settings()
         {
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            _saveDirPath = Path.Combine(appDataFolderPath, "BeatSaberModManager");
+            _saveDirPath = Path.Combine(appDataFolderPath, nameof(BeatSaberModManager));
             _saveFilePath = Path.Combine(_saveDirPath, "settings.json");
         }
 

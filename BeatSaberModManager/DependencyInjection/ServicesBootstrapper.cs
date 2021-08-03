@@ -22,23 +22,15 @@ namespace BeatSaberModManager.DependencyInjection
         {
             services.RegisterLazySingleton(Settings.Load);
 
-            services.RegisterLazySingleton(() =>
-            {
-                Settings settings = resolver.GetService<Settings>();
-                return new LanguageSwitcher(settings);
-            });
+            services.RegisterLazySingleton(() => new LanguageSwitcher(resolver.GetService<Settings>()));
 
-            services.RegisterLazySingleton(() =>
-            {
-                Settings settings = resolver.GetService<Settings>();
-                return new ThemeSwitcher(settings);
-            });
+            services.RegisterLazySingleton(() => new ThemeSwitcher(resolver.GetService<Settings>()));
 
             services.RegisterLazySingleton(() =>
             {
                 HttpClientHandler clientHandler = new() { AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate };
                 HttpClient client = new(clientHandler) { Timeout = TimeSpan.FromSeconds(30) };
-                client.DefaultRequestHeaders.Add("User-Agent", $"BeatSaberModManager/{Environment.Version}");
+                client.DefaultRequestHeaders.Add("User-Agent", $"{nameof(BeatSaberModManager)}/{Environment.Version}");
                 return client;
             });
 
@@ -68,7 +60,7 @@ namespace BeatSaberModManager.DependencyInjection
             );
 
             services.RegisterLazySingleton(() =>
-                new BeatModsModProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>(), resolver.GetService<IHashProvider>()),
+                new BeatModsModProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>(), resolver.GetService<IHashProvider>(), resolver.GetService<IGameVersionProvider>()),
                 typeof(IModProvider)
             );
 

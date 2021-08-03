@@ -5,19 +5,16 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
 {
     public class BeatSaverMap
     {
-        [JsonPropertyName("key")]
-        public string? Key { get; set; }
+        [JsonPropertyName("id")]
+        public string? Id { get; set; }
 
         [JsonPropertyName("name")]
         public string? Name { get; set; }
 
-        [JsonPropertyName("downloadURL")]
-        public string? DownloadUrl { get; set; }
-
-        [JsonPropertyName("coverURL")]
-        public string? CoverUrl { get; set; }
-
         [JsonPropertyName("metadata")]
         public BeatSaverMapMetaData? MetaData { get; set; }
+
+        [JsonPropertyName("versions")]
+        public BeatSaverMapVersion[]? Versions { get; set; }
     }
 }

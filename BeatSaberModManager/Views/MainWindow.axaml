@@ -6,7 +6,6 @@
                      xmlns:v="clr-namespace:BeatSaberModManager.Views"
                      mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
                      x:Class="BeatSaberModManager.Views.MainWindow"
-                     Title="BeatSaberModManager"
                      TransparencyLevelHint="AcrylicBlur"
                      Background="Transparent"
                      ExtendClientAreaToDecorationsHint="True"

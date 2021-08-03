@@ -14,6 +14,7 @@ namespace BeatSaberModManager.Models.Interfaces
         void ResolveDependencies(IMod modToResolve);
         void UnresolveDependencies(IMod modToUnresolve);
         Task LoadInstalledModsAsync();
+        Task LoadAvailableModsForCurrentVersionAsync();
         Task LoadAvailableModsForVersionAsync(string version);
         Task<ZipArchive?> DownloadModAsync(string url);
     }

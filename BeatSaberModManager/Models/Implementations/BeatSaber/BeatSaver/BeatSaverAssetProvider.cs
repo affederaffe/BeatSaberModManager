@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,10 +16,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
         private readonly Settings _settings;
         private readonly HttpClient _httpClient;
 
-        private const string kBeatSaverUrlPrefix = "https://beatsaver.com";
-        private const string kBeatSaverKeyEndpoint = "/api/maps/detail/";
-        private const string kBeatSaberDataFolderName = "Beat Saber_Data";
-        private const string kCustomSongsFolderName = "CustomLevels";
+        private const string kBeatSaverUrlPrefix = "https://api.beatsaver.com";
+        private const string kBeatSaverKeyEndpoint = "/maps/id/";
 
         public BeatSaverAssetProvider(Settings settings, HttpClient httpClient)
         {
@@ -35,20 +34,20 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync();
             BeatSaverMap? map = JsonSerializer.Deserialize<BeatSaverMap>(body);
-            if (map is null) return false;
-            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map);
+            if (map is null || map.Versions!.Length <= 0) return false;
+            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last());
             if (archive is null) return false;
-            string customLevelsDirectoryPath = Path.Combine(_settings.InstallDir, kBeatSaberDataFolderName, kCustomSongsFolderName);
+            string customLevelsDirectoryPath = Path.Combine(_settings.InstallDir, "Beat Saber_Data", "CustomLevels");
             if (!Directory.Exists(customLevelsDirectoryPath)) Directory.CreateDirectory(customLevelsDirectoryPath);
-            string mapName = string.Concat($"{map.Key} ({map.MetaData?.SongName} - {map.MetaData?.LevelAuthorName})".Split(_illegalCharacters));
+            string mapName = string.Concat($"{map.Id} ({map.MetaData?.SongName} - {map.MetaData?.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
             archive.ExtractToDirectory(levelDirectoryPath, true);
             return true;
         }
 
-        private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMap map)
+        private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + map.DownloadUrl);
+            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl);
             if (!response.IsSuccessStatusCode) return null;
             Stream stream = await response.Content.ReadAsStreamAsync();
             return new ZipArchive(stream);

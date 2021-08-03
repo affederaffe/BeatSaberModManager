@@ -11,13 +11,18 @@ namespace BeatSaberModManager.ViewModels
     {
         public ModGridItemViewModel(IMod availableMod, IMod? installedMod)
         {
-            AvailableMod = availableMod;
-            InstalledMod = installedMod;
+            _availableMod = availableMod;
+            _installedMod = installedMod;
         }
 
-        public IMod AvailableMod { get; }
-
         public IDisposable? Subscription { get; set; }
+
+        private IMod _availableMod;
+        public IMod AvailableMod
+        {
+            get => _availableMod;
+            set => this.RaiseAndSetIfChanged(ref _availableMod, value);
+        }
 
         private IMod? _installedMod;
         public IMod? InstalledMod

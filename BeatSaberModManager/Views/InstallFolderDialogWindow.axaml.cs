@@ -16,7 +16,7 @@ namespace BeatSaberModManager.Views
         {
             OpenFolderDialog dialog = new();
             string? folder = await dialog.ShowAsync(this);
-            Close(string.IsNullOrEmpty(folder) ? null : folder);
+            Close(folder);
         }
 
         private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);

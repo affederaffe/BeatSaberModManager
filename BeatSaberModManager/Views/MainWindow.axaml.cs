@@ -21,6 +21,7 @@ namespace BeatSaberModManager.Views
         {
             AvaloniaXamlLoader.Load(this);
             ViewModel = Locator.Current.GetService<MainWindowViewModel>();
+            Title = nameof(BeatSaberModManager);
             Label label = this.FindControl<Label>("ProgressBarLabel");
             ViewModel.WhenAnyValue(x => x.ProgressBarPreTextResourceName, x => x.ProgressBarText)
                      .Select(x => this.TryFindResource(x.Item1, out object? resource) ? $"{resource} {x.Item2}" : x.Item2)
