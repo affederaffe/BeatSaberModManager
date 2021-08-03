@@ -19,10 +19,6 @@ Currently, implemented ones include:
    Unlike ModAssistant, there is no extra <kbd>Uninstall</kbd> button, installed mods that are unchecked will automatically be uninstalled.
 3. Mods are installed to `IPA/Pending` until the game is run. Boot the game to complete mod installation.
 
-### Roadmap
-- Localisation
-- Theming support
-
 ### Credits
 ModAssistant by Assistant https://github.com/Assistant/ModAssistant \
 BSIPA-Linux by geefr https://github.com/geefr/BSIPA-Linux
