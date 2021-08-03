@@ -47,7 +47,7 @@ namespace BeatSaberModManager.ViewModels
         private string? _themesDir;
         public string? ThemesDir
         {
-            get => _settings.ThemesDir ??= _settings.ThemesDir;
+            get => _themesDir ??= _settings.ThemesDir;
             set => this.RaiseAndSetIfChanged(ref _themesDir, value);
         }
 
