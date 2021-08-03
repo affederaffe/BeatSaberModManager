@@ -42,9 +42,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
             const int rewind = -sizeof(int) - sizeof(byte);
             stream.Seek(rewind, SeekOrigin.Current); // rewind to the string length
 
-            int strlen = reader.ReadInt32();
-            byte[] strbytes = reader.ReadBytes(strlen);
-            return Encoding.UTF8.GetString(strbytes);
+            int strLen = reader.ReadInt32();
+            byte[] strBytes = reader.ReadBytes(strLen);
+            return Encoding.UTF8.GetString(strBytes);
         }
     }
 }

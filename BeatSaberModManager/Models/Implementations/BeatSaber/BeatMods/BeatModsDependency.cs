@@ -5,7 +5,7 @@ using BeatSaberModManager.Models.Interfaces;
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
-    public class BeatModsDependency : IDependency
+    public class BeatModsDependency
     {
         [JsonPropertyName("name")]
         public string? Name { get; set; }

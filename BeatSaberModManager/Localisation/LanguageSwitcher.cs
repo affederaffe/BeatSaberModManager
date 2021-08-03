@@ -21,7 +21,7 @@ namespace BeatSaberModManager.Localisation
                 LoadLanguage("Deutsch", "avares://BeatSaberModManager/Resources/Localisation/de.axaml")
             };
 
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage);
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).WhereNotNull();
             selectedLanguageObservable.Subscribe(l => Application.Current.Resources.MergedDictionaries[0] = l.ResourceProvider);
             selectedLanguageObservable.Subscribe(l => settings.LanguageName = l.Name);
         }
@@ -29,10 +29,15 @@ namespace BeatSaberModManager.Localisation
         public Language[] Languages { get; }
 
         private Language? _selectedLanguage;
-        public Language SelectedLanguage
+        public Language? SelectedLanguage
         {
-            get => _selectedLanguage ??= Languages.First();
+            get => _selectedLanguage;
             set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
+        }
+
+        public void Initialize(string? lastLanguage)
+        {
+            SelectedLanguage = Languages.FirstOrDefault(x => x.Name == lastLanguage) ?? Languages.First();
         }
 
         private static Language LoadLanguage(string name, string uri)

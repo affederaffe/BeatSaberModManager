@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Linq;
+using System.Text.Json.Serialization;
 
 using BeatSaberModManager.Models.Interfaces;
 
@@ -35,12 +36,14 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public bool Required { get; set; }
 
         [JsonPropertyName("author")]
-        public IAuthor? Author { get; set; }
+        public BeatModsAuthor? Author { get; set; }
 
         [JsonPropertyName("downloads")]
-        public IDownload[]? Downloads { get; set; }
+        public BeatModsDownload[]? Downloads { get; set; }
 
         [JsonPropertyName("dependencies")]
-        public IDependency[]? Dependencies { get; set; }
+        public BeatModsDependency[]? Dependencies { get; set; }
+
+        public BeatModsDownload? GetDownloadForVRPlatform(string platform) => Downloads!.FirstOrDefault(x => x.Type!.ToLowerInvariant() == "universal" || x.Type == platform);
     }
 }

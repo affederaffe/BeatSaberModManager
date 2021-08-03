@@ -9,7 +9,7 @@ namespace BeatSaberModManager.DependencyInjection
 {
     public static class ViewModelBootstrapper
     {
-        public static void RegisterServices(IMutableDependencyResolver services, IReadonlyDependencyResolver resolver)
+        public static void Register(IMutableDependencyResolver services, IReadonlyDependencyResolver resolver)
         {
             services.RegisterLazySingleton(() => new AssetInstallWindowViewModel(resolver.GetServices<IAssetProvider>()));
             services.RegisterLazySingleton(() => new IntroViewModel());

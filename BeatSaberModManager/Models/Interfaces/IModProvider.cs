@@ -11,8 +11,8 @@ namespace BeatSaberModManager.Models.Interfaces
         IMod[]? AvailableMods { get; }
         HashSet<IMod>? InstalledMods { get; }
         Dictionary<IMod, HashSet<IMod>> Dependencies { get; }
-        void ResolveDependencies(IMod modToResolveFor);
-        void UnresolveDependencies(IMod modToUnresolveFor);
+        void ResolveDependencies(IMod modToResolve);
+        void UnresolveDependencies(IMod modToUnresolve);
         Task LoadInstalledModsAsync();
         Task LoadAvailableModsForVersionAsync(string version);
         Task<ZipArchive?> DownloadModAsync(string url);

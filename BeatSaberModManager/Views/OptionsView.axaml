@@ -74,6 +74,7 @@
                    Content="{DynamicResource OptionsView:BeatSaverLabel}" />
             <CheckBox Grid.Column="1"
                       Grid.Row="0"
+                      Command="{Binding ToggleBeatSaverOneClickHandlerCommand}"
                       IsChecked="{Binding BeatSaverOneClickCheckboxChecked}" />
             <Label Grid.Column="0"
                    Grid.Row="1"
@@ -81,6 +82,7 @@
                    Content="{DynamicResource OptionsView:ModelSaberLabel}" />
             <CheckBox Grid.Column="1"
                       Grid.Row="1"
+                      Command="{Binding ToggleModelSaberOneClickHandlerCommand}"
                       IsChecked="{Binding ModelSaberOneClickCheckboxChecked}" />
         </Grid>
         <Label Grid.Column="1"

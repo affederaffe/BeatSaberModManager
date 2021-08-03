@@ -18,26 +18,15 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
         public bool TryDetectInstallDir(out string? installDir)
         {
             installDir = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                installDir = LocateWindowsInstallDir();
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                installDir = LocateLinuxSteamInstallDir();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) installDir = LocateWindowsInstallDir();
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) installDir = LocateLinuxSteamInstallDir();
             return installDir is not null;
         }
 
         private static string? LocateWindowsInstallDir()
         {
-            try
-            {
-                string? steamInstallDir = LocateWindowsSteamInstallDir();
-                return !string.IsNullOrEmpty(steamInstallDir)
-                    ? LocateSteamBeatSaberInstallDir(steamInstallDir)
-                    : LocateWindowsOculusBeatSaberDir();
-            }
-            catch
-            {
-                return null;
-            }
+            string? steamInstallDir = LocateWindowsSteamInstallDir();
+            return !string.IsNullOrEmpty(steamInstallDir) ? LocateSteamBeatSaberInstallDir(steamInstallDir) : LocateWindowsOculusBeatSaberDir();
         }
 
         private static string? LocateWindowsSteamInstallDir()
@@ -50,16 +39,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
 
         private static string? LocateLinuxSteamInstallDir()
         {
-            try
-            {
-                string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-                string steamInstallDir = Path.Combine(homeDir, ".steam", "root");
-                return LocateSteamBeatSaberInstallDir(steamInstallDir);
-            }
-            catch
-            {
-                return null;
-            }
+            string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string steamInstallDir = Path.Combine(homeDir, ".steam", "root");
+            return LocateSteamBeatSaberInstallDir(steamInstallDir);
         }
 
         private static string? LocateSteamBeatSaberInstallDir(string steamInstallDir)

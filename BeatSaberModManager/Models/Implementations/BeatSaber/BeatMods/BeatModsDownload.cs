@@ -1,11 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-using BeatSaberModManager.Models.Interfaces;
-
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
-    public class BeatModsDownload : IDownload
+    public class BeatModsDownload
     {
         [JsonPropertyName("type")]
         public string? Type { get; set; }
@@ -14,6 +12,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public string? Url { get; set; }
 
         [JsonPropertyName("hashMd5")]
-        public IHash[]? Hashes { get; set; }
+        public BeatModsHash[]? Hashes { get; set; }
     }
 }

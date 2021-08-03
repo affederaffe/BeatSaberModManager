@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -23,13 +24,17 @@ namespace BeatSaberModManager.Views
             ViewModel.WhenAnyValue(x => x.AssetName)
                      .Select(x => $"{this.FindResource("AssetInstallWindow:InstallText")} {x}")
                      .BindTo(assetNameTextBox, x => x.Text);
-            this.WhenActivated(async _ =>
-            {
-                if (Uri is null) return;
-                await ViewModel.InstallAsset(Uri);
-            });
+            this.WhenActivated(_ => InstallAssetAndClose().ConfigureAwait(false));
         }
 
         public string? Uri { private get; init; }
+
+        private async Task InstallAssetAndClose()
+        {
+            if (Uri is null) return;
+            await ViewModel!.InstallAsset(Uri);
+            await Task.Delay(1500);
+            Close();
+        }
     }
 }

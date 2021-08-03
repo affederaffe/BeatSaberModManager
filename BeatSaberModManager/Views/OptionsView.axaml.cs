@@ -6,7 +6,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Localisation;
-using BeatSaberModManager.Models;
 using BeatSaberModManager.Theming;
 using BeatSaberModManager.ViewModels;
 

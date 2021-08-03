@@ -19,7 +19,7 @@ namespace BeatSaberModManager.Utils
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 await Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true })!.WaitForExitAsync();
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                await Process.Start("xdg-open", $"\"{uri}\"")!.WaitForExitAsync();
+                await Process.Start("xdg-open", $"\"{uri}\"").WaitForExitAsync();
             else
                 throw new PlatformNotSupportedException();
         }

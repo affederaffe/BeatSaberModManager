@@ -1,11 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-using BeatSaberModManager.Models.Interfaces;
-
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
-    public class BeatModsAuthor : IAuthor
+    public class BeatModsAuthor
     {
         [JsonPropertyName("_id")]
         public string? Id { get; set; }

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -21,7 +21,7 @@ namespace BeatSaberModManager.Theming
 
         public ThemeSwitcher(Settings settings)
         {
-            Themes = new ObservableCollection<Theme>
+            Themes = new List<Theme>
             {
                 LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultLight.axaml"),
                 LoadBuildInTheme("Default Dark", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseDark.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultDark.axaml"),
@@ -39,27 +39,34 @@ namespace BeatSaberModManager.Theming
                 }
             }
 
-            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme);
+            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).WhereNotNull();
             selectedThemeObservable.Subscribe(t => Application.Current.Styles[0] = t.Style);
             selectedThemeObservable.Subscribe(t => settings.ThemeName = t.Name);
         }
 
-        public ObservableCollection<Theme> Themes { get; }
+        public List<Theme> Themes { get; }
 
         private Theme? _selectedTheme;
-        public Theme SelectedTheme
+        public Theme? SelectedTheme
         {
-            get => _selectedTheme ??= Themes.First();
+            get => _selectedTheme;
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
-        public static Theme? LoadTheme(string filePath)
+        public void Initialize(string? lastTheme)
+        {
+            SelectedTheme = Themes.FirstOrDefault(x => x.Name == lastTheme) ?? Themes.First();
+        }
+
+        private Theme? LoadTheme(string filePath)
         {
             if (!File.Exists(filePath)) return null;
             string name = Path.GetFileNameWithoutExtension(filePath);
             string xaml = File.ReadAllText(filePath);
             IStyle style = AvaloniaRuntimeXamlLoader.Parse<IStyle>(xaml);
-            return new Theme(name, style);
+            Theme theme = new(name, style);
+            Themes.Add(theme);
+            return theme;
         }
 
         private static Theme LoadBuildInTheme(string name, params string[] uris)

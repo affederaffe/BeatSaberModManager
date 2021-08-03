@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using System.Text.Json;
 
 using BeatSaberModManager.Localisation;
 using BeatSaberModManager.Models;
@@ -11,7 +10,6 @@ using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Theming;
-using BeatSaberModManager.Utils;
 
 using Splat;
 
@@ -20,7 +18,7 @@ namespace BeatSaberModManager.DependencyInjection
 {
     public static class ServicesBootstrapper
     {
-        public static void RegisterServices(IMutableDependencyResolver services, IReadonlyDependencyResolver resolver)
+        public static void Register(IMutableDependencyResolver services, IReadonlyDependencyResolver resolver)
         {
             services.RegisterLazySingleton(Settings.Load);
 
@@ -42,18 +40,6 @@ namespace BeatSaberModManager.DependencyInjection
                 HttpClient client = new(clientHandler) { Timeout = TimeSpan.FromSeconds(30) };
                 client.DefaultRequestHeaders.Add("User-Agent", $"BeatSaberModManager/{Environment.Version}");
                 return client;
-            });
-
-            services.RegisterLazySingleton(() => new JsonSerializerOptions
-            {
-                Converters =
-                {
-                    new ConcreteConverter<IMod, BeatModsMod>(),
-                    new ConcreteConverter<IHash, BeatModsHash>(),
-                    new ConcreteConverter<IAuthor, BeatModsAuthor>(),
-                    new ConcreteConverter<IDownload, BeatModsDownload>(),
-                    new ConcreteConverter<IDependency, BeatModsDependency>()
-                }
             });
 
             services.RegisterLazySingleton(() =>
@@ -82,7 +68,7 @@ namespace BeatSaberModManager.DependencyInjection
             );
 
             services.RegisterLazySingleton(() =>
-                new BeatModsModProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>(), resolver.GetService<JsonSerializerOptions>(), resolver.GetService<IHashProvider>()),
+                new BeatModsModProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>(), resolver.GetService<IHashProvider>()),
                 typeof(IModProvider)
             );
 

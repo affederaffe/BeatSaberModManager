@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -16,7 +15,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
     {
         private readonly Settings _settings;
         private readonly HttpClient _httpClient;
-        private readonly JsonSerializerOptions _jsonSerializerOptions;
         private readonly IHashProvider _hashProvider;
 
         private const string kBeatModsBaseUrl = "https://beatmods.com";
@@ -28,11 +26,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         private const string kNotDeclinedStatus = "?status!=declined";
         private const string kGameVersion = "&gameVersion=";
 
-        public BeatModsModProvider(Settings settings, HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions, IHashProvider hashProvider)
+        public BeatModsModProvider(Settings settings, HttpClient httpClient, IHashProvider hashProvider)
         {
             _settings = settings;
             _httpClient = httpClient;
-            _jsonSerializerOptions = jsonSerializerOptions;
             _hashProvider = hashProvider;
         }
 
@@ -41,55 +38,43 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public HashSet<IMod>? InstalledMods { get; private set; }
         public Dictionary<IMod, HashSet<IMod>> Dependencies { get; } = new();
 
-        public void ResolveDependencies(IMod modToResolveFor)
+        public void ResolveDependencies(IMod modToResolve)
         {
-            if (modToResolveFor.Dependencies is null || modToResolveFor.Dependencies.Length <= 0) return;
-            foreach (IDependency dependency in modToResolveFor.Dependencies)
+            if (modToResolve is not BeatModsMod beatModsMod || beatModsMod.Dependencies?.Length <= 0) return;
+            foreach (BeatModsDependency dependency in beatModsMod.Dependencies!)
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
                 if (dependency.DependingMod is null) continue;
-                if (Dependencies.TryGetValue(dependency.DependingMod!, out HashSet<IMod>? dependants)) dependants.Add(modToResolveFor);
-                else Dependencies.Add(dependency.DependingMod!, new HashSet<IMod> { modToResolveFor });
+                if (Dependencies.TryGetValue(dependency.DependingMod!, out HashSet<IMod>? dependants)) dependants.Add(beatModsMod);
+                else Dependencies.Add(dependency.DependingMod!, new HashSet<IMod> { beatModsMod });
             }
         }
 
-        public void UnresolveDependencies(IMod modToUnresolveFor)
+        public void UnresolveDependencies(IMod modToUnresolve)
         {
             foreach (HashSet<IMod> dependants in Dependencies.Values)
-                dependants.Remove(modToUnresolveFor);
+                dependants.Remove(modToUnresolve);
         }
 
         public async Task LoadInstalledModsAsync()
         {
-            IMod[]? allMods = await GetModsAsync(kItem + kNotDeclinedStatus);
+            BeatModsMod[]? allMods = await GetModsAsync(kItem + kNotDeclinedStatus);
             if (allMods is null) return;
-            List<string> filesToCheck = new() { Path.Combine(_settings.InstallDir!, "Beat Saber_Data", "Managed", "IPA.Injector.dll") };
-            foreach (string folder in new[] { "IPA/Pending/Plugins", "IPA/Pending/Libs", "Plugins", "Libs" })
+            Dictionary<string, IMod> fileHashModPairs = new();
+            foreach (BeatModsMod mod in allMods)
             {
-                string dirPath = Path.Combine(_settings.InstallDir!, folder);
-                if (!Directory.Exists(dirPath)) continue;
-                IEnumerable<string> files = Directory.EnumerateFiles(dirPath).Where(x =>
-                    x.EndsWith(".dll", StringComparison.Ordinal) ||
-                    x.EndsWith(".manifest", StringComparison.Ordinal));
-                filesToCheck.AddRange(files);
+                BeatModsDownload? download = mod.GetDownloadForVRPlatform(_settings.VRPlatform!);
+                if (download?.Hashes is null) continue;
+                foreach (BeatModsHash hash in download.Hashes)
+                    fileHashModPairs.TryAdd(hash.Hash!, mod);
             }
 
-            InstalledMods = new HashSet<IMod>(filesToCheck.Count);
-            foreach (string file in filesToCheck)
+            InstalledMods = new HashSet<IMod>();
+            foreach (string filePath in _installedModsLocations.Select(x => Path.Combine(_settings.InstallDir!, x)).Where(Directory.Exists).SelectMany(d => Directory.EnumerateFiles(d, "*.dll")))
             {
-                if (!File.Exists(file)) continue;
-                string hash = _hashProvider.CalculateHashForFile(file);
-                foreach (IMod mod in allMods)
-                {
-                    foreach (IDownload download in mod.Downloads!)
-                    {
-                        foreach (IHash downloadHash in download.Hashes!)
-                        {
-                            if (downloadHash.Hash == hash)
-                                InstalledMods.Add(mod);
-                        }
-                    }
-                }
+                string hash = _hashProvider.CalculateHashForFile(filePath);
+                if (!fileHashModPairs.TryGetValue(hash, out IMod? mod)) continue;
+                InstalledMods.Add(mod);
             }
         }
 
@@ -108,12 +93,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             return new ZipArchive(stream);
         }
 
-        private async Task<IMod[]?> GetModsAsync(string? args)
+        private async Task<BeatModsMod[]?> GetModsAsync(string? args)
         {
             HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsApiUrl + args);
             if (!response.IsSuccessStatusCode) return default;
             string body = await response.Content.ReadAsStringAsync();
-            return JsonSerializer.Deserialize<IMod[]>(body, _jsonSerializerOptions);
+            return JsonSerializer.Deserialize<BeatModsMod[]>(body);
         }
 
         private async Task<string?> GetAliasedGameVersion(string gameVersion)
@@ -139,7 +124,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                     return version;
             }
 
-            return versions[0];
+            return versions.FirstOrDefault();
         }
+
+        private static readonly string[] _installedModsLocations = { string.Empty, "IPA/Pending/Plugins", "IPA/Pending/Libs", "Plugins", "Libs" };
     }
 }

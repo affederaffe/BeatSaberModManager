@@ -18,6 +18,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
     <AnalysisLevel>latest</AnalysisLevel>
     <AssemblyVersion>0.0.1</AssemblyVersion>
   </PropertyGroup>

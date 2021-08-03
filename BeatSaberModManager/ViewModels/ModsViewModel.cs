@@ -122,7 +122,7 @@ namespace BeatSaberModManager.ViewModels
             _mainWindowViewModel.ProgressBarValue = 100;
         }
 
-        public async Task UninstallAllModsAsyn()
+        public async Task UninstallAllModsAsync()
         {
             if (GridItems is not null)
                 foreach (ModGridItemViewModel gridItem in GridItems)

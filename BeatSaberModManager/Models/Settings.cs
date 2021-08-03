@@ -2,9 +2,6 @@
 using System.IO;
 using System.Text.Json;
 
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
-
 
 namespace BeatSaberModManager.Models
 {
@@ -16,13 +13,7 @@ namespace BeatSaberModManager.Models
         public string? ThemeName { get; set; }
         public string? LanguageName { get; set; }
 
-        public Settings()
-        {
-            if (Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                desktop.Exit += (_, _) => Save();
-        }
-
-        private void Save()
+        public void Save()
         {
             JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
             string json = JsonSerializer.Serialize(this, jsonSerializerOptions);

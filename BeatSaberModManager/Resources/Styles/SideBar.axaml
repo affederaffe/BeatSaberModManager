@@ -21,12 +21,11 @@
             BorderBrush="{TemplateBinding BorderBrush}"
             BorderThickness="{TemplateBinding BorderThickness}">
           <DockPanel>
-            <ScrollViewer Width="240" Margin="0, 30, 0, 0"
+            <ScrollViewer Margin="0, 30, 0, 0"
                 Name="PART_ScrollViewer"
                 HorizontalScrollBarVisibility="{TemplateBinding (ScrollViewer.HorizontalScrollBarVisibility)}"
                 VerticalScrollBarVisibility="{TemplateBinding (ScrollViewer.VerticalScrollBarVisibility)}"
-                Background="{TemplateBinding Background}"
-                DockPanel.Dock="Left">
+                Background="{TemplateBinding Background}">
               <ItemsPresenter
                   Name="PART_ItemsPresenter"
                   Items="{TemplateBinding Items}"
@@ -54,11 +53,10 @@
   </Style>
 
   <Style Selector="TabControl.SideBar > TabItem">
-    <Setter Property="BorderThickness" Value="0" />    
+    <Setter Property="BorderThickness" Value="0" />
     <Setter Property="FontSize" Value="14" />
     <Setter Property="Margin" Value="0" />
-    <Setter Property="Padding" Value="16" />    
-    <Setter Property="Width" Value="240" />
+    <Setter Property="Padding" Value="16" />
     <Setter Property="HorizontalContentAlignment" Value="Stretch" />    
     <Setter Property="(ScrollViewer.HorizontalScrollBarVisibility)" Value="Auto" />
     <Setter Property="(ScrollViewer.VerticalScrollBarVisibility)" Value="Auto" />
@@ -71,6 +69,6 @@
   </Style>
 
   <Style Selector="TabControl.SideBar > TabItem:pointerover /template/ Border#PART_LayoutRoot">
-    <Setter Property="Background" Value="#3fffffff" />    
+    <Setter Property="Background" Value="#3fffffff" />
   </Style>
 </Styles>
