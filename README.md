@@ -11,7 +11,7 @@ Currently, implemented ones include:
 - Dependency resolution
 - Installed mod detection
 - Mod uninstallation
-- OneClick™ support for [BeatSaver](https://beatsaver.com) and [ModelSaber](https://modelsaber.com)
+- OneClick™ support for [BeatSaver](https://beatsaver.com), [ModelSaber](https://modelsaber.com) and [Playlists](https://bsaber.com/category/playlists)
 
 ### Usage
 1. **Run the game at least once before trying to mod the game!**

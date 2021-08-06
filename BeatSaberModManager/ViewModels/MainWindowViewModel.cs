@@ -59,8 +59,8 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task OpenMoreInfoLink()
         {
-            if (_modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink is not null)
-                await PlatformUtils.OpenBrowserOrFileExplorer(_modsViewModel.SelectedGridItem.AvailableMod.MoreInfoLink);
+            if (_modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink is null) return;
+            await PlatformUtils.OpenBrowserOrFileExplorer(_modsViewModel.SelectedGridItem.AvailableMod.MoreInfoLink);
         }
     }
 }

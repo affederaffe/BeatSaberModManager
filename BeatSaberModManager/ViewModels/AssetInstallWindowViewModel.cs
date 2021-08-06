@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Interfaces;
@@ -24,7 +25,8 @@ namespace BeatSaberModManager.ViewModels
             Uri uri = new(strUri);
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == uri.Scheme);
             if (assetProvider is null) return;
-            AssetName = uri.Host;
+            string decodedName = WebUtility.UrlDecode(uri.Segments.Last());
+            AssetName = decodedName == "/" ? uri.Host : decodedName;
             bool result = await assetProvider.InstallAssetAsync(uri);
             ProgressRingActive = false;
             ResultLabelText = result ? "✔" : "✘";

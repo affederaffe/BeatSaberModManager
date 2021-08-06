@@ -21,12 +21,15 @@
     <sys:String x:Key="OptionsView:OpenFolderButton">Open Folder</sys:String>
     <sys:String x:Key="OptionsView:SelectFolderButton">Select Folder</sys:String>
     <sys:String x:Key="OptionsView:UninstallModLoaderButton">Uninstall BSIPA</sys:String>
-    <sys:String x:Key="OptionsView:UninstallAllModsButton">Uninstall all mods</sys:String>
+    <sys:String x:Key="OptionsView:UninstallAllModsButton">Uninstall All Mods</sys:String>
     <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Support</sys:String>
     <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver:</sys:String>
     <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber:</sys:String>
+    <sys:String x:Key="OptionsView:PlaylistLabel">Playlist:</sys:String>
     <sys:String x:Key="OptionsView:LanguageLabel">Language</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themes</sys:String>
+    <sys:String x:Key="OptionsView:ToolsLabel">Tools</sys:String>
+    <sys:String x:Key="OptionsView:InstallPlaylistButton">Install Playlist</sys:String>
     
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">It looks like you haven't set your installation directory yet, would you like to do so?</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Continue</sys:String>

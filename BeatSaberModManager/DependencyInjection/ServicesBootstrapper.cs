@@ -8,6 +8,7 @@ using BeatSaberModManager.Models.Implementations.BeatSaber;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
+using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Theming;
 
@@ -70,12 +71,26 @@ namespace BeatSaberModManager.DependencyInjection
             );
 
             services.RegisterLazySingleton(() =>
-                new ModelSaberAssetProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()),
+                new ModelSaberModelInstaller(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()));
+
+            services.RegisterLazySingleton(() =>
+                new BeatSaverMapInstaller(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()));
+
+            services.RegisterLazySingleton(() =>
+                new PlaylistInstaller(resolver.GetService<HttpClient>(),resolver.GetService<BeatSaverMapInstaller>()));
+
+            services.RegisterLazySingleton(() =>
+                new ModelSaberAssetProvider(resolver.GetService<ModelSaberModelInstaller>()),
                 typeof(IAssetProvider)
             );
 
             services.RegisterLazySingleton(() =>
-                new BeatSaverAssetProvider(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()),
+                new BeatSaverAssetProvider(resolver.GetService<BeatSaverMapInstaller>()),
+                typeof(IAssetProvider)
+            );
+
+            services.RegisterLazySingleton(() =>
+                new PlaylistAssetProvider(resolver.GetService<PlaylistInstaller>()),
                 typeof(IAssetProvider)
             );
         }

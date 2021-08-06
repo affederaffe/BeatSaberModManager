@@ -25,8 +25,11 @@
     <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Unterstützung</sys:String>
     <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver:</sys:String>
     <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber:</sys:String>
+    <sys:String x:Key="OptionsView:PlaylistLabel">Playlist:</sys:String>
     <sys:String x:Key="OptionsView:LanguageLabel">Sprache</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themen</sys:String>
+    <sys:String x:Key="OptionsView:ToolsLabel">Werkzeuge</sys:String>
+    <sys:String x:Key="OptionsView:InstallPlaylistButton">Playlist installieren</sys:String>
     
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Weiter</sys:String>

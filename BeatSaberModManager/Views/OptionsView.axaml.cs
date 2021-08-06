@@ -45,5 +45,18 @@ namespace BeatSaberModManager.Views
             OpenFolderDialog openFolderDialog = new();
             ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(desktop.MainWindow);
         }
+
+        private async void OnInstallPlaylistButtonClicked(object? sender, RoutedEventArgs e)
+        {
+            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
+            OpenFileDialog openFileDialog = new();
+            FileDialogFilter fileDialogFilter = new();
+            fileDialogFilter.Extensions.Add("bplist");
+            fileDialogFilter.Name = "BeatSaber Playlist";
+            openFileDialog.Filters.Add(fileDialogFilter);
+            openFileDialog.AllowMultiple = true;
+            string[] filePaths = await openFileDialog.ShowAsync(desktop.MainWindow);
+            await ViewModel!.InstallPlaylists(filePaths);
+        }
     }
 }

@@ -27,7 +27,7 @@
             
             <DataGridTemplateColumn Width="275">
                 <DataGridTemplateColumn.Header>
-                    <Label VerticalContentAlignment="Center" Content="{DynamicResource ModsView:ModNameHeader}" />
+                    <Label Padding="0"  VerticalContentAlignment="Center" Content="{DynamicResource ModsView:ModNameHeader}" />
                 </DataGridTemplateColumn.Header>
                 <DataGridTemplateColumn.CellTemplate>
                     <DataTemplate DataType="vm:ModGridItemViewModel">
