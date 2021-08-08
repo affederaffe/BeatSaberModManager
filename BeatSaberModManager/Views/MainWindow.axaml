@@ -15,45 +15,14 @@
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
-
-    <Grid RowDefinitions="Auto, 17.5*, *">
-        <Label Grid.Row="0"
-               Margin="125, 0"
-               FontSize="32"
-               ZIndex="1"
-               Content="{Binding #TabControl.SelectedItem.Header}" />
-        <TabControl Grid.Row="0" Grid.RowSpan="2"
-                    Name="TabControl"
-                    Classes="SideBar"
-                    VerticalAlignment="Stretch"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-            <TabItem Header="{DynamicResource MainWindow:IntroHeader}">
-                <Panel>
-                    <Rectangle Opacity="0.975" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" IsHitTestVisible="False" />
-                    <v:IntroView Margin="0, 30, 0, 0" />
-                </Panel>
-            </TabItem>
-            <TabItem Header="{DynamicResource MainWindow:ModsHeader}">
-                <Panel>
-                    <Rectangle Opacity="0.975" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" IsHitTestVisible="False" />
-                    <v:ModsView Margin="0, 30, 0, 0" />
-                </Panel>
-            </TabItem>
-            <TabItem Header="{DynamicResource MainWindow:OptionsHeader}">
-                <Panel>
-                    <Rectangle Opacity="0.975" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" IsHitTestVisible="False" />
-                    <v:OptionsView Margin="0, 30, 0, 0" />
-                </Panel>
-            </TabItem>
-        </TabControl>
-        
-        <Grid Grid.Row="2"
+    
+    <DockPanel>
+        <Grid DockPanel.Dock="Bottom"
               ColumnDefinitions="*, Auto, Auto"
               Opacity="0.875"
               Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
             <ProgressBar Grid.Column="0"
                          Margin="10, 0, 5, 0"
-                         MaxHeight="40"
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"
                          Value="{Binding ProgressBarValue}">
@@ -62,14 +31,12 @@
                    Name="ProgressBarLabel"
                    Margin="10, 0, 5, 0"
                    ZIndex="1"
-                   MaxHeight="40"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
                    HorizontalContentAlignment="Center"
                    VerticalContentAlignment="Center" />
             <Button Grid.Column="1"
                     Margin="5, 0, 5, 0"
-                    MaxHeight="40"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
@@ -79,7 +46,6 @@
                     Command="{Binding MoreInfoButtonCommand}" />
             <Button Grid.Column="2"
                     Margin="5, 0, 10, 0"
-                    MaxHeight="40"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
@@ -88,5 +54,29 @@
                     IsEnabled="{Binding InstallButtonEnabled}"
                     Command="{Binding InstallButtonCommand}" />
         </Grid>
-    </Grid>
+        
+        <TabControl DockPanel.Dock="Left"
+                    Classes="SideBar"
+                    Padding="0, 25, 0, 0"
+                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            <TabItem Header="{DynamicResource MainWindow:IntroHeader}">
+                <Panel>
+                    <Rectangle IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+                    <v:IntroView />
+                </Panel>
+            </TabItem>
+            <TabItem Header="{DynamicResource MainWindow:ModsHeader}">
+                <Panel>
+                    <Rectangle IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+                    <v:ModsView />
+                </Panel>
+            </TabItem>
+            <TabItem Header="{DynamicResource MainWindow:OptionsHeader}">
+                <Panel>
+                    <Rectangle IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+                    <v:OptionsView />
+                </Panel>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>

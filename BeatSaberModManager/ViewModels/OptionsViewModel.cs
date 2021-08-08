@@ -18,14 +18,16 @@ namespace BeatSaberModManager.ViewModels
         private readonly Settings _settings;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly IInstallDirValidator _installDirValidator;
+        private readonly IStatusProgress _progress;
         private readonly ObservableAsPropertyHelper<bool> _openInstallDirButtonActive;
         private readonly ObservableAsPropertyHelper<bool> _openThemesDirButtonActive;
 
-        public OptionsViewModel(ModsViewModel modsViewModel, Settings settings, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
+        public OptionsViewModel(ModsViewModel modsViewModel, Settings settings, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator, IStatusProgress progress)
         {
             _settings = settings;
             _playlistInstaller = playlistInstaller;
             _installDirValidator = installDirValidator;
+            _progress = progress;
             OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.InstallDir!));
             OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.ThemesDir!));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
@@ -95,7 +97,7 @@ namespace BeatSaberModManager.ViewModels
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
-        public async Task InstallPlaylists(string[] filePaths) => await _playlistInstaller.InstallPlaylistsAsync(filePaths);
+        public async Task InstallPlaylists(string filePath) => await _playlistInstaller.InstallPlaylistFromFileAsync(filePath, _progress);
 
         private static async Task ToggleOneClickHandler(bool active, string protocol, string description)
         {

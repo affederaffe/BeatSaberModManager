@@ -97,7 +97,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public async Task<ZipArchive?> DownloadModAsync(string url)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsBaseUrl + url);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsBaseUrl + url);
             if (!response.IsSuccessStatusCode) return null;
             Stream stream = await response.Content.ReadAsStreamAsync();
             return new ZipArchive(stream);
@@ -105,7 +105,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         private async Task<BeatModsMod[]?> GetModsAsync(string? args)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsApiUrl + args);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsApiUrl + args);
             if (!response.IsSuccessStatusCode) return default;
             string body = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<BeatModsMod[]>(body);
@@ -113,16 +113,16 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         private async Task<string?> GetAliasedGameVersion(string gameVersion)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsVersionsUrl);
-            if (!response.IsSuccessStatusCode) return null;
-            string body = await response.Content.ReadAsStringAsync();
-            string[]? versions = JsonSerializer.Deserialize<string[]>(body);
+            using HttpResponseMessage versionsResponse = await _httpClient.GetAsync(kBeatModsVersionsUrl);
+            if (!versionsResponse.IsSuccessStatusCode) return null;
+            string versionsBody = await versionsResponse.Content.ReadAsStringAsync();
+            string[]? versions = JsonSerializer.Deserialize<string[]>(versionsBody);
             if (versions is null) return null;
             if (versions.Contains(gameVersion)) return gameVersion;
-            response = await _httpClient.GetAsync(kBeatModsAliasUrl);
-            if (!response.IsSuccessStatusCode) return null;
-            body = await response.Content.ReadAsStringAsync();
-            Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(body);
+            using HttpResponseMessage aliasResponse = await _httpClient.GetAsync(kBeatModsAliasUrl);
+            if (!aliasResponse.IsSuccessStatusCode) return null;
+            string aliasBody = await aliasResponse.Content.ReadAsStringAsync();
+            Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(aliasBody);
             if (aliases is null) return null;
 
             foreach ((string version, string[] alias) in aliases)

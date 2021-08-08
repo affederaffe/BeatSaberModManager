@@ -1,7 +1,9 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Utils;
 
 using ReactiveUI;
@@ -14,8 +16,10 @@ namespace BeatSaberModManager.ViewModels
         private readonly ModsViewModel _modsViewModel;
         private readonly ObservableAsPropertyHelper<bool> _moreInfoButtonEnabled;
         private readonly ObservableAsPropertyHelper<bool> _installButtonEnabled;
+        private readonly ObservableAsPropertyHelper<double> _progressBarValue;
+        private readonly ObservableAsPropertyHelper<string> _progressBarText;
 
-        public MainWindowViewModel(ModsViewModel modsViewModel)
+        public MainWindowViewModel(ModsViewModel modsViewModel, StatusProgress progress)
         {
             _modsViewModel = modsViewModel;
             MoreInfoButtonCommand = ReactiveCommand.CreateFromTask(OpenMoreInfoLink);
@@ -26,6 +30,10 @@ namespace BeatSaberModManager.ViewModels
             _modsViewModel.WhenAnyValue(x => x.GridItems)
                 .Select(x => x is not null)
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
+            IObservable<(double, string)> statusObservable = Observable.FromEventPattern<(double, string)>(handler => progress.ProgressChanged += handler, handler => progress.ProgressChanged -= handler)
+                .Select(x => x.EventArgs);
+            statusObservable.Select(x => x.Item1 * 100).ToProperty(this, nameof(ProgressBarValue), out _progressBarValue);
+            statusObservable.Select(x => x.Item2).ToProperty(this, nameof(ProgressBarText), out _progressBarText);
         }
 
         public ReactiveCommand<Unit, Unit> MoreInfoButtonCommand { get; }
@@ -36,26 +44,9 @@ namespace BeatSaberModManager.ViewModels
 
         public bool InstallButtonEnabled => _installButtonEnabled.Value;
 
-        private double _progressBarValue;
-        public double ProgressBarValue
-        {
-            get => _progressBarValue;
-            set => this.RaiseAndSetIfChanged(ref _progressBarValue, value);
-        }
+        public double ProgressBarValue => _progressBarValue.Value;
 
-        private string _progressBarPreTextResourceName = string.Empty;
-        public string ProgressBarPreTextResourceName
-        {
-            get => _progressBarPreTextResourceName;
-            set => this.RaiseAndSetIfChanged(ref _progressBarPreTextResourceName, value);
-        }
-
-        private string? _progressBarText;
-        public string? ProgressBarText
-        {
-            get => _progressBarText;
-            set => this.RaiseAndSetIfChanged(ref _progressBarText, value);
-        }
+        public string ProgressBarText => _progressBarText.Value;
 
         private async Task OpenMoreInfoLink()
         {

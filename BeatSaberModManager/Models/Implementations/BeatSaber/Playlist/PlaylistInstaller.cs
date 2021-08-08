@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
+using BeatSaberModManager.Models.Interfaces;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
@@ -21,34 +20,28 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
             _beatSaverMapInstaller = beatSaverMapInstaller;
         }
 
-        public async Task<bool> InstallPlaylistsAsync(IEnumerable<string> filePaths)
+        public async Task<bool> InstallPlaylistFromFileAsync(string filePath, IStatusProgress? progress = null)
         {
-            foreach (string filePath in filePaths.Where(File.Exists))
-            {
-                string json = await File.ReadAllTextAsync(filePath);
-                Playlist? playlist = JsonSerializer.Deserialize<Playlist>(json);
-                if (playlist is null) continue;
-                bool success = await InstallPlaylistAsync(playlist);
-                if (!success) return false;
-            }
-
-            return true;
+            string json = await File.ReadAllTextAsync(filePath);
+            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(json);
+            return playlist is not null && await InstallPlaylistAsync(playlist, progress);
         }
 
-        public async Task<bool> InstallPlaylistAsync(string url)
+        public async Task<bool> InstallPlaylistFromUrlAsync(string url, IStatusProgress? progress = null)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(url);
+            using HttpResponseMessage response = await _httpClient.GetAsync(url);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync();
             Playlist? playlist = JsonSerializer.Deserialize<Playlist>(body);
-            return playlist is not null && await InstallPlaylistAsync(playlist);
+            return playlist is not null && await InstallPlaylistAsync(playlist, progress);
         }
 
-        private async Task<bool> InstallPlaylistAsync(Playlist playlist)
+        private async Task<bool> InstallPlaylistAsync(Playlist playlist, IStatusProgress? progress = null)
         {
-            foreach (PlaylistSong song in playlist.Songs!)
+            for (int i = 0; i < playlist.Songs!.Length; i++)
             {
-                bool success = await _beatSaverMapInstaller.InstallBeatSaverMapFromKeyAsync(song.Id!);
+                progress?.Report((double)i / (playlist.Songs!.Length - 1));
+                bool success = await _beatSaverMapInstaller.InstallBeatSaverMapFromKeyAsync(playlist.Songs![i].Id!, progress);
                 if (!success) return false;
             }
 

@@ -1,5 +1,6 @@
 ﻿using BeatSaberModManager.Models;
 using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.ViewModels;
 
@@ -14,9 +15,9 @@ namespace BeatSaberModManager.DependencyInjection
         {
             services.RegisterLazySingleton(() => new AssetInstallWindowViewModel(resolver.GetServices<IAssetProvider>()));
             services.RegisterLazySingleton(() => new IntroViewModel());
-            services.RegisterLazySingleton(() => new ModsViewModel(resolver.GetService<Settings>(), resolver.GetService<IModProvider>(), resolver.GetService<IModInstaller>(), resolver.GetService<IModVersionComparer>()));
-            services.RegisterLazySingleton(() => new OptionsViewModel(resolver.GetService<ModsViewModel>(), resolver.GetService<Settings>(), resolver.GetService<PlaylistInstaller>(), resolver.GetService<IInstallDirValidator>()));
-            services.RegisterLazySingleton(() => new MainWindowViewModel(resolver.GetService<ModsViewModel>()));
+            services.RegisterLazySingleton(() => new ModsViewModel(resolver.GetService<Settings>(), resolver.GetService<IModProvider>(), resolver.GetService<IModInstaller>(), resolver.GetService<IModVersionComparer>(), resolver.GetService<IStatusProgress>()));
+            services.RegisterLazySingleton(() => new OptionsViewModel(resolver.GetService<ModsViewModel>(), resolver.GetService<Settings>(), resolver.GetService<PlaylistInstaller>(), resolver.GetService<IInstallDirValidator>(), resolver.GetService<IStatusProgress>()));
+            services.RegisterLazySingleton(() => new MainWindowViewModel(resolver.GetService<ModsViewModel>(), (StatusProgress)resolver.GetService<IStatusProgress>()));
         }
     }
 }

@@ -9,6 +9,7 @@ using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Theming;
 
@@ -34,6 +35,11 @@ namespace BeatSaberModManager.DependencyInjection
                 client.DefaultRequestHeaders.Add("User-Agent", $"{nameof(BeatSaberModManager)}/{Environment.Version}");
                 return client;
             });
+
+            services.RegisterLazySingleton(() =>
+                new StatusProgress(),
+                typeof(IStatusProgress)
+            );
 
             services.RegisterLazySingleton(() =>
                 new MD5HashProvider(),
@@ -77,7 +83,7 @@ namespace BeatSaberModManager.DependencyInjection
                 new BeatSaverMapInstaller(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()));
 
             services.RegisterLazySingleton(() =>
-                new PlaylistInstaller(resolver.GetService<HttpClient>(),resolver.GetService<BeatSaverMapInstaller>()));
+                new PlaylistInstaller(resolver.GetService<HttpClient>(), resolver.GetService<BeatSaverMapInstaller>()));
 
             services.RegisterLazySingleton(() =>
                 new ModelSaberAssetProvider(resolver.GetService<ModelSaberModelInstaller>()),

@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Interfaces;
+
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
 {
@@ -21,7 +23,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
             _httpClient = httpClient;
         }
 
-        public async Task<bool> InstallModelFromUriAsync(Uri uri)
+        public async Task<bool> InstallModelFromUriAsync(Uri uri, IStatusProgress? progress = null)
         {
             if (_settings.InstallDir is null) return false;
             string? folderName = uri.Host switch
@@ -36,10 +38,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
             if (folderName is null) return false;
             string folderPath = Path.Combine(_settings.InstallDir, folderName);
             if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
-            HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath);
+            string modelName = WebUtility.UrlDecode(uri.Segments.Last());
+            progress?.Report(modelName);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath);
             if (!response.IsSuccessStatusCode) return false;
             byte[] body = await response.Content.ReadAsByteArrayAsync();
-            string filePath = WebUtility.UrlDecode(Path.Combine(folderPath, uri.Segments.Last()));
+            string filePath = Path.Combine(folderPath, modelName);
             await File.WriteAllBytesAsync(filePath, body);
             return true;
         }

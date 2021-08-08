@@ -54,9 +54,10 @@ namespace BeatSaberModManager.Views
             fileDialogFilter.Extensions.Add("bplist");
             fileDialogFilter.Name = "BeatSaber Playlist";
             openFileDialog.Filters.Add(fileDialogFilter);
-            openFileDialog.AllowMultiple = true;
+            openFileDialog.AllowMultiple = false;
             string[] filePaths = await openFileDialog.ShowAsync(desktop.MainWindow);
-            await ViewModel!.InstallPlaylists(filePaths);
+            if (filePaths.Length <= 0) return;
+            await ViewModel!.InstallPlaylists(filePaths[0]);
         }
     }
 }

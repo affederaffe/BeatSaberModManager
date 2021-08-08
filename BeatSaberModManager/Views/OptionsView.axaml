@@ -15,7 +15,7 @@
     
     <Grid VerticalAlignment="Top"
           ColumnDefinitions="*, 4*, Auto, Auto, *"
-          RowDefinitions="*, *, *, *, *, *, *, *, *, *, *, *">
+          RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
         <Label Grid.Column="1"
                Grid.Row="0"
                Margin="10, 5, 10, 0"

@@ -17,6 +17,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
             _playlistInstaller = playlistInstaller;
         }
 
-        public async Task<bool> InstallAssetAsync(Uri uri) => await _playlistInstaller.InstallPlaylistAsync(uri.AbsolutePath[1..]);
+        public async Task<bool> InstallAssetAsync(Uri uri) => await _playlistInstaller.InstallPlaylistFromUrlAsync(uri.AbsolutePath[1..]);
     }
 }
