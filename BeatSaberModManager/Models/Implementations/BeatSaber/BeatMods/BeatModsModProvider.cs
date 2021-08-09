@@ -97,7 +97,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public async Task<ZipArchive?> DownloadModAsync(string url)
         {
-            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsBaseUrl + url).ConfigureAwait(false);
+            HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsBaseUrl + url).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             return new ZipArchive(stream);

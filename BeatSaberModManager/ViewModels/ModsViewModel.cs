@@ -72,18 +72,18 @@ namespace BeatSaberModManager.ViewModels
         {
             ModGridItemViewModel[] modsToInstall = GridItems.Where(x => x.IsCheckBoxChecked && !x.IsUpToDate).ToArray();
             ModGridItemViewModel[] modsToUninstall = GridItems.Where(x => !x.IsCheckBoxChecked && _modProvider.InstalledMods!.Contains(x.InstalledMod!)).ToArray();
-            int sum = modsToInstall.Length + modsToInstall.Length - 2;
+            int sum = modsToInstall.Length + modsToUninstall.Length - 2;
 
             for (int i = 0; i < modsToInstall.Length; i++)
             {
-                _progress.Report((double)i / sum);
                 await InstallModAsync(modsToInstall[i]);
+                _progress.Report((double)i / sum);
             }
 
             for (int i = 0; i < modsToUninstall.Length; i++)
             {
-                _progress.Report(((double)i + modsToInstall.Length - 1) / sum);
                 await UninstallModAsync(modsToUninstall[i]);
+                _progress.Report(((double)i + modsToInstall.Length - 1) / sum);
             }
         }
 

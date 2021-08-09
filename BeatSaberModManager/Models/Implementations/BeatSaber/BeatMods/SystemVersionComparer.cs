@@ -9,9 +9,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
     {
         public int CompareVersions(string? availableVersion, string? installedVersion)
         {
-            if (!Version.TryParse(availableVersion, out Version? parsedAvailableVersion)) return -1;
-            Version.TryParse(installedVersion, out Version? parsedInstalledVersion);
-            return parsedAvailableVersion.CompareTo(parsedInstalledVersion);
+            return Version.TryParse(availableVersion, out Version? parsedAvailableVersion) && Version.TryParse(installedVersion, out Version? parsedInstalledVersion)
+                ? parsedInstalledVersion.CompareTo(parsedAvailableVersion)
+                : -1;
         }
     }
 }
