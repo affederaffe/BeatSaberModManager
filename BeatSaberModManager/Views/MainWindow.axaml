@@ -28,13 +28,13 @@
                          Value="{Binding ProgressBarValue}">
             </ProgressBar>
             <Label Grid.Column="0"
-                   Name="ProgressBarLabel"
                    Margin="10, 0, 5, 0"
                    ZIndex="1"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
                    HorizontalContentAlignment="Center"
-                   VerticalContentAlignment="Center" />
+                   VerticalContentAlignment="Center"
+                   Content="{Binding ProgressBarText}" />
             <Button Grid.Column="1"
                     Margin="5, 0, 5, 0"
                     HorizontalAlignment="Stretch"

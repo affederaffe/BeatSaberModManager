@@ -31,7 +31,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             if (!Directory.Exists(pendingDirPath)) Directory.CreateDirectory(pendingDirPath);
             BeatModsDownload? download = beatModsMod.GetDownloadForVRPlatform(_settings.VRPlatform!);
             if (download is null) return false;
-            using ZipArchive? archive = await _modProvider.DownloadModAsync(download.Url!);
+            using ZipArchive? archive = await _modProvider.DownloadModAsync(download.Url!).ConfigureAwait(false);
             if (archive is null || !ValidateDownload(download, archive)) return false;
             if (beatModsMod.Name!.ToLowerInvariant() != _modProvider.ModLoaderName)
             {
@@ -41,7 +41,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
             archive.ExtractToDirectory(_settings.InstallDir!, true);
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return await InstallBSIPAWindowsAsync();
+                return await InstallBSIPAWindowsAsync().ConfigureAwait(false);
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                 return InstallBSIPALinux();
             throw new PlatformNotSupportedException();
@@ -53,7 +53,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             if (modToUninstall.Name!.ToLowerInvariant() == _modProvider.ModLoaderName)
             {
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    return await UninstallBSIPAWindowsAsync(beatModsMod);
+                    return await UninstallBSIPAWindowsAsync(beatModsMod).ConfigureAwait(false);
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                     return UninstallBSIPALinux(beatModsMod);
                 throw new PlatformNotSupportedException();
@@ -109,7 +109,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
             Process? process = Process.Start(processStartInfo);
             if (process is null) return false;
-            await process.WaitForExitAsync();
+            await process.WaitForExitAsync().ConfigureAwait(false);
             return true;
         }
 
@@ -143,7 +143,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
                 Process? process = Process.Start(processStartInfo);
                 if (process is null) return false;
-                await process.WaitForExitAsync();
+                await process.WaitForExitAsync().ConfigureAwait(false);
             }
 
             BeatModsDownload? download = bsipa.GetDownloadForVRPlatform(_settings.VRPlatform!);
@@ -168,7 +168,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             if (download?.Hashes is null) return false;
             foreach (BeatModsHash hash in download.Hashes)
             {
-                string fileName = hash.File!.Replace("IPA/", "").Replace("Data", "Beat Saber_Data");
+                string fileName = hash.File!.Replace("IPA/", string.Empty).Replace("Data", "Beat Saber_Data");
                 string filePath = Path.Combine(_settings.InstallDir!, fileName);
                 if (File.Exists(filePath)) File.Delete(filePath);
             }

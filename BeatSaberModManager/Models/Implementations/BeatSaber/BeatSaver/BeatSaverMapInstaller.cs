@@ -24,16 +24,16 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
             _httpClient = httpClient;
         }
 
-        public async Task<bool> InstallBeatSaverMapFromKeyAsync(string key, IStatusProgress? progress = null)
+        public async Task<bool> InstallBeatSaverMapAsync(string key, IStatusProgress? progress = null)
         {
             if (_settings.InstallDir is null) return false;
-            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
-            string body = await response.Content.ReadAsStringAsync();
+            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             BeatSaverMap? map = JsonSerializer.Deserialize<BeatSaverMap>(body);
             if (map is null || map.Versions!.Length <= 0) return false;
             progress?.Report(map.Name!);
-            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last());
+            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last()).ConfigureAwait(false);
             if (archive is null) return false;
             string customLevelsDirectoryPath = Path.Combine(_settings.InstallDir!, "Beat Saber_Data", "CustomLevels");
             if (!Directory.Exists(customLevelsDirectoryPath)) Directory.CreateDirectory(customLevelsDirectoryPath);
@@ -45,9 +45,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
 
         private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl!);
+            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl!).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
-            Stream stream = await response.Content.ReadAsStreamAsync();
+            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             return new ZipArchive(stream);
         }
 

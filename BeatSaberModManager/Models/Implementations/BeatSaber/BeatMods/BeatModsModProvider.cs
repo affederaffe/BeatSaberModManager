@@ -61,7 +61,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public async Task LoadInstalledModsAsync()
         {
-            BeatModsMod[]? allMods = await GetModsAsync(kItem + kNotDeclinedStatus);
+            BeatModsMod[]? allMods = await GetModsAsync(kItem + kNotDeclinedStatus).ConfigureAwait(false);
             if (allMods is null) return;
             Dictionary<string, IMod> fileHashModPairs = new();
             foreach (BeatModsMod mod in allMods)
@@ -85,43 +85,43 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         {
             string? version = _gameVersionProvider.GetGameVersion();
             if (version is null) return;
-            await LoadAvailableModsForVersionAsync(version);
+            await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 
         public async Task LoadAvailableModsForVersionAsync(string version)
         {
-            string? aliasedGameVersion = await GetAliasedGameVersion(version);
+            string? aliasedGameVersion = await GetAliasedGameVersion(version).ConfigureAwait(false);
             if (aliasedGameVersion is null) return;
-            AvailableMods = await GetModsAsync(kItem + kApprovedStatus + kGameVersion + aliasedGameVersion);
+            AvailableMods = await GetModsAsync(kItem + kApprovedStatus + kGameVersion + aliasedGameVersion).ConfigureAwait(false);
         }
 
         public async Task<ZipArchive?> DownloadModAsync(string url)
         {
-            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsBaseUrl + url);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsBaseUrl + url).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
-            Stream stream = await response.Content.ReadAsStreamAsync();
+            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             return new ZipArchive(stream);
         }
 
         private async Task<BeatModsMod[]?> GetModsAsync(string? args)
         {
-            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsApiUrl + args);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsApiUrl + args).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return default;
-            string body = await response.Content.ReadAsStringAsync();
+            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonSerializer.Deserialize<BeatModsMod[]>(body);
         }
 
         private async Task<string?> GetAliasedGameVersion(string gameVersion)
         {
-            using HttpResponseMessage versionsResponse = await _httpClient.GetAsync(kBeatModsVersionsUrl);
+            using HttpResponseMessage versionsResponse = await _httpClient.GetAsync(kBeatModsVersionsUrl).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode) return null;
-            string versionsBody = await versionsResponse.Content.ReadAsStringAsync();
+            string versionsBody = await versionsResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             string[]? versions = JsonSerializer.Deserialize<string[]>(versionsBody);
             if (versions is null) return null;
             if (versions.Contains(gameVersion)) return gameVersion;
-            using HttpResponseMessage aliasResponse = await _httpClient.GetAsync(kBeatModsAliasUrl);
+            using HttpResponseMessage aliasResponse = await _httpClient.GetAsync(kBeatModsAliasUrl).ConfigureAwait(false);
             if (!aliasResponse.IsSuccessStatusCode) return null;
-            string aliasBody = await aliasResponse.Content.ReadAsStringAsync();
+            string aliasBody = await aliasResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(aliasBody);
             if (aliases is null) return null;
 

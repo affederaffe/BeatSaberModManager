@@ -83,7 +83,7 @@ namespace BeatSaberModManager.DependencyInjection
                 new BeatSaverMapInstaller(resolver.GetService<Settings>(), resolver.GetService<HttpClient>()));
 
             services.RegisterLazySingleton(() =>
-                new PlaylistInstaller(resolver.GetService<HttpClient>(), resolver.GetService<BeatSaverMapInstaller>()));
+                new PlaylistInstaller(resolver.GetService<Settings>(), resolver.GetService<HttpClient>(), resolver.GetService<BeatSaverMapInstaller>()));
 
             services.RegisterLazySingleton(() =>
                 new ModelSaberAssetProvider(resolver.GetService<ModelSaberModelInstaller>()),

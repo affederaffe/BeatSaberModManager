@@ -23,7 +23,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
             _httpClient = httpClient;
         }
 
-        public async Task<bool> InstallModelFromUriAsync(Uri uri, IStatusProgress? progress = null)
+        public async Task<bool> InstallModelAsync(Uri uri, IStatusProgress? progress = null)
         {
             if (_settings.InstallDir is null) return false;
             string? folderName = uri.Host switch

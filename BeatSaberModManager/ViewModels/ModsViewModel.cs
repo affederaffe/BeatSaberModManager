@@ -57,7 +57,7 @@ namespace BeatSaberModManager.ViewModels
                 }
                 else
                 {
-                    gridItem = new ModGridItemViewModel(availableMod, installedMod);
+                    gridItem = new ModGridItemViewModel(_modVersionComparer, availableMod, installedMod);
                     GridItems.Add(gridItem);
                 }
 
@@ -70,7 +70,7 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task RefreshModsAsync()
         {
-            ModGridItemViewModel[] modsToInstall = GridItems.Where(x => x.IsCheckBoxChecked && _modVersionComparer.CompareVersions(x.AvailableMod.Version, x.InstalledMod?.Version) > 0).ToArray();
+            ModGridItemViewModel[] modsToInstall = GridItems.Where(x => x.IsCheckBoxChecked && !x.IsUpToDate).ToArray();
             ModGridItemViewModel[] modsToUninstall = GridItems.Where(x => !x.IsCheckBoxChecked && _modProvider.InstalledMods!.Contains(x.InstalledMod!)).ToArray();
             int sum = modsToInstall.Length + modsToInstall.Length - 2;
 

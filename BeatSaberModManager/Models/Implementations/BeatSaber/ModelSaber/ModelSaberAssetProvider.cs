@@ -17,6 +17,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
 
         public string Protocol => "modelsaber";
 
-        public async Task<bool> InstallAssetAsync(Uri uri) => await _modelSaberModelInstaller.InstallModelFromUriAsync(uri);
+        public async Task<bool> InstallAssetAsync(Uri uri) => await _modelSaberModelInstaller.InstallModelAsync(uri);
     }
 }
