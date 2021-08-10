@@ -16,6 +16,8 @@ namespace BeatSaberModManager.Views
 {
     public class AssetInstallWindow : ReactiveWindow<AssetInstallWindowViewModel>
     {
+        private readonly string? _uri;
+
         public AssetInstallWindow()
         {
             AvaloniaXamlLoader.Load(this);
@@ -27,12 +29,15 @@ namespace BeatSaberModManager.Views
             this.WhenActivated(_ => InstallAssetAndClose().ConfigureAwait(false));
         }
 
-        public string? Uri { private get; init; }
+        public AssetInstallWindow(string uri) : this()
+        {
+            _uri = uri;
+        }
 
         private async Task InstallAssetAndClose()
         {
-            if (Uri is null) return;
-            await ViewModel!.InstallAsset(Uri);
+            if (_uri is null) return;
+            await ViewModel!.InstallAsset(_uri);
             await Task.Delay(1500);
             Close();
         }

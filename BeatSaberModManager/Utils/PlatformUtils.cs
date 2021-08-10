@@ -24,14 +24,12 @@ namespace BeatSaberModManager.Utils
                 throw new PlatformNotSupportedException();
         }
 
-        public static bool IsProtocolHandlerRegistered(string protocol, string providerName)
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return IsWindowsProtocolHandlerRegistered(protocol, providerName);
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                return IsLinuxProtocolHandlerRegistered(protocol, providerName);
-            throw new PlatformNotSupportedException();
-        }
+        public static bool IsProtocolHandlerRegistered(string protocol, string providerName) =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? IsWindowsProtocolHandlerRegistered(protocol, providerName)
+                : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                    ? IsLinuxProtocolHandlerRegistered(protocol, providerName)
+                    : throw new PlatformNotSupportedException();
 
         public static void RegisterProtocolHandler(string protocol, string description, string providerName)
         {

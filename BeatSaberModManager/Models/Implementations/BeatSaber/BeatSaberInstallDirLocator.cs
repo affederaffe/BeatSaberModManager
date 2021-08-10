@@ -69,8 +69,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
                 {
                     Match match = regex.Match(line);
                     if (!match.Success) continue;
-                    if (File.Exists(Path.Combine(path, "common", match.Groups[1].Value, "Beat Saber.exe")))
-                        return Path.Combine(path, "common", match.Groups[1].Value);
+                    string installDir = Path.Combine(path, "common", match.Groups[1].Value);
+                    if (File.Exists(Path.Combine(installDir, "Beat Saber.exe")))
+                        return installDir;
                 }
             }
 

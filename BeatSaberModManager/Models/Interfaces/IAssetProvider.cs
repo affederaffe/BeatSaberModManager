@@ -7,6 +7,6 @@ namespace BeatSaberModManager.Models.Interfaces
     public interface IAssetProvider
     {
         string Protocol { get; }
-        Task<bool> InstallAssetAsync(Uri uri);
+        Task<bool> InstallAssetAsync(Uri uri, IStatusProgress? progress = null);
     }
 }

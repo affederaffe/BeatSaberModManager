@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
 
 using ReactiveUI;
@@ -14,10 +15,16 @@ namespace BeatSaberModManager.ViewModels
     public class AssetInstallWindowViewModel : ReactiveObject
     {
         private readonly IEnumerable<IAssetProvider> _assetProviders;
+        private readonly IStatusProgress _progress;
+        private readonly ObservableAsPropertyHelper<string> _assetName;
 
-        public AssetInstallWindowViewModel(IEnumerable<IAssetProvider> assetProviders)
+        public AssetInstallWindowViewModel(IEnumerable<IAssetProvider> assetProviders, StatusProgress progress)
         {
             _assetProviders = assetProviders;
+            _progress = progress;
+            Observable.FromEventPattern<(double, string)>(handler => progress.ProgressChanged += handler, handler => progress.ProgressChanged -= handler)
+                .Select(x => x.EventArgs.Item2)
+                .ToProperty(this, nameof(AssetName), out _assetName);
         }
 
         public async Task InstallAsset(string strUri)
@@ -25,12 +32,12 @@ namespace BeatSaberModManager.ViewModels
             Uri uri = new(strUri);
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == uri.Scheme);
             if (assetProvider is null) return;
-            string decodedName = WebUtility.UrlDecode(uri.Segments.Last());
-            AssetName = decodedName == "/" ? uri.Host : decodedName;
-            bool result = await assetProvider.InstallAssetAsync(uri);
+            bool result = await assetProvider.InstallAssetAsync(uri, _progress);
             ProgressRingActive = false;
             ResultLabelText = result ? "✔" : "✘";
         }
+
+        public string AssetName => _assetName.Value;
 
         private bool _progressRingActive = true;
         public bool ProgressRingActive
@@ -44,13 +51,6 @@ namespace BeatSaberModManager.ViewModels
         {
             get => _resultLabelText;
             set => this.RaiseAndSetIfChanged(ref _resultLabelText, value);
-        }
-
-        private string? _assetName;
-        public string? AssetName
-        {
-            get => _assetName;
-            set => this.RaiseAndSetIfChanged(ref _assetName, value);
         }
     }
 }

@@ -40,25 +40,13 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             }
 
             archive.ExtractToDirectory(_settings.InstallDir!, true);
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                return await InstallBSIPAWindowsAsync().ConfigureAwait(false);
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                return InstallBSIPALinux();
-            throw new PlatformNotSupportedException();
+            return await InstallBSIPAAsync().ConfigureAwait(false);
         }
 
         public async Task<bool> UninstallModAsync(IMod modToUninstall)
         {
             if (modToUninstall is not BeatModsMod beatModsMod) return false;
-            if (modToUninstall.Name!.ToLowerInvariant() == _modProvider.ModLoaderName)
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                    return await UninstallBSIPAWindowsAsync(beatModsMod).ConfigureAwait(false);
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                    return UninstallBSIPALinux(beatModsMod);
-                throw new PlatformNotSupportedException();
-            }
-
+            if (modToUninstall.Name!.ToLowerInvariant() == _modProvider.ModLoaderName) return await UninstallBSIPAAsync(beatModsMod).ConfigureAwait(false);
             string pendingDirPath = Path.Combine(_settings.InstallDir!, "IPA", "Pending");
             BeatModsDownload? download = beatModsMod.GetDownloadForVRPlatform(_settings.VRPlatform!);
             if (download!.Hashes is null) return false;
@@ -95,6 +83,20 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
             return true;
         }
+
+        private async Task<bool> InstallBSIPAAsync() =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? await InstallBSIPAWindowsAsync().ConfigureAwait(false)
+                : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                    ? InstallBSIPALinux()
+                    : throw new PlatformNotSupportedException();
+
+        private async Task<bool> UninstallBSIPAAsync(BeatModsMod bsipa) =>
+            RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                ? await UninstallBSIPAWindowsAsync(bsipa).ConfigureAwait(false)
+                : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
+                    ? UninstallBSIPALinux(bsipa)
+                    : throw new PlatformNotSupportedException();
 
         private async Task<bool> InstallBSIPAWindowsAsync()
         {

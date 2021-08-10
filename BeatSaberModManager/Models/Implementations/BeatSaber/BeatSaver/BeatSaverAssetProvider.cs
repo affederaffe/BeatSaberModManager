@@ -18,6 +18,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
 
         public string Protocol => "beatsaver";
 
-        public async Task<bool> InstallAssetAsync(Uri uri) => await _beatSaverMapInstaller.InstallBeatSaverMapAsync(uri.Host).ConfigureAwait(false);
+        public async Task<bool> InstallAssetAsync(Uri uri, IStatusProgress? progress = null)
+            => await _beatSaverMapInstaller.InstallBeatSaverMapAsync(uri.Host, progress).ConfigureAwait(false);
     }
 }

@@ -35,7 +35,7 @@ namespace BeatSaberModManager
             Locator.Current.GetService<LanguageSwitcher>().Initialize(settings.LanguageName);
             Locator.Current.GetService<ThemeSwitcher>().Initialize(settings.ThemeName);
             desktop.MainWindow = desktop.Args.Length > 1 && desktop.Args[0] == "--install"
-                ? new AssetInstallWindow { Uri = desktop.Args[1] }
+                ? new AssetInstallWindow(desktop.Args[1])
                 : new MainWindow();
         }
     }

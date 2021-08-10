@@ -20,7 +20,7 @@ namespace BeatSaberModManager.Views
             AvaloniaXamlLoader.Load(this);
             ViewModel = Locator.Current.GetService<MainWindowViewModel>();
             Title = nameof(BeatSaberModManager);
-            this.WhenActivated(_ => VerifyInstallDir().ConfigureAwait(false));
+            this.WhenActivated(disposables => _ = VerifyInstallDir());
         }
 
         private async Task VerifyInstallDir()
