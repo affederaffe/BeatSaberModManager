@@ -1,13 +1,14 @@
-﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-             xmlns:v="clr-namespace:BeatSaberModManager.Views"
-             xmlns:t="clr-namespace:BeatSaberModManager.Theming"
-             xmlns:l="clr-namespace:BeatSaberModManager.Localisation"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="BeatSaberModManager.Views.OptionsView">
+﻿<rxUi:ReactiveUserControl x:TypeArguments="vm:OptionsViewModel" xmlns="https://github.com/avaloniaui"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+                          xmlns:v="clr-namespace:BeatSaberModManager.Views"
+                          xmlns:t="clr-namespace:BeatSaberModManager.Theming"
+                          xmlns:l="clr-namespace:BeatSaberModManager.Localisation"
+                          xmlns:rxUi="http://reactiveui.net"
+                          mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+                          x:Class="BeatSaberModManager.Views.OptionsView">
 
     <Design.DataContext>
         <vm:OptionsViewModel/>
@@ -166,4 +167,4 @@
             Content="{DynamicResource OptionsView:InstallPlaylistButton}"
             Click="OnInstallPlaylistButtonClicked" />
     </Grid>
-</UserControl>
+</rxUi:ReactiveUserControl>

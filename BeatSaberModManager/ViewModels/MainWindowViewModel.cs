@@ -3,6 +3,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models;
 using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Utils;
 
@@ -19,7 +20,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<double> _progressBarValue;
         private readonly ObservableAsPropertyHelper<string> _progressBarText;
 
-        public MainWindowViewModel(ModsViewModel modsViewModel, StatusProgress progress)
+        public MainWindowViewModel(ModsViewModel modsViewModel, Settings settings, StatusProgress progress)
         {
             _modsViewModel = modsViewModel;
             MoreInfoButtonCommand = ReactiveCommand.CreateFromTask(OpenMoreInfoLink);
@@ -27,8 +28,8 @@ namespace BeatSaberModManager.ViewModels
             _modsViewModel.WhenAnyValue(x => x.SelectedGridItem)
                 .Select(mod => mod is not null)
                 .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
-            _modsViewModel.WhenAnyValue(x => x.GridItems)
-                .Select(x => x is not null)
+            _modsViewModel.WhenAnyValue(x => x.GridItems.Count)
+                .Select(x => x > 0 && settings.InstallDir is not null)
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
             IObservable<(double, string)> statusObservable = Observable.FromEventPattern<(double, string)>(handler => progress.ProgressChanged += handler, handler => progress.ProgressChanged -= handler)
                 .Select(x => x.EventArgs);

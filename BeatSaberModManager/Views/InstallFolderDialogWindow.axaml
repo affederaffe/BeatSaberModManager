@@ -6,8 +6,8 @@
         x:Class="BeatSaberModManager.Views.InstallFolderDialogWindow"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
-        ClientSize="320, 140"
-        CanResize="False">
+        ExtendClientAreaToDecorationsHint="True"
+        ClientSize="320, 140">
     
         <Panel>
             <Rectangle IsHitTestVisible="False"

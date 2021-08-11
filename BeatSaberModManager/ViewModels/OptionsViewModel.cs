@@ -35,10 +35,10 @@ namespace BeatSaberModManager.ViewModels
             ToggleBeatSaverOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(BeatSaverOneClickCheckboxChecked, "beatsaver", "URI:BeatSaver OneClick Install"));
             ToggleModelSaberOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(ModelSaberOneClickCheckboxChecked, "modelsaber", "URI:ModelSaber OneClick Install"));
             TogglePlaylistOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(PlaylistOneClickCheckBoxChecked, "bsplaylist", "URI:BPList OneClick Install"));
-            IObservable<string?> installDirObservable = this.WhenAnyValue(x => x.InstallDir);
-            installDirObservable.BindTo(_settings, x => x.InstallDir);
-            installDirObservable.Subscribe(x => _settings.VRPlatform = _installDirValidator.DetectVRPlatform(x!));
-            installDirObservable.Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
+            IObservable<string?> validatedInstallDirObservable = this.WhenAnyValue(x => x.InstallDir).Where(_installDirValidator.ValidateInstallDir);
+            validatedInstallDirObservable.BindTo(_settings, x => x.InstallDir);
+            validatedInstallDirObservable.Subscribe(x => _settings.VRPlatform = _installDirValidator.DetectVRPlatform(x!));
+            validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
             IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir);
             themesDirObservable.BindTo(_settings, x => x.ThemesDir);
             themesDirObservable.Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);

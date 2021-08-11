@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models;
 using BeatSaberModManager.Models.Interfaces;
+
+using DynamicData.Binding;
 
 using ReactiveUI;
 
@@ -14,22 +14,20 @@ namespace BeatSaberModManager.ViewModels
 {
     public class ModsViewModel : ReactiveObject
     {
-        private readonly Settings _settings;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
         private readonly IStatusProgress _progress;
 
-        public ModsViewModel(Settings settings, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
+        public ModsViewModel(IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
         {
-            _settings = settings;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
             _progress = progress;
         }
 
-        public ObservableCollection<ModGridItemViewModel> GridItems { get; } = new();
+        public ObservableCollectionExtended<ModGridItemViewModel> GridItems { get; } = new();
 
         private ModGridItemViewModel? _selectedGridItem;
         public ModGridItemViewModel? SelectedGridItem
@@ -40,13 +38,12 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task RefreshDataGridAsync()
         {
-            if (_settings.InstallDir is null) return;
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
-            if (_modProvider.AvailableMods is null || _modProvider.InstalledMods is null) return;
+            if (_modProvider.AvailableMods is null) return;
             for (int i = 0; i < _modProvider.AvailableMods.Length; i++)
             {
                 IMod availableMod = _modProvider.AvailableMods[i];
-                IMod? installedMod = _modProvider.InstalledMods.FirstOrDefault(x => x.Name == availableMod.Name);
+                IMod? installedMod = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name == availableMod.Name);
                 ModGridItemViewModel gridItem;
                 if (GridItems.Count > i)
                 {

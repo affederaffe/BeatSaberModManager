@@ -61,6 +61,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public async Task LoadInstalledModsAsync()
         {
+            if (_settings.InstallDir is null) return;
             BeatModsMod[]? allMods = await GetModsAsync(kItem + kNotDeclinedStatus).ConfigureAwait(false);
             if (allMods is null) return;
             Dictionary<string, IMod> fileHashModPairs = new();
@@ -73,7 +74,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             }
 
             InstalledMods = new HashSet<IMod>();
-            foreach (string filePath in _installedModsLocations.Select(x => Path.Combine(_settings.InstallDir!, x)).Where(Directory.Exists).SelectMany(Directory.EnumerateFiles).Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal)))
+            foreach (string filePath in _installedModsLocations.Select(x => Path.Combine(_settings.InstallDir, x)).Where(Directory.Exists).SelectMany(Directory.EnumerateFiles).Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal)))
             {
                 string hash = _hashProvider.CalculateHashForFile(filePath);
                 if (!fileHashModPairs.TryGetValue(hash, out IMod? mod)) continue;
@@ -84,11 +85,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public async Task LoadAvailableModsForCurrentVersionAsync()
         {
             string? version = _gameVersionProvider.GetGameVersion();
-            if (version is null) return;
             await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 
-        public async Task LoadAvailableModsForVersionAsync(string version)
+        public async Task LoadAvailableModsForVersionAsync(string? version)
         {
             string? aliasedGameVersion = await GetAliasedGameVersion(version).ConfigureAwait(false);
             if (aliasedGameVersion is null) return;
@@ -111,7 +111,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             return JsonSerializer.Deserialize<BeatModsMod[]>(body);
         }
 
-        private async Task<string?> GetAliasedGameVersion(string gameVersion)
+        private async Task<string?> GetAliasedGameVersion(string? gameVersion)
         {
             using HttpResponseMessage versionsResponse = await _httpClient.GetAsync(kBeatModsVersionsUrl).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode) return null;
