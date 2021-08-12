@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Interfaces;
-
-using DynamicData.Binding;
 
 using ReactiveUI;
 
@@ -27,7 +26,7 @@ namespace BeatSaberModManager.ViewModels
             _progress = progress;
         }
 
-        public ObservableCollectionExtended<ModGridItemViewModel> GridItems { get; } = new();
+        public ObservableCollection<ModGridItemViewModel> GridItems { get; } = new();
 
         private ModGridItemViewModel? _selectedGridItem;
         public ModGridItemViewModel? SelectedGridItem

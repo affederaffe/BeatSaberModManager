@@ -15,7 +15,6 @@ namespace BeatSaberModManager.ViewModels
 {
     public class OptionsViewModel : ReactiveObject
     {
-        private readonly Settings _settings;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IStatusProgress _progress;
@@ -24,37 +23,38 @@ namespace BeatSaberModManager.ViewModels
 
         public OptionsViewModel(ModsViewModel modsViewModel, Settings settings, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator, IStatusProgress progress)
         {
-            _settings = settings;
             _playlistInstaller = playlistInstaller;
             _installDirValidator = installDirValidator;
             _progress = progress;
-            OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.InstallDir!));
-            OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(_settings.ThemesDir!));
+            _installDir = settings.InstallDir;
+            _themesDir = settings.ThemesDir;
+            OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(settings.InstallDir!));
+            OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => PlatformUtils.OpenBrowserOrFileExplorer(settings.ThemesDir!));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
             ToggleBeatSaverOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(BeatSaverOneClickCheckboxChecked, "beatsaver", "URI:BeatSaver OneClick Install"));
             ToggleModelSaberOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(ModelSaberOneClickCheckboxChecked, "modelsaber", "URI:ModelSaber OneClick Install"));
             TogglePlaylistOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandler(PlaylistOneClickCheckBoxChecked, "bsplaylist", "URI:BPList OneClick Install"));
             IObservable<string?> validatedInstallDirObservable = this.WhenAnyValue(x => x.InstallDir).Where(_installDirValidator.ValidateInstallDir);
-            validatedInstallDirObservable.BindTo(_settings, x => x.InstallDir);
-            validatedInstallDirObservable.Subscribe(x => _settings.VRPlatform = _installDirValidator.DetectVRPlatform(x!));
+            validatedInstallDirObservable.BindTo(settings, x => x.InstallDir);
+            validatedInstallDirObservable.Subscribe(x => settings.VRPlatform = _installDirValidator.DetectVRPlatform(x!));
             validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
             IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir);
-            themesDirObservable.BindTo(_settings, x => x.ThemesDir);
+            themesDirObservable.BindTo(settings, x => x.ThemesDir);
             themesDirObservable.Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
 
         private string? _installDir;
         public string? InstallDir
         {
-            get => _installDir ??= _settings.InstallDir;
+            get => _installDir;
             set => this.RaiseAndSetIfChangedConditional(ref _installDir, value, _installDirValidator.ValidateInstallDir);
         }
 
         private string? _themesDir;
         public string? ThemesDir
         {
-            get => _themesDir ??= _settings.ThemesDir;
+            get => _themesDir;
             set => this.RaiseAndSetIfChangedConditional(ref _themesDir, value, x => !string.IsNullOrEmpty(x));
         }
 

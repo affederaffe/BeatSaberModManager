@@ -51,8 +51,9 @@
             <Label Grid.Column="0"
                    Margin="10, 0, 5, 0"
                    ZIndex="1"
-                   HorizontalAlignment="Stretch"
-                   VerticalAlignment="Stretch"
+                   FontSize="22"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
                    Content="{Binding ProgressBarText}" />
             <Button Grid.Column="1"
                     Margin="5, 0, 5, 0"

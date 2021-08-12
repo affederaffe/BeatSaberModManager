@@ -88,7 +88,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
                 ? await InstallBSIPAWindowsAsync().ConfigureAwait(false)
                 : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
-                    ? InstallBSIPALinux()
+                    ? await InstallBSIPALinux().ConfigureAwait(false)
                     : throw new PlatformNotSupportedException();
 
         private async Task<bool> UninstallBSIPAAsync(BeatModsMod bsipa) =>
@@ -106,6 +106,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             ProcessStartInfo processStartInfo = new()
             {
                 FileName = bsipaPath,
+                WorkingDirectory = _settings.InstallDir,
                 Arguments = "-n"
             };
 
@@ -115,7 +116,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             return true;
         }
 
-        private bool InstallBSIPALinux()
+        private async Task<bool> InstallBSIPALinux()
         {
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(_settings.InstallDir!);
@@ -123,12 +124,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             Directory.SetCurrentDirectory(oldDir);
             string protonPrefixPath = Path.Combine($"{_settings.InstallDir}/../..", "compatdata/620980/pfx/user.reg");
             if (!File.Exists(protonPrefixPath)) return false;
-            string[] lines = File.ReadAllLines(protonPrefixPath);
-            using StreamWriter streamWriter = File.AppendText(protonPrefixPath);
+            string[] lines = await File.ReadAllLinesAsync(protonPrefixPath);
+            await using StreamWriter streamWriter = File.AppendText(protonPrefixPath);
             if (!lines.Contains("[Software\\\\Wine\\\\DllOverrides]"))
-                streamWriter.WriteLine("[Software\\\\Wine\\\\DllOverrides]");
+                await streamWriter.WriteLineAsync("[Software\\\\Wine\\\\DllOverrides]");
             if (!lines.Contains("\"winhttp\"=\"native,builtin\""))
-                streamWriter.WriteLine("\"winhttp\"=\"native,builtin\"");
+                await streamWriter.WriteLineAsync("\"winhttp\"=\"native,builtin\"");
             return true;
         }
 
@@ -140,6 +141,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                 ProcessStartInfo processStartInfo = new()
                 {
                     FileName = bsipaPath,
+                    WorkingDirectory = _settings.InstallDir,
                     Arguments = "--revert -n"
                 };
 
@@ -148,16 +150,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                 await process.WaitForExitAsync().ConfigureAwait(false);
             }
 
-            BeatModsDownload? download = bsipa.GetDownloadForVRPlatform(_settings.VRPlatform!);
-            if (download?.Hashes is null) return false;
-            foreach (BeatModsHash hash in download.Hashes)
-            {
-                string fileName = hash.File!.Replace("IPA/", "").Replace("Data", "Beat Saber_Data");
-                string filePath = Path.Combine(_settings.InstallDir!, fileName);
-                if (File.Exists(filePath)) File.Delete(filePath);
-            }
-
-            return true;
+            return TryRemoveBSIPAFiles(bsipa);
         }
 
         private bool UninstallBSIPALinux(BeatModsMod bsipa)
@@ -166,6 +159,11 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             Directory.SetCurrentDirectory(_settings.InstallDir!);
             IPA.Program.Main(new[] { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
+            return TryRemoveBSIPAFiles(bsipa);
+        }
+
+        private bool TryRemoveBSIPAFiles(BeatModsMod bsipa)
+        {
             BeatModsDownload? download = bsipa.GetDownloadForVRPlatform(_settings.VRPlatform!);
             if (download?.Hashes is null) return false;
             foreach (BeatModsHash hash in download.Hashes)
