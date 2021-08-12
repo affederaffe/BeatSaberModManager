@@ -36,11 +36,14 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             if (beatModsMod.Name!.ToLowerInvariant() != _modProvider.ModLoaderName)
             {
                 archive.ExtractToDirectory(pendingDirPath, true);
+                _modProvider.InstalledMods?.Add(modToInstall);
                 return true;
             }
 
             archive.ExtractToDirectory(_settings.InstallDir!, true);
-            return await InstallBSIPAAsync().ConfigureAwait(false);
+            if (!await InstallBSIPAAsync().ConfigureAwait(false)) return false;
+            _modProvider.InstalledMods?.Add(modToInstall);
+            return true;
         }
 
         public async Task<bool> UninstallModAsync(IMod modToUninstall)
@@ -58,6 +61,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                 if (File.Exists(normalPath)) File.Delete(normalPath);
             }
 
+            _modProvider.InstalledMods?.Remove(modToUninstall);
             return true;
         }
 
@@ -173,6 +177,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
                 if (File.Exists(filePath)) File.Delete(filePath);
             }
 
+            _modProvider.InstalledMods?.Remove(bsipa);
             return true;
         }
     }
