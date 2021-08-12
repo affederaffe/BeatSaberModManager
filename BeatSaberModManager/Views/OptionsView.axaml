@@ -1,21 +1,19 @@
-﻿<rxUi:ReactiveUserControl x:TypeArguments="vm:OptionsViewModel" xmlns="https://github.com/avaloniaui"
-                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-                          xmlns:v="clr-namespace:BeatSaberModManager.Views"
-                          xmlns:t="clr-namespace:BeatSaberModManager.Theming"
-                          xmlns:l="clr-namespace:BeatSaberModManager.Localisation"
-                          xmlns:rxUi="http://reactiveui.net"
-                          mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                          x:Class="BeatSaberModManager.Views.OptionsView">
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:v="clr-namespace:BeatSaberModManager.Views"
+             xmlns:t="clr-namespace:BeatSaberModManager.Theming"
+             xmlns:l="clr-namespace:BeatSaberModManager.Localisation"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BeatSaberModManager.Views.OptionsView">
 
     <Design.DataContext>
         <vm:OptionsViewModel/>
     </Design.DataContext>
     
-    <Grid VerticalAlignment="Top"
-          ColumnDefinitions="*, 4*, Auto, Auto, *"
+    <Grid ColumnDefinitions="*, 4*, *, *, *"
           RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
         <Label Grid.Column="1"
                Grid.Row="0"
@@ -106,6 +104,7 @@
                     Orientation="Horizontal">
             <Label Content="A 文" FontSize="22" />
             <ComboBox DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:OptionsView}}"
+                      VirtualizationMode="None"
                       Items="{Binding LanguageSwitcher.Languages}"
                       SelectedItem="{Binding LanguageSwitcher.SelectedLanguage}">
                 <ComboBox.ItemTemplate>
@@ -167,4 +166,5 @@
             Content="{DynamicResource OptionsView:InstallPlaylistButton}"
             Click="OnInstallPlaylistButtonClicked" />
     </Grid>
-</rxUi:ReactiveUserControl>
+
+</UserControl>

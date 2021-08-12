@@ -5,7 +5,7 @@ namespace BeatSaberModManager.Theming
 {
     public class Theme
     {
-        internal Theme(string name, IStyle style)
+        public Theme(string name, IStyle style)
         {
             Name = name;
             Style = style;

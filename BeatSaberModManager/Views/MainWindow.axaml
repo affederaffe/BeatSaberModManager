@@ -1,27 +1,47 @@
-<rxUi:ReactiveWindow x:TypeArguments="vm:MainWindowViewModel" xmlns="https://github.com/avaloniaui"
-                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                     xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-                     xmlns:v="clr-namespace:BeatSaberModManager.Views"
-                     xmlns:rxUi="http://reactiveui.net"
-                     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-                     x:Class="BeatSaberModManager.Views.MainWindow"
-                     TransparencyLevelHint="AcrylicBlur"
-                     Background="Transparent"
-                     ExtendClientAreaToDecorationsHint="True"
-                     Width="1080"
-                     Height="580">
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+        xmlns:v="clr-namespace:BeatSaberModManager.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BeatSaberModManager.Views.MainWindow"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        Width="1080"
+        Height="580">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
     
-    <DockPanel>
-        <Grid DockPanel.Dock="Bottom"
-              ColumnDefinitions="*, Auto, Auto"
-              Opacity="0.875"
-              Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+    <Grid ColumnDefinitions="*, 8.75*"
+          RowDefinitions="*, Auto">
+        <Rectangle Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.9" Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+        <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.985" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+        
+        <ListBox Grid.Column="0" Grid.Row="0" Name="Tabs" Margin="0, 10" Background="{x:Null}">
+            <ListBox.Items>
+                <Label Content="{DynamicResource MainWindow:IntroHeader}" />
+                <Label Content="{DynamicResource MainWindow:ModsHeader}" />
+                <Label Content="{DynamicResource MainWindow:OptionsHeader}" />
+            </ListBox.Items>
+        </ListBox>
+
+        <TabControl Grid.Column="1"
+                    Grid.Row="0"
+                    Classes="SideBar"
+                    SelectedIndex="{Binding #Tabs.SelectedIndex}">
+            <v:IntroView />
+            <v:ModsView /> 
+            <v:OptionsView />
+        </TabControl>
+        
+       <Grid Grid.Column="1"
+             Grid.Row="1"
+             ColumnDefinitions="*, Auto, Auto"
+             Margin="0, 5">
             <ProgressBar Grid.Column="0"
                          Margin="10, 0, 5, 0"
                          HorizontalAlignment="Stretch"
@@ -33,15 +53,11 @@
                    ZIndex="1"
                    HorizontalAlignment="Stretch"
                    VerticalAlignment="Stretch"
-                   HorizontalContentAlignment="Center"
-                   VerticalContentAlignment="Center"
                    Content="{Binding ProgressBarText}" />
             <Button Grid.Column="1"
                     Margin="5, 0, 5, 0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
                     Content="{DynamicResource MainWindow:MoreInfoButton}"
                     IsEnabled="{Binding MoreInfoButtonEnabled}"
                     Command="{Binding MoreInfoButtonCommand}" />
@@ -49,35 +65,10 @@
                     Margin="5, 0, 10, 0"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    VerticalContentAlignment="Center"
                     Content="{DynamicResource MainWindow:RefreshModsButton}"
                     IsEnabled="{Binding InstallButtonEnabled}"
                     Command="{Binding InstallButtonCommand}" />
         </Grid>
-        
-        <TabControl DockPanel.Dock="Left"
-                    Classes="SideBar"
-                    Padding="0, 25, 0, 0"
-                    Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
-            <TabItem Header="{DynamicResource MainWindow:IntroHeader}">
-                <Panel>
-                    <Rectangle IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-                    <v:IntroView />
-                </Panel>
-            </TabItem>
-            <TabItem Header="{DynamicResource MainWindow:ModsHeader}">
-                <Panel>
-                    <Rectangle IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-                    <v:ModsView />
-                </Panel>
-            </TabItem>
-            <TabItem Header="{DynamicResource MainWindow:OptionsHeader}">
-                <Panel>
-                    <Rectangle IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-                    <v:OptionsView />
-                </Panel>
-            </TabItem>
-        </TabControl>
-    </DockPanel>
-</rxUi:ReactiveWindow>
+    </Grid>
+
+</Window>

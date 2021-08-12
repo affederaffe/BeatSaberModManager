@@ -19,24 +19,15 @@
                 <Border Margin="{TemplateBinding Margin}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
-                    <DockPanel>
-                        <Panel>
-                            <Rectangle IsHitTestVisible="False" Opacity="0.85" Fill="{TemplateBinding Background}" />
-                            <ItemsPresenter Name="PART_ItemsPresenter"
-                                            Margin="{TemplateBinding Padding}"
-                                            Items="{TemplateBinding Items}"
-                                            ItemsPanel="{TemplateBinding ItemsPanel}"
-                                            ItemTemplate="{TemplateBinding ItemTemplate}" />
-                        </Panel>
-                        <ContentControl DockPanel.Dock="Right"
-                                        Content="{TemplateBinding Tag}"
+                    <Panel>
+                        <ItemsPresenter Name="PART_ItemsPresenter" />
+                        <ContentControl Content="{TemplateBinding Tag}"
                                         HorizontalContentAlignment="Right" />
                         <ContentPresenter Name="PART_SelectedContentHost"
-                                          HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                          VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Content="{TemplateBinding SelectedContent}"
-                                          ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
-                    </DockPanel>
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Content="{TemplateBinding SelectedItem}" />
+                    </Panel>
                 </Border>
             </ControlTemplate>
         </Setter>
