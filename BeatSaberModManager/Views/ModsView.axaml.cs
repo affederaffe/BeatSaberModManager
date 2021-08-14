@@ -20,9 +20,9 @@ namespace BeatSaberModManager.Views
 
         protected override async void OnInitialized()
         {
-            await ViewModel!.RefreshDataGridAsync();
-            DataGridCollectionView dataGridCollection = new(ViewModel.GridItems);
+            DataGridCollectionView dataGridCollection = new(ViewModel!.GridItems);
             dataGridCollection.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)));
+            await ViewModel.RefreshDataGridAsync();
             this.FindControl<DataGrid>("ModsDataGrid").Items = dataGridCollection;
         }
     }

@@ -13,7 +13,7 @@
         <vm:OptionsViewModel/>
     </Design.DataContext>
     
-    <Grid ColumnDefinitions="*, 4*, *, *, *"
+    <Grid ColumnDefinitions="*, 4*, Auto, Auto, *"
           RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
         <Label Grid.Column="1"
                Grid.Row="0"
@@ -21,21 +21,19 @@
                FontWeight="Bold"
                HorizontalAlignment="Stretch"
                Content="{DynamicResource OptionsView:InstallationLabel}" />
-        <TextBox
-            Grid.Column="1"
-            Grid.Row="1"
-            Margin="10, 5"
-            IsHitTestVisible="False"
-            HorizontalAlignment="Stretch"
-            Text="{Binding InstallDir}" />
-        <Button
-            Grid.Column="2"
-            Grid.Row="1"
-            Margin="10, 5"
-            HorizontalAlignment="Center"
-            Content="{DynamicResource OptionsView:OpenFolderButton}"
-            IsEnabled="{Binding OpenInstallDirButtonActive}"
-            Command="{Binding OpenInstallDirCommand}" />
+        <TextBox Grid.Column="1"
+                 Grid.Row="1"
+                 Margin="10, 5"
+                 IsHitTestVisible="False"
+                 HorizontalAlignment="Stretch"
+                 Text="{Binding InstallDir}" />
+        <Button Grid.Column="2"
+                Grid.Row="1"
+                Margin="10, 5"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource OptionsView:OpenFolderButton}"
+                IsEnabled="{Binding HasValidatedInstallDir}"
+                Command="{Binding OpenInstallDirCommand}" />
         <Button Grid.Column="3"
                 Grid.Row="1"
                 Margin="10, 5"
@@ -46,13 +44,14 @@
                     Grid.Row="2"
                     Orientation="Horizontal"
                     HorizontalAlignment="Center">
-            <Button 
-                Margin="10"
-                Content="{DynamicResource OptionsView:UninstallModLoaderButton}"
-                Command="{Binding UninstallModLoaderCommand}" />
+            <Button Margin="10"
+                    IsEnabled="{Binding HasValidatedInstallDir}"
+                    Content="{DynamicResource OptionsView:UninstallModLoaderButton}"
+                    Command="{Binding UninstallModLoaderCommand}" />
             <Button Margin="10, 5"
                     HorizontalAlignment="Center"
                     Background="#FFBB0000"
+                    IsEnabled="{Binding HasValidatedInstallDir}"
                     Content="{DynamicResource OptionsView:UninstallAllModsButton}"
                     Command="{Binding UninstallAllModsCommand}" />
         </StackPanel>
@@ -119,21 +118,19 @@
                Margin="10, 5, 10, 0"
                FontWeight="Bold"
                Content="{DynamicResource OptionsView:ThemesLabel}" />
-        <TextBox
-            Grid.Column="1"
-            Grid.Row="8"
-            Margin="10, 5"
-            IsHitTestVisible="False"
-            HorizontalAlignment="Stretch"
-            Text="{Binding ThemesDir}" />
-        <Button
-            Grid.Column="2"
-            Grid.Row="8"
-            Margin="10, 5"
-            HorizontalAlignment="Center"
-            Content="{DynamicResource OptionsView:OpenFolderButton}"
-            IsEnabled="{Binding OpenThemesDirButtonActive}"
-            Command="{Binding OpenThemesDirCommand}" />
+        <TextBox Grid.Column="1"
+                 Grid.Row="8"
+                 Margin="10, 5"
+                 IsHitTestVisible="False"
+                 HorizontalAlignment="Stretch"
+                 Text="{Binding ThemesDir}" />
+        <Button Grid.Column="2"
+                Grid.Row="8"
+                Margin="10, 5"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource OptionsView:OpenFolderButton}"
+                IsEnabled="{Binding OpenThemesDirButtonActive}"
+                Command="{Binding OpenThemesDirCommand}" />
         <Button Grid.Column="3"
                 Grid.Row="8"
                 Margin="10, 5"
@@ -158,13 +155,13 @@
                Margin="10, 5, 10, 0"
                FontWeight="Bold"
                Content="{DynamicResource OptionsView:ToolsLabel}" />
-        <Button
-            Grid.Column="1"
-            Grid.Row="11"
-            Margin="50, 5, 10, 5"
-            HorizontalAlignment="Left"
-            Content="{DynamicResource OptionsView:InstallPlaylistButton}"
-            Click="OnInstallPlaylistButtonClicked" />
+        <Button Grid.Column="1"
+                Grid.Row="11"
+                Margin="50, 5, 10, 5"
+                HorizontalAlignment="Left"
+                IsEnabled="{Binding HasValidatedInstallDir}"
+                Content="{DynamicResource OptionsView:InstallPlaylistButton}"
+                Click="OnInstallPlaylistButtonClicked" />
     </Grid>
 
 </UserControl>

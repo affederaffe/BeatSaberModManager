@@ -48,8 +48,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
                 if (dependency.DependingMod is null) continue;
-                if (Dependencies.TryGetValue(dependency.DependingMod!, out HashSet<IMod>? dependants)) dependants.Add(beatModsMod);
-                else Dependencies.Add(dependency.DependingMod!, new HashSet<IMod> { beatModsMod });
+                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependants)) dependants.Add(beatModsMod);
+                else Dependencies.Add(dependency.DependingMod, new HashSet<IMod> { beatModsMod });
             }
         }
 
@@ -74,7 +74,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             }
 
             InstalledMods = new HashSet<IMod>();
-            foreach (string filePath in _installedModsLocations.Select(x => Path.Combine(_settings.InstallDir, x)).Where(Directory.Exists).SelectMany(Directory.EnumerateFiles).Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal)))
+            IEnumerable<string> filePaths = _installedModsLocations.Select(x => Path.Combine(_settings.InstallDir, x))
+                .Where(Directory.Exists)
+                .SelectMany(Directory.EnumerateFiles)
+                .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal))
+                .Concat(new[] { Path.Combine(_settings.InstallDir, "Beat Saber_Data/Managed/IPA.Loader.dll") });
+            foreach (string filePath in filePaths)
             {
                 string hash = _hashProvider.CalculateHashForFile(filePath);
                 if (!fileHashModPairs.TryGetValue(hash, out IMod? mod)) continue;
@@ -134,6 +139,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             return versions.FirstOrDefault();
         }
 
-        private static readonly string[] _installedModsLocations = { string.Empty, "IPA/Pending/Plugins", "IPA/Pending/Libs", "Plugins", "Libs" };
+        private static readonly string[] _installedModsLocations = { "IPA/Pending/Plugins", "IPA/Pending/Libs", "Plugins", "Libs" };
     }
 }

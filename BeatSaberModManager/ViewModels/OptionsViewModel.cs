@@ -18,7 +18,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IStatusProgress _progress;
-        private readonly ObservableAsPropertyHelper<bool> _openInstallDirButtonActive;
+        private readonly ObservableAsPropertyHelper<bool> _hasValidatedInstallDir;
         private readonly ObservableAsPropertyHelper<bool> _openThemesDirButtonActive;
 
         public OptionsViewModel(ModsViewModel modsViewModel, Settings settings, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator, IStatusProgress progress)
@@ -38,7 +38,7 @@ namespace BeatSaberModManager.ViewModels
             IObservable<string?> validatedInstallDirObservable = this.WhenAnyValue(x => x.InstallDir).Where(_installDirValidator.ValidateInstallDir);
             validatedInstallDirObservable.BindTo(settings, x => x.InstallDir);
             validatedInstallDirObservable.Subscribe(x => settings.VRPlatform = _installDirValidator.DetectVRPlatform(x!));
-            validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(OpenInstallDirButtonActive), out _openInstallDirButtonActive);
+            validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
             IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir);
             themesDirObservable.BindTo(settings, x => x.ThemesDir);
             themesDirObservable.Select(x => !string.IsNullOrEmpty(x)).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
@@ -93,7 +93,7 @@ namespace BeatSaberModManager.ViewModels
 
         public ReactiveCommand<Unit, Unit> TogglePlaylistOneClickHandlerCommand { get; }
 
-        public bool OpenInstallDirButtonActive => _openInstallDirButtonActive.Value;
+        public bool HasValidatedInstallDir => _hasValidatedInstallDir.Value;
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 

@@ -16,6 +16,7 @@
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>
     <sys:String x:Key="ModsView:LatestVersionHeader">Neuste</sys:String>
     <sys:String x:Key="ModsView:ModDescriptionHeader">Beschreibung</sys:String>
+    <sys:String x:Key="ModsView:NoModsAvailable">Keine Mods für diese Version verfügbar</sys:String>
     
     <sys:String x:Key="OptionsView:InstallationLabel">Installationsordner</sys:String>
     <sys:String x:Key="OptionsView:OpenFolderButton">Ordner öffnen</sys:String>

@@ -1,6 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
+
 using BeatSaberModManager.Theming;
 
 using BeatSaberModManager.DependencyInjection;
@@ -15,6 +17,8 @@ namespace BeatSaberModManager
 {
     public class App : Application
     {
+        public static void Main(string[] args) => AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI().LogToTrace().StartWithClassicDesktopLifetime(args);
+
         public override void RegisterServices()
         {
             ServicesBootstrapper.Register(Locator.CurrentMutable, Locator.Current);

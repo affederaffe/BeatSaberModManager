@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Interfaces;
+
+using DynamicData.Binding;
 
 using ReactiveUI;
 
@@ -17,6 +19,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
         private readonly IStatusProgress _progress;
+        private readonly ObservableAsPropertyHelper<bool> _areModsAvailable;
 
         public ModsViewModel(IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
         {
@@ -24,9 +27,14 @@ namespace BeatSaberModManager.ViewModels
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
             _progress = progress;
+            this.WhenAnyValue(x => x.GridItems.Count)
+                .Select(x => x > 0)
+                .ToProperty(this, nameof(AreModsAvailable), out _areModsAvailable);
         }
 
-        public ObservableCollection<ModGridItemViewModel> GridItems { get; } = new();
+        public ObservableCollectionExtended<ModGridItemViewModel> GridItems { get; } = new();
+
+        public bool AreModsAvailable => _areModsAvailable.Value;
 
         private ModGridItemViewModel? _selectedGridItem;
         public ModGridItemViewModel? SelectedGridItem
@@ -85,7 +93,7 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task UninstallModLoaderAsync()
         {
-            ModGridItemViewModel? gridItem = GridItems.FirstOrDefault(x => x.AvailableMod.Name?.ToLowerInvariant() == _modProvider.ModLoaderName);
+            ModGridItemViewModel? gridItem = GridItems.FirstOrDefault(x => x.InstalledMod?.Name?.ToLowerInvariant() == _modProvider.ModLoaderName);
             if (gridItem is not null)
             {
                 await UninstallModAsync(gridItem);

@@ -70,9 +70,11 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             string pluginsDirPath = Path.Combine(_settings.InstallDir!, "Plugins");
             string libsDirPath = Path.Combine(_settings.InstallDir!, "Libs");
             string ipaDirPath = Path.Combine(_settings.InstallDir!, "IPA");
+            string winhttpPath = Path.Combine(_settings.InstallDir!, "winhttp.dll");
             if (Directory.Exists(pluginsDirPath)) Directory.Delete(pluginsDirPath, true);
             if (Directory.Exists(libsDirPath)) Directory.Delete(libsDirPath, true);
             if (Directory.Exists(ipaDirPath)) Directory.Delete(ipaDirPath, true);
+            if (File.Exists(winhttpPath)) File.Delete(winhttpPath);
         }
 
         private bool ValidateDownload(BeatModsDownload download, ZipArchive archive)

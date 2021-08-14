@@ -4,16 +4,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Threading.Tasks;
+
+using Microsoft.Win32;
 
 
 namespace BeatSaberModManager.Utils
 {
     public static class PlatformUtils
     {
-        private static readonly bool _isWindowsAdmin = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-
         public static async Task OpenBrowserOrFileExplorer(string uri)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -26,7 +25,7 @@ namespace BeatSaberModManager.Utils
 
         public static bool IsProtocolHandlerRegistered(string protocol, string providerName) =>
             RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-                ? IsWindowsProtocolHandlerRegistered(protocol, providerName)
+                ? IsWindowsProtocolHandlerRegistered(protocol)
                 : RuntimeInformation.IsOSPlatform(OSPlatform.Linux)
                     ? IsLinuxProtocolHandlerRegistered(protocol, providerName)
                     : throw new PlatformNotSupportedException();
@@ -53,62 +52,31 @@ namespace BeatSaberModManager.Utils
 
         private static void RegisterWindowsProtocolHandler(string protocol, string description, string providerName)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || IsWindowsProtocolHandlerRegistered(protocol, providerName)) return;
-            if (!_isWindowsAdmin)
-            {
-                RunProcessAsWindowsAdmin($"\"--register\" \"{protocol}\" \"{description}\" \"{providerName}\"");
-                return;
-            }
-
-            using Microsoft.Win32.RegistryKey protocolKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(protocol, true) ??
-                                                            Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(protocol, true);
-            // ReSharper disable once ConstantNullCoalescingCondition
-            using Microsoft.Win32.RegistryKey commandKey = protocolKey.CreateSubKey(@"shell\open\command", true) ??
-                                                           Microsoft.Win32.Registry.ClassesRoot.CreateSubKey(@"shell\open\command", true);
-            if (protocolKey.GetValue("OneClick-Provider")?.ToString() == providerName) return;
-            protocolKey.SetValue("", description, Microsoft.Win32.RegistryValueKind.String);
-            protocolKey.SetValue("URL Protocol", "", Microsoft.Win32.RegistryValueKind.String);
-            protocolKey.SetValue("OneClick-Provider", providerName, Microsoft.Win32.RegistryValueKind.String);
-            commandKey.SetValue("", $"\"{Environment.ProcessPath}\" \"--install\" \"%1\"");
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+            using RegistryKey protocolKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol, true) ??
+                                            Registry.CurrentUser.CreateSubKey(@"software\classes").CreateSubKey(protocol, true);
+            using RegistryKey commandKey = protocolKey.CreateSubKey(@"shell\open\command", true);
+            protocolKey.SetValue(string.Empty, description, RegistryValueKind.String);
+            protocolKey.SetValue("URL Protocol", string.Empty, RegistryValueKind.String);
+            protocolKey.SetValue("OneClick-Provider", providerName, RegistryValueKind.String);
+            commandKey.SetValue(string.Empty, $"\"{Environment.ProcessPath}\" \"--install\" \"%1\"");
         }
 
         private static void UnregisterWindowsProtocolHandler(string protocol, string providerName)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows) || !IsWindowsProtocolHandlerRegistered(protocol, providerName)) return;
-            if (!_isWindowsAdmin)
-            {
-                RunProcessAsWindowsAdmin($"\"--unregister\" \"{protocol}\" \"{providerName}\"");
-                return;
-            }
-
-            using Microsoft.Win32.RegistryKey? protocolKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(protocol, true);
-            if (protocolKey is not null && protocolKey.GetValue("OneClick-Provider")?.ToString() == providerName)
-                Microsoft.Win32.Registry.ClassesRoot.DeleteSubKeyTree(protocol);
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
+            using RegistryKey? providerKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol);
+            string? registeredProviderName = providerKey?.GetValue("OneClick-Provider")?.ToString();
+            if (registeredProviderName != providerName) return;
+            Registry.CurrentUser.DeleteSubKeyTree($@"software\classes\{protocol}", false);
         }
 
-        private static bool IsWindowsProtocolHandlerRegistered(string protocol, string providerName)
+        private static bool IsWindowsProtocolHandlerRegistered(string protocol)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return false;
-            using Microsoft.Win32.RegistryKey? protocolKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(protocol);
-            return protocolKey is not null && protocolKey.GetValue("OneClick-Provider")?.ToString() == providerName;
-        }
-
-        private static void RunProcessAsWindowsAdmin(string args)
-        {
-            Process process = new()
-            {
-                StartInfo =
-                {
-                    FileName = Environment.ProcessPath,
-                    Arguments = args,
-                    UseShellExecute = true,
-                    CreateNoWindow = true,
-                    Verb = "runas"
-                }
-            };
-
-            process.Start();
-            process.WaitForExit();
+            using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol);
+            string? protocolHandler = protocolKey?.OpenSubKey(@"shell\open\command")?.GetValue(string.Empty)?.ToString()?.Split(' ')[0];
+            return protocolHandler == Environment.ProcessPath;
         }
 
         private static void RegisterLinuxProtocolHandler(string protocol, string description, string providerName)
