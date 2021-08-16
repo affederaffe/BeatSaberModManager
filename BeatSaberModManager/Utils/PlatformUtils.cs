@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 using Microsoft.Win32;
 
@@ -13,12 +12,12 @@ namespace BeatSaberModManager.Utils
 {
     public static class PlatformUtils
     {
-        public static async Task OpenBrowserOrFileExplorer(string uri)
+        public static void OpenBrowserOrFileExplorer(string uri)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                await Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true })!.WaitForExitAsync();
+                Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                await Process.Start("xdg-open", $"\"{uri}\"").WaitForExitAsync();
+                Process.Start("xdg-open", $"\"{uri}\"");
             else
                 throw new PlatformNotSupportedException();
         }
@@ -30,12 +29,12 @@ namespace BeatSaberModManager.Utils
                     ? IsLinuxProtocolHandlerRegistered(protocol, providerName)
                     : throw new PlatformNotSupportedException();
 
-        public static void RegisterProtocolHandler(string protocol, string description, string providerName)
+        public static void RegisterProtocolHandler(string protocol, string providerName)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                RegisterWindowsProtocolHandler(protocol, description, providerName);
+                RegisterWindowsProtocolHandler(protocol, providerName);
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-                RegisterLinuxProtocolHandler(protocol, description, providerName);
+                RegisterLinuxProtocolHandler(protocol, providerName);
             else
                 throw new PlatformNotSupportedException();
         }
@@ -50,13 +49,13 @@ namespace BeatSaberModManager.Utils
                 throw new PlatformNotSupportedException();
         }
 
-        private static void RegisterWindowsProtocolHandler(string protocol, string description, string providerName)
+        private static void RegisterWindowsProtocolHandler(string protocol, string providerName)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return;
             using RegistryKey protocolKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol, true) ??
                                             Registry.CurrentUser.CreateSubKey(@"software\classes").CreateSubKey(protocol, true);
             using RegistryKey commandKey = protocolKey.CreateSubKey(@"shell\open\command", true);
-            protocolKey.SetValue(string.Empty, description, RegistryValueKind.String);
+            protocolKey.SetValue(string.Empty, $"URL:{protocol} Protocol", RegistryValueKind.String);
             protocolKey.SetValue("URL Protocol", string.Empty, RegistryValueKind.String);
             protocolKey.SetValue("OneClick-Provider", providerName, RegistryValueKind.String);
             commandKey.SetValue(string.Empty, $"\"{Environment.ProcessPath}\" \"--install\" \"%1\"");
@@ -76,18 +75,17 @@ namespace BeatSaberModManager.Utils
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return false;
             using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol);
             string? protocolHandler = protocolKey?.OpenSubKey(@"shell\open\command")?.GetValue(string.Empty)?.ToString()?.Split(' ')[0];
-            return protocolHandler == Environment.ProcessPath;
+            return protocolHandler?[1..^1] == Environment.ProcessPath;
         }
 
-        private static void RegisterLinuxProtocolHandler(string protocol, string description, string providerName)
+        private static void RegisterLinuxProtocolHandler(string protocol, string providerName)
         {
             string localAppDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string localApplicationsPath = Path.Combine(localAppDataPath, "applications");
             string handlerDesktopFileName = providerName + ".desktop";
-            string handlerDesktopFilePath = Path.Combine(localApplicationsPath, handlerDesktopFileName);
+            string handlerDesktopFilePath = Path.Combine(localAppDataPath, "applications", handlerDesktopFileName);
             if (!File.Exists(handlerDesktopFilePath))
             {
-                File.WriteAllText(handlerDesktopFilePath, $"[Desktop Entry]\nType=Application\nCategories=Utility;\nName={providerName}\nComment={description}\nExec={Environment.ProcessPath} --install %u\nType=Application\nTerminal=false\nMimeType=x-scheme-handler/{protocol};");
+                File.WriteAllText(handlerDesktopFilePath, $"[Desktop Entry]\nType=Application\nCategories=Utility;\nName={providerName}\nExec={Environment.ProcessPath} --install %u\nType=Application\nTerminal=false\nMimeType=x-scheme-handler/{protocol};");
                 return;
             }
 
@@ -118,7 +116,11 @@ namespace BeatSaberModManager.Utils
             string mimeappsListFilePath = Path.Combine(configPath, "mimeapps.list");
             if (!File.Exists(mimeappsListFilePath)) return false;
             string target = $"x-scheme-handler/{protocol}={providerName}.desktop";
-            return File.ReadAllLines(mimeappsListFilePath).Any(x => x == target);
+            using FileStream stream = File.OpenRead(mimeappsListFilePath);
+            using StreamReader reader = new(stream);
+            while (stream.Position < stream.Length)
+                if (reader.ReadLine() == target) return true;
+            return false;
         }
     }
 }

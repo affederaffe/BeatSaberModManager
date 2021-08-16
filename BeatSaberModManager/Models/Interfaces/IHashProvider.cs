@@ -1,7 +1,7 @@
 ﻿using System.IO;
 
 
-namespace BeatSaberModManager.Models.Interfaces
+namespace BeatSaberModManager.Models.Implementations.Interfaces
 {
     public interface IHashProvider
     {

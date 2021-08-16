@@ -1,9 +1,9 @@
 ﻿using System;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.Progress
+namespace BeatSaberModManager.Models.Implementations.Implementations.Progress
 {
     public class StatusProgress : Progress<(double, string)>, IStatusProgress
     {

@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 
 using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
-using BeatSaberModManager.Models;
+using BeatSaberModManager.Models.Implementations;
 
 using ReactiveUI;
 
@@ -15,35 +16,31 @@ namespace BeatSaberModManager.Localisation
     {
         public LanguageSwitcher(Settings settings)
         {
-            Languages = new[]
-            {
-                LoadLanguage("English", "avares://BeatSaberModManager/Resources/Localisation/en.axaml"),
-                LoadLanguage("Deutsch", "avares://BeatSaberModManager/Resources/Localisation/de.axaml")
-            };
-
+            Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
             IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).WhereNotNull();
             selectedLanguageObservable.Subscribe(l => Application.Current.Resources.MergedDictionaries[0] = l.ResourceProvider);
-            selectedLanguageObservable.Subscribe(l => settings.LanguageName = l.Name);
+            selectedLanguageObservable.Subscribe(l => settings.LanguageCode = l.CultureInfo.Name);
+            SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == settings.LanguageCode) ??
+                               Languages.FirstOrDefault(x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
+                               Languages.First();
         }
 
         public Language[] Languages { get; }
 
-        private Language? _selectedLanguage;
-        public Language? SelectedLanguage
+        private Language _selectedLanguage = null!;
+        public Language SelectedLanguage
         {
             get => _selectedLanguage;
             set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
         }
 
-        public void Initialize(string? lastLanguage)
+        private static Language LoadLanguage(string languageCode)
         {
-            SelectedLanguage = Languages.FirstOrDefault(x => x.Name == lastLanguage) ?? Languages.First();
+            ResourceInclude resourceInclude = new() { Source = new Uri($"avares://{nameof(BeatSaberModManager)}/Resources/Localisation/{languageCode}.axaml") };
+            CultureInfo cultureInfo = CultureInfo.GetCultureInfo(languageCode);
+            return new Language(cultureInfo, resourceInclude);
         }
 
-        private static Language LoadLanguage(string name, string uri)
-        {
-            ResourceInclude resourceInclude = new() { Source = new Uri(uri) };
-            return new Language(name, resourceInclude);
-        }
+        private static readonly string[] _supportedLanguageCodes = { "de", "en" };
     }
 }

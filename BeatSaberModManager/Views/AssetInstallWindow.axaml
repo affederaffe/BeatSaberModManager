@@ -34,7 +34,7 @@
                    Content="{Binding ResultLabelText}"
                    IsVisible="{Binding !ProgressRingActive}" />
             <TextBox Grid.Row="1"
-                     Name="AssetNameTextBox"
+                     x:Name="AssetNameTextBox"
                      IsReadOnly="True"
                      IsHitTestVisible="False" />
         </Grid>

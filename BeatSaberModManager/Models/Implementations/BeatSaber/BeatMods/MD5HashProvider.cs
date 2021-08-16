@@ -2,10 +2,10 @@
 using System.IO;
 using System.Security.Cryptography;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatMods
 {
     public class MD5HashProvider : IHashProvider
     {

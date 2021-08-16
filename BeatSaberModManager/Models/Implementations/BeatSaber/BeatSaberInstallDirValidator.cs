@@ -1,9 +1,9 @@
 ﻿using System.IO;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber
 {
     public class BeatSaberInstallDirValidator : IInstallDirValidator
     {

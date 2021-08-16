@@ -1,8 +1,8 @@
-﻿using System.Reactive.Linq;
+﻿using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
@@ -14,19 +14,21 @@ using Splat;
 
 namespace BeatSaberModManager.Views
 {
-    public class AssetInstallWindow : ReactiveWindow<AssetInstallWindowViewModel>
+    public partial class AssetInstallWindow : ReactiveWindow<AssetInstallWindowViewModel>
     {
         private readonly string? _uri;
 
         public AssetInstallWindow()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
             ViewModel = Locator.Current.GetService<AssetInstallWindowViewModel>();
-            TextBox assetNameTextBox = this.FindControl<TextBox>("AssetNameTextBox");
-            ViewModel.WhenAnyValue(x => x.AssetName)
-                     .Select(x => $"{this.FindResource("AssetInstallWindow:InstallText")} {x}")
-                     .BindTo(assetNameTextBox, x => x.Text);
-            this.WhenActivated(_ => InstallAssetAndClose().ConfigureAwait(false));
+            this.WhenActivated(disposables =>
+            {
+                ViewModel.WhenAnyValue(x => x.AssetName)
+                    .Select(x => $"{this.FindResource("AssetInstallWindow:InstallText")} {x}")
+                    .BindTo(AssetNameTextBox, x => x.Text)
+                    .DisposeWith(disposables);
+            });
         }
 
         public AssetInstallWindow(string uri) : this()
@@ -34,7 +36,7 @@ namespace BeatSaberModManager.Views
             _uri = uri;
         }
 
-        private async Task InstallAssetAndClose()
+        protected override async void OnInitialized()
         {
             if (_uri is null) return;
             await ViewModel!.InstallAsset(_uri);

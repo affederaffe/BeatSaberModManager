@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Text.Json.Serialization;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatMods
 {
     public class BeatModsMod : IMod
     {

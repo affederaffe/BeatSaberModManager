@@ -108,7 +108,7 @@
                       SelectedItem="{Binding LanguageSwitcher.SelectedLanguage}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="l:Language">
-                        <Label Content="{Binding Name}" />
+                        <Label Content="{Binding CultureInfo.DisplayName}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>

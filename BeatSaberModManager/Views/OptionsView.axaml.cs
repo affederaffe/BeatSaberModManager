@@ -1,30 +1,31 @@
-﻿using Avalonia;
+﻿using System;
+
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Localisation;
 using BeatSaberModManager.Theming;
 using BeatSaberModManager.ViewModels;
 
+using ReactiveUI;
+
 using Splat;
 
 
 namespace BeatSaberModManager.Views
 {
-    public class OptionsView : ReactiveUserControl<OptionsViewModel>
+    public partial class OptionsView : ReactiveUserControl<OptionsViewModel>
     {
-        private readonly ModsViewModel _modsViewModel;
-
         public OptionsView()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
             ViewModel = Locator.Current.GetService<OptionsViewModel>();
             LanguageSwitcher = Locator.Current.GetService<LanguageSwitcher>();
             ThemeSwitcher = Locator.Current.GetService<ThemeSwitcher>();
-            _modsViewModel = Locator.Current.GetService<ModsViewModel>();
+            ViewModel.WhenAnyValue(x => x.ThemesDir).Subscribe(_ => ThemeSwitcher.TryLoadExternThemes());
         }
 
         public LanguageSwitcher LanguageSwitcher { get; }
@@ -36,7 +37,6 @@ namespace BeatSaberModManager.Views
             if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
             OpenFolderDialog openFolderDialog = new();
             ViewModel!.InstallDir = await openFolderDialog.ShowAsync(desktop.MainWindow);
-            await _modsViewModel.RefreshDataGridAsync();
         }
 
         private async void OnSelectThemesFolderButtonClicked(object? sender, RoutedEventArgs e)
@@ -57,7 +57,7 @@ namespace BeatSaberModManager.Views
             openFileDialog.AllowMultiple = false;
             string[] filePaths = await openFileDialog.ShowAsync(desktop.MainWindow);
             if (filePaths.Length <= 0) return;
-            await ViewModel!.InstallPlaylists(filePaths[0]);
+            await ViewModel!.InstallPlaylistsAsync(filePaths[0]);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 using DynamicData.Binding;
 
@@ -55,7 +55,6 @@ namespace BeatSaberModManager.ViewModels
                 if (GridItems.Count > i)
                 {
                     gridItem = GridItems[i];
-                    gridItem.Subscription?.Dispose();
                     gridItem.AvailableMod = availableMod;
                     gridItem.InstalledMod = installedMod;
                 }
@@ -65,10 +64,8 @@ namespace BeatSaberModManager.ViewModels
                     GridItems.Add(gridItem);
                 }
 
-                if (installedMod is not null) _modProvider.ResolveDependencies(availableMod);
                 gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null;
-                UpdateCheckboxEnabled(gridItem);
-                gridItem.Subscription = gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
+                gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
             }
         }
 
@@ -78,6 +75,7 @@ namespace BeatSaberModManager.ViewModels
             ModGridItemViewModel[] modsToUninstall = GridItems.Where(x => !x.IsCheckBoxChecked && _modProvider.InstalledMods!.Contains(x.InstalledMod!)).ToArray();
             int sum = modsToInstall.Length + modsToUninstall.Length;
 
+            _progress.Report(0);
             for (int i = 0; i < modsToInstall.Length; i++)
             {
                 await InstallModAsync(modsToInstall[i]);
@@ -133,15 +131,12 @@ namespace BeatSaberModManager.ViewModels
         {
             if (gridItem.IsCheckBoxChecked) _modProvider.ResolveDependencies(gridItem.AvailableMod);
             else _modProvider.UnresolveDependencies(gridItem.AvailableMod);
-            foreach (ModGridItemViewModel listItem in GridItems)
-                UpdateCheckboxEnabled(listItem);
-        }
-
-        private void UpdateCheckboxEnabled(ModGridItemViewModel gridItem)
-        {
-            bool isDependency = gridItem.AvailableMod.Required || (_modProvider.Dependencies.TryGetValue(gridItem.AvailableMod, out HashSet<IMod>? dependants) && dependants.Count != 0);
-            gridItem.IsCheckBoxEnabled = !isDependency;
-            gridItem.IsCheckBoxChecked = gridItem.IsCheckBoxChecked || isDependency;
+            foreach (ModGridItemViewModel modGridItem in GridItems)
+            {
+                bool isDependency = modGridItem.AvailableMod.Required || (_modProvider.Dependencies.TryGetValue(modGridItem.AvailableMod, out HashSet<IMod>? dependants) && dependants.Count != 0);
+                modGridItem.IsCheckBoxEnabled = !isDependency;
+                modGridItem.IsCheckBoxChecked = modGridItem.IsCheckBoxChecked || isDependency;
+            }
         }
     }
 }

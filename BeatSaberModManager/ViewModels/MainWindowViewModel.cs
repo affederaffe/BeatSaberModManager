@@ -3,8 +3,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models;
-using BeatSaberModManager.Models.Implementations.Progress;
+using BeatSaberModManager.Models.Implementations;
+using BeatSaberModManager.Models.Implementations.Implementations.Progress;
 using BeatSaberModManager.Utils;
 
 using ReactiveUI;
@@ -52,7 +52,7 @@ namespace BeatSaberModManager.ViewModels
         private async Task OpenMoreInfoLink()
         {
             if (_modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink is null) return;
-            await PlatformUtils.OpenBrowserOrFileExplorer(_modsViewModel.SelectedGridItem.AvailableMod.MoreInfoLink);
+            await Task.Run(() => PlatformUtils.OpenBrowserOrFileExplorer(_modsViewModel.SelectedGridItem.AvailableMod.MoreInfoLink));
         }
     }
 }

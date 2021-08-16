@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Text;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber
 {
     public class BeatSaberGameVersionProvider : IGameVersionProvider
     {
@@ -18,8 +18,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
         public string? GetGameVersion()
         {
             if (_settings.InstallDir is null) return null;
-            string filename = Path.Combine(_settings.InstallDir, "Beat Saber_Data", "globalgamemanagers");
-            using FileStream stream = File.OpenRead(filename);
+            string filePath = Path.Combine(_settings.InstallDir, "Beat Saber_Data", "globalgamemanagers");
+            using FileStream stream = File.OpenRead(filePath);
             using BinaryReader reader = new(stream, Encoding.UTF8);
             const string key = "public.app-category.games";
             int pos = 0;
@@ -43,9 +43,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
             const int rewind = -sizeof(int) - sizeof(byte);
             stream.Seek(rewind, SeekOrigin.Current); // rewind to the string length
 
-            int strLen = reader.ReadInt32();
-            byte[] strBytes = reader.ReadBytes(strLen);
-            return Encoding.UTF8.GetString(strBytes);
+            int len = reader.ReadInt32();
+            byte[] bytes = reader.ReadBytes(len);
+            return Encoding.UTF8.GetString(bytes);
         }
     }
 }

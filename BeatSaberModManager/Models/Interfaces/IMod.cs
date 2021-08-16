@@ -1,4 +1,4 @@
-﻿namespace BeatSaberModManager.Models.Interfaces
+﻿namespace BeatSaberModManager.Models.Implementations.Interfaces
 {
     public interface IMod
     {

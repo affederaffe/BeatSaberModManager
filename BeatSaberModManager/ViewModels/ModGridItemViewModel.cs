@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 using ReactiveUI;
 
@@ -21,8 +21,6 @@ namespace BeatSaberModManager.ViewModels
             isUpToDateObservable.ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
             isUpToDateObservable.Select(x => x ? "Green" : "Red").ToProperty(this, nameof(InstalledVersionColor), out _installedVersionColor);
         }
-
-        public IDisposable? Subscription { get; set; }
 
         public string InstalledVersionColor => _installedVersionColor.Value;
 

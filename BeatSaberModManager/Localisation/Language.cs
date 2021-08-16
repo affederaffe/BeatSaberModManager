@@ -1,17 +1,19 @@
-﻿using Avalonia.Controls;
+﻿using System.Globalization;
+
+using Avalonia.Controls;
 
 
 namespace BeatSaberModManager.Localisation
 {
     public class Language
     {
-        public Language(string name, IResourceProvider resourceProvider)
+        public Language(CultureInfo cultureInfo, IResourceProvider resourceProvider)
         {
-            Name = name;
+            CultureInfo = cultureInfo;
             ResourceProvider = resourceProvider;
         }
 
-        public string Name { get; }
+        public CultureInfo CultureInfo { get; }
         public IResourceProvider ResourceProvider { get; }
     }
 }

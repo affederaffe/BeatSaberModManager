@@ -3,14 +3,14 @@ using System.Net;
 using System.Net.Http;
 
 using BeatSaberModManager.Localisation;
-using BeatSaberModManager.Models;
-using BeatSaberModManager.Models.Implementations.BeatSaber;
-using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
-using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
-using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
-using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
-using BeatSaberModManager.Models.Implementations.Progress;
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations;
+using BeatSaberModManager.Models.Implementations.Implementations.BeatSaber;
+using BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatMods;
+using BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatSaver;
+using BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.ModelSaber;
+using BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Implementations.Implementations.Progress;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 using BeatSaberModManager.Theming;
 
 using Splat;

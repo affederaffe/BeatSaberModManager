@@ -20,10 +20,10 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}">
                     <Panel>
-                        <ItemsPresenter Name="PART_ItemsPresenter" />
+                        <ItemsPresenter x:Name="PART_ItemsPresenter" />
                         <ContentControl Content="{TemplateBinding Tag}"
                                         HorizontalContentAlignment="Right" />
-                        <ContentPresenter Name="PART_SelectedContentHost"
+                        <ContentPresenter x:Name="PART_SelectedContentHost"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                           Content="{TemplateBinding SelectedItem}" />

@@ -1,15 +1,14 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Avalonia.Markup.Xaml;
 
 
 namespace BeatSaberModManager.Views
 {
-    public class InstallFolderDialogWindow : Window
+    public partial class InstallFolderDialogWindow : Window
     {
         public InstallFolderDialogWindow()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
         }
 
         private async void OnContinueButtonClicked(object? sender, RoutedEventArgs e)

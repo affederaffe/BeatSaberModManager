@@ -8,7 +8,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 
-using BeatSaberModManager.Models;
+using BeatSaberModManager.Models.Implementations;
 
 using ReactiveUI;
 
@@ -17,10 +17,13 @@ namespace BeatSaberModManager.Theming
 {
     public class ThemeSwitcher : ReactiveObject
     {
-        private static readonly Uri _styleIncludeUri = new("avares://Avalonia.ThemeManager/Styles");
-
+        private readonly Settings _settings;
+        private readonly int _buildInThemesCount;
+        
         public ThemeSwitcher(Settings settings)
         {
+            _settings = settings;
+
             Themes = new List<Theme>
             {
                 LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultLight.axaml"),
@@ -29,44 +32,44 @@ namespace BeatSaberModManager.Theming
                 LoadBuildInTheme("Fluent Dark", "avares://Avalonia.Themes.Fluent/FluentDark.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
             };
 
-            if (Directory.Exists(settings.ThemesDir))
-            {
-                foreach (string filePath in Directory.EnumerateFiles(settings.ThemesDir, "*.xaml"))
-                {
-                    Theme? theme = LoadTheme(filePath);
-                    if (theme is null) continue;
-                    Themes.Add(theme);
-                }
-            }
-
+            _buildInThemesCount = Themes.Count;
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).WhereNotNull();
             selectedThemeObservable.Subscribe(t => Application.Current.Styles[0] = t.Style);
             selectedThemeObservable.Subscribe(t => settings.ThemeName = t.Name);
+            SelectedTheme = Themes.FirstOrDefault(x => x.Name == settings.ThemeName) ??
+                            Themes.First();
         }
 
         public List<Theme> Themes { get; }
 
-        private Theme? _selectedTheme;
-        public Theme? SelectedTheme
+        private Theme _selectedTheme = null!;
+        public Theme SelectedTheme
         {
             get => _selectedTheme;
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
-        public void Initialize(string? lastTheme)
+        public void TryLoadExternThemes()
         {
-            SelectedTheme = Themes.FirstOrDefault(x => x.Name == lastTheme) ?? Themes.First();
+            if (!Directory.Exists(_settings.ThemesDir)) return;
+            Themes.RemoveRange(_buildInThemesCount, Themes.Count - _buildInThemesCount);
+            foreach (string filePath in Directory.EnumerateFiles(_settings.ThemesDir, "*.xaml"))
+            {
+                Theme? theme = LoadTheme(filePath);
+                if (theme is null) continue;
+                Themes.Add(theme);
+            }
         }
 
-        private Theme? LoadTheme(string filePath)
+        private static readonly Uri _styleIncludeUri = new("avares://Avalonia.ThemeManager/Styles");
+
+        private static Theme? LoadTheme(string filePath)
         {
             if (!File.Exists(filePath)) return null;
             string name = Path.GetFileNameWithoutExtension(filePath);
             string xaml = File.ReadAllText(filePath);
             IStyle style = AvaloniaRuntimeXamlLoader.Parse<IStyle>(xaml);
-            Theme theme = new(name, style);
-            Themes.Add(theme);
-            return theme;
+            return new Theme(name, style);
         }
 
         private static Theme LoadBuildInTheme(string name, params string[] uris)

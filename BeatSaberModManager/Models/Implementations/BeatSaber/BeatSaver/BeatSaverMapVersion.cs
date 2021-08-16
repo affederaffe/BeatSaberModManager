@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatSaver
 {
     public class BeatSaverMapVersion
     {

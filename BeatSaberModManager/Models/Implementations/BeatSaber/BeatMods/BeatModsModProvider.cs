@@ -7,10 +7,10 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatMods
 {
     public class BeatModsModProvider : IModProvider
     {
@@ -23,10 +23,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         private const string kBeatModsApiUrl = "https://beatmods.com/api/v1/";
         private const string kBeatModsAliasUrl = "https://alias.beatmods.com/aliases.json";
         private const string kBeatModsVersionsUrl = "https://versions.beatmods.com/versions.json";
-        private const string kItem = "mod";
-        private const string kApprovedStatus = "?status=approved";
-        private const string kNotDeclinedStatus = "?status!=declined";
-        private const string kGameVersion = "&gameVersion=";
 
         public BeatModsModProvider(Settings settings, HttpClient httpClient, IHashProvider hashProvider, IGameVersionProvider gameVersionProvider)
         {
@@ -43,7 +39,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public void ResolveDependencies(IMod modToResolve)
         {
-            if (modToResolve is not BeatModsMod beatModsMod || beatModsMod.Dependencies?.Length <= 0) return;
+            if (modToResolve is not BeatModsMod beatModsMod || beatModsMod.Dependencies!.Length <= 0) return;
             foreach (BeatModsDependency dependency in beatModsMod.Dependencies!)
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
@@ -55,21 +51,25 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public void UnresolveDependencies(IMod modToUnresolve)
         {
-            foreach (HashSet<IMod> dependants in Dependencies.Values)
-                dependants.Remove(modToUnresolve);
+            if (modToUnresolve is not BeatModsMod beatModsMod || beatModsMod.Dependencies!.Length <= 0) return;
+            foreach (BeatModsDependency dependency in beatModsMod.Dependencies!)
+            {
+                if (dependency.DependingMod is null) continue;
+                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependants))
+                    dependants.Remove(beatModsMod);
+            }
         }
 
         public async Task LoadInstalledModsAsync()
         {
             if (_settings.InstallDir is null) return;
-            BeatModsMod[]? allMods = await GetModsAsync(kItem + kNotDeclinedStatus).ConfigureAwait(false);
+            BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
             if (allMods is null) return;
             Dictionary<string, IMod> fileHashModPairs = new();
             foreach (BeatModsMod mod in allMods)
             {
                 BeatModsDownload? download = mod.GetDownloadForVRPlatform(_settings.VRPlatform!);
-                if (download?.Hashes is null) continue;
-                foreach (BeatModsHash hash in download.Hashes)
+                foreach (BeatModsHash hash in download!.Hashes!)
                     fileHashModPairs.TryAdd(hash.Hash!, mod);
             }
 
@@ -97,7 +97,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         {
             string? aliasedGameVersion = await GetAliasedGameVersion(version).ConfigureAwait(false);
             if (aliasedGameVersion is null) return;
-            AvailableMods = await GetModsAsync(kItem + kApprovedStatus + kGameVersion + aliasedGameVersion).ConfigureAwait(false);
+            AvailableMods = await GetModsAsync($"mod?status=approved&gameVersion={aliasedGameVersion}").ConfigureAwait(false);
         }
 
         public async Task<ZipArchive?> DownloadModAsync(string url)

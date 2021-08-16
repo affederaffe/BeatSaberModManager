@@ -2,13 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
+
+using Microsoft.Win32;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber
 {
     // Basically everything here is stolen from ModAssistant, thanks!
     public class BeatSaberInstallDirLocator : IInstallDirLocator
@@ -32,8 +35,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
         private static string? LocateWindowsSteamInstallDir()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
-            using Microsoft.Win32.RegistryKey? steamInstallDirKey = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam") ??
-                  Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
+            using RegistryKey? steamInstallDirKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam") ??
+                  Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
             return steamInstallDirKey?.GetValue("InstallPath")?.ToString();
         }
 
@@ -63,8 +66,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
             regex = new Regex("\\s\"installdir\"\\s+\"(.+)\"");
             foreach (string path in steamPaths)
             {
-                if (!File.Exists(Path.Combine(path, "appmanifest_" + kBeatSaberAppId + ".acf"))) continue;
-                using StreamReader reader = new(Path.Combine(path, "appmanifest_" + kBeatSaberAppId + ".acf"));
+                string acf = Path.Combine(path, "appmanifest_" + kBeatSaberAppId + ".acf");
+                if (!File.Exists(acf)) continue;
+                using StreamReader reader = new(acf);
                 while ((line = reader.ReadLine()) is not null)
                 {
                     Match match = regex.Match(line);
@@ -81,7 +85,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
         private static string? LocateWindowsOculusBeatSaberDir()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
-            using Microsoft.Win32.RegistryKey? oculusInstallDirKey = Microsoft.Win32.RegistryKey.OpenBaseKey(Microsoft.Win32.RegistryHive.LocalMachine, Microsoft.Win32.RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
+            using RegistryKey? oculusInstallDirKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
             if (string.IsNullOrEmpty(oculusInstallDir)) return null;
 
@@ -89,15 +93,15 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
                 return Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
 
             // Yoinked this code from Umbranox's Mod Manager. Lot's of thanks and love for Umbra <3
-            using Microsoft.Win32.RegistryKey? librariesKey = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Libraries");
+            using RegistryKey? librariesKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Libraries");
             if (librariesKey is null) return null;
 
             // Oculus libraries uses GUID volume paths like this "\\?\Volume{0fea75bf-8ad6-457c-9c24-cbe2396f1096}\Games\Oculus Apps", we need to transform these to "D:\Game"\Oculus Apps"
-            System.Management.WqlObjectQuery wqlQuery = new("SELECT * FROM Win32_Volume");
-            using System.Management.ManagementObjectSearcher searcher = new(wqlQuery);
+            WqlObjectQuery wqlQuery = new("SELECT * FROM Win32_Volume");
+            using ManagementObjectSearcher searcher = new(wqlQuery);
             Dictionary<string, string> guidLetterVolumes = new();
 
-            foreach (System.Management.ManagementBaseObject disk in searcher.Get())
+            foreach (ManagementBaseObject disk in searcher.Get())
             {
                 string diskId = ((string)disk.GetPropertyValue("DeviceID")).Substring(11, 36);
                 string diskLetter = (string)disk.GetPropertyValue("DriveLetter") + "/";
@@ -108,8 +112,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
             // Search among the library folders
             foreach (string libraryKeyName in librariesKey.GetSubKeyNames())
             {
-                using Microsoft.Win32.RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
-                string? libraryPath = (string?)libraryKey?.GetValue("Path");
+                using RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
+                string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
                 if (libraryPath is null) return null;
                 // Yoinked this code from Megalon's fix. <3
                 string guidLetter = guidLetterVolumes.FirstOrDefault(x => libraryPath.Contains(x.Key)).Value;

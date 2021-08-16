@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.Playlist
 {
     public class Playlist
     {

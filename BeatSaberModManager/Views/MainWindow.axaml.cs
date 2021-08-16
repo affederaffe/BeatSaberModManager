@@ -1,29 +1,23 @@
-using System.Threading.Tasks;
-
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 using BeatSaberModManager.ViewModels;
-
-using ReactiveUI;
 
 using Splat;
 
 
 namespace BeatSaberModManager.Views
 {
-    public class MainWindow : ReactiveWindow<MainWindowViewModel>
+    public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
         public MainWindow()
         {
-            AvaloniaXamlLoader.Load(this);
+            InitializeComponent();
             ViewModel = Locator.Current.GetService<MainWindowViewModel>();
             Title = nameof(BeatSaberModManager);
-            this.WhenActivated(disposables => _ = VerifyInstallDir());
         }
 
-        private async Task VerifyInstallDir()
+        protected override async void OnInitialized()
         {
             OptionsViewModel optionsViewModel = Locator.Current.GetService<OptionsViewModel>();
             if (optionsViewModel.InstallDir is not null) return;

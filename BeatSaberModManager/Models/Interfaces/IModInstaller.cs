@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
 
-namespace BeatSaberModManager.Models.Interfaces
+namespace BeatSaberModManager.Models.Implementations.Interfaces
 {
     public interface IModInstaller
     {

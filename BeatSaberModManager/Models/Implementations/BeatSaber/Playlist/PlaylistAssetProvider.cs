@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
+namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.Playlist
 {
     public class PlaylistAssetProvider : IAssetProvider
     {

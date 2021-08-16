@@ -21,7 +21,7 @@
         <Rectangle Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.9" Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
         <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.985" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
         
-        <ListBox Grid.Column="0" Grid.Row="0" Name="Tabs" Margin="0, 30" Background="{x:Null}">
+        <ListBox Grid.Column="0" Grid.Row="0" x:Name="Tabs" Margin="0, 30" Background="{x:Null}">
             <ListBox.Items>
                 <Label Content="{DynamicResource MainWindow:IntroHeader}" />
                 <Label Content="{DynamicResource MainWindow:ModsHeader}" />
