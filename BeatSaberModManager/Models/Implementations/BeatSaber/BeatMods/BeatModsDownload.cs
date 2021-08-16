@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 
-namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatMods
+namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
     public class BeatModsDownload
     {

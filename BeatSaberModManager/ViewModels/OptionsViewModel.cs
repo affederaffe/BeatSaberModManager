@@ -5,8 +5,8 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations;
-using BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.Playlist;
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
 
 using ReactiveUI;

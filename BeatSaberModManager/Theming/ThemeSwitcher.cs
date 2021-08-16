@@ -19,7 +19,7 @@ namespace BeatSaberModManager.Theming
     {
         private readonly Settings _settings;
         private readonly int _buildInThemesCount;
-        
+
         public ThemeSwitcher(Settings settings)
         {
             _settings = settings;

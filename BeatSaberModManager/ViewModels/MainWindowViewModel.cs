@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations;
-using BeatSaberModManager.Models.Implementations.Implementations.Progress;
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Utils;
 
 using ReactiveUI;

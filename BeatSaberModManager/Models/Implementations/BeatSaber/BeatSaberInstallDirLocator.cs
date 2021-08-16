@@ -6,12 +6,12 @@ using System.Management;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Interfaces;
 
 using Microsoft.Win32;
 
 
-namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber
+namespace BeatSaberModManager.Models.Implementations.BeatSaber
 {
     // Basically everything here is stolen from ModAssistant, thanks!
     public class BeatSaberInstallDirLocator : IInstallDirLocator

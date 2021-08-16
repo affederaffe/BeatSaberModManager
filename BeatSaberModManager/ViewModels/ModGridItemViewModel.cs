@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Interfaces;
 
 using ReactiveUI;
 

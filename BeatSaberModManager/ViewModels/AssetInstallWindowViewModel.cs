@@ -4,8 +4,8 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.Implementations.Progress;
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Implementations.Progress;
+using BeatSaberModManager.Models.Interfaces;
 
 using ReactiveUI;
 

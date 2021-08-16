@@ -6,10 +6,10 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatMods
+namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
     public class BeatModsModInstaller : IModInstaller
     {

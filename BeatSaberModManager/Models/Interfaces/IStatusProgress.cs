@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace BeatSaberModManager.Models.Implementations.Interfaces
+namespace BeatSaberModManager.Models.Interfaces
 {
     public interface IStatusProgress : IProgress<double>, IProgress<string> { }
 }

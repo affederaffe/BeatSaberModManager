@@ -5,11 +5,11 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatSaver;
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
+using BeatSaberModManager.Models.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.Playlist
+namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
 {
     public class PlaylistInstaller
     {

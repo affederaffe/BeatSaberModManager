@@ -1,11 +1,10 @@
 ﻿using System;
-
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Interfaces;
 
 
-namespace BeatSaberModManager.Models.Implementations.Implementations.BeatSaber.BeatSaver
+namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
 {
     public class BeatSaverAssetProvider : IAssetProvider
     {

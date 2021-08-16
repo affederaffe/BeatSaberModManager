@@ -1,6 +1,6 @@
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Models.Implementations.Interfaces;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.ViewModels;
 
 using Splat;

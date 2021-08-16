@@ -16,7 +16,7 @@ namespace BeatSaberModManager.Views
     public partial class ModsView : ReactiveUserControl<ModsViewModel>
     {
         private readonly DataGridCollectionView _dataGridCollection;
-        
+
         public ModsView()
         {
             InitializeComponent();

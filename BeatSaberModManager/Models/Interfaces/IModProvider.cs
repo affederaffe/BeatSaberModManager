@@ -3,7 +3,7 @@ using System.IO.Compression;
 using System.Threading.Tasks;
 
 
-namespace BeatSaberModManager.Models.Implementations.Interfaces
+namespace BeatSaberModManager.Models.Interfaces
 {
     public interface IModProvider
     {
