@@ -30,7 +30,7 @@ namespace BeatSaberModManager.Views
 
         private async Task RefreshDataGridAsync()
         {
-            await ViewModel!.RefreshDataGridAsync();
+            await Task.Run(ViewModel!.RefreshDataGridAsync);
             ModsDataGrid.Items = _dataGridCollection;
         }
     }

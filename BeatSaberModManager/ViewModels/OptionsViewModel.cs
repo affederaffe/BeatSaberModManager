@@ -29,8 +29,10 @@ namespace BeatSaberModManager.ViewModels
         {
             _playlistInstaller = playlistInstaller;
             _progress = progress;
-            OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => OpenFolderAsync(settings.InstallDir!));
-            OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => OpenFolderAsync(settings.ThemesDir!));
+            _installDir = settings.InstallDir;
+            _themesDir = settings.ThemesDir;
+            OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => OpenFolderAsync(InstallDir));
+            OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => OpenFolderAsync(ThemesDir));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
             ToggleBeatSaverOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandlerAsync(BeatSaverOneClickCheckboxChecked, kBeatSaverProtocol));
@@ -43,8 +45,6 @@ namespace BeatSaberModManager.ViewModels
             IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir).Where(x => !string.IsNullOrEmpty(x));
             themesDirObservable.BindTo(settings, x => x.ThemesDir);
             themesDirObservable.Select(_ => true).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
-            InstallDir = settings.InstallDir;
-            ThemesDir = settings.ThemesDir;
         }
 
         private string? _installDir;
@@ -100,7 +100,7 @@ namespace BeatSaberModManager.ViewModels
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
-        public async Task InstallPlaylistsAsync(string filePath) => await _playlistInstaller.InstallPlaylistAsync(filePath, _progress);
+        public async Task InstallPlaylistsAsync(string filePath) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(filePath, _progress));
 
         private static async Task ToggleOneClickHandlerAsync(bool active, string protocol)
         {

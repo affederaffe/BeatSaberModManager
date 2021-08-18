@@ -62,7 +62,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public async Task LoadInstalledModsAsync()
         {
-            if (_settings.InstallDir is null) return;
+            if (!Directory.Exists(_settings.InstallDir)) return;
             BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
             if (allMods is null) return;
             Dictionary<string, IMod> fileHashModPairs = new();

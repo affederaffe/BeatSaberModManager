@@ -25,7 +25,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
 
         public async Task<bool> InstallModelAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (_settings.InstallDir is null) return false;
+            if (!Directory.Exists(_settings.InstallDir)) return false;
             string? folderName = uri.Host switch
             {
                 "avatar" => "CustomAvatars",

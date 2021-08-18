@@ -26,7 +26,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
 
         public async Task<bool> InstallPlaylistAsync(string filePath, IStatusProgress? progress = null)
         {
-            if (_settings.InstallDir is null) return false;
+            if (!Directory.Exists(_settings.InstallDir)) return false;
             string json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
             string playlistsDirPath = Path.Combine(_settings.InstallDir, "Playlists");
             string fileName = Path.GetFileName(filePath);
@@ -39,7 +39,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
 
         public async Task<bool> InstallPlaylistAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (_settings.InstallDir is null) return false;
+            if (!Directory.Exists(_settings.InstallDir)) return false;
             using HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

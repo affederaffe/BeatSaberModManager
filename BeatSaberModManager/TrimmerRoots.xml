@@ -1,0 +1,7 @@
+<linker>
+  <assembly fullname="System.Runtime">
+    <type fullname="System.Globalization.CultureInfo">
+      <property name="DisplayName" />
+    </type>
+  </assembly>
+</linker>

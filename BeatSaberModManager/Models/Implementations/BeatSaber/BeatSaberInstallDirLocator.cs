@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Management;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 using BeatSaberModManager.Models.Interfaces;
@@ -21,8 +20,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
         public bool TryDetectInstallDir(out string? installDir)
         {
             installDir = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) installDir = LocateWindowsInstallDir();
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) installDir = LocateLinuxSteamInstallDir();
+            if (OperatingSystem.IsWindows()) installDir = LocateWindowsInstallDir();
+            else if (OperatingSystem.IsLinux()) installDir = LocateLinuxSteamInstallDir();
             return installDir is not null;
         }
 
@@ -34,7 +33,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
 
         private static string? LocateWindowsSteamInstallDir()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
+            if (!OperatingSystem.IsWindows()) return null;
             using RegistryKey? steamInstallDirKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam") ??
                   Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
             return steamInstallDirKey?.GetValue("InstallPath")?.ToString();
@@ -84,7 +83,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
 
         private static string? LocateWindowsOculusBeatSaberDir()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return null;
+            if (!OperatingSystem.IsWindows()) return null;
             using RegistryKey? oculusInstallDirKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
             if (string.IsNullOrEmpty(oculusInstallDir)) return null;

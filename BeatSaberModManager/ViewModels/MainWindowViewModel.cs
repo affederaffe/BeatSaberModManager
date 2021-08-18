@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ namespace BeatSaberModManager.ViewModels
                 .Select(mod => mod is not null)
                 .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
             _modsViewModel.WhenAnyValue(x => x.GridItems.Count)
-                .Select(x => x > 0 && settings.InstallDir is not null)
+                .Select(x => x > 0 && Directory.Exists(settings.InstallDir))
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
             IObservable<(double, string)> statusObservable = Observable.FromEventPattern<(double, string)>(handler => progress.ProgressChanged += handler, handler => progress.ProgressChanged -= handler)
                 .Select(x => x.EventArgs);

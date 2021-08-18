@@ -17,7 +17,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
 
         public string? GetGameVersion()
         {
-            if (_settings.InstallDir is null) return null;
+            if (!Directory.Exists(_settings.InstallDir)) return null;
             string filePath = Path.Combine(_settings.InstallDir, "Beat Saber_Data", "globalgamemanagers");
             using FileStream stream = File.OpenRead(filePath);
             using BinaryReader reader = new(stream, Encoding.UTF8);
