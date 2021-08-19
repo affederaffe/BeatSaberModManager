@@ -90,7 +90,7 @@ namespace BeatSaberModManager.Utils
 
             IEnumerable<string> lines = File.ReadAllLines(handlerDesktopFilePath).Select(x => x.StartsWith("MimeType", StringComparison.Ordinal) ? $"{x}x-scheme-handler/{protocol}" : x);
             File.WriteAllLines(handlerDesktopFilePath, lines);
-            Process.Start("xdg-mime", $"\"default\" \"{handlerDesktopFileName}\" \"x-scheme-handler/{protocol}\"").WaitForExit();
+            Process.Start("xdg-mime", $"\"default\" \"{handlerDesktopFileName}\" \"x-scheme-handler/{protocol}\"");
         }
 
         private static void UnregisterLinuxProtocolHandler(string protocol, string providerName)
@@ -117,8 +117,9 @@ namespace BeatSaberModManager.Utils
             string target = $"x-scheme-handler/{protocol}={providerName}.desktop";
             using FileStream stream = File.OpenRead(mimeappsListFilePath);
             using StreamReader reader = new(stream);
-            while (stream.Position < stream.Length)
-                if (reader.ReadLine() == target) return true;
+            string? line;
+            while ((line = reader.ReadLine()) is not null)
+                if (line == target) return true;
             return false;
         }
     }

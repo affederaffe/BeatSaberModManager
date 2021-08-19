@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   
   <PropertyGroup>
-    <OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
-    <OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <Self-Contained>true</Self-Contained>
     <PublishSingleFile>true</PublishSingleFile>
@@ -14,14 +12,26 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <Nullable>enable</Nullable>
-    <Optimize Condition="'$(Configuration)'=='Release'">true</Optimize>
-    <DebuggerSupport Condition="'$(Configuration)'=='Release'">false</DebuggerSupport>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisLevel>preview</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AssemblyVersion>0.0.1</AssemblyVersion>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <OutputType >Exe</OutputType>
+    <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <OutputType >WinExe</OutputType>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
   </PropertyGroup>
   
   <ItemGroup>
