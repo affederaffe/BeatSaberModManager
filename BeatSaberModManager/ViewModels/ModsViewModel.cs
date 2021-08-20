@@ -91,14 +91,14 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task UninstallModLoaderAsync()
         {
-            ModGridItemViewModel? gridItem = GridItems.FirstOrDefault(x => x.InstalledMod?.Name?.ToLowerInvariant() == _modProvider.ModLoaderName);
+            ModGridItemViewModel? gridItem = GridItems.FirstOrDefault(x => x.InstalledMod?.Name.ToLowerInvariant() == _modProvider.ModLoaderName);
             if (gridItem is not null)
             {
                 await UninstallModAsync(gridItem);
                 return;
             }
 
-            IMod? modLoader = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name?.ToLowerInvariant() == _modProvider.ModLoaderName);
+            IMod? modLoader = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name.ToLowerInvariant() == _modProvider.ModLoaderName);
             if (modLoader is null) return;
             await _modInstaller.UninstallModAsync(modLoader);
         }
@@ -112,7 +112,7 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task InstallModAsync(ModGridItemViewModel gridItem)
         {
-            _progress.Report(gridItem.AvailableMod.Name!);
+            _progress.Report(gridItem.AvailableMod.Name);
             bool success = await _modInstaller.InstallModAsync(gridItem.AvailableMod);
             if (!success) return;
             gridItem.InstalledMod = gridItem.AvailableMod;
@@ -121,7 +121,7 @@ namespace BeatSaberModManager.ViewModels
         private async Task UninstallModAsync(ModGridItemViewModel gridItem)
         {
             if (gridItem.InstalledMod is null) return;
-            _progress.Report(gridItem.InstalledMod.Name!);
+            _progress.Report(gridItem.InstalledMod.Name);
             bool success = await _modInstaller.UninstallModAsync(gridItem.InstalledMod);
             if (!success) return;
             gridItem.InstalledMod = null;

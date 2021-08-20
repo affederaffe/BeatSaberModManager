@@ -28,6 +28,7 @@ namespace BeatSaberModManager.Views
                     .Select(x => $"{this.FindResource("AssetInstallWindow:InstallText")} {x}")
                     .BindTo(AssetNameTextBox, x => x.Text)
                     .DisposeWith(disposables);
+                InstallAsset().ConfigureAwait(false);
             });
         }
 
@@ -36,7 +37,7 @@ namespace BeatSaberModManager.Views
             _uri = uri;
         }
 
-        protected override async void OnInitialized()
+        private async Task InstallAsset()
         {
             if (_uri is null) return;
             await ViewModel!.InstallAsset(_uri);

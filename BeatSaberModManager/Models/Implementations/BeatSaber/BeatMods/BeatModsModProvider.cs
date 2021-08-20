@@ -40,8 +40,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public void ResolveDependencies(IMod modToResolve)
         {
-            if (modToResolve is not BeatModsMod beatModsMod || beatModsMod.Dependencies!.Length <= 0) return;
-            foreach (BeatModsDependency dependency in beatModsMod.Dependencies!)
+            if (modToResolve is not BeatModsMod beatModsMod) return;
+            foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
                 if (dependency.DependingMod is null) continue;
@@ -52,8 +52,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public void UnresolveDependencies(IMod modToUnresolve)
         {
-            if (modToUnresolve is not BeatModsMod beatModsMod || beatModsMod.Dependencies!.Length <= 0) return;
-            foreach (BeatModsDependency dependency in beatModsMod.Dependencies!)
+            if (modToUnresolve is not BeatModsMod beatModsMod) return;
+            foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
                 if (dependency.DependingMod is null) continue;
                 if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependants))
@@ -69,9 +69,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             Dictionary<string, IMod> fileHashModPairs = new();
             foreach (BeatModsMod mod in allMods)
             {
-                BeatModsDownload? download = mod.GetDownloadForVRPlatform(_settings.VRPlatform!);
-                foreach (BeatModsHash hash in download!.Hashes!)
-                    fileHashModPairs.TryAdd(hash.Hash!, mod);
+                BeatModsDownload download = mod.GetDownloadForVRPlatform(_settings.VRPlatform!);
+                foreach (BeatModsHash hash in download.Hashes)
+                    fileHashModPairs.TryAdd(hash.Hash, mod);
             }
 
             InstalledMods = new HashSet<IMod>();

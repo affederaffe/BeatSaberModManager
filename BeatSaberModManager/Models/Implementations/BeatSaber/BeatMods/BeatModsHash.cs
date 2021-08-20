@@ -6,9 +6,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
     public class BeatModsHash
     {
         [JsonPropertyName("hash")]
-        public string? Hash { get; set; }
+        public string Hash { get; set; } = null!;
 
         [JsonPropertyName("file")]
-        public string? File { get; set; }
+        public string File { get; set; } = null!;
     }
 }

@@ -1,7 +1,11 @@
+using System.Threading.Tasks;
+
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.ViewModels;
+
+using ReactiveUI;
 
 using Splat;
 
@@ -15,9 +19,10 @@ namespace BeatSaberModManager.Views
             InitializeComponent();
             ViewModel = Locator.Current.GetService<MainWindowViewModel>();
             Title = nameof(BeatSaberModManager);
+            this.WhenActivated(_ => ValidateOrSetInstallDir().ConfigureAwait(false));
         }
 
-        protected override async void OnInitialized()
+        private async Task ValidateOrSetInstallDir()
         {
             OptionsViewModel optionsViewModel = Locator.Current.GetService<OptionsViewModel>();
             if (optionsViewModel.InstallDir is not null) return;

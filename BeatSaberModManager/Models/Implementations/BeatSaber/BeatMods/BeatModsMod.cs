@@ -9,41 +9,41 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
     public class BeatModsMod : IMod
     {
         [JsonPropertyName("name")]
-        public string? Name { get; set; }
+        public string Name { get; set; } = null!;
 
         [JsonPropertyName("version")]
-        public string? Version { get; set; }
+        public string Version { get; set; } = null!;
 
         [JsonPropertyName("gameVersion")]
-        public string? GameVersion { get; set; }
+        public string GameVersion { get; set; } = null!;
 
         [JsonPropertyName("_id")]
-        public string? Id { get; set; }
+        public string Id { get; set; } = null!;
 
         [JsonPropertyName("status")]
-        public string? Status { get; set; }
+        public string Status { get; set; } = null!;
 
         [JsonPropertyName("description")]
-        public string? Description { get; set; }
+        public string Description { get; set; } = null!;
 
         [JsonPropertyName("category")]
-        public string? Category { get; set; }
+        public string Category { get; set; } = null!;
 
         [JsonPropertyName("link")]
-        public string? MoreInfoLink { get; set; }
+        public string MoreInfoLink { get; set; } = null!;
 
         [JsonPropertyName("required")]
         public bool Required { get; set; }
 
         [JsonPropertyName("author")]
-        public BeatModsAuthor? Author { get; set; }
+        public BeatModsAuthor Author { get; set; } = null!;
 
         [JsonPropertyName("downloads")]
-        public BeatModsDownload[]? Downloads { get; set; }
+        public BeatModsDownload[] Downloads { get; set; } = null!;
 
         [JsonPropertyName("dependencies")]
-        public BeatModsDependency[]? Dependencies { get; set; }
+        public BeatModsDependency[] Dependencies { get; set; } = null!;
 
-        public BeatModsDownload? GetDownloadForVRPlatform(string platform) => Downloads!.FirstOrDefault(x => x.Type!.ToLowerInvariant() == "universal" || x.Type == platform);
+        public BeatModsDownload GetDownloadForVRPlatform(string platform) => Downloads.First(x => x.Type.ToLowerInvariant() == "universal" || x.Type == platform);
     }
 }

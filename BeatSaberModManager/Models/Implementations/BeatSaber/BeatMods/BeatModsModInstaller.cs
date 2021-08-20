@@ -28,11 +28,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             if (modToInstall is not BeatModsMod beatModsMod || !Directory.Exists(_settings.InstallDir)) return false;
             string pendingDirPath = Path.Combine(_settings.InstallDir, "IPA", "Pending");
             if (!Directory.Exists(pendingDirPath)) Directory.CreateDirectory(pendingDirPath);
-            BeatModsDownload? download = beatModsMod.GetDownloadForVRPlatform(_settings.VRPlatform!);
-            if (download is null) return false;
-            using ZipArchive? archive = await _modProvider.DownloadModAsync(download.Url!).ConfigureAwait(false);
+            BeatModsDownload download = beatModsMod.GetDownloadForVRPlatform(_settings.VRPlatform!);
+            using ZipArchive? archive = await _modProvider.DownloadModAsync(download.Url).ConfigureAwait(false);
             if (archive is null || !ValidateDownload(download, archive)) return false;
-            if (beatModsMod.Name!.ToLowerInvariant() != _modProvider.ModLoaderName)
+            if (beatModsMod.Name.ToLowerInvariant() != _modProvider.ModLoaderName)
             {
                 archive.ExtractToDirectory(pendingDirPath, true);
                 _modProvider.InstalledMods?.Add(modToInstall);
@@ -48,14 +47,13 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public async Task<bool> UninstallModAsync(IMod modToUninstall)
         {
             if (modToUninstall is not BeatModsMod beatModsMod || !Directory.Exists(_settings.InstallDir)) return false;
-            if (modToUninstall.Name!.ToLowerInvariant() == _modProvider.ModLoaderName) return await UninstallBSIPAAsync(beatModsMod).ConfigureAwait(false);
+            if (modToUninstall.Name.ToLowerInvariant() == _modProvider.ModLoaderName) return await UninstallBSIPAAsync(beatModsMod).ConfigureAwait(false);
             string pendingDirPath = Path.Combine(_settings.InstallDir, "IPA", "Pending");
-            BeatModsDownload? download = beatModsMod.GetDownloadForVRPlatform(_settings.VRPlatform!);
-            if (download!.Hashes is null) return false;
+            BeatModsDownload download = beatModsMod.GetDownloadForVRPlatform(_settings.VRPlatform!);
             foreach (BeatModsHash hash in download.Hashes)
             {
-                string pendingPath = Path.Combine(pendingDirPath, hash.File!);
-                string normalPath = Path.Combine(_settings.InstallDir, hash.File!);
+                string pendingPath = Path.Combine(pendingDirPath, hash.File);
+                string normalPath = Path.Combine(_settings.InstallDir, hash.File);
                 if (File.Exists(pendingPath)) File.Delete(pendingPath);
                 if (File.Exists(normalPath)) File.Delete(normalPath);
             }
@@ -79,9 +77,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         private bool ValidateDownload(BeatModsDownload download, ZipArchive archive)
         {
-            foreach (BeatModsHash hash in download.Hashes!)
+            foreach (BeatModsHash hash in download.Hashes)
             {
-                using Stream? stream = archive.GetEntry(hash.File!)?.Open();
+                using Stream? stream = archive.GetEntry(hash.File)?.Open();
                 if (stream is null) return false;
                 string strHash = _hashProvider.CalculateHashForStream(stream);
                 if (strHash != hash.Hash) return false;
@@ -174,11 +172,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         private bool TryRemoveBSIPAFiles(BeatModsMod bsipa)
         {
-            BeatModsDownload? download = bsipa.GetDownloadForVRPlatform(_settings.VRPlatform!);
-            if (download?.Hashes is null) return false;
+            BeatModsDownload download = bsipa.GetDownloadForVRPlatform(_settings.VRPlatform!);
             foreach (BeatModsHash hash in download.Hashes)
             {
-                string fileName = hash.File!.Replace("IPA/", string.Empty).Replace("Data", "Beat Saber_Data");
+                string fileName = hash.File.Replace("IPA/", string.Empty).Replace("Data", "Beat Saber_Data");
                 string filePath = Path.Combine(_settings.InstallDir!, fileName);
                 if (File.Exists(filePath)) File.Delete(filePath);
             }
