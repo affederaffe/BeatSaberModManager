@@ -30,7 +30,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
             using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            BeatSaverMap? map = JsonSerializer.Deserialize<BeatSaverMap>(body);
+            BeatSaverMap? map = JsonSerializer.Deserialize<BeatSaverMap>(body, BeatSaverMapJsonSerializerContext.Default.BeatSaverMap);
             if (map is null || map.Versions!.Length <= 0) return false;
             progress?.Report(map.Name!);
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last()).ConfigureAwait(false);

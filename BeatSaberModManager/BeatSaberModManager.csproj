@@ -23,13 +23,13 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-    <OutputType >Exe</OutputType>
+    <OutputType>Exe</OutputType>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <OutputType >WinExe</OutputType>
+    <OutputType>WinExe</OutputType>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
   </PropertyGroup>
@@ -43,6 +43,8 @@
   </ItemGroup>
   
   <ItemGroup>
+    <PackageReference Include="System.Management" Version="6.0.0-preview.7.21377.19" />
+    <PackageReference Include="System.Text.Json" Version="6.0.0-preview.7.21377.19" />
     <PackageReference Include="Avalonia" Version="0.10.7" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.7" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.7" />
@@ -50,7 +52,6 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.7" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
     <PackageReference Include="Deadpikle.AvaloniaProgressRing" Version="0.9.1" />
-    <PackageReference Include="System.Management" Version="6.0.0-preview.7.21377.19" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.5.21301.5" />
     <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
   </ItemGroup>

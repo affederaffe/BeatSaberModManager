@@ -2,6 +2,8 @@
 using System.IO;
 using System.Text.Json;
 
+using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
+
 
 namespace BeatSaberModManager.Models.Implementations
 {
@@ -15,8 +17,7 @@ namespace BeatSaberModManager.Models.Implementations
 
         public void Save()
         {
-            JsonSerializerOptions jsonSerializerOptions = new() { WriteIndented = true };
-            string json = JsonSerializer.Serialize(this, jsonSerializerOptions);
+            string json = JsonSerializer.Serialize(this, SettingsJsonSerializerContext.Default.Settings);
             if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
             File.WriteAllText(_saveFilePath, json);
         }
@@ -35,7 +36,7 @@ namespace BeatSaberModManager.Models.Implementations
         {
             Settings? settings = null;
             if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
-            if (File.Exists(_saveFilePath)) settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText(_saveFilePath));
+            if (File.Exists(_saveFilePath)) settings = JsonSerializer.Deserialize<Settings>(File.ReadAllText(_saveFilePath), SettingsJsonSerializerContext.Default.Settings);
             return settings ?? new Settings();
         }
     }
