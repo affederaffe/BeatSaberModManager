@@ -6,12 +6,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
     public class Playlist
     {
         [JsonPropertyName("playlistName")]
-        public string? PlaylistTitle { get; set; }
+        public string PlaylistTitle { get; set; } = null!;
 
         [JsonPropertyName("playlistAuthor")]
-        public string? PlaylistAuthor { get; set; }
+        public string PlaylistAuthor { get; set; } = null!;
 
         [JsonPropertyName("songs")]
-        public PlaylistSong[]? Songs { get; set; }
+        public PlaylistSong[] Songs { get; set; } = null!;
     }
 }

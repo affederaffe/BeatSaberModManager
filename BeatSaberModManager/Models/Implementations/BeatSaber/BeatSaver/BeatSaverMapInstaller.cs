@@ -31,13 +31,13 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             BeatSaverMap? map = JsonSerializer.Deserialize<BeatSaverMap>(body, BeatSaverMapJsonSerializerContext.Default.BeatSaverMap);
-            if (map is null || map.Versions!.Length <= 0) return false;
-            progress?.Report(map.Name!);
+            if (map is null || map.Versions.Length <= 0) return false;
+            progress?.Report(map.Name);
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last()).ConfigureAwait(false);
             if (archive is null) return false;
             string customLevelsDirectoryPath = Path.Combine(_settings.InstallDir, "Beat Saber_Data", "CustomLevels");
             if (!Directory.Exists(customLevelsDirectoryPath)) Directory.CreateDirectory(customLevelsDirectoryPath);
-            string mapName = string.Concat($"{map.Id} ({map.MetaData?.SongName} - {map.MetaData?.LevelAuthorName})".Split(_illegalCharacters));
+            string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
             archive.ExtractToDirectory(levelDirectoryPath, true);
             return true;
@@ -45,7 +45,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
 
         private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl!).ConfigureAwait(false);
+            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             return new ZipArchive(stream);

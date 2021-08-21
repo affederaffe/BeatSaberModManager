@@ -1,7 +1,10 @@
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
+using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.ViewModels;
 
@@ -19,6 +22,7 @@ namespace BeatSaberModManager.Views
             InitializeComponent();
             ViewModel = Locator.Current.GetService<MainWindowViewModel>();
             Title = nameof(BeatSaberModManager);
+            ViewModel.WhenAnyValue(x => x.ProgressBarStatusType).Select(GetLocalizedStatus).BindTo(this, x => x.ProgressBarStatusText.Content);
             this.WhenActivated(_ => ValidateOrSetInstallDir().ConfigureAwait(false));
         }
 
@@ -30,5 +34,13 @@ namespace BeatSaberModManager.Views
             if (installDirLocator.TryDetectInstallDir(out string? installDir)) optionsViewModel.InstallDir = installDir;
             optionsViewModel.InstallDir ??= await new InstallFolderDialogWindow().ShowDialog<string?>(this);
         }
+        
+        private object? GetLocalizedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
+        {
+            ProgressBarStatusType.None => string.Empty,
+            ProgressBarStatusType.Installing => "MainWindow:InstallModText",
+            ProgressBarStatusType.Uninstalling => "MainWindow:UninstallModText",
+            _ => string.Empty
+        });
     }
 }

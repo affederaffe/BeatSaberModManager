@@ -47,13 +47,17 @@
                          HorizontalAlignment="Stretch"
                          VerticalAlignment="Stretch"
                          Value="{Binding ProgressBarValue}" />
-            <Label Grid.Column="0"
-                   Margin="10, 0, 5, 0"
-                   ZIndex="1"
-                   FontSize="22"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Content="{Binding ProgressBarText}" />
+            <StackPanel Grid.Column="0"
+                        ZIndex="1"
+                        Margin="10, 0, 5, 0"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                <Label Name="ProgressBarStatusText"
+                       FontSize="22" />
+                <Label FontSize="22"
+                       Content="{Binding ProgressBarText}" />
+            </StackPanel>
             <Button Grid.Column="1"
                     Margin="5, 0, 5, 0"
                     HorizontalAlignment="Stretch"

@@ -1,5 +1,4 @@
-﻿using System.Reactive.Disposables;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using Avalonia.Controls;
@@ -22,14 +21,14 @@ namespace BeatSaberModManager.Views
         {
             InitializeComponent();
             ViewModel = Locator.Current.GetService<AssetInstallWindowViewModel>();
-            this.WhenActivated(disposables =>
-            {
-                ViewModel.WhenAnyValue(x => x.AssetName)
-                    .Select(x => $"{this.FindResource("AssetInstallWindow:InstallText")} {x}")
-                    .BindTo(AssetNameTextBox, x => x.Text)
-                    .DisposeWith(disposables);
-                InstallAsset().ConfigureAwait(false);
-            });
+            string installText = (string)this.FindResource("AssetInstallWindow:InstallText")!;
+            string log = string.Empty;
+            ViewModel.WhenAnyValue(x => x.AssetName)
+                .WhereNotNull()
+                .Select(x => log += $"{installText} {x}\n")
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .BindTo(this, x => x.AssetNameTextBox.Text);
+            this.WhenActivated(_ => InstallAsset().ConfigureAwait(false));
         }
 
         public AssetInstallWindow(string uri) : this()

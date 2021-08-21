@@ -1,16 +1,31 @@
 ﻿using System;
+using System.Reactive.Subjects;
 
 using BeatSaberModManager.Models.Interfaces;
 
 
 namespace BeatSaberModManager.Models.Implementations.Progress
 {
-    public class StatusProgress : Progress<(double, string)>, IStatusProgress
+    public class StatusProgress : IStatusProgress, IDisposable
     {
-        private double _progress;
-        private string _status = string.Empty;
+        private readonly Subject<double> _progressValue = new();
+        private readonly Subject<string?> _statusText = new();
+        private readonly Subject<ProgressBarStatusType> _statusType = new();
 
-        public void Report(double value) => base.OnReport((_progress = value, _status));
-        public void Report(string value) => base.OnReport((_progress, _status = value));
+        public IObservable<double> ProgressValue => _progressValue;
+        public IObservable<string?> StatusText => _statusText;
+        public IObservable<ProgressBarStatusType> StatusType => _statusType;
+
+        public void Report(double value) => _progressValue.OnNext(value * 100);
+        public void Report(string value) => _statusText.OnNext(value);
+        public void Report(ProgressBarStatusType value) => _statusType.OnNext(value);
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            _progressValue.Dispose();
+            _statusText.Dispose();
+            _statusType.Dispose();
+        }
     }
 }

@@ -6,9 +6,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
     public class PlaylistSong
     {
         [JsonPropertyName("key")]
-        public string? Id { get; set; }
+        public string Id { get; set; } = null!;
 
         [JsonPropertyName("hash")]
-        public string? Hash { get; set; }
+        public string Hash { get; set; } = null!;
     }
 }

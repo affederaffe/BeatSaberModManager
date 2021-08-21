@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Progress;
@@ -16,15 +15,13 @@ namespace BeatSaberModManager.ViewModels
     {
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly IStatusProgress _progress;
-        private readonly ObservableAsPropertyHelper<string> _assetName;
+        private readonly ObservableAsPropertyHelper<string?> _assetName;
 
         public AssetInstallWindowViewModel(IEnumerable<IAssetProvider> assetProviders, StatusProgress progress)
         {
             _assetProviders = assetProviders;
             _progress = progress;
-            Observable.FromEventPattern<(double, string)>(handler => progress.ProgressChanged += handler, handler => progress.ProgressChanged -= handler)
-                .Select(x => x.EventArgs.Item2)
-                .ToProperty(this, nameof(AssetName), out _assetName);
+            progress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
         }
 
         public async Task InstallAsset(string strUri)
@@ -37,7 +34,7 @@ namespace BeatSaberModManager.ViewModels
             ResultLabelText = result ? "✔" : "✘";
         }
 
-        public string AssetName => _assetName.Value;
+        public string? AssetName => _assetName.Value;
 
         private bool _progressRingActive = true;
         public bool ProgressRingActive

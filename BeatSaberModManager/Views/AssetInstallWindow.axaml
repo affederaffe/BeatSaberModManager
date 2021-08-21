@@ -35,7 +35,6 @@
                    IsVisible="{Binding !ProgressRingActive}" />
             <TextBox Grid.Row="1"
                      x:Name="AssetNameTextBox"
-                     IsReadOnly="True"
                      IsHitTestVisible="False" />
         </Grid>
     </Panel>

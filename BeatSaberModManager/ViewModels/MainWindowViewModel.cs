@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -19,7 +18,8 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _moreInfoButtonEnabled;
         private readonly ObservableAsPropertyHelper<bool> _installButtonEnabled;
         private readonly ObservableAsPropertyHelper<double> _progressBarValue;
-        private readonly ObservableAsPropertyHelper<string> _progressBarText;
+        private readonly ObservableAsPropertyHelper<string?> _progressBarText;
+        private readonly ObservableAsPropertyHelper<ProgressBarStatusType> _progressBarStatusType;
 
         public MainWindowViewModel(ModsViewModel modsViewModel, Settings settings, StatusProgress progress)
         {
@@ -32,10 +32,9 @@ namespace BeatSaberModManager.ViewModels
             _modsViewModel.WhenAnyValue(x => x.GridItems.Count)
                 .Select(x => x > 0 && Directory.Exists(settings.InstallDir))
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
-            IObservable<(double, string)> statusObservable = Observable.FromEventPattern<(double, string)>(handler => progress.ProgressChanged += handler, handler => progress.ProgressChanged -= handler)
-                .Select(x => x.EventArgs);
-            statusObservable.Select(x => x.Item1 * 100).ToProperty(this, nameof(ProgressBarValue), out _progressBarValue);
-            statusObservable.Select(x => x.Item2).ToProperty(this, nameof(ProgressBarText), out _progressBarText);
+            progress.ProgressValue.ToProperty(this, nameof(ProgressBarValue), out _progressBarValue);
+            progress.StatusText.ToProperty(this, nameof(ProgressBarText), out _progressBarText);
+            progress.StatusType.ToProperty(this, nameof(ProgressBarStatusType), out _progressBarStatusType);
         }
 
         public ReactiveCommand<Unit, Unit> MoreInfoButtonCommand { get; }
@@ -48,7 +47,9 @@ namespace BeatSaberModManager.ViewModels
 
         public double ProgressBarValue => _progressBarValue.Value;
 
-        public string ProgressBarText => _progressBarText.Value;
+        public string? ProgressBarText => _progressBarText.Value;
+
+        public ProgressBarStatusType ProgressBarStatusType => _progressBarStatusType.Value;
 
         private async Task OpenMoreInfoLink()
         {

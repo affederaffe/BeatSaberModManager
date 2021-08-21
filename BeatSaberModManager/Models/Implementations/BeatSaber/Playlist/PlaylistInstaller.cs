@@ -55,11 +55,11 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
 
         private async Task<bool> InstallPlaylistAsync(Playlist playlist, IStatusProgress? progress = null)
         {
-            for (int i = 0; i < playlist.Songs!.Length; i++)
+            for (int i = 0; i < playlist.Songs.Length; i++)
             {
-                bool success = await _beatSaverMapInstaller.InstallBeatSaverMapAsync(playlist.Songs![i].Id!, progress).ConfigureAwait(false);
+                bool success = await _beatSaverMapInstaller.InstallBeatSaverMapAsync(playlist.Songs[i].Id, progress).ConfigureAwait(false);
                 if (!success) return false;
-                progress?.Report(((double)i + 1) / playlist.Songs!.Length);
+                progress?.Report(((double)i + 1) / playlist.Songs.Length);
             }
 
             return true;
