@@ -136,7 +136,7 @@ namespace BeatSaberModManager.ViewModels
             else _modProvider.UnresolveDependencies(gridItem.AvailableMod);
             foreach (ModGridItemViewModel modGridItem in GridItems)
             {
-                bool isDependency = modGridItem.AvailableMod.Required || _modProvider.Dependencies.TryGetValue(modGridItem.AvailableMod, out HashSet<IMod>? dependants) && dependants.Count != 0;
+                bool isDependency = modGridItem.AvailableMod.Required || _modProvider.Dependencies.TryGetValue(modGridItem.AvailableMod, out HashSet<IMod>? dependents) && dependents.Count != 0;
                 modGridItem.IsCheckBoxEnabled = !isDependency;
                 modGridItem.IsCheckBoxChecked = modGridItem.IsCheckBoxChecked || isDependency;
             }

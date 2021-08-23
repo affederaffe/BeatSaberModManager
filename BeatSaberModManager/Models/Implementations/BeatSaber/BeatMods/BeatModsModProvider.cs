@@ -45,7 +45,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
                 if (dependency.DependingMod is null) continue;
-                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependants)) dependants.Add(beatModsMod);
+                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependents)) dependents.Add(beatModsMod);
                 else Dependencies.Add(dependency.DependingMod, new HashSet<IMod> { beatModsMod });
             }
         }
@@ -56,8 +56,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
                 if (dependency.DependingMod is null) continue;
-                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependants))
-                    dependants.Remove(beatModsMod);
+                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependents))
+                    dependents.Remove(beatModsMod);
             }
         }
 
