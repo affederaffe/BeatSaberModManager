@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
-    
+
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
     <sys:String x:Key="MainWindow:OptionsHeader">Optionen</sys:String>
@@ -11,13 +11,21 @@
     <sys:String x:Key="MainWindow:UninstallModText">Deinstalliere:</sys:String>
     
     <sys:String x:Key="IntroView:Name">Beat Saber Mod Manager</sys:String>
-    
+    <sys:String x:Key="IntroView:IntroText:Line1">Bitte lies diese Seite vollständig und aufmerksam.</sys:String>
+    <sys:String x:Key="IntroView:IntroText:Line2">Durch Nutzung dieses Programmes stimmst du den folgenden Bedingungen zu:</sys:String>
+    <sys:String x:Key="IntroView:IntroText:Line3">Beat Saber unterstützt normalerweise keine Mods. Das heißt:</sys:String>
+    <sys:String x:Key="IntroView:IntroText:Line4">Mods werden nach jedem Update kaputt gehen. Das ist normal und nicht Beat Games' Schuld.</sys:String>
+    <sys:String x:Key="IntroView:IntroText:Line5">Mods werden Fehler und Leistungsprobleme verursachen. Das ist nicht Beat Games' Schuld.</sys:String>
+    <sys:String x:Key="IntroView:IntroText:Line6">Mods werden kostenlos von Leuten in ihrer Freizeit erstellt. Bitte sei geduldig und verständnisvoll.</sys:String>
+    <sys:String x:Key="IntroView:IntroText:Line7">Bitte vergib KEINE schlechte Bewertung, weil die Mods nicht funktionieren. Das ist nicht Beat Games' Schuld.</sys:String>
+    <sys:String x:Key="IntroView:IntroText:Line8">Sie versuchen nicht, Mods zu unterbinden.</sys:String>
+
     <sys:String x:Key="ModsView:ModNameHeader">Name</sys:String>
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>
     <sys:String x:Key="ModsView:LatestVersionHeader">Neuste</sys:String>
     <sys:String x:Key="ModsView:ModDescriptionHeader">Beschreibung</sys:String>
     <sys:String x:Key="ModsView:NoModsAvailable">Keine Mods für diese Version verfügbar</sys:String>
-    
+
     <sys:String x:Key="OptionsView:InstallationLabel">Installationsordner</sys:String>
     <sys:String x:Key="OptionsView:OpenFolderButton">Ordner öffnen</sys:String>
     <sys:String x:Key="OptionsView:SelectFolderButton">Ordner auswählen</sys:String>
@@ -31,10 +39,10 @@
     <sys:String x:Key="OptionsView:ThemesLabel">Themen</sys:String>
     <sys:String x:Key="OptionsView:ToolsLabel">Werkzeuge</sys:String>
     <sys:String x:Key="OptionsView:InstallPlaylistButton">Playlist installieren</sys:String>
-    
+
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Weiter</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:CancelButtonText">Abbrechen</sys:String>
-    
+
     <sys:String x:Key="AssetInstallWindow:InstallText">Installiere:</sys:String>
 </ResourceDictionary>

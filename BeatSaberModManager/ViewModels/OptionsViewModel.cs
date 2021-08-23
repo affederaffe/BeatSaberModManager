@@ -100,7 +100,7 @@ namespace BeatSaberModManager.ViewModels
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
-        public async Task InstallPlaylistsAsync(string filePath) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(filePath, _progress));
+        public async Task InstallPlaylistsAsync(string[] filePaths) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(filePaths, _progress));
 
         private static async Task ToggleOneClickHandlerAsync(bool active, string protocol)
         {

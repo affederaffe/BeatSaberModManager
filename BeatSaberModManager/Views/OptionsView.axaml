@@ -36,10 +36,10 @@
                 Command="{Binding OpenInstallDirCommand}" />
         <Button Grid.Column="3"
                 Grid.Row="1"
+                x:Name="SelectInstallFolderButton"
                 Margin="10, 5"
                 HorizontalAlignment="Center"
-                Content="{DynamicResource OptionsView:SelectFolderButton}"
-                Click="OnSelectInstallFolderButtonClicked" />
+                Content="{DynamicResource OptionsView:SelectFolderButton}" />
         <StackPanel Grid.Column="1"
                     Grid.Row="2"
                     Orientation="Horizontal"
@@ -103,7 +103,6 @@
                     Orientation="Horizontal">
             <Label Content="A 文" FontSize="22" />
             <ComboBox DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:OptionsView}}"
-                      VirtualizationMode="None"
                       Items="{Binding LanguageSwitcher.Languages}"
                       SelectedItem="{Binding LanguageSwitcher.SelectedLanguage}">
                 <ComboBox.ItemTemplate>
@@ -133,10 +132,10 @@
                 Command="{Binding OpenThemesDirCommand}" />
         <Button Grid.Column="3"
                 Grid.Row="8"
+                x:Name="SelectThemesFolderButton"
                 Margin="10, 5"
                 HorizontalAlignment="Center"
-                Content="{DynamicResource OptionsView:SelectFolderButton}"
-                Click="OnSelectThemesFolderButtonClicked" />
+                Content="{DynamicResource OptionsView:SelectFolderButton}" />
         <ComboBox Grid.Column="1"
                   Grid.Row="9"
                   Margin="10, 5"
@@ -157,11 +156,11 @@
                Content="{DynamicResource OptionsView:ToolsLabel}" />
         <Button Grid.Column="1"
                 Grid.Row="11"
+                x:Name="InstallPlaylistButton"
                 Margin="50, 5, 10, 5"
                 HorizontalAlignment="Left"
                 IsEnabled="{Binding HasValidatedInstallDir}"
-                Content="{DynamicResource OptionsView:InstallPlaylistButton}"
-                Click="OnInstallPlaylistButtonClicked" />
+                Content="{DynamicResource OptionsView:InstallPlaylistButton}" />
     </Grid>
 
 </UserControl>

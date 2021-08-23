@@ -34,7 +34,7 @@ namespace BeatSaberModManager.Views
             if (installDirLocator.TryDetectInstallDir(out string? installDir)) optionsViewModel.InstallDir = installDir;
             optionsViewModel.InstallDir ??= await new InstallFolderDialogWindow().ShowDialog<string?>(this);
         }
-        
+
         private object? GetLocalizedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
         {
             ProgressBarStatusType.None => string.Empty,

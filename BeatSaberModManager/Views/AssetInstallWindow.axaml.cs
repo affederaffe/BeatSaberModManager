@@ -25,7 +25,7 @@ namespace BeatSaberModManager.Views
             string log = string.Empty;
             ViewModel.WhenAnyValue(x => x.AssetName)
                 .WhereNotNull()
-                .Select(x => log += $"{installText} {x}\n")
+                .Select(x => log = $"{installText} {x}\n{log}")
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .BindTo(this, x => x.AssetNameTextBox.Text);
             this.WhenActivated(_ => InstallAsset().ConfigureAwait(false));

@@ -143,20 +143,17 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         {
             if (!Directory.Exists(_settings.InstallDir)) return false;
             string bsipaPath = Path.Combine(_settings.InstallDir, "IPA.exe");
-            if (File.Exists(bsipaPath))
+            if (!File.Exists(bsipaPath)) return TryRemoveBSIPAFiles(bsipa);
+            ProcessStartInfo processStartInfo = new()
             {
-                ProcessStartInfo processStartInfo = new()
-                {
-                    FileName = bsipaPath,
-                    WorkingDirectory = _settings.InstallDir,
-                    Arguments = "--revert -n"
-                };
+                FileName = bsipaPath,
+                WorkingDirectory = _settings.InstallDir,
+                Arguments = "--revert -n"
+            };
 
-                Process? process = Process.Start(processStartInfo);
-                if (process is null) return false;
-                await process.WaitForExitAsync().ConfigureAwait(false);
-            }
-
+            Process? process = Process.Start(processStartInfo);
+            if (process is null) return false;
+            await process.WaitForExitAsync().ConfigureAwait(false);
             return TryRemoveBSIPAFiles(bsipa);
         }
 

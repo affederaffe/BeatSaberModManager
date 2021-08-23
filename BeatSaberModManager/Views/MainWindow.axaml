@@ -16,16 +16,30 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
     
-    <Grid ColumnDefinitions="*, 8.75*"
-          RowDefinitions="*, Auto">
-        <Rectangle Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.9" Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
-        <Rectangle Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" IsHitTestVisible="False" Opacity="0.985" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-        
-        <ListBox Grid.Column="0" Grid.Row="0" x:Name="Tabs" Margin="0, 30" Background="{x:Null}">
+    <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
+        <Rectangle Grid.Column="0"
+                   Grid.Row="0"
+                   Grid.RowSpan="2"
+                   IsHitTestVisible="False"
+                   Opacity="0.9"
+                   Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+        <Rectangle Grid.Column="1"
+                   Grid.Row="0"
+                   Grid.RowSpan="2"
+                   IsHitTestVisible="False" 
+                   Opacity="0.985"
+                   Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+
+        <ListBox Grid.Column="0"
+                 Grid.Row="0"
+                 x:Name="Tabs"
+                 Margin="0, 30"
+                 Background="{x:Null}"
+                 BorderBrush="{x:Null}">
             <ListBox.Items>
-                <Label Content="{DynamicResource MainWindow:IntroHeader}" />
-                <Label Content="{DynamicResource MainWindow:ModsHeader}" />
-                <Label Content="{DynamicResource MainWindow:OptionsHeader}" />
+                <ListBoxItem Content="{DynamicResource MainWindow:IntroHeader}" />
+                <ListBoxItem Content="{DynamicResource MainWindow:ModsHeader}" />
+                <ListBoxItem Content="{DynamicResource MainWindow:OptionsHeader}" />
             </ListBox.Items>
         </ListBox>
 

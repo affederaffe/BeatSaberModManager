@@ -2,20 +2,24 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.IntroView">
-    
-    <Design.DataContext>
-        <vm:IntroViewModel />
-    </Design.DataContext>
 
     <StackPanel Margin="20"
                 Orientation="Vertical">
         <Label IsHitTestVisible="False"
-               FontSize="22.5"
+               FontSize="30"
+               Margin="0, 0, 0, 10"
                HorizontalAlignment="Center"
                Content="{DynamicResource IntroView:Name}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line1}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line2}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line3}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line4}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line5}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line6}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line7}" />
+        <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line8}" />
     </StackPanel>
 
 </UserControl>

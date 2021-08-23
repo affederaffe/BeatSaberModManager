@@ -1,18 +1,13 @@
-﻿using Avalonia.ReactiveUI;
-
-using BeatSaberModManager.ViewModels;
-
-using Splat;
+﻿using Avalonia.Controls;
 
 
 namespace BeatSaberModManager.Views
 {
-    public partial class IntroView : ReactiveUserControl<IntroViewModel>
+    public partial class IntroView : UserControl
     {
         public IntroView()
         {
             InitializeComponent();
-            ViewModel = Locator.Current.GetService<IntroViewModel>();
         }
     }
 }

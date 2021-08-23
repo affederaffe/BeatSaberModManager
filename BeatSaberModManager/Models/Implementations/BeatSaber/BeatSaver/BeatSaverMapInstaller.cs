@@ -51,8 +51,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
             return new ZipArchive(stream);
         }
 
-        private static readonly char[] _illegalCharacters = new[]
-        {
+        private static readonly char[] _illegalCharacters = {
             '<', '>', ':', '/', '\\', '|', '?', '*', '"',
             '\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007',
             '\u0008', '\u0009', '\u000a', '\u000b', '\u000c', '\u000d', '\u000e', '\u000d',
