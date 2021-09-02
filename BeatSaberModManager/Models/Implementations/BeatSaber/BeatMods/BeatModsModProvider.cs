@@ -7,15 +7,17 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
+using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
+
+using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
     public class BeatModsModProvider : IModProvider
     {
-        private readonly Settings _settings;
+        private readonly SettingsStore _settingsStore;
         private readonly HttpClient _httpClient;
         private readonly IHashProvider _hashProvider;
         private readonly IGameVersionProvider _gameVersionProvider;
@@ -25,9 +27,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         private const string kBeatModsAliasUrl = "https://alias.beatmods.com/aliases.json";
         private const string kBeatModsVersionsUrl = "https://versions.beatmods.com/versions.json";
 
-        public BeatModsModProvider(Settings settings, HttpClient httpClient, IHashProvider hashProvider, IGameVersionProvider gameVersionProvider)
+        public BeatModsModProvider(IOptions<SettingsStore>settingsStore, HttpClient httpClient, IHashProvider hashProvider, IGameVersionProvider gameVersionProvider)
         {
-            _settings = settings;
+            _settingsStore = settingsStore.Value;
             _httpClient = httpClient;
             _hashProvider = hashProvider;
             _gameVersionProvider = gameVersionProvider;
@@ -63,26 +65,26 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         public async Task LoadInstalledModsAsync()
         {
-            if (!Directory.Exists(_settings.InstallDir)) return;
+            if (!Directory.Exists(_settingsStore.InstallDir)) return;
             BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
             if (allMods is null) return;
             Dictionary<string, IMod> fileHashModPairs = new();
             foreach (BeatModsMod mod in allMods)
             {
-                BeatModsDownload download = mod.GetDownloadForVRPlatform(_settings.VRPlatform!);
+                BeatModsDownload download = mod.GetDownloadForVRPlatform(_settingsStore.VRPlatform!);
                 foreach (BeatModsHash hash in download.Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
             }
 
             InstalledMods = new HashSet<IMod>();
-            IEnumerable<string> filePaths = _installedModsLocations.Select(x => Path.Combine(_settings.InstallDir, x))
+            IEnumerable<string> hashes = _installedModsLocations.Select(x => Path.Combine(_settingsStore.InstallDir, x))
                 .Where(Directory.Exists)
                 .SelectMany(Directory.EnumerateFiles)
                 .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal))
-                .Concat(new[] { Path.Combine(_settings.InstallDir, "Beat Saber_Data/Managed/IPA.Loader.dll") });
-            foreach (string filePath in filePaths)
+                .Concat(new[] { Path.Combine(_settingsStore.InstallDir, "Beat Saber_Data/Managed/IPA.Loader.dll") })
+                .Select(_hashProvider.CalculateHashForFile);
+            foreach (string hash in hashes)
             {
-                string hash = _hashProvider.CalculateHashForFile(filePath);
                 if (!fileHashModPairs.TryGetValue(hash, out IMod? mod)) continue;
                 InstalledMods.Add(mod);
             }
@@ -114,7 +116,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsApiUrl + args).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return default;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonSerializer.Deserialize<BeatModsMod[]>(body, BeatModsModArrayJsonSerializerContext.Default.BeatModsModArray);
+            return JsonSerializer.Deserialize<BeatModsMod[]>(body);
         }
 
         private async Task<string?> GetAliasedGameVersion(string? gameVersion)
@@ -122,13 +124,13 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage versionsResponse = await _httpClient.GetAsync(kBeatModsVersionsUrl).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode) return null;
             string versionsBody = await versionsResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            string[]? versions = JsonSerializer.Deserialize<string[]>(versionsBody, StringArrayJsonSerializerContext.Default.StringArray);
+            string[]? versions = JsonSerializer.Deserialize<string[]>(versionsBody);
             if (versions is null) return null;
             if (versions.Contains(gameVersion)) return gameVersion;
             using HttpResponseMessage aliasResponse = await _httpClient.GetAsync(kBeatModsAliasUrl).ConfigureAwait(false);
             if (!aliasResponse.IsSuccessStatusCode) return null;
             string aliasBody = await aliasResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(aliasBody, DictionaryStringStringArrayJsonSerializerContext.Default.DictionaryStringStringArray);
+            Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(aliasBody);
             if (aliases is null) return null;
 
             foreach ((string version, string[] alias) in aliases)

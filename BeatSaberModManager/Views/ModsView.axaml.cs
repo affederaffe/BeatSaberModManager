@@ -6,23 +6,25 @@ using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
 
-using ReactiveUI;
+using Microsoft.Extensions.DependencyInjection;
 
-using Splat;
+using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views
 {
     public partial class ModsView : ReactiveUserControl<ModsViewModel>
     {
-        private readonly DataGridCollectionView _dataGridCollection;
+        private readonly DataGridCollectionView _dataGridCollection = null!;
 
-        public ModsView()
+        public ModsView() { }
+
+        [ActivatorUtilitiesConstructor]
+        public ModsView(ModsViewModel modsViewModel, OptionsViewModel optionsViewModel)
         {
             InitializeComponent();
-            ViewModel = Locator.Current.GetService<ModsViewModel>();
-            OptionsViewModel optionsViewModel = Locator.Current.GetService<OptionsViewModel>();
-            _dataGridCollection = new DataGridCollectionView(ViewModel!.GridItems);
+            ViewModel = modsViewModel;
+            _dataGridCollection = new DataGridCollectionView(ViewModel.GridItems);
             _dataGridCollection.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)));
             ReactiveCommand<string?, Unit> refreshCommand = ReactiveCommand.CreateFromTask<string?>(_ => RefreshDataGridAsync());
             optionsViewModel.WhenAnyValue(x => x.ThemesDir).InvokeCommand(refreshCommand);

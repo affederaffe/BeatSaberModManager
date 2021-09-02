@@ -12,7 +12,7 @@
     <Design.DataContext>
         <vm:OptionsViewModel/>
     </Design.DataContext>
-    
+
     <Grid ColumnDefinitions="*, 4*, Auto, Auto, *"
           RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
         <Label Grid.Column="1"
@@ -72,7 +72,6 @@
                    Content="{DynamicResource OptionsView:BeatSaverLabel}" />
             <CheckBox Grid.Column="1"
                       Grid.Row="0"
-                      Command="{Binding ToggleBeatSaverOneClickHandlerCommand}"
                       IsChecked="{Binding BeatSaverOneClickCheckboxChecked}" />
             <Label Grid.Column="0"
                    Grid.Row="1"
@@ -80,7 +79,6 @@
                    Content="{DynamicResource OptionsView:ModelSaberLabel}" />
             <CheckBox Grid.Column="1"
                       Grid.Row="1"
-                      Command="{Binding ToggleModelSaberOneClickHandlerCommand}"
                       IsChecked="{Binding ModelSaberOneClickCheckboxChecked}" />
             <Label Grid.Column="0"
                    Grid.Row="2"
@@ -88,7 +86,6 @@
                    Content="{DynamicResource OptionsView:PlaylistLabel}"/>
             <CheckBox Grid.Column="1"
                       Grid.Row="2"
-                      Command="{Binding TogglePlaylistOneClickHandlerCommand}"
                       IsChecked="{Binding PlaylistOneClickCheckBoxChecked}" />
         </Grid>
         <Label Grid.Column="1"
@@ -103,8 +100,8 @@
                     Orientation="Horizontal">
             <Label Content="A 文" FontSize="22" />
             <ComboBox DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:OptionsView}}"
-                      Items="{Binding LanguageSwitcher.Languages}"
-                      SelectedItem="{Binding LanguageSwitcher.SelectedLanguage}">
+                      Items="{Binding LocalisationManager.Languages}"
+                      SelectedItem="{Binding LocalisationManager.SelectedLanguage}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="l:Language">
                         <Label Content="{Binding CultureInfo.DisplayName}" />
@@ -141,8 +138,8 @@
                   Margin="10, 5"
                   VerticalAlignment="Center"
                   DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=v:OptionsView}}"
-                  Items="{Binding ThemeSwitcher.Themes}"
-                  SelectedItem="{Binding ThemeSwitcher.SelectedTheme}">
+                  Items="{Binding ThemeManager.Themes}"
+                  SelectedItem="{Binding ThemeManager.SelectedTheme}">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="t:Theme">
                     <Label Content="{Binding Name}" />

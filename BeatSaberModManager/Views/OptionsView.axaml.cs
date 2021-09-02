@@ -10,30 +10,33 @@ using BeatSaberModManager.Localisation;
 using BeatSaberModManager.Theming;
 using BeatSaberModManager.ViewModels;
 
-using ReactiveUI;
+using Microsoft.Extensions.DependencyInjection;
 
-using Splat;
+using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views
 {
     public partial class OptionsView : ReactiveUserControl<OptionsViewModel>
     {
-        public OptionsView()
+        public OptionsView() { }
+
+        [ActivatorUtilitiesConstructor]
+        public OptionsView(OptionsViewModel optionsViewModel, LocalisationManager localisationManager, ThemeManager themeManager)
         {
             InitializeComponent();
-            ViewModel = Locator.Current.GetService<OptionsViewModel>();
-            LanguageSwitcher = Locator.Current.GetService<LanguageSwitcher>();
-            ThemeSwitcher = Locator.Current.GetService<ThemeSwitcher>();
+            ViewModel = optionsViewModel;
+            LocalisationManager = localisationManager;
+            ThemeManager = themeManager;
             SelectInstallFolderButton.Command = ReactiveCommand.CreateFromTask(SelectInstallFolderAsync);
             SelectThemesFolderButton.Command = ReactiveCommand.CreateFromTask(SelectThemesFolderAsync);
             InstallPlaylistButton.Command = ReactiveCommand.CreateFromTask(InstallPlaylistAsync);
-            ViewModel.WhenAnyValue(static x => x.ThemesDir).Subscribe(_ => ThemeSwitcher.TryLoadExternThemes());
+            ViewModel.WhenAnyValue(x => x.ThemesDir).Subscribe(_ => ThemeManager.TryLoadExternThemes());
         }
 
-        public LanguageSwitcher LanguageSwitcher { get; }
+        public LocalisationManager LocalisationManager { get; } = null!;
 
-        public ThemeSwitcher ThemeSwitcher { get; }
+        public ThemeManager ThemeManager { get; } = null!;
 
         private async Task SelectInstallFolderAsync()
         {

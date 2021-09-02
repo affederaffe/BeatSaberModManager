@@ -5,27 +5,30 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
+
+using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
 {
     public class ModelSaberModelInstaller
     {
-        private readonly Settings _settings;
+        private readonly SettingsStore _settingsStore;
         private readonly HttpClient _httpClient;
 
         private const string kModelSaberFilesEndpoint = "https://modelsaber.com/files/";
 
-        public ModelSaberModelInstaller(Settings settings, HttpClient httpClient)
+        public ModelSaberModelInstaller(IOptions<SettingsStore> settingsStore, HttpClient httpClient)
         {
-            _settings = settings;
+            _settingsStore = settingsStore.Value;
             _httpClient = httpClient;
         }
 
         public async Task<bool> InstallModelAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (!Directory.Exists(_settings.InstallDir)) return false;
+            if (!Directory.Exists(_settingsStore.InstallDir)) return false;
             string? folderName = uri.Host switch
             {
                 "avatar" => "CustomAvatars",
@@ -36,7 +39,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber
             };
 
             if (folderName is null) return false;
-            string folderPath = Path.Combine(_settings.InstallDir, folderName);
+            string folderPath = Path.Combine(_settingsStore.InstallDir, folderName);
             if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);

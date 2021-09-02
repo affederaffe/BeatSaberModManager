@@ -1,13 +1,14 @@
 ﻿using System;
-using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations;
 using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
+
+using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -16,8 +17,9 @@ namespace BeatSaberModManager.ViewModels
 {
     public class OptionsViewModel : ReactiveObject
     {
-        private readonly PlaylistInstaller _playlistInstaller;
         private readonly IStatusProgress _progress;
+        private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
+        private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<bool> _hasValidatedInstallDir;
         private readonly ObservableAsPropertyHelper<bool> _openThemesDirButtonActive;
 
@@ -25,27 +27,43 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public OptionsViewModel(ModsViewModel modsViewModel, Settings settings, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator, IStatusProgress progress)
+        public OptionsViewModel(ModsViewModel modsViewModel, IOptions<SettingsStore> settingsStore, IStatusProgress progress, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
         {
-            _playlistInstaller = playlistInstaller;
             _progress = progress;
-            _installDir = settings.InstallDir;
-            _themesDir = settings.ThemesDir;
-            OpenInstallDirCommand = ReactiveCommand.CreateFromTask(() => OpenFolderAsync(InstallDir));
-            OpenThemesDirCommand = ReactiveCommand.CreateFromTask(() => OpenFolderAsync(ThemesDir));
+            _protocolHandlerRegistrar = protocolHandlerRegistrar;
+            _playlistInstaller = playlistInstaller;
+            _installDir = settingsStore.Value.InstallDir;
+            _themesDir = settingsStore.Value.ThemesDir;
+            _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
+            _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
+            _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
+            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenFolder(InstallDir));
+            OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenFolder(ThemesDir));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
-            ToggleBeatSaverOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandlerAsync(BeatSaverOneClickCheckboxChecked, kBeatSaverProtocol));
-            ToggleModelSaberOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandlerAsync(ModelSaberOneClickCheckboxChecked, kModelSaberProtocol));
-            TogglePlaylistOneClickHandlerCommand = ReactiveCommand.CreateFromTask(() => ToggleOneClickHandlerAsync(PlaylistOneClickCheckBoxChecked, kPlaylistProtocol));
+            this.WhenAnyValue(x => x.BeatSaverOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kBeatSaverProtocol));
+            this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kModelSaberProtocol));
+            this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(b => ToggleOneClickHandler(b, kPlaylistProtocol));
             IObservable<string> validatedInstallDirObservable = this.WhenAnyValue(x => x.InstallDir).Where(installDirValidator.ValidateInstallDir)!;
-            validatedInstallDirObservable.BindTo(settings, x => x.InstallDir);
-            validatedInstallDirObservable.Select(installDirValidator.DetectVRPlatform).BindTo(settings, x => x.VRPlatform);
+            validatedInstallDirObservable.BindTo(settingsStore, x => x.Value.InstallDir);
+            validatedInstallDirObservable.Select(installDirValidator.DetectVRPlatform).BindTo(settingsStore, x => x.Value.VRPlatform);
             validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
             IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir).Where(x => !string.IsNullOrEmpty(x));
-            themesDirObservable.BindTo(settings, x => x.ThemesDir);
+            themesDirObservable.BindTo(settingsStore, x => x.Value.ThemesDir);
             themesDirObservable.Select(_ => true).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
+
+        public ReactiveCommand<Unit, Unit> OpenInstallDirCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> OpenThemesDirCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> UninstallModLoaderCommand { get; }
+
+        public ReactiveCommand<Unit, Unit> UninstallAllModsCommand { get; }
+
+        public bool HasValidatedInstallDir => _hasValidatedInstallDir.Value;
+
+        public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
         private string? _installDir;
         public string? InstallDir
@@ -61,57 +79,33 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _themesDir, value);
         }
 
-        private bool _beatSaverOneClickCheckboxChecked = PlatformUtils.IsProtocolHandlerRegistered(kBeatSaverProtocol, nameof(BeatSaberModManager));
+        private bool _beatSaverOneClickCheckboxChecked;
         public bool BeatSaverOneClickCheckboxChecked
         {
             get => _beatSaverOneClickCheckboxChecked;
             set => this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
         }
 
-        private bool _modelSaberOneClickCheckboxChecked = PlatformUtils.IsProtocolHandlerRegistered(kModelSaberProtocol, nameof(BeatSaberModManager));
+        private bool _modelSaberOneClickCheckboxChecked;
         public bool ModelSaberOneClickCheckboxChecked
         {
             get => _modelSaberOneClickCheckboxChecked;
             set => this.RaiseAndSetIfChanged(ref _modelSaberOneClickCheckboxChecked, value);
         }
 
-        private bool _playlistOneClickCheckBoxChecked = PlatformUtils.IsProtocolHandlerRegistered(kPlaylistProtocol, nameof(BeatSaberModManager));
+        private bool _playlistOneClickCheckBoxChecked;
         public bool PlaylistOneClickCheckBoxChecked
         {
             get => _playlistOneClickCheckBoxChecked;
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
 
-        public ReactiveCommand<Unit, Unit> OpenInstallDirCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> OpenThemesDirCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> UninstallModLoaderCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> UninstallAllModsCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> ToggleBeatSaverOneClickHandlerCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> ToggleModelSaberOneClickHandlerCommand { get; }
-
-        public ReactiveCommand<Unit, Unit> TogglePlaylistOneClickHandlerCommand { get; }
-
-        public bool HasValidatedInstallDir => _hasValidatedInstallDir.Value;
-
-        public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
-
         public async Task InstallPlaylistsAsync(string[] filePaths) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(filePaths, _progress));
 
-        private static async Task ToggleOneClickHandlerAsync(bool active, string protocol)
+        private void ToggleOneClickHandler(bool active, string protocol)
         {
-            if (active) await Task.Run(() => PlatformUtils.RegisterProtocolHandler(protocol, nameof(BeatSaberModManager)));
-            else await Task.Run(() => PlatformUtils.UnregisterProtocolHandler(protocol, nameof(BeatSaberModManager)));
-        }
-
-        private static async Task OpenFolderAsync(string? path)
-        {
-            if (!Directory.Exists(path)) return;
-            await Task.Run(() => PlatformUtils.OpenBrowserOrFileExplorer(path));
+            if (active) _protocolHandlerRegistrar.RegisterProtocolHandler(protocol);
+            else _protocolHandlerRegistrar.UnregisterProtocolHandler(protocol);
         }
     }
 }

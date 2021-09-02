@@ -9,7 +9,7 @@
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         ClientSize="320, 140">
-    
+
         <Panel>
             <Rectangle IsHitTestVisible="False"
                        Opacity="0.975"

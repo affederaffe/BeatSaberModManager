@@ -4,7 +4,6 @@
 
     <Application.Styles>
         <FluentTheme Mode="Dark" />
-        <StyleInclude Source="avares://AvaloniaProgressRing/Styles/ProgressRing.xaml" />
         <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
     </Application.Styles>
 

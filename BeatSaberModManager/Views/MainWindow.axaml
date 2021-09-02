@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-        xmlns:v="clr-namespace:BeatSaberModManager.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.MainWindow"
         TransparencyLevelHint="AcrylicBlur"
@@ -15,27 +14,27 @@
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
-    
+
     <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
         <Rectangle Grid.Column="0"
                    Grid.Row="0"
                    Grid.RowSpan="2"
                    IsHitTestVisible="False"
-                   Opacity="0.9"
+                   Opacity="0.85"
                    Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
         <Rectangle Grid.Column="1"
                    Grid.Row="0"
                    Grid.RowSpan="2"
                    IsHitTestVisible="False" 
-                   Opacity="0.985"
+                   Opacity="0.95"
                    Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
 
         <ListBox Grid.Column="0"
                  Grid.Row="0"
-                 x:Name="Tabs"
                  Margin="0, 30"
                  Background="{x:Null}"
-                 BorderBrush="{x:Null}">
+                 BorderBrush="{x:Null}"
+                 SelectedIndex="{Binding SelectedIndex}">
             <ListBox.Items>
                 <ListBoxItem Content="{DynamicResource MainWindow:IntroHeader}" />
                 <ListBoxItem Content="{DynamicResource MainWindow:ModsHeader}" />
@@ -46,16 +45,16 @@
         <TabControl Grid.Column="1"
                     Grid.Row="0"
                     Classes="SideBar"
-                    SelectedIndex="{Binding #Tabs.SelectedIndex}">
-            <v:IntroView />
-            <v:ModsView /> 
-            <v:OptionsView />
+                    SelectedIndex="{Binding SelectedIndex}">
+            <TabItem x:Name="IntroViewTabItem" />
+            <TabItem x:Name="ModsViewTabItem" />
+            <TabItem x:Name="OptionsViewTabItem" />
         </TabControl>
-        
-       <Grid Grid.Column="1"
-             Grid.Row="1"
-             ColumnDefinitions="*, Auto, Auto"
-             Margin="0, 5">
+
+        <Grid Grid.Column="1"
+              Grid.Row="1"
+              ColumnDefinitions="*, Auto, Auto"
+              Margin="0, 5">
             <ProgressBar Grid.Column="0"
                          Margin="10, 0, 5, 0"
                          HorizontalAlignment="Stretch"

@@ -15,32 +15,36 @@ namespace BeatSaberModManager.ViewModels
     {
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly IStatusProgress _progress;
+        private readonly ObservableAsPropertyHelper<double> _progressValue;
         private readonly ObservableAsPropertyHelper<string?> _assetName;
 
-        public AssetInstallWindowViewModel(IEnumerable<IAssetProvider> assetProviders, StatusProgress progress)
+        public AssetInstallWindowViewModel(IEnumerable<IAssetProvider> assetProviders, IStatusProgress progress)
         {
             _assetProviders = assetProviders;
             _progress = progress;
-            progress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
+            StatusProgress statusProgress = (StatusProgress)progress;
+            statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
+            statusProgress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
         }
 
-        public async Task InstallAsset(string strUri)
+        public async Task InstallAsset(Uri uri)
         {
-            Uri uri = new(strUri);
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == uri.Scheme);
             if (assetProvider is null) return;
             bool result = await assetProvider.InstallAssetAsync(uri, _progress);
-            ProgressRingActive = false;
+            ProgressRingVisible = false;
             ResultLabelText = result ? "✔" : "✘";
         }
 
+        public double ProgressValue => _progressValue.Value;
+
         public string? AssetName => _assetName.Value;
 
-        private bool _progressRingActive = true;
-        public bool ProgressRingActive
+        private bool _progressRingVisible = true;
+        public bool ProgressRingVisible
         {
-            get => _progressRingActive;
-            set => this.RaiseAndSetIfChanged(ref _progressRingActive, value);
+            get => _progressRingVisible;
+            set => this.RaiseAndSetIfChanged(ref _progressRingVisible, value);
         }
 
         private string? _resultLabelText;

@@ -5,22 +5,24 @@ using System.Linq;
 using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
-using BeatSaberModManager.Models.Implementations;
+using BeatSaberModManager.Models.Implementations.Settings;
+
+using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
 
 namespace BeatSaberModManager.Localisation
 {
-    public class LanguageSwitcher : ReactiveObject
+    public class LocalisationManager : ReactiveObject
     {
-        public LanguageSwitcher(Settings settings)
+        private readonly SettingsStore _settingsStore;
+
+        public LocalisationManager(IOptions<SettingsStore> settingsStore)
         {
+            _settingsStore = settingsStore.Value;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).WhereNotNull();
-            selectedLanguageObservable.Subscribe(l => Application.Current.Resources.MergedDictionaries[0] = l.ResourceProvider);
-            selectedLanguageObservable.Subscribe(l => settings.LanguageCode = l.CultureInfo.Name);
-            SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == settings.LanguageCode) ??
+            SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _settingsStore.LanguageCode) ??
                                Languages.FirstOrDefault(x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
                                Languages.First();
         }
@@ -32,6 +34,13 @@ namespace BeatSaberModManager.Localisation
         {
             get => _selectedLanguage;
             set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
+        }
+
+        public void Initialize(Application application)
+        {
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).WhereNotNull();
+            selectedLanguageObservable.Subscribe(l => application.Resources.MergedDictionaries[0] = l.ResourceProvider);
+            selectedLanguageObservable.Subscribe(l => _settingsStore.LanguageCode = l.CultureInfo.Name);
         }
 
         private static Language LoadLanguage(string languageCode)

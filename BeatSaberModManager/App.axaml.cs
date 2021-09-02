@@ -1,43 +1,30 @@
 using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
+
 using Avalonia.Markup.Xaml;
-using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.DependencyInjection;
-using BeatSaberModManager.Models.Implementations;
-using BeatSaberModManager.Views;
-
-using Splat;
+using BeatSaberModManager.Localisation;
+using BeatSaberModManager.Theming;
 
 
 namespace BeatSaberModManager
 {
     public class App : Application
     {
-        public static void Main(string[] args) => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        private readonly LocalisationManager _localisationManager = null!;
+        private readonly ThemeManager _themeManager = null!;
 
-        public static AppBuilder BuildAvaloniaApp() => AppBuilder.Configure<App>().UsePlatformDetect().LogToTrace().UseReactiveUI();
+        public App() { }
 
-        public override void RegisterServices()
+        public App(LocalisationManager localisationManager, ThemeManager themeManager)
         {
-            ServicesBootstrapper.Register(Locator.CurrentMutable, Locator.Current);
-            ViewModelBootstrapper.Register(Locator.CurrentMutable, Locator.Current);
-            base.RegisterServices();
+            _localisationManager = localisationManager;
+            _themeManager = themeManager;
         }
-
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-        }
-
-        public override void OnFrameworkInitializationCompleted()
-        {
-            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
-            Settings settings = Locator.Current.GetService<Settings>();
-            desktop.Exit += (_, _) => settings.Save();
-            desktop.MainWindow = desktop.Args.Length > 1 && desktop.Args[0] == "--install"
-                ? new AssetInstallWindow(desktop.Args[1])
-                : new MainWindow();
+            _localisationManager.Initialize(this);
+            _themeManager.Initialize(this);
         }
     }
 }

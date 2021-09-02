@@ -19,10 +19,12 @@
                Content="{DynamicResource ModsView:NoModsAvailable}" />
 
         <DataGrid x:Name="ModsDataGrid"
-                  IsVisible="{Binding AreModsAvailable}"
+                  RowHeight="25"
                   SelectionMode="Single"
                   HorizontalAlignment="Stretch"
+                  IsVisible="{Binding AreModsAvailable}"
                   SelectedItem="{Binding SelectedGridItem}">
+
             <DataGrid.Columns>
                 <DataGridTemplateColumn Width="25">
                     <DataGridTemplateColumn.CellTemplate>

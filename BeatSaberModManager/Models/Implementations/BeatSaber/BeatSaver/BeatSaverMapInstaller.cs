@@ -5,37 +5,40 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
+
+using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
 {
     public class BeatSaverMapInstaller
     {
-        private readonly Settings _settings;
+        private readonly SettingsStore _settingsStore;
         private readonly HttpClient _httpClient;
 
         private const string kBeatSaverUrlPrefix = "https://api.beatsaver.com";
         private const string kBeatSaverKeyEndpoint = "/maps/id/";
 
-        public BeatSaverMapInstaller(Settings settings, HttpClient httpClient)
+        public BeatSaverMapInstaller(IOptions<SettingsStore> settingsStore, HttpClient httpClient)
         {
-            _settings = settings;
+            _settingsStore = settingsStore.Value;
             _httpClient = httpClient;
         }
 
         public async Task<bool> InstallBeatSaverMapAsync(string key, IStatusProgress? progress = null)
         {
-            if (!Directory.Exists(_settings.InstallDir)) return false;
+            if (!Directory.Exists(_settingsStore.InstallDir)) return false;
             using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            BeatSaverMap? map = JsonSerializer.Deserialize<BeatSaverMap>(body, BeatSaverMapJsonSerializerContext.Default.BeatSaverMap);
+            BeatSaverMap? map = JsonSerializer.Deserialize<BeatSaverMap>(body);
             if (map is null || map.Versions.Length <= 0) return false;
             progress?.Report(map.Name);
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last()).ConfigureAwait(false);
             if (archive is null) return false;
-            string customLevelsDirectoryPath = Path.Combine(_settings.InstallDir, "Beat Saber_Data", "CustomLevels");
+            string customLevelsDirectoryPath = Path.Combine(_settingsStore.InstallDir, "Beat Saber_Data", "CustomLevels");
             if (!Directory.Exists(customLevelsDirectoryPath)) Directory.CreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);

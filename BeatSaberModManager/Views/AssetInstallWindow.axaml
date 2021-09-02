@@ -3,7 +3,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-        xmlns:progrRing="clr-namespace:AvaloniaProgressRing;assembly=AvaloniaProgressRing"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.AssetInstallWindow"
         Title="OneClick™ Installer"
@@ -12,7 +11,7 @@
         ExtendClientAreaToDecorationsHint="True"
         Width="300"
         Height="500">
-    
+
     <Design.DataContext>
         <vm:AssetInstallWindowViewModel />
     </Design.DataContext>
@@ -21,18 +20,20 @@
         <Rectangle IsHitTestVisible="False" Opacity="0.975" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
         <Grid ColumnDefinitions="*"
               RowDefinitions="4*, *">
-            <progrRing:ProgressRing Grid.Row="0"
-                                    Width="100"
-                                    Height="100"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    IsActive="{Binding ProgressRingActive}" />
+            <!-- TODO -->
+            <!--<ProgressRing Grid.Row="0"
+                          Minimum="0"
+                          Maximum="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Value="{Binding ProgressValue}"
+                          IsVisible="{Binding ProgressRingVisible}" />-->
             <Label Grid.Row="0"
                    FontSize="100"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Content="{Binding ResultLabelText}"
-                   IsVisible="{Binding !ProgressRingActive}" />
+                   IsVisible="{Binding !ProgressRingVisible}" />
             <TextBox Grid.Row="1"
                      x:Name="AssetNameTextBox"
                      IsReadOnly="True" />

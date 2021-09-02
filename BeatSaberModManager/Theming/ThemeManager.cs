@@ -8,22 +8,23 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 
-using BeatSaberModManager.Models.Implementations;
+using BeatSaberModManager.Models.Implementations.Settings;
+
+using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
 
 namespace BeatSaberModManager.Theming
 {
-    public class ThemeSwitcher : ReactiveObject
+    public class ThemeManager : ReactiveObject
     {
-        private readonly Settings _settings;
+        private readonly SettingsStore _settingsStore;
         private readonly int _buildInThemesCount;
 
-        public ThemeSwitcher(Settings settings)
+        public ThemeManager(IOptions<SettingsStore> settingsStore)
         {
-            _settings = settings;
-
+            _settingsStore = settingsStore.Value;
             Themes = new List<Theme>
             {
                 LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultLight.axaml"),
@@ -33,11 +34,7 @@ namespace BeatSaberModManager.Theming
             };
 
             _buildInThemesCount = Themes.Count;
-            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).WhereNotNull();
-            selectedThemeObservable.Subscribe(t => Application.Current.Styles[0] = t.Style);
-            selectedThemeObservable.Subscribe(t => settings.ThemeName = t.Name);
-            SelectedTheme = Themes.FirstOrDefault(x => x.Name == settings.ThemeName) ??
-                            Themes.First();
+            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _settingsStore.ThemeName) ?? Themes.First();
         }
 
         public List<Theme> Themes { get; }
@@ -49,11 +46,18 @@ namespace BeatSaberModManager.Theming
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
+        public void Initialize(Application application)
+        {
+            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).WhereNotNull();
+            selectedThemeObservable.Subscribe(t => application.Styles[0] = t.Style);
+            selectedThemeObservable.Subscribe(t => _settingsStore.ThemeName = t.Name);
+        }
+
         public void TryLoadExternThemes()
         {
-            if (!Directory.Exists(_settings.ThemesDir)) return;
+            if (!Directory.Exists(_settingsStore.ThemesDir)) return;
             Themes.RemoveRange(_buildInThemesCount, Themes.Count - _buildInThemesCount);
-            foreach (string filePath in Directory.EnumerateFiles(_settings.ThemesDir, "*.xaml"))
+            foreach (string filePath in Directory.EnumerateFiles(_settingsStore.ThemesDir, "*.xaml"))
             {
                 Theme? theme = LoadTheme(filePath);
                 if (theme is null) continue;

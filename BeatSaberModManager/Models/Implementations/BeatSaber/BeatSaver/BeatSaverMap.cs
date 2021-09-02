@@ -17,7 +17,4 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
         [JsonPropertyName("versions")]
         public BeatSaverMapVersion[] Versions { get; set; } = null!;
     }
-
-    [JsonSerializable(typeof(BeatSaverMap))]
-    public partial class BeatSaverMapJsonSerializerContext : JsonSerializerContext { }
 }

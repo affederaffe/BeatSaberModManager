@@ -2,23 +2,26 @@
 using System.Text;
 
 using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Models.Implementations.Settings;
+
+using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber
 {
     public class BeatSaberGameVersionProvider : IGameVersionProvider
     {
-        private readonly Settings _settings;
+        private readonly SettingsStore _settingsStore;
 
-        public BeatSaberGameVersionProvider(Settings settings)
+        public BeatSaberGameVersionProvider(IOptions<SettingsStore> settingsStore)
         {
-            _settings = settings;
+            _settingsStore = settingsStore.Value;
         }
 
         public string? GetGameVersion()
         {
-            if (!Directory.Exists(_settings.InstallDir)) return null;
-            string filePath = Path.Combine(_settings.InstallDir, "Beat Saber_Data", "globalgamemanagers");
+            if (!Directory.Exists(_settingsStore.InstallDir)) return null;
+            string filePath = Path.Combine(_settingsStore.InstallDir, "Beat Saber_Data", "globalgamemanagers");
             using FileStream stream = File.OpenRead(filePath);
             using BinaryReader reader = new(stream, Encoding.UTF8);
             const string key = "public.app-category.games";

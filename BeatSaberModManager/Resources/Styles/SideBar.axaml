@@ -26,7 +26,7 @@
                         <ContentPresenter x:Name="PART_SelectedContentHost"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          Content="{TemplateBinding SelectedItem}" />
+                                          Content="{TemplateBinding SelectedContent}" />
                     </Panel>
                 </Border>
             </ControlTemplate>

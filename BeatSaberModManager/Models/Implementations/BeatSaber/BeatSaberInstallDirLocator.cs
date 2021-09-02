@@ -17,12 +17,11 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber
     {
         private const string kBeatSaberAppId = "620980";
 
-        public bool TryDetectInstallDir(out string? installDir)
+        public string? DetectInstallDir()
         {
-            installDir = null;
-            if (OperatingSystem.IsWindows()) installDir = LocateWindowsInstallDir();
-            else if (OperatingSystem.IsLinux()) installDir = LocateLinuxSteamInstallDir();
-            return installDir is not null;
+            if (OperatingSystem.IsWindows()) return LocateWindowsInstallDir();
+            if (OperatingSystem.IsLinux()) return LocateLinuxSteamInstallDir();
+            throw new PlatformNotSupportedException();
         }
 
         private static string? LocateWindowsInstallDir()
