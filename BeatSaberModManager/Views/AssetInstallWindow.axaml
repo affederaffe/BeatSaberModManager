@@ -18,25 +18,24 @@
 
     <Panel>
         <Rectangle IsHitTestVisible="False" Opacity="0.975" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
-        <Grid ColumnDefinitions="*"
-              RowDefinitions="4*, *">
-            <!-- TODO -->
-            <!--<ProgressRing Grid.Row="0"
+        <Grid RowDefinitions="2.75*, *">
+            <ProgressRing Grid.Row="0"
                           Minimum="0"
-                          Maximum="1"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
+                          Maximum="100"
+                          Width="200"
+                          Height="200"
                           Value="{Binding ProgressValue}"
-                          IsVisible="{Binding ProgressRingVisible}" />-->
+                          IsVisible="{Binding ProgressRingVisible}" />
             <Label Grid.Row="0"
                    FontSize="100"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    Content="{Binding ResultLabelText}"
                    IsVisible="{Binding !ProgressRingVisible}" />
-            <TextBox Grid.Row="1"
-                     x:Name="AssetNameTextBox"
-                     IsReadOnly="True" />
+            <ScrollViewer Grid.Row="1">
+                <ItemsRepeater Items="{Binding Log}">
+                </ItemsRepeater>
+            </ScrollViewer>
         </Grid>
     </Panel>
 

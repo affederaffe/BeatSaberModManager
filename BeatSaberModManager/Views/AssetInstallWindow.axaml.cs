@@ -27,12 +27,11 @@ namespace BeatSaberModManager.Views
             InitializeComponent();
             ViewModel = assetInstallWindowViewModel;
             string installText = (string)this.FindResource("AssetInstallWindow:InstallText")!;
-            string log = string.Empty;
             ViewModel.WhenAnyValue(x => x!.AssetName)
                 .WhereNotNull()
-                .Select(x => log = $"{installText} {x}\n{log}")
+                .Select(x => $"{installText} {x}")
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .BindTo(this, x => x.AssetNameTextBox.Text);
+                .Subscribe(x => ViewModel.Log.Insert(0, x));
             this.WhenActivated(_ => InstallAsset().ConfigureAwait(false));
         }
 

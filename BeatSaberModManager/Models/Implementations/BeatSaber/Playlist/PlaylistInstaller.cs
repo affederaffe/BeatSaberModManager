@@ -31,7 +31,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlist
         public async Task<bool> InstallPlaylistAsync(string[] filePaths, IStatusProgress? progress = null)
         {
             if (filePaths.Length is 1) return await InstallPlaylistAsync(filePaths[0], progress);
-            IEnumerable<Task<bool>> tasks = filePaths.Select(async x => await InstallPlaylistAsync(x, progress).ConfigureAwait(false));
+            IEnumerable<Task<bool>> tasks = filePaths.Select(x => InstallPlaylistAsync(x, progress));
             bool[] results = await Task.WhenAll(tasks).ConfigureAwait(false);
             return results.All(x => x);
         }

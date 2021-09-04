@@ -20,6 +20,7 @@ namespace BeatSaberModManager
             _localisationManager = localisationManager;
             _themeManager = themeManager;
         }
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
