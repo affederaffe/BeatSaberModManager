@@ -3,8 +3,8 @@ using System.Reactive;
 using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Services.Progress;
 using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.Options;

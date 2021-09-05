@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Services.Progress;
+using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.ViewModels;
 
 using Microsoft.Extensions.DependencyInjection;

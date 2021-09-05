@@ -1,6 +1,6 @@
 ﻿using System;
 
-using BeatSaberModManager.Services.Progress;
+using BeatSaberModManager.Services.Implementations.Progress;
 
 
 namespace BeatSaberModManager.Services.Interfaces

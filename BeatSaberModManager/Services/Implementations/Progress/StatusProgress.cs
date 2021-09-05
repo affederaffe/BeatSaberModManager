@@ -4,7 +4,7 @@ using System.Reactive.Subjects;
 using BeatSaberModManager.Services.Interfaces;
 
 
-namespace BeatSaberModManager.Services.Progress
+namespace BeatSaberModManager.Services.Implementations.Progress
 {
     public class StatusProgress : IStatusProgress, IDisposable
     {
@@ -22,7 +22,6 @@ namespace BeatSaberModManager.Services.Progress
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
             _progressValue.Dispose();
             _statusText.Dispose();
             _statusType.Dispose();
