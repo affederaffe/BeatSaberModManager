@@ -2,9 +2,9 @@
 using System.Reactive;
 using System.Reactive.Linq;
 
-using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Services.Progress;
 using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.Options;

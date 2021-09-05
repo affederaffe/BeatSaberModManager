@@ -1,0 +1,163 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:localisation="clr-namespace:BeatSaberModManager.Views.Implementations.Localisation"
+             xmlns:pages="clr-namespace:BeatSaberModManager.Views.Implementations.Pages"
+             xmlns:theming="clr-namespace:BeatSaberModManager.Views.Implementations.Theming"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BeatSaberModManager.Views.Implementations.Pages.OptionsView">
+
+    <Design.DataContext>
+        <vm:OptionsViewModel/>
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="*, 4*, Auto, Auto, *"
+          RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
+        <Label Grid.Column="1"
+               Grid.Row="0"
+               Margin="10, 5, 10, 0"
+               FontWeight="Bold"
+               HorizontalAlignment="Stretch"
+               Content="{DynamicResource OptionsView:InstallationLabel}" />
+        <TextBox Grid.Column="1"
+                 Grid.Row="1"
+                 Margin="10, 5"
+                 IsHitTestVisible="False"
+                 HorizontalAlignment="Stretch"
+                 Text="{Binding InstallDir}" />
+        <Button Grid.Column="2"
+                Grid.Row="1"
+                Margin="10, 5"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource OptionsView:OpenFolderButton}"
+                IsEnabled="{Binding HasValidatedInstallDir}"
+                Command="{Binding OpenInstallDirCommand}" />
+        <Button Grid.Column="3"
+                Grid.Row="1"
+                x:Name="SelectInstallFolderButton"
+                Margin="10, 5"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource OptionsView:SelectFolderButton}" />
+        <StackPanel Grid.Column="1"
+                    Grid.Row="2"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+            <Button Margin="10"
+                    IsEnabled="{Binding HasValidatedInstallDir}"
+                    Content="{DynamicResource OptionsView:UninstallModLoaderButton}"
+                    Command="{Binding UninstallModLoaderCommand}" />
+            <Button Margin="10, 5"
+                    HorizontalAlignment="Center"
+                    Background="#FFBB0000"
+                    IsEnabled="{Binding HasValidatedInstallDir}"
+                    Content="{DynamicResource OptionsView:UninstallAllModsButton}"
+                    Command="{Binding UninstallAllModsCommand}" />
+        </StackPanel>
+        <Label Grid.Column="1"
+               Grid.Row="3"
+               Margin="10, 5, 10, 0"
+               FontWeight="Bold"
+               Content="{DynamicResource OptionsView:OneClickHandlerLabel}" />
+        <Grid Grid.Column="1"
+              Grid.Row="4"
+              Margin="50, 5, 10, 5"
+              RowDefinitions="*, * ,*"
+              ColumnDefinitions="Auto, 20"
+              VerticalAlignment="Center">
+            <Label Grid.Column="0"
+                   Grid.Row="0"
+                   VerticalAlignment="Center"
+                   Content="{DynamicResource OptionsView:BeatSaverLabel}" />
+            <CheckBox Grid.Column="1"
+                      Grid.Row="0"
+                      IsChecked="{Binding BeatSaverOneClickCheckboxChecked}" />
+            <Label Grid.Column="0"
+                   Grid.Row="1"
+                   VerticalAlignment="Center"
+                   Content="{DynamicResource OptionsView:ModelSaberLabel}" />
+            <CheckBox Grid.Column="1"
+                      Grid.Row="1"
+                      IsChecked="{Binding ModelSaberOneClickCheckboxChecked}" />
+            <Label Grid.Column="0"
+                   Grid.Row="2"
+                   VerticalAlignment="Center"
+                   Content="{DynamicResource OptionsView:PlaylistLabel}"/>
+            <CheckBox Grid.Column="1"
+                      Grid.Row="2"
+                      IsChecked="{Binding PlaylistOneClickCheckBoxChecked}" />
+        </Grid>
+        <Label Grid.Column="1"
+               Grid.Row="5"
+               Margin="10, 5, 10, 0"
+               FontWeight="Bold"
+               Content="{DynamicResource OptionsView:LanguageLabel}"/>
+        <StackPanel Grid.Column="1"
+                    Grid.Row="6"
+                    Margin="50, 5, 10, 5"
+                    HorizontalAlignment="Left"
+                    Orientation="Horizontal">
+            <Label Content="A 文" FontSize="22" />
+            <ComboBox DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=pages:OptionsView}}"
+                      Items="{Binding LocalisationManager.Languages}"
+                      SelectedItem="{Binding LocalisationManager.SelectedLanguage}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="localisation:Language">
+                        <Label Content="{Binding CultureInfo.DisplayName}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+        <Label Grid.Column="1"
+               Grid.Row="7"
+               Margin="10, 5, 10, 0"
+               FontWeight="Bold"
+               Content="{DynamicResource OptionsView:ThemesLabel}" />
+        <TextBox Grid.Column="1"
+                 Grid.Row="8"
+                 Margin="10, 5"
+                 IsHitTestVisible="False"
+                 HorizontalAlignment="Stretch"
+                 Text="{Binding ThemesDir}" />
+        <Button Grid.Column="2"
+                Grid.Row="8"
+                Margin="10, 5"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource OptionsView:OpenFolderButton}"
+                IsEnabled="{Binding OpenThemesDirButtonActive}"
+                Command="{Binding OpenThemesDirCommand}" />
+        <Button Grid.Column="3"
+                Grid.Row="8"
+                x:Name="SelectThemesFolderButton"
+                Margin="10, 5"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource OptionsView:SelectFolderButton}" />
+        <ComboBox Grid.Column="1"
+                  Grid.Row="9"
+                  Margin="10, 5"
+                  VerticalAlignment="Center"
+                  DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=pages:OptionsView}}"
+                  Items="{Binding ThemeManager.Themes}"
+                  SelectedItem="{Binding ThemeManager.SelectedTheme}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate DataType="theming:Theme">
+                    <Label Content="{Binding Name}" />
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Label Grid.Column="1"
+               Grid.Row="10"
+               Margin="10, 5, 10, 0"
+               FontWeight="Bold"
+               Content="{DynamicResource OptionsView:ToolsLabel}" />
+        <Button Grid.Column="1"
+                Grid.Row="11"
+                x:Name="InstallPlaylistButton"
+                Margin="50, 5, 10, 5"
+                HorizontalAlignment="Left"
+                IsEnabled="{Binding HasValidatedInstallDir}"
+                Content="{DynamicResource OptionsView:InstallPlaylistButton}" />
+    </Grid>
+
+</UserControl>

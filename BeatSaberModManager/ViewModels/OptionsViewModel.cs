@@ -3,9 +3,9 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Services.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.Options;

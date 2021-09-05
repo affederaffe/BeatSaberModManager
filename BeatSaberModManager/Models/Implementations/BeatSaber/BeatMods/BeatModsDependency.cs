@@ -8,10 +8,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
     public class BeatModsDependency
     {
         [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
+        public string Name { get; init; } = null!;
 
         [JsonPropertyName("_id")]
-        public string Id { get; set; } = null!;
+        public string Id { get; init; } = null!;
 
         [JsonIgnore]
         public IMod? DependingMod { get; set; }

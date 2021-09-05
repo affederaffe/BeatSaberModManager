@@ -6,9 +6,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
     public class BeatSaverMapMetaData
     {
         [JsonPropertyName("levelAuthorName")]
-        public string LevelAuthorName { get; set; } = null!;
+        public string LevelAuthorName { get; init; } = null!;
 
         [JsonPropertyName("songName")]
-        public string SongName { get; set; } = null!;
+        public string SongName { get; init; } = null!;
     }
 }

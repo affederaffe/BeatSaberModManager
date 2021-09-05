@@ -2,6 +2,7 @@
 using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Services.Interfaces;
 
 using ReactiveUI;
 

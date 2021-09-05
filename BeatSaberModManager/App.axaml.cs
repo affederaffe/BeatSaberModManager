@@ -2,20 +2,22 @@ using Avalonia;
 
 using Avalonia.Markup.Xaml;
 
-using BeatSaberModManager.Localisation;
-using BeatSaberModManager.Theming;
+using BeatSaberModManager.Views.Interfaces;
+
+using Microsoft.Extensions.DependencyInjection;
 
 
 namespace BeatSaberModManager
 {
     public class App : Application
     {
-        private readonly LocalisationManager _localisationManager = null!;
-        private readonly ThemeManager _themeManager = null!;
+        private readonly ILocalisationManager _localisationManager = null!;
+        private readonly IThemeManager _themeManager = null!;
 
         public App() { }
 
-        public App(LocalisationManager localisationManager, ThemeManager themeManager)
+        [ActivatorUtilitiesConstructor]
+        public App(ILocalisationManager localisationManager, IThemeManager themeManager)
         {
             _localisationManager = localisationManager;
             _themeManager = themeManager;
@@ -24,8 +26,8 @@ namespace BeatSaberModManager
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-            _localisationManager.Initialize(this);
-            _themeManager.Initialize(this);
+            _localisationManager.Initialize();
+            _themeManager.Initialize();
         }
     }
 }

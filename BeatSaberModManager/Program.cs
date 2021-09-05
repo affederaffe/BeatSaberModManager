@@ -6,19 +6,22 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Localisation;
-using BeatSaberModManager.Models.Implementations.BeatSaber;
-using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
-using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
-using BeatSaberModManager.Models.Implementations.BeatSaber.ModelSaber;
-using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
-using BeatSaberModManager.Models.Implementations.Progress;
-using BeatSaberModManager.Models.Implementations.ProtocolHandlerRegistrars;
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
-using BeatSaberModManager.Theming;
+using BeatSaberModManager.Services.Implementations.BeatSaber;
+using BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods;
+using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
+using BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber;
+using BeatSaberModManager.Services.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars;
+using BeatSaberModManager.Services.Implementations.Settings;
+using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Services.Progress;
 using BeatSaberModManager.ViewModels;
-using BeatSaberModManager.Views;
+using BeatSaberModManager.Views.Implementations.Localisation;
+using BeatSaberModManager.Views.Implementations.Pages;
+using BeatSaberModManager.Views.Implementations.Theming;
+using BeatSaberModManager.Views.Implementations.Windows;
+using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,7 +37,7 @@ namespace BeatSaberModManager
             BuildAvaloniaApp();
             using IHost host = CreateHostBuilder(args).Build();
             await host.StartAsync();
-            host.Services.StartAvaloniaApp();
+            RunAvaloniaApp(host.Services);
             await host.StopAsync();
         }
 
@@ -47,7 +50,7 @@ namespace BeatSaberModManager
             builder.AfterPlatformServicesSetupCallback(builder);
         }
 
-        private static void StartAvaloniaApp(this IServiceProvider services)
+        private static void RunAvaloniaApp(IServiceProvider services)
         {
             Application app = services.GetRequiredService<Application>();
             AvaloniaLocator.CurrentMutable.BindToSelf(app);
@@ -62,14 +65,13 @@ namespace BeatSaberModManager
 
         private static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureServices(services =>
         {
-            services.AddCoreUI();
             services.AddCoreServices();
+            services.AddApplication();
             services.AddAssetProviders();
             if (args.Length is 2 && args[0] == "--install")
             {
-                services.AddSingleton(new Uri(args[1]));
                 services.AddSingleton<AssetInstallWindowViewModel>();
-                services.AddSingleton<Window, AssetInstallWindow>();
+                services.AddSingleton<Window, AssetInstallWindow>(provider => new AssetInstallWindow(provider.GetRequiredService<AssetInstallWindowViewModel>(), new Uri(args[1])));
             }
             else
             {
@@ -129,11 +131,11 @@ namespace BeatSaberModManager
             services.AddSingleton<OptionsView>();
         }
 
-        private static void AddCoreUI(this IServiceCollection services)
+        private static void AddApplication(this IServiceCollection services)
         {
             services.AddSingleton<Application, App>();
-            services.AddSingleton<LocalisationManager>();
-            services.AddSingleton<ThemeManager>();
+            services.AddSingleton<ILocalisationManager, LocalisationManager>();
+            services.AddSingleton<IThemeManager, ThemeManager>();
         }
     }
 }

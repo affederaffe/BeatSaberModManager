@@ -1,0 +1,89 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:controls="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BeatSaberModManager.Views.Implementations.Pages.ModsView">
+
+    <Design.DataContext>
+        <vm:ModsViewModel />
+    </Design.DataContext>
+
+    <Panel>
+        <controls:ProgressRing IsIndeterminate="True" IsVisible="{Binding AreModsLoading}" />
+
+        <Label FontSize="33"
+               FontWeight="SemiBold"
+               VerticalAlignment="Center"
+               HorizontalAlignment="Center"
+               IsVisible="{Binding NoModsTextVisible}"
+               Content="{DynamicResource ModsView:NoModsAvailable}" />
+
+        <DataGrid x:Name="ModsDataGrid"
+                  RowHeight="25"
+                  SelectionMode="Single"
+                  HorizontalAlignment="Stretch"
+                  IsVisible="{Binding AreModsAvailable}"
+                  SelectedItem="{Binding SelectedGridItem}">
+
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Width="25">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="vm:ModGridItemViewModel">
+                            <CheckBox VerticalAlignment="Center"
+                                      IsEnabled="{Binding IsCheckBoxEnabled}"
+                                      IsChecked="{Binding IsCheckBoxChecked}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="275">
+                    <DataGridTemplateColumn.Header>
+                        <Label Padding="0" Content="{DynamicResource ModsView:ModNameHeader}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="vm:ModGridItemViewModel">
+                            <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Name}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="100">
+                    <DataGridTemplateColumn.Header>
+                        <Label Padding="0" HorizontalAlignment="Center" Content="{DynamicResource ModsView:InstalledVersionHeader}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="vm:ModGridItemViewModel">
+                            <Label VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding InstalledVersionColor}" Content="{Binding InstalledMod.Version}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn Width="100">
+                    <DataGridTemplateColumn.Header>
+                        <Label Padding="0" HorizontalAlignment="Center" Content="{DynamicResource ModsView:LatestVersionHeader}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="vm:ModGridItemViewModel">
+                            <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding AvailableMod.Version}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.Header>
+                        <Label Padding="0" Content="{DynamicResource ModsView:ModDescriptionHeader}" />
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="vm:ModGridItemViewModel">
+                            <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Description}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Panel>
+
+</UserControl>

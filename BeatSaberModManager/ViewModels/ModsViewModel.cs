@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
-
-using DynamicData.Binding;
+using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Services.Progress;
 
 using ReactiveUI;
 
@@ -20,7 +20,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
         private readonly IStatusProgress _progress;
-        private readonly ObservableAsPropertyHelper<bool> _areModsAvailable;
+        private readonly ObservableAsPropertyHelper<bool> _noModsTextVisible;
 
         public ModsViewModel(IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
         {
@@ -28,14 +28,28 @@ namespace BeatSaberModManager.ViewModels
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
             _progress = progress;
-            this.WhenAnyValue(x => x.GridItems.Count)
-                .Select(x => x > 0)
-                .ToProperty(this, nameof(AreModsAvailable), out _areModsAvailable);
+            this.WhenAnyValue(x => x.AreModsLoading, x => x.AreModsAvailable)
+                .Select(tuple => tuple.Item1 && tuple.Item2)
+                .ToProperty(this, nameof(NoModsTextVisible), out _noModsTextVisible);
         }
 
-        public ObservableCollectionExtended<ModGridItemViewModel> GridItems { get; } = new();
+        public ObservableCollection<ModGridItemViewModel> GridItems { get; } = new();
 
-        public bool AreModsAvailable => _areModsAvailable.Value;
+        public bool NoModsTextVisible => _noModsTextVisible.Value;
+
+        private bool _areModsLoading = true;
+        public bool AreModsLoading
+        {
+            get => _areModsLoading;
+            set => this.RaiseAndSetIfChanged(ref _areModsLoading, value);
+        }
+
+        private bool _areModsAvailable;
+        public bool AreModsAvailable
+        {
+            get => _areModsAvailable;
+            set => this.RaiseAndSetIfChanged(ref _areModsAvailable, value);
+        }
 
         private ModGridItemViewModel? _selectedGridItem;
         public ModGridItemViewModel? SelectedGridItem
@@ -47,8 +61,10 @@ namespace BeatSaberModManager.ViewModels
         public async Task RefreshDataGridAsync()
         {
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
-            if (_modProvider.AvailableMods is null) return;
-            for (int i = 0; i < _modProvider.AvailableMods.Length; i++)
+            AreModsLoading = false;
+            AreModsAvailable = _modProvider.AvailableMods?.Length > 0;
+            if (!AreModsAvailable) return;
+            for (int i = 0; i < _modProvider.AvailableMods!.Length; i++)
             {
                 IMod availableMod = _modProvider.AvailableMods[i];
                 IMod? installedMod = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name == availableMod.Name);
