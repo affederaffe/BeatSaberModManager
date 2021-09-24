@@ -53,10 +53,9 @@ namespace BeatSaberModManager.Views.Implementations.Controls
 
         protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
         {
-#pragma warning disable 8631
+#nullable disable
             base.OnPropertyChanged(change);
-#pragma warning restore 8631
-
+#nullable enable
             if (change.Property == IsIndeterminateProperty)
                 UpdatePseudoClasses(change.NewValue.GetValueOrDefault<bool>(), null);
             else if (change.Property == PreserveAspectProperty)

@@ -29,7 +29,7 @@ namespace BeatSaberModManager.ViewModels
             _modVersionComparer = modVersionComparer;
             _progress = progress;
             this.WhenAnyValue(x => x.AreModsLoading, x => x.AreModsAvailable)
-                .Select(tuple => tuple.Item1 && tuple.Item2)
+                .Select(tuple => !tuple.Item1 && !tuple.Item2)
                 .ToProperty(this, nameof(NoModsTextVisible), out _noModsTextVisible);
         }
 
@@ -63,8 +63,7 @@ namespace BeatSaberModManager.ViewModels
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
             AreModsLoading = false;
             AreModsAvailable = _modProvider.AvailableMods?.Length > 0;
-            if (!AreModsAvailable) return;
-            for (int i = 0; i < _modProvider.AvailableMods!.Length; i++)
+            for (int i = 0; i < _modProvider.AvailableMods?.Length; i++)
             {
                 IMod availableMod = _modProvider.AvailableMods[i];
                 IMod? installedMod = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name == availableMod.Name);
@@ -74,15 +73,15 @@ namespace BeatSaberModManager.ViewModels
                     gridItem = GridItems[i];
                     gridItem.AvailableMod = availableMod;
                     gridItem.InstalledMod = installedMod;
+                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null;
                 }
                 else
                 {
                     gridItem = new ModGridItemViewModel(_modVersionComparer, availableMod, installedMod);
                     GridItems.Add(gridItem);
+                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null;
+                    gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
                 }
-
-                gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null;
-                gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
             }
         }
 

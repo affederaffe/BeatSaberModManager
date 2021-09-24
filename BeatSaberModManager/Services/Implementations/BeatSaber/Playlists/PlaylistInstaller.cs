@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Interfaces;
@@ -13,7 +14,7 @@ using BeatSaberModManager.Services.Interfaces;
 using Microsoft.Extensions.Options;
 
 
-namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlist
+namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 {
     public class PlaylistInstaller
     {
@@ -47,7 +48,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlist
             string filePath = Path.Combine(playlistsDirPath, fileName);
             if (!Directory.Exists(playlistsDirPath)) Directory.CreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
-            Models.Implementations.BeatSaber.Playlist.Playlist? playlist = JsonSerializer.Deserialize<Models.Implementations.BeatSaber.Playlist.Playlist>(body);
+            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(body);
             return playlist is not null && await InstallPlaylistAsync(playlist, progress).ConfigureAwait(false);
         }
 
@@ -60,11 +61,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlist
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
             if (!Directory.Exists(playlistsDirPath)) Directory.CreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);
-            Models.Implementations.BeatSaber.Playlist.Playlist? playlist = JsonSerializer.Deserialize<Models.Implementations.BeatSaber.Playlist.Playlist>(json);
+            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(json);
             return playlist is not null && await InstallPlaylistAsync(playlist, progress).ConfigureAwait(false);
         }
 
-        private async Task<bool> InstallPlaylistAsync(Models.Implementations.BeatSaber.Playlist.Playlist playlist, IStatusProgress? progress = null)
+        private async Task<bool> InstallPlaylistAsync(Playlist playlist, IStatusProgress? progress = null)
         {
             for (int i = 0; i < playlist.Songs.Length; i++)
             {

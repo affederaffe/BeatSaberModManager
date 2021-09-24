@@ -1,5 +1,4 @@
 using Avalonia;
-
 using Avalonia.Markup.Xaml;
 
 using BeatSaberModManager.Views.Interfaces;
@@ -7,7 +6,7 @@ using BeatSaberModManager.Views.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace BeatSaberModManager
+namespace BeatSaberModManager.Views.Implementations
 {
     public class App : Application
     {

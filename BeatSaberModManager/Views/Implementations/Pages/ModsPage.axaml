@@ -3,16 +3,16 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-             xmlns:controls="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
+             xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="BeatSaberModManager.Views.Implementations.Pages.ModsView">
+             x:Class="BeatSaberModManager.Views.Implementations.Pages.ModsPage">
 
     <Design.DataContext>
         <vm:ModsViewModel />
     </Design.DataContext>
 
     <Panel>
-        <controls:ProgressRing IsIndeterminate="True" IsVisible="{Binding AreModsLoading}" />
+        <c:ProgressRing IsIndeterminate="True" IsVisible="{Binding AreModsLoading}" />
 
         <Label FontSize="33"
                FontWeight="SemiBold"

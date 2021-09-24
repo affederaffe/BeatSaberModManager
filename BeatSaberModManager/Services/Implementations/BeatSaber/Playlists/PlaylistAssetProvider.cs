@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using BeatSaberModManager.Services.Interfaces;
 
 
-namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlist
+namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 {
     public class PlaylistAssetProvider : IAssetProvider
     {

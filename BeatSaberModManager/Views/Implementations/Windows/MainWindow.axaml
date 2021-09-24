@@ -42,14 +42,11 @@
             </ListBox.Items>
         </ListBox>
 
-        <TabControl Grid.Column="1"
+        <TabControl x:Name="Pages"
+                    Grid.Column="1"
                     Grid.Row="0"
                     Classes="SideBar"
-                    SelectedIndex="{Binding SelectedIndex}">
-            <TabItem x:Name="IntroViewTabItem" />
-            <TabItem x:Name="ModsViewTabItem" />
-            <TabItem x:Name="OptionsViewTabItem" />
-        </TabControl>
+                    SelectedIndex="{Binding SelectedIndex}" />
 
         <Grid Grid.Column="1"
               Grid.Row="1"

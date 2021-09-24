@@ -8,6 +8,6 @@ namespace BeatSaberModManager.Views.Interfaces
         ITheme SelectedTheme { get; set; }
         ObservableCollection<ITheme> Themes { get; }
         void Initialize();
-        void ReloadExternalThemes();
+        void ReloadExternalThemes(string path);
     }
 }

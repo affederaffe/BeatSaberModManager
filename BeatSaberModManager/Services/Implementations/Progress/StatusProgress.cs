@@ -6,7 +6,7 @@ using BeatSaberModManager.Services.Interfaces;
 
 namespace BeatSaberModManager.Services.Implementations.Progress
 {
-    public class StatusProgress : IStatusProgress, IDisposable
+    public sealed class StatusProgress : IStatusProgress, IDisposable
     {
         private readonly Subject<double> _progressValue = new();
         private readonly Subject<string?> _statusText = new();

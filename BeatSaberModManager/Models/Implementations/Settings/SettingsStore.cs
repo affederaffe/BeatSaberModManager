@@ -7,6 +7,5 @@
         public string? ThemesDir { get; set; }
         public string? ThemeName { get; set; }
         public string? LanguageCode { get; set; }
-        public int LastSelectedIndex { get; set; }
     }
 }

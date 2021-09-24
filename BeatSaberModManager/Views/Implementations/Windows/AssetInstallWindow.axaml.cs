@@ -23,8 +23,8 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         [ActivatorUtilitiesConstructor]
         public AssetInstallWindow(AssetInstallWindowViewModel assetInstallWindowViewModel, Uri uri)
         {
-            _uri = uri;
             InitializeComponent();
+            _uri = uri;
             ViewModel = assetInstallWindowViewModel;
             string installText = (string)this.FindResource("AssetInstallWindow:InstallText")!;
             ViewModel.WhenAnyValue(x => x!.AssetName)

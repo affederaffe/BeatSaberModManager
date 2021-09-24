@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
@@ -16,51 +15,51 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Implementations.Pages
 {
-    public partial class OptionsView : ReactiveUserControl<OptionsViewModel>
+    public partial class OptionsPage : ReactiveUserControl<OptionsViewModel>, IPage
     {
-        public OptionsView() { }
+        private readonly IClassicDesktopStyleApplicationLifetime _lifetime = null!;
+
+        public OptionsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public OptionsView(OptionsViewModel optionsViewModel, ILocalisationManager localisationManager, IThemeManager themeManager)
+        public OptionsPage(OptionsViewModel optionsViewModel, IClassicDesktopStyleApplicationLifetime lifetime, IThemeManager themeManager, ILocalisationManager localisationManager)
         {
             InitializeComponent();
+            _lifetime = lifetime;
             ViewModel = optionsViewModel;
             LocalisationManager = localisationManager;
             ThemeManager = themeManager;
             SelectInstallFolderButton.Command = ReactiveCommand.CreateFromTask(SelectInstallFolderAsync);
             SelectThemesFolderButton.Command = ReactiveCommand.CreateFromTask(SelectThemesFolderAsync);
             InstallPlaylistButton.Command = ReactiveCommand.CreateFromTask(InstallPlaylistAsync);
-            ViewModel.WhenAnyValue(x => x.ThemesDir).Subscribe(_ => ThemeManager.ReloadExternalThemes());
+            ViewModel.WhenAnyValue(x => x.ThemesDir).WhereNotNull().Subscribe(ThemeManager.ReloadExternalThemes);
         }
-
-        public ILocalisationManager LocalisationManager { get; } = null!;
 
         public IThemeManager ThemeManager { get; } = null!;
 
+        public ILocalisationManager LocalisationManager { get; } = null!;
+
         private async Task SelectInstallFolderAsync()
         {
-            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
             OpenFolderDialog openFolderDialog = new();
-            ViewModel!.InstallDir = await openFolderDialog.ShowAsync(desktop.MainWindow);
+            ViewModel!.InstallDir = await openFolderDialog.ShowAsync(_lifetime.MainWindow);
         }
 
         private async Task SelectThemesFolderAsync()
         {
-            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
             OpenFolderDialog openFolderDialog = new();
-            ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(desktop.MainWindow);
+            ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(_lifetime.MainWindow);
         }
 
         private async Task InstallPlaylistAsync()
         {
-            if (Application.Current.ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop) return;
-            OpenFileDialog openFileDialog = new();
-            FileDialogFilter fileDialogFilter = new();
-            fileDialogFilter.Extensions.Add("bplist");
-            fileDialogFilter.Name = "BeatSaber Playlist";
-            openFileDialog.Filters.Add(fileDialogFilter);
-            openFileDialog.AllowMultiple = true;
-            string[] filePaths = await openFileDialog.ShowAsync(desktop.MainWindow);
+            OpenFileDialog openFileDialog = new()
+            {
+                AllowMultiple = true,
+                Filters = { new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" } }
+            };
+
+            string[] filePaths = await openFileDialog.ShowAsync(_lifetime.MainWindow);
             if (filePaths is null || filePaths.Length <= 0) return;
             await ViewModel!.InstallPlaylistsAsync(filePaths);
         }

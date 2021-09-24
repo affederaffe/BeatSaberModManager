@@ -42,8 +42,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         {
             SettingsStore? settingsStore = null;
             if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
-            if (File.Exists(_saveFilePath) && (settingsStore = JsonSerializer.Deserialize<SettingsStore>(File.ReadAllText(_saveFilePath))) is not null
-                                           && _installDirValidator.ValidateInstallDir(settingsStore.InstallDir))
+            if (File.Exists(_saveFilePath) && (settingsStore = JsonSerializer.Deserialize<SettingsStore>(File.ReadAllText(_saveFilePath))) is not null && _installDirValidator.ValidateInstallDir(settingsStore.InstallDir))
                 return settingsStore;
             settingsStore ??= new SettingsStore();
             settingsStore.InstallDir = _installDirLocator.DetectInstallDir();

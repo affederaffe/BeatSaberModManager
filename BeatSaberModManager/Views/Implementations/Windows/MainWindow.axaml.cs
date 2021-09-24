@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -6,6 +9,7 @@ using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.ViewModels;
+using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,23 +25,25 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         public MainWindow() { }
 
         [ActivatorUtilitiesConstructor]
-        public MainWindow(MainWindowViewModel mainWindowViewModel, Pages.IntroView introView, Pages.ModsView modsView, Pages.OptionsView optionsView)
+        public MainWindow(MainWindowViewModel mainWindowViewModel, OptionsViewModel optionsViewModel, IEnumerable<IPage> pages)
         {
-            _optionsViewModel = optionsView.ViewModel!;
             InitializeComponent();
-            IntroViewTabItem.Content = introView;
-            ModsViewTabItem.Content = modsView;
-            OptionsViewTabItem.Content = optionsView;
+            _optionsViewModel = optionsViewModel;
             ViewModel = mainWindowViewModel;
             Title = nameof(BeatSaberModManager);
-            ViewModel.WhenAnyValue(x => x.ProgressBarStatusType).Select(GetLocalizedStatus).BindTo<object?, MainWindow, object>(this, x => x.ProgressBarStatusText.Content);
-            this.WhenActivated(_ => ValidateOrSetInstallDir().ConfigureAwait(false));
+            Pages.Items = pages.Select(x => new TabItem { Content = x }).ToArray();
+            ViewModel.WhenAnyValue(x => x.ProgressBarStatusType)
+                .Select(GetLocalizedStatus)
+                .BindTo(this, x => x.ProgressBarStatusText.Content);
         }
 
-        private async Task ValidateOrSetInstallDir()
+        protected override void OnOpened(EventArgs e)
         {
-            _optionsViewModel.InstallDir ??= await new InstallFolderDialogWindow().ShowDialog<string?>(this);
+            base.OnOpened(e);
+            _ = ValidateOrSetInstallDir();
         }
+
+        private async Task ValidateOrSetInstallDir() => _optionsViewModel.InstallDir ??= await new InstallFolderDialogWindow().ShowDialog<string?>(this);
 
         private object? GetLocalizedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
         {

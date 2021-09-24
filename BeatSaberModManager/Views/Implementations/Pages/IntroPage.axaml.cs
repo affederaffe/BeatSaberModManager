@@ -1,13 +1,12 @@
 ﻿using Avalonia.Controls;
 
+using BeatSaberModManager.Views.Interfaces;
+
 
 namespace BeatSaberModManager.Views.Implementations.Pages
 {
-    public partial class IntroView : UserControl
+    public partial class IntroPage : UserControl, IPage
     {
-        public IntroView()
-        {
-            InitializeComponent();
-        }
+        public IntroPage() => InitializeComponent();
     }
 }

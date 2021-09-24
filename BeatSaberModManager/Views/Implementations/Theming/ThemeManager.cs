@@ -56,12 +56,12 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             selectedThemeObservable.Subscribe(t => _settingsStore.ThemeName = t.Name);
         }
 
-        public void ReloadExternalThemes()
+        public void ReloadExternalThemes(string path)
         {
-            if (!Directory.Exists(_settingsStore.ThemesDir)) return;
+            if (!Directory.Exists(path)) return;
             for (int i = _buildInThemesCount; i < Themes.Count; i++)
                 Themes.RemoveAt(i);
-            IEnumerable<ITheme> themes = Directory.EnumerateFiles(_settingsStore.ThemesDir, "*.xaml").Select(LoadTheme).Where(x => x is not null)!;
+            IEnumerable<ITheme> themes = Directory.EnumerateFiles(path, "*.xaml").Select(LoadTheme).Where(x => x is not null)!;
             foreach (ITheme theme in themes)
                 Themes.Add(theme);
         }
@@ -79,13 +79,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
         {
             Styles styles = new();
             foreach (string uri in uris)
-            {
-                styles.Add(new StyleInclude((Uri?)null!)
-                {
-                    Source = new Uri(uri)
-                });
-            }
-
+                styles.Add(new StyleInclude((null as Uri)!) { Source = new Uri(uri) });
             return new Theme(name, styles);
         }
     }

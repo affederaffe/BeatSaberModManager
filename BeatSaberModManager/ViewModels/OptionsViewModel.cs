@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Services.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 
@@ -17,7 +17,6 @@ namespace BeatSaberModManager.ViewModels
 {
     public class OptionsViewModel : ReactiveObject
     {
-        private readonly IStatusProgress _progress;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<bool> _hasValidatedInstallDir;
@@ -27,9 +26,8 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public OptionsViewModel(ModsViewModel modsViewModel, IOptions<SettingsStore> settingsStore, IStatusProgress progress, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
+        public OptionsViewModel(ModsViewModel modsViewModel, IOptions<SettingsStore> settingsStore, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
         {
-            _progress = progress;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
             _installDir = settingsStore.Value.InstallDir;
@@ -100,7 +98,7 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
 
-        public async Task InstallPlaylistsAsync(string[] filePaths) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(filePaths, _progress));
+        public async Task InstallPlaylistsAsync(string[] filePaths) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(filePaths));
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {

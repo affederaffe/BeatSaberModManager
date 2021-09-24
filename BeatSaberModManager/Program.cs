@@ -1,5 +1,5 @@
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -11,12 +11,13 @@ using BeatSaberModManager.Services.Implementations.BeatSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber;
-using BeatSaberModManager.Services.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars;
 using BeatSaberModManager.Services.Implementations.Settings;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
+using BeatSaberModManager.Views.Implementations;
 using BeatSaberModManager.Views.Implementations.Localisation;
 using BeatSaberModManager.Views.Implementations.Pages;
 using BeatSaberModManager.Views.Implementations.Theming;
@@ -24,7 +25,6 @@ using BeatSaberModManager.Views.Implementations.Windows;
 using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 
@@ -32,13 +32,11 @@ namespace BeatSaberModManager
 {
     public static class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             BuildAvaloniaApp();
-            using IHost host = CreateHostBuilder(args).Build();
-            await host.StartAsync();
-            RunAvaloniaApp(host.Services);
-            await host.StopAsync();
+            IServiceProvider services = new ServiceCollection().AddServices(args).BuildServiceProvider();
+            RunAvaloniaApp(services);
         }
 
         private static void BuildAvaloniaApp()
@@ -54,21 +52,21 @@ namespace BeatSaberModManager
         {
             Application app = services.GetRequiredService<Application>();
             AvaloniaLocator.CurrentMutable.BindToSelf(app);
-            ClassicDesktopStyleApplicationLifetime lifetime = new();
+            ClassicDesktopStyleApplicationLifetime lifetime = (ClassicDesktopStyleApplicationLifetime)services.GetRequiredService<IClassicDesktopStyleApplicationLifetime>();
             app.ApplicationLifetime = lifetime;
             app.RegisterServices();
             app.Initialize();
             app.OnFrameworkInitializationCompleted();
             lifetime.MainWindow = services.GetRequiredService<Window>();
-            lifetime.Start(Array.Empty<string>());
+            lifetime.Start(null);
         }
 
-        private static IHostBuilder CreateHostBuilder(string[] args) => Host.CreateDefaultBuilder(args).ConfigureServices(services =>
+        private static IServiceCollection AddServices(this IServiceCollection services, IReadOnlyList<string> args)
         {
             services.AddCoreServices();
             services.AddApplication();
             services.AddAssetProviders();
-            if (args.Length is 2 && args[0] == "--install")
+            if (args.Count is 2 && args[0] == "--install")
             {
                 services.AddSingleton<AssetInstallWindowViewModel>();
                 services.AddSingleton<Window, AssetInstallWindow>(provider => new AssetInstallWindow(provider.GetRequiredService<AssetInstallWindowViewModel>(), new Uri(args[1])));
@@ -80,7 +78,9 @@ namespace BeatSaberModManager
                 services.AddViewModels();
                 services.AddViews();
             }
-        });
+
+            return services;
+        }
 
         private static void AddCoreServices(this IServiceCollection services)
         {
@@ -119,7 +119,6 @@ namespace BeatSaberModManager
         private static void AddViewModels(this IServiceCollection services)
         {
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<IntroView>();
             services.AddSingleton<ModsViewModel>();
             services.AddSingleton<OptionsViewModel>();
         }
@@ -127,13 +126,15 @@ namespace BeatSaberModManager
         private static void AddViews(this IServiceCollection services)
         {
             services.AddSingleton<Window, MainWindow>();
-            services.AddSingleton<ModsView>();
-            services.AddSingleton<OptionsView>();
+            services.AddSingleton<IPage, IntroPage>();
+            services.AddSingleton<IPage, ModsPage>();
+            services.AddSingleton<IPage, OptionsPage>();
         }
 
         private static void AddApplication(this IServiceCollection services)
         {
             services.AddSingleton<Application, App>();
+            services.AddSingleton<IClassicDesktopStyleApplicationLifetime, ClassicDesktopStyleApplicationLifetime>();
             services.AddSingleton<ILocalisationManager, LocalisationManager>();
             services.AddSingleton<IThemeManager, ThemeManager>();
         }

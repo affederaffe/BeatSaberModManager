@@ -24,10 +24,8 @@ namespace BeatSaberModManager.ViewModels
 
         public MainWindowViewModel(ModsViewModel modsViewModel, IOptions<SettingsStore> settingsStore, IStatusProgress progress)
         {
-            _selectedIndex = settingsStore.Value.LastSelectedIndex;
             MoreInfoButtonCommand = ReactiveCommand.Create(() => PlatformUtils.OpenBrowser(modsViewModel.SelectedGridItem?.AvailableMod.MoreInfoLink));
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync);
-            this.WhenAnyValue(x => x.SelectedIndex).BindTo(settingsStore.Value, x => x.LastSelectedIndex);
             modsViewModel.WhenAnyValue(x => x.SelectedGridItem)
                 .Select(mod => mod is not null)
                 .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);

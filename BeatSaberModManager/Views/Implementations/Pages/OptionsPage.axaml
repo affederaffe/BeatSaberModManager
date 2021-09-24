@@ -3,11 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-             xmlns:localisation="clr-namespace:BeatSaberModManager.Views.Implementations.Localisation"
              xmlns:pages="clr-namespace:BeatSaberModManager.Views.Implementations.Pages"
-             xmlns:theming="clr-namespace:BeatSaberModManager.Views.Implementations.Theming"
+             xmlns:i="clr-namespace:BeatSaberModManager.Views.Interfaces"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="BeatSaberModManager.Views.Implementations.Pages.OptionsView">
+             x:Class="BeatSaberModManager.Views.Implementations.Pages.OptionsPage">
 
     <Design.DataContext>
         <vm:OptionsViewModel/>
@@ -99,11 +98,11 @@
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
             <Label Content="A 文" FontSize="22" />
-            <ComboBox DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=pages:OptionsView}}"
+            <ComboBox DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=pages:OptionsPage}}"
                       Items="{Binding LocalisationManager.Languages}"
                       SelectedItem="{Binding LocalisationManager.SelectedLanguage}">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate DataType="localisation:Language">
+                    <DataTemplate DataType="i:ILanguage">
                         <Label Content="{Binding CultureInfo.DisplayName}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
@@ -137,11 +136,11 @@
                   Grid.Row="9"
                   Margin="10, 5"
                   VerticalAlignment="Center"
-                  DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=pages:OptionsView}}"
+                  DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=pages:OptionsPage}}"
                   Items="{Binding ThemeManager.Themes}"
                   SelectedItem="{Binding ThemeManager.SelectedTheme}">
             <ComboBox.ItemTemplate>
-                <DataTemplate DataType="theming:Theme">
+                <DataTemplate DataType="i:ITheme">
                     <Label Content="{Binding Name}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>

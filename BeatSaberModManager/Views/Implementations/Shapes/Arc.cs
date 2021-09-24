@@ -112,14 +112,8 @@ namespace BeatSaberModManager.Views.Implementations.Shapes
             double normEnd = RadToNormRad(endAngle);
 
 
-            if (Math.Abs(normStart - normEnd) < 0.01 && Math.Abs(startAngle - endAngle) < 0.01) //empty
-            {
-
-            }
-            else //not empty
-            {
+            if (Math.Abs(normStart - normEnd) > 0.01 || Math.Abs(startAngle - endAngle) > 0.01)
                 base.Render(context);
-            }
         }
 
         private static double DegreesToRad(double inAngle) =>
