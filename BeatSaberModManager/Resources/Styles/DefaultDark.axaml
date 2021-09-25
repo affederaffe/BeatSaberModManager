@@ -1,5 +1,5 @@
 ﻿<Style xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
     <Style.Resources>
         <Color x:Key="SystemChromeMediumLowColor">#FF2B2B2B</Color>
@@ -7,4 +7,5 @@
         <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumLowBrush" Color="{StaticResource SystemChromeMediumLowColor}" />
         <SolidColorBrush x:Key="SystemControlBackgroundChromeMediumBrush" Color="{StaticResource SystemChromeMediumColor}" />
     </Style.Resources>
+
 </Style>

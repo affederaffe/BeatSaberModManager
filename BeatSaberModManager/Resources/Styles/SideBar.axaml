@@ -51,4 +51,5 @@
     <Style Selector="TabControl.SideBar > TabItem:pointerover /template/ Border#PART_LayoutRoot">
         <Setter Property="Background" Value="#3fffffff" />
     </Style>
+
 </Styles>

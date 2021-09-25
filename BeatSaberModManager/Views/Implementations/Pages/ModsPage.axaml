@@ -15,7 +15,7 @@
         <c:ProgressRing IsIndeterminate="True"
                         Width="500"
                         Height="500"
-                        IsVisible="{Binding AreModsLoading}"/>
+                        IsVisible="{Binding AreModsLoading}" />
 
         <Label FontSize="33"
                FontWeight="SemiBold"

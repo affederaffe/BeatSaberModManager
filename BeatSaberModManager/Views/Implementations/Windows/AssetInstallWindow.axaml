@@ -3,7 +3,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-        xmlns:controls="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
+        xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.AssetInstallWindow"
         Title="OneClick™ Installer"
@@ -20,13 +20,11 @@
     <Panel>
         <Rectangle IsHitTestVisible="False" Opacity="0.975" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
         <Grid RowDefinitions="2.75*, *">
-            <controls:ProgressRing Grid.Row="0"
-                          Minimum="0"
-                          Maximum="100"
-                          Width="200"
-                          Height="200"
-                          Value="{Binding ProgressValue}"
-                          IsVisible="{Binding ProgressRingVisible}" />
+            <c:ProgressRing Grid.Row="0"
+                            Width="200"
+                            Height="200"
+                            Value="{Binding ProgressValue}"
+                            IsVisible="{Binding ProgressRingVisible}" />
             <Label Grid.Row="0"
                    FontSize="100"
                    HorizontalAlignment="Center"
