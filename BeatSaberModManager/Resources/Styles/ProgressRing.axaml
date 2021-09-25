@@ -1,0 +1,72 @@
+
+<Styles xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls">
+
+    <Design.PreviewWith>
+		<Border Padding="0" ClipToBounds="False">
+			<c:ProgressRing IsIndeterminate="True" />
+		</Border>
+	</Design.PreviewWith>
+
+	<Style Selector="c|ProgressRing">
+        <Setter Property="Foreground" Value="{DynamicResource SystemControlHighlightAccentBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundBaseLowBrush}" />
+        <Setter Property="BorderThickness" Value="9" />
+        <Setter Property="MinHeight" Value="16" />
+        <Setter Property="MinWidth" Value="16" />
+    </Style>
+
+	<Style Selector="c|ProgressRing[IsIndeterminate=False]">
+        <Setter Property="Template">
+			<ControlTemplate>
+                <Panel>
+                    <Ellipse Stroke="{TemplateBinding Background}"
+                             StrokeThickness="{TemplateBinding StrokeThickness}" />
+                    <Arc Stroke="{TemplateBinding Foreground}"
+                         StrokeThickness="{TemplateBinding StrokeThickness}"
+                         StartAngle="{TemplateBinding StartAngle}"
+                         SweepAngle="{TemplateBinding SweepAngle}" />
+                </Panel>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+
+	<Style Selector="c|ProgressRing[IsIndeterminate=True]">
+		<Setter Property="Template">
+			<ControlTemplate>
+				<Panel>
+                    <Ellipse Stroke="{TemplateBinding Background}"
+                             StrokeThickness="{TemplateBinding StrokeThickness}" />
+					<Arc Stroke="{TemplateBinding Foreground}"
+                         StrokeThickness="{TemplateBinding StrokeThickness}"
+                         Classes="rc">
+						<Arc.RenderTransform>
+							<RotateTransform Angle="-90" />
+						</Arc.RenderTransform>
+					</Arc>
+				</Panel>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+
+	<Style Selector="c|ProgressRing[IsIndeterminate=True] /template/ Arc.rc">
+		<Style.Animations>
+			<Animation Duration="0:0:.75" FillMode="Both"
+                       IterationCount="Infinite">
+				<KeyFrame Cue="0%">
+					<Setter Property="StartAngle" Value="0" />
+					<Setter Property="SweepAngle" Value="180" />
+				</KeyFrame>
+				<KeyFrame Cue="50%">
+					<Setter Property="StartAngle" Value="270" />
+					<Setter Property="SweepAngle" Value="22.5" />
+				</KeyFrame>
+				<KeyFrame Cue="100%">
+					<Setter Property="StartAngle" Value="360" />
+					<Setter Property="SweepAngle" Value="180" />
+				</KeyFrame>
+			</Animation>
+		</Style.Animations>
+	</Style>
+</Styles>

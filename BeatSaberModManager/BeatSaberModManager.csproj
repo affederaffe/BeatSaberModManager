@@ -54,11 +54,4 @@
     <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Views\Implementations\App.axaml.cs">
-      <DependentUpon>App.axaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-  </ItemGroup>
-
 </Project>

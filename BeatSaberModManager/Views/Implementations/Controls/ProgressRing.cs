@@ -1,36 +1,27 @@
+using System;
+
 using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Primitives;
 
 
 namespace BeatSaberModManager.Views.Implementations.Controls
 {
-    /// <summary>
-    /// A control used to indicate the progress of an operation.
-    /// </summary>
-    [PseudoClasses(":preserveaspect", ":indeterminate")]
     public class ProgressRing : RangeBase
     {
-        public static readonly StyledProperty<bool> IsIndeterminateProperty =
-            ProgressBar.IsIndeterminateProperty.AddOwner<ProgressRing>();
-
-        public static readonly StyledProperty<bool> PreserveAspectProperty =
-            AvaloniaProperty.Register<ProgressRing, bool>(nameof(PreserveAspect), true);
-
-        public static readonly StyledProperty<double> ValueAngleProperty =
-            AvaloniaProperty.Register<ProgressRing, double>(nameof(ValueAngle), -90.0);
+        public static readonly StyledProperty<bool> IsIndeterminateProperty = AvaloniaProperty.Register<ProgressRing, bool>(nameof(IsIndeterminate));
+        public static readonly StyledProperty<int> StrokeThicknessProperty = AvaloniaProperty.Register<ProgressRing, int>(nameof(StrokeThickness), 20);
+        public static readonly DirectProperty<ProgressRing, double> StartAngleProperty = AvaloniaProperty.RegisterDirect<ProgressRing, double>(nameof(StartAngle), o => o.StartAngle);
+        public static readonly DirectProperty<ProgressRing, double> SweepAngleProperty = AvaloniaProperty.RegisterDirect<ProgressRing, double>(nameof(SweepAngle), o => o.SweepAngle);
 
         static ProgressRing()
         {
-            MinimumProperty.Changed.AddClassHandler<ProgressRing>(OnRangePropertiesChanged);
-            ValueProperty.Changed.AddClassHandler<ProgressRing>(OnRangePropertiesChanged);
-            MaximumProperty.Changed.AddClassHandler<ProgressRing>(OnRangePropertiesChanged);
-        }
-
-        public ProgressRing()
-        {
-            UpdatePseudoClasses(IsIndeterminate, PreserveAspect);
+            MaximumProperty.Changed.Subscribe(CalibrateAngles);
+            MinimumProperty.Changed.Subscribe(CalibrateAngles);
+            ValueProperty.Changed.Subscribe(CalibrateAngles);
+            MaximumProperty.OverrideMetadata<ProgressRing>(new DirectPropertyMetadata<double>(100));
+            MinimumProperty.OverrideMetadata<ProgressRing>(new DirectPropertyMetadata<double>());
+            ValueProperty.OverrideMetadata<ProgressRing>(new DirectPropertyMetadata<double>(25));
+            AffectsRender<ProgressRing>(StartAngleProperty, SweepAngleProperty);
         }
 
         public bool IsIndeterminate
@@ -39,54 +30,31 @@ namespace BeatSaberModManager.Views.Implementations.Controls
             set => SetValue(IsIndeterminateProperty, value);
         }
 
-        public bool PreserveAspect
+        public int StrokeThickness
         {
-            get => GetValue(PreserveAspectProperty);
-            set => SetValue(PreserveAspectProperty, value);
+            get => GetValue(StrokeThicknessProperty);
+            set => SetValue(StrokeThicknessProperty, value);
         }
 
-        public double ValueAngle
+        private double _startAngle;
+        public double StartAngle
         {
-            get => GetValue(ValueAngleProperty);
-            private set => SetValue(ValueAngleProperty, value);
+            get => _startAngle;
+            private set => SetAndRaise(StartAngleProperty, ref _startAngle, value);
         }
 
-        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        private double _sweepAngle;
+        public double SweepAngle
         {
-#nullable disable
-            base.OnPropertyChanged(change);
-#nullable enable
-            if (change.Property == IsIndeterminateProperty)
-                UpdatePseudoClasses(change.NewValue.GetValueOrDefault<bool>(), null);
-            else if (change.Property == PreserveAspectProperty)
-                UpdatePseudoClasses(null, change.NewValue.GetValueOrDefault<bool>());
+            get => _sweepAngle;
+            private set => SetAndRaise(SweepAngleProperty, ref _sweepAngle, value);
         }
 
-        private void UpdatePseudoClasses(bool? isIndeterminate, bool? preserveAspect)
+        private static void CalibrateAngles(AvaloniaPropertyChangedEventArgs<double> e)
         {
-            if (isIndeterminate.HasValue)
-                PseudoClasses.Set(":indeterminate", isIndeterminate.Value);
-            if (preserveAspect.HasValue)
-                PseudoClasses.Set(":preserveaspect", preserveAspect.Value);
-        }
-
-        private static void OnRangePropertiesChanged(ProgressRing sender, AvaloniaPropertyChangedEventArgs e)
-        {
-            double min = sender.Minimum;
-            double ringVal = sender.Value;
-            double max = sender.Maximum;
-
-            if (e.NewValue is double newPropVal)
-            {
-                if (e.Property == MinimumProperty)
-                    min = newPropVal;
-                else if (e.Property == ValueProperty)
-                    ringVal = newPropVal;
-                else if (e.Property == MaximumProperty)
-                    max = newPropVal;
-            }
-
-            sender.ValueAngle = (ringVal - min) / (max - min) * 360.0 - 90;
+            if (e.Sender is not ProgressRing pr) return;
+            pr.StartAngle = -90;
+            pr.SweepAngle = (pr.Value - pr.Minimum) / (pr.Maximum - pr.Minimum) * 360;
         }
     }
 }

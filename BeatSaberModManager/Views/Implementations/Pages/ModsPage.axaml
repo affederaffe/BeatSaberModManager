@@ -12,7 +12,10 @@
     </Design.DataContext>
 
     <Panel>
-        <c:ProgressRing IsIndeterminate="True" IsVisible="{Binding AreModsLoading}" />
+        <c:ProgressRing IsIndeterminate="True"
+                        Width="500"
+                        Height="500"
+                        IsVisible="{Binding AreModsLoading}"/>
 
         <Label FontSize="33"
                FontWeight="SemiBold"
@@ -33,6 +36,7 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <CheckBox VerticalAlignment="Center"
+                                      HorizontalAlignment="Center"
                                       IsEnabled="{Binding IsCheckBoxEnabled}"
                                       IsChecked="{Binding IsCheckBoxChecked}" />
                         </DataTemplate>

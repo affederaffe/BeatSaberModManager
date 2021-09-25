@@ -7,6 +7,9 @@ namespace BeatSaberModManager.Views.Implementations.Pages
 {
     public partial class IntroPage : UserControl, IPage
     {
-        public IntroPage() => InitializeComponent();
+        public IntroPage()
+        {
+            InitializeComponent();
+        }
     }
 }

@@ -5,6 +5,7 @@
     <Application.Styles>
         <FluentTheme Mode="Dark" />
         <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
+        <StyleInclude Source="/Resources/Styles/ProgressRing.axaml" />
     </Application.Styles>
 
     <Application.Resources>
