@@ -6,29 +6,29 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
-
-using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 {
     public class ModelSaberModelInstaller
     {
-        private readonly SettingsStore _settingsStore;
-        private readonly HttpClient _httpClient;
+        private readonly AppSettings _appSettings;
+        private readonly HttpProgressClient _httpClient;
 
         private const string kModelSaberFilesEndpoint = "https://modelsaber.com/files/";
 
-        public ModelSaberModelInstaller(IOptions<SettingsStore> settingsStore, HttpClient httpClient)
+        public ModelSaberModelInstaller(ISettings<AppSettings> appSettings, HttpProgressClient httpClient)
         {
-            _settingsStore = settingsStore.Value;
+            _appSettings = appSettings.Value;
             _httpClient = httpClient;
         }
 
         public async Task<bool> InstallModelAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (!Directory.Exists(_settingsStore.InstallDir)) return false;
+            if (!Directory.Exists(_appSettings.InstallDir)) return false;
             string? folderName = uri.Host switch
             {
                 "avatar" => "CustomAvatars",
@@ -39,11 +39,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             };
 
             if (folderName is null) return false;
-            string folderPath = Path.Combine(_settingsStore.InstallDir, folderName);
+            string folderPath = Path.Combine(_appSettings.InstallDir, folderName);
             if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);
-            using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath, progress);
             if (!response.IsSuccessStatusCode) return false;
             byte[] body = await response.Content.ReadAsByteArrayAsync();
             string filePath = Path.Combine(folderPath, modelName);

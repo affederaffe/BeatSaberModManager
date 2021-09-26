@@ -7,11 +7,13 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
+using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars;
 using BeatSaberModManager.Services.Implementations.Settings;
@@ -25,7 +27,6 @@ using BeatSaberModManager.Views.Implementations.Windows;
 using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager
@@ -35,8 +36,7 @@ namespace BeatSaberModManager
         public static void Main(string[] args)
         {
             BuildAvaloniaApp();
-            IServiceProvider services = new ServiceCollection().AddServices(args).BuildServiceProvider();
-            RunAvaloniaApp(services);
+            CreateServiceCollection(args).BuildServiceProvider().StartAvaloniaApp();
         }
 
         private static void BuildAvaloniaApp()
@@ -48,7 +48,7 @@ namespace BeatSaberModManager
             builder.AfterPlatformServicesSetupCallback(builder);
         }
 
-        private static void RunAvaloniaApp(IServiceProvider services)
+        private static void StartAvaloniaApp(this IServiceProvider services)
         {
             Application app = services.GetRequiredService<Application>();
             AvaloniaLocator.CurrentMutable.BindToSelf(app);
@@ -61,82 +61,64 @@ namespace BeatSaberModManager
             lifetime.Start(null);
         }
 
-        private static IServiceCollection AddServices(this IServiceCollection services, IReadOnlyList<string> args)
-        {
-            services.AddCoreServices();
-            services.AddApplication();
-            services.AddAssetProviders();
-            if (args.Count is 2 && args[0] == "--install")
-            {
-                services.AddSingleton<AssetInstallWindowViewModel>();
-                services.AddSingleton<Window, AssetInstallWindow>(provider => new AssetInstallWindow(provider.GetRequiredService<AssetInstallWindowViewModel>(), new Uri(args[1])));
-            }
-            else
-            {
-                services.AddProtocolHandlerRegistrar();
-                services.AddModServices();
-                services.AddViewModels();
-                services.AddViews();
-            }
+        private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>
+            new ServiceCollection()
+                .AddCoreServices()
+                .AddApplication()
+                .AddAssetProviders()
+                .AddWindows(args);
 
-            return services;
-        }
+        private static IServiceCollection AddWindows(this IServiceCollection services, IReadOnlyList<string> args) =>
+            args.Count is 2 && args[0] == "--install"
+                ? services.AddSingleton<AssetInstallWindowViewModel>()
+                    .AddSingleton<Window, AssetInstallWindow>(provider => new AssetInstallWindow(provider.GetRequiredService<AssetInstallWindowViewModel>(), args[1]))
+                : services.AddProtocolHandlerRegistrar()
+                    .AddModServices()
+                    .AddViewModels()
+                    .AddViews();
 
-        private static void AddCoreServices(this IServiceCollection services)
-        {
-            services.AddHttpClient();
-            services.AddSingleton<IStatusProgress, StatusProgress>();
-            services.AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>();
-            services.AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>();
-            services.AddSingleton<IOptions<SettingsStore>, SettingsManager>();
-        }
+        private static IServiceCollection AddCoreServices(this IServiceCollection services) =>
+            services.AddSingleton<HttpProgressClient>()
+                .AddSingleton<IStatusProgress, StatusProgress>()
+                .AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>()
+                .AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>()
+                .AddSingleton<ISettings<AppSettings>, AppSettingsProvider>();
 
-        private static void AddProtocolHandlerRegistrar(this IServiceCollection services)
-        {
-            if (OperatingSystem.IsWindows()) services.AddSingleton<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>();
-            else if (OperatingSystem.IsLinux()) services.AddSingleton<IProtocolHandlerRegistrar, LinuxProtocolHandlerRegistrar>();
-        }
+        private static IServiceCollection AddProtocolHandlerRegistrar(this IServiceCollection services) =>
+            OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>()
+                : OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, LinuxProtocolHandlerRegistrar>()
+                    : throw new PlatformNotSupportedException();
 
-        private static void AddModServices(this IServiceCollection services)
-        {
-            services.AddSingleton<IHashProvider, MD5HashProvider>();
-            services.AddSingleton<IModProvider, BeatModsModProvider>();
-            services.AddSingleton<IModInstaller, BeatModsModInstaller>();
-            services.AddSingleton<IModVersionComparer, SystemVersionComparer>();
-            services.AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>();
-        }
+        private static IServiceCollection AddModServices(this IServiceCollection services) =>
+            services.AddSingleton<IHashProvider, MD5HashProvider>()
+                .AddSingleton<IModProvider, BeatModsModProvider>()
+                .AddSingleton<IModInstaller, BeatModsModInstaller>()
+                .AddSingleton<IModVersionComparer, SystemVersionComparer>()
+                .AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>();
 
-        private static void AddAssetProviders(this IServiceCollection services)
-        {
-            services.AddSingleton<BeatSaverMapInstaller>();
-            services.AddSingleton<IAssetProvider, BeatSaverAssetProvider>();
-            services.AddSingleton<ModelSaberModelInstaller>();
-            services.AddSingleton<IAssetProvider, ModelSaberAssetProvider>();
-            services.AddSingleton<PlaylistInstaller>();
-            services.AddSingleton<IAssetProvider, PlaylistAssetProvider>();
-        }
+        private static IServiceCollection AddAssetProviders(this IServiceCollection services) =>
+            services.AddSingleton<BeatSaverMapInstaller>()
+                .AddSingleton<IAssetProvider, BeatSaverAssetProvider>()
+                .AddSingleton<ModelSaberModelInstaller>()
+                .AddSingleton<IAssetProvider, ModelSaberAssetProvider>()
+                .AddSingleton<PlaylistInstaller>()
+                .AddSingleton<IAssetProvider, PlaylistAssetProvider>();
 
-        private static void AddViewModels(this IServiceCollection services)
-        {
-            services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<ModsViewModel>();
-            services.AddSingleton<OptionsViewModel>();
-        }
+        private static IServiceCollection AddViewModels(this IServiceCollection services) =>
+            services.AddSingleton<MainWindowViewModel>()
+                .AddSingleton<ModsViewModel>()
+                .AddSingleton<OptionsViewModel>();
 
-        private static void AddViews(this IServiceCollection services)
-        {
-            services.AddSingleton<Window, MainWindow>();
-            services.AddSingleton<IPage, IntroPage>();
-            services.AddSingleton<IPage, ModsPage>();
-            services.AddSingleton<IPage, OptionsPage>();
-        }
+        private static IServiceCollection AddViews(this IServiceCollection services) =>
+            services.AddSingleton<Window, MainWindow>()
+                .AddSingleton<IPage, IntroPage>()
+                .AddSingleton<IPage, ModsPage>()
+                .AddSingleton<IPage, OptionsPage>();
 
-        private static void AddApplication(this IServiceCollection services)
-        {
-            services.AddSingleton<Application, App>();
-            services.AddSingleton<IClassicDesktopStyleApplicationLifetime, ClassicDesktopStyleApplicationLifetime>();
-            services.AddSingleton<ILocalisationManager, LocalisationManager>();
-            services.AddSingleton<IThemeManager, ThemeManager>();
-        }
+        private static IServiceCollection AddApplication(this IServiceCollection services) =>
+            services.AddSingleton<Application, App>()
+                .AddSingleton<IClassicDesktopStyleApplicationLifetime, ClassicDesktopStyleApplicationLifetime>()
+                .AddSingleton<ILocalisationManager, LocalisationManager>()
+                .AddSingleton<IThemeManager, ThemeManager>();
     }
 }

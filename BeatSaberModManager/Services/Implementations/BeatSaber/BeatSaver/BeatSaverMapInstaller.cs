@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
@@ -7,24 +8,24 @@ using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
-
-using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 {
     public class BeatSaverMapInstaller
     {
-        private readonly SettingsStore _settingsStore;
-        private readonly HttpClient _httpClient;
+        private readonly AppSettings _appSettings;
+        private readonly HttpProgressClient _httpClient;
 
         private const string kBeatSaverUrlPrefix = "https://api.beatsaver.com";
         private const string kBeatSaverKeyEndpoint = "/maps/id/";
 
-        public BeatSaverMapInstaller(IOptions<SettingsStore> settingsStore, HttpClient httpClient)
+        public BeatSaverMapInstaller(ISettings<AppSettings> appSettings, HttpProgressClient httpClient)
         {
-            _settingsStore = settingsStore.Value;
+            _appSettings = appSettings.Value;
             _httpClient = httpClient;
         }
 
@@ -33,36 +34,50 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             BeatSaverMap? map = await GetBeatSaverMapAsync(key);
             if (map is null || map.Versions.Length <= 0) return false;
             progress?.Report(map.Name);
-            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last()).ConfigureAwait(false);
+            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
             return archive is not null && ExtractBeatSaverMapToFolder(map, archive);
         }
 
-        private async Task<BeatSaverMap?> GetBeatSaverMapAsync(string key)
+        public async Task<BeatSaverMap?> GetBeatSaverMapAsync(string key, int retries = 2)
         {
+            if (retries == 0) return null;
             using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return null;
+            if (!response.IsSuccessStatusCode)
+            {
+                await WaitForRateLimitAsync();
+                return await GetBeatSaverMapAsync(key, retries - 1);
+            }
+
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonSerializer.Deserialize<BeatSaverMap>(body);
         }
 
-        private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion)
+        public bool ExtractBeatSaverMapToFolder(BeatSaverMap map, ZipArchive archive)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return null;
-            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            return new ZipArchive(stream);
-        }
-
-        private bool ExtractBeatSaverMapToFolder(BeatSaverMap map, ZipArchive archive)
-        {
-            if (!Directory.Exists(_settingsStore.InstallDir)) return false;
-            string customLevelsDirectoryPath = Path.Combine(_settingsStore.InstallDir, "Beat Saber_Data", "CustomLevels");
+            if (!Directory.Exists(_appSettings.InstallDir)) return false;
+            string customLevelsDirectoryPath = Path.Combine(_appSettings.InstallDir, "Beat Saber_Data", "CustomLevels");
             if (!Directory.Exists(customLevelsDirectoryPath)) Directory.CreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
             archive.ExtractToDirectory(levelDirectoryPath, true);
             return true;
         }
+
+        private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion, IProgress<double>? progress = null, int retries = 2)
+        {
+            if (retries == 0) return null;
+            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode)
+            {
+                await WaitForRateLimitAsync();
+                return await DownloadBeatSaverMapAsync(mapVersion, progress, retries - 1);
+            }
+
+            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            return new ZipArchive(stream);
+        }
+
+        private static Task WaitForRateLimitAsync() => Task.Delay(1000);
 
         private static readonly char[] _illegalCharacters = {
             '<', '>', ':', '/', '\\', '|', '?', '*', '"',

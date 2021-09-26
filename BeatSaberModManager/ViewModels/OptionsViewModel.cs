@@ -4,11 +4,10 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -26,12 +25,12 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public OptionsViewModel(ModsViewModel modsViewModel, IOptions<SettingsStore> settingsStore, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
+        public OptionsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
         {
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
-            _installDir = settingsStore.Value.InstallDir;
-            _themesDir = settingsStore.Value.ThemesDir;
+            _installDir = appSettings.Value.InstallDir;
+            _themesDir = appSettings.Value.ThemesDir;
             _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
             _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
             _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
@@ -43,11 +42,11 @@ namespace BeatSaberModManager.ViewModels
             this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kModelSaberProtocol));
             this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(b => ToggleOneClickHandler(b, kPlaylistProtocol));
             IObservable<string> validatedInstallDirObservable = this.WhenAnyValue(x => x.InstallDir).Where(installDirValidator.ValidateInstallDir)!;
-            validatedInstallDirObservable.BindTo(settingsStore, x => x.Value.InstallDir);
-            validatedInstallDirObservable.Select(installDirValidator.DetectVRPlatform).BindTo(settingsStore, x => x.Value.VRPlatform);
+            validatedInstallDirObservable.BindTo(appSettings, x => x.Value.InstallDir);
+            validatedInstallDirObservable.Select(installDirValidator.DetectVRPlatform).BindTo(appSettings, x => x.Value.VRPlatform);
             validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
             IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir).Where(x => !string.IsNullOrEmpty(x));
-            themesDirObservable.BindTo(settingsStore, x => x.Value.ThemesDir);
+            themesDirObservable.BindTo(appSettings, x => x.Value.ThemesDir);
             themesDirObservable.Select(_ => true).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
 
@@ -98,7 +97,7 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
 
-        public async Task InstallPlaylistsAsync(string[] filePaths) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(filePaths));
+        public async Task InstallPlaylistsAsync(string path) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(path));
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {

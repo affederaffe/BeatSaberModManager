@@ -1,6 +1,6 @@
 ﻿namespace BeatSaberModManager.Models.Implementations.Settings
 {
-    public class SettingsStore
+    public class AppSettings
     {
         public string? InstallDir { get; set; }
         public string? VRPlatform { get; set; }

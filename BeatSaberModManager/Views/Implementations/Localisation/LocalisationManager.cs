@@ -7,9 +7,8 @@ using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Views.Interfaces;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -18,13 +17,13 @@ namespace BeatSaberModManager.Views.Implementations.Localisation
 {
     public class LocalisationManager : ReactiveObject, ILocalisationManager
     {
-        private readonly SettingsStore _settingsStore;
+        private readonly AppSettings _appSettings;
 
-        public LocalisationManager(IOptions<SettingsStore> settingsStore)
+        public LocalisationManager(ISettings<AppSettings> appSettings)
         {
-            _settingsStore = settingsStore.Value;
+            _appSettings = appSettings.Value;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
-            SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _settingsStore.LanguageCode) ??
+            SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _appSettings.LanguageCode) ??
                                Languages.FirstOrDefault(x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
                                Languages.First();
         }
@@ -42,7 +41,7 @@ namespace BeatSaberModManager.Views.Implementations.Localisation
         {
             IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).WhereNotNull().Cast<Language>();
             selectedLanguageObservable.Subscribe(l => Application.Current.Resources.MergedDictionaries[0] = l.ResourceProvider);
-            selectedLanguageObservable.Subscribe(l => _settingsStore.LanguageCode = l.CultureInfo.Name);
+            selectedLanguageObservable.Subscribe(l => _appSettings.LanguageCode = l.CultureInfo.Name);
         }
 
         private static ILanguage LoadLanguage(string languageCode)

@@ -55,13 +55,13 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         {
             OpenFileDialog openFileDialog = new()
             {
-                AllowMultiple = true,
+                AllowMultiple = false,
                 Filters = { new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" } }
             };
 
             string[] filePaths = await openFileDialog.ShowAsync(_lifetime.MainWindow);
-            if (filePaths is null || filePaths.Length <= 0) return;
-            await ViewModel!.InstallPlaylistsAsync(filePaths);
+            if (filePaths?.Length is not 1) return;
+            await ViewModel!.InstallPlaylistsAsync(filePaths[0]);
         }
     }
 }

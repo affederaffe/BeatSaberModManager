@@ -11,9 +11,8 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Views.Interfaces;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -22,12 +21,12 @@ namespace BeatSaberModManager.Views.Implementations.Theming
 {
     public class ThemeManager : ReactiveObject, IThemeManager
     {
-        private readonly SettingsStore _settingsStore;
+        private readonly AppSettings _appSettings;
         private readonly int _buildInThemesCount;
 
-        public ThemeManager(IOptions<SettingsStore> settingsStore)
+        public ThemeManager(ISettings<AppSettings> appSettings)
         {
-            _settingsStore = settingsStore.Value;
+            _appSettings = appSettings.Value;
             Themes = new ObservableCollection<ITheme>
             {
                 LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultLight.axaml"),
@@ -37,7 +36,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             };
 
             _buildInThemesCount = Themes.Count;
-            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _settingsStore.ThemeName) ?? Themes.First();
+            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.ThemeName) ?? Themes.First();
         }
 
         public ObservableCollection<ITheme> Themes { get; }
@@ -53,7 +52,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
         {
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).WhereNotNull().Cast<Theme>();
             selectedThemeObservable.Subscribe(t => Application.Current.Styles[0] = t.Style);
-            selectedThemeObservable.Subscribe(t => _settingsStore.ThemeName = t.Name);
+            selectedThemeObservable.Subscribe(t => _appSettings.ThemeName = t.Name);
         }
 
         public void ReloadExternalThemes(string path)
