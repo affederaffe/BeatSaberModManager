@@ -32,17 +32,22 @@ namespace BeatSaberModManager.Services.Implementations.Settings
 
         private void Save()
         {
-            string json = JsonSerializer.Serialize(Value);
+            string json = JsonSerializer.Serialize(Value, new JsonSerializerOptions { WriteIndented = true });
             if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
             File.WriteAllText(_saveFilePath, json);
         }
 
         private AppSettings Load()
         {
-            AppSettings? appSettings = null;
             if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
-            if (File.Exists(_saveFilePath) && (appSettings = JsonSerializer.Deserialize<AppSettings>(File.ReadAllText(_saveFilePath))) is not null && _installDirValidator.ValidateInstallDir(appSettings.InstallDir))
-                return appSettings;
+            AppSettings? appSettings = null;
+            if (File.Exists(_saveFilePath))
+            {
+                string json = File.ReadAllText(_saveFilePath);
+                appSettings = JsonSerializer.Deserialize<AppSettings>(json);
+                if (_installDirValidator.ValidateInstallDir(appSettings?.InstallDir)) return appSettings!;
+            }
+
             appSettings ??= new AppSettings();
             appSettings.InstallDir = _installDirLocator.DetectInstallDir();
             return appSettings;

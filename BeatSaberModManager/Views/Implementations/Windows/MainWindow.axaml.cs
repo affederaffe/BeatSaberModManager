@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.ReactiveUI;
@@ -37,13 +36,11 @@ namespace BeatSaberModManager.Views.Implementations.Windows
                 .BindTo(this, x => x.ProgressBarStatusText.Content);
         }
 
-        protected override void OnOpened(EventArgs e)
+        protected override async void OnOpened(EventArgs e)
         {
             base.OnOpened(e);
-            _ = ValidateOrSetInstallDir();
+            _optionsViewModel.InstallDir ??= await new InstallFolderDialogWindow().ShowDialog<string?>(this);
         }
-
-        private async Task ValidateOrSetInstallDir() => _optionsViewModel.InstallDir ??= await new InstallFolderDialogWindow().ShowDialog<string?>(this);
 
         private object? GetLocalizedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
         {

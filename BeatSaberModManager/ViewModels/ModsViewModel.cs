@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
@@ -16,14 +17,16 @@ namespace BeatSaberModManager.ViewModels
 {
     public class ModsViewModel : ReactiveObject
     {
+        private readonly AppSettings _appSettings;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
         private readonly IStatusProgress _progress;
         private readonly ObservableAsPropertyHelper<bool> _noModsTextVisible;
 
-        public ModsViewModel(IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
+        public ModsViewModel(ISettings<AppSettings> appSettings, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
         {
+            _appSettings = appSettings.Value;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
@@ -37,7 +40,7 @@ namespace BeatSaberModManager.ViewModels
 
         public bool NoModsTextVisible => _noModsTextVisible.Value;
 
-        private bool _areModsLoading = true;
+        private bool _areModsLoading;
         public bool AreModsLoading
         {
             get => _areModsLoading;
@@ -60,6 +63,7 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task RefreshDataGridAsync()
         {
+            AreModsLoading = true;
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
             AreModsLoading = false;
             AreModsAvailable = _modProvider.AvailableMods?.Length > 0;
@@ -73,13 +77,13 @@ namespace BeatSaberModManager.ViewModels
                     gridItem = GridItems[i];
                     gridItem.AvailableMod = availableMod;
                     gridItem.InstalledMod = installedMod;
-                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null;
+                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.SelectedMods.Contains(availableMod.Name);
                 }
                 else
                 {
                     gridItem = new ModGridItemViewModel(_modVersionComparer, availableMod, installedMod);
                     GridItems.Add(gridItem);
-                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null;
+                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.SelectedMods.Contains(availableMod.Name);
                     gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
                 }
             }
@@ -147,8 +151,17 @@ namespace BeatSaberModManager.ViewModels
 
         private void OnCheckboxUpdated(ModGridItemViewModel gridItem)
         {
-            if (gridItem.IsCheckBoxChecked) _modProvider.ResolveDependencies(gridItem.AvailableMod);
-            else _modProvider.UnresolveDependencies(gridItem.AvailableMod);
+            if (gridItem.IsCheckBoxChecked)
+            {
+                _modProvider.ResolveDependencies(gridItem.AvailableMod);
+                _appSettings.SelectedMods.Add(gridItem.AvailableMod.Name);
+            }
+            else
+            {
+                _modProvider.UnresolveDependencies(gridItem.AvailableMod);
+                _appSettings.SelectedMods.Remove(gridItem.AvailableMod.Name);
+            }
+
             foreach (ModGridItemViewModel modGridItem in GridItems)
             {
                 bool isDependency = modGridItem.AvailableMod.Required || _modProvider.Dependencies.TryGetValue(modGridItem.AvailableMod, out HashSet<IMod>? dependents) && dependents.Count != 0;

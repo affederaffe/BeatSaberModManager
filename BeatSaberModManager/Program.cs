@@ -33,33 +33,11 @@ namespace BeatSaberModManager
 {
     public static class Program
     {
-        public static void Main(string[] args)
-        {
-            BuildAvaloniaApp();
-            CreateServiceCollection(args).BuildServiceProvider().StartAvaloniaApp();
-        }
+        public static void Main(string[] args) =>
+            CreateServiceCollection(args).BuildServiceProvider().RunAvaloniaApp();
 
-        private static void BuildAvaloniaApp()
-        {
-            AppBuilder builder = AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI();
-            builder.RuntimePlatformServicesInitializer();
-            builder.WindowingSubsystemInitializer();
-            builder.RenderingSubsystemInitializer();
-            builder.AfterPlatformServicesSetupCallback(builder);
-        }
-
-        private static void StartAvaloniaApp(this IServiceProvider services)
-        {
-            Application app = services.GetRequiredService<Application>();
-            AvaloniaLocator.CurrentMutable.BindToSelf(app);
-            ClassicDesktopStyleApplicationLifetime lifetime = (ClassicDesktopStyleApplicationLifetime)services.GetRequiredService<IClassicDesktopStyleApplicationLifetime>();
-            app.ApplicationLifetime = lifetime;
-            app.RegisterServices();
-            app.Initialize();
-            app.OnFrameworkInitializationCompleted();
-            lifetime.MainWindow = services.GetRequiredService<Window>();
-            lifetime.Start(null);
-        }
+        private static AppBuilder BuildAvaloniaApp() =>
+            AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI();
 
         private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>
             new ServiceCollection()
@@ -86,7 +64,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddProtocolHandlerRegistrar(this IServiceCollection services) =>
             OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>()
-                : OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, LinuxProtocolHandlerRegistrar>()
+                : OperatingSystem.IsLinux() ? services.AddSingleton<IProtocolHandlerRegistrar, LinuxProtocolHandlerRegistrar>()
                     : throw new PlatformNotSupportedException();
 
         private static IServiceCollection AddModServices(this IServiceCollection services) =>
@@ -116,9 +94,29 @@ namespace BeatSaberModManager
                 .AddSingleton<IPage, OptionsPage>();
 
         private static IServiceCollection AddApplication(this IServiceCollection services) =>
-            services.AddSingleton<Application, App>()
+            services.AddSingleton(BuildAvaloniaApp())
+                .AddSingleton<Application, App>()
                 .AddSingleton<IClassicDesktopStyleApplicationLifetime, ClassicDesktopStyleApplicationLifetime>()
                 .AddSingleton<ILocalisationManager, LocalisationManager>()
                 .AddSingleton<IThemeManager, ThemeManager>();
+
+        private static void RunAvaloniaApp(this ServiceProvider services)
+        {
+            AppBuilder builder = services.GetRequiredService<AppBuilder>();
+            builder.RuntimePlatformServicesInitializer();
+            builder.WindowingSubsystemInitializer();
+            builder.RenderingSubsystemInitializer();
+            builder.AfterPlatformServicesSetupCallback(builder);
+            Application app = services.GetRequiredService<Application>();
+            ClassicDesktopStyleApplicationLifetime lifetime = (ClassicDesktopStyleApplicationLifetime)services.GetRequiredService<IClassicDesktopStyleApplicationLifetime>();
+            app.ApplicationLifetime = lifetime;
+            app.RegisterServices();
+            app.Initialize();
+            builder.AfterSetupCallback(builder);
+            app.OnFrameworkInitializationCompleted();
+            lifetime.MainWindow = services.GetRequiredService<Window>();
+            lifetime.Start(null);
+            services.Dispose();
+        }
     }
 }
