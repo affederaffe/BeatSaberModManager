@@ -32,9 +32,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         [JsonPropertyName("link")]
         public string MoreInfoLink { get; init; } = null!;
 
-        [JsonPropertyName("required")]
-        public bool Required { get; init; }
-
         [JsonPropertyName("author")]
         public BeatModsAuthor Author { get; init; } = null!;
 

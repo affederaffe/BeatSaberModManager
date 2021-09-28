@@ -41,7 +41,7 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _installedMod, value);
         }
 
-        private bool _isCheckBoxEnabled;
+        private bool _isCheckBoxEnabled = true;
         public bool IsCheckBoxEnabled
         {
             get => _isCheckBoxEnabled;

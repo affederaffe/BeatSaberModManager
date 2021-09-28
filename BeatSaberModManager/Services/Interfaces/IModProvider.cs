@@ -13,8 +13,8 @@ namespace BeatSaberModManager.Services.Interfaces
         IMod[]? AvailableMods { get; }
         HashSet<IMod>? InstalledMods { get; }
         Dictionary<IMod, HashSet<IMod>> Dependencies { get; }
-        void ResolveDependencies(IMod modToResolve);
-        void UnresolveDependencies(IMod modToUnresolve);
+        IEnumerable<IMod> ResolveDependencies(IMod modToResolve);
+        IEnumerable<IMod> UnresolveDependencies(IMod modToUnresolve);
         Task LoadInstalledModsAsync();
         Task LoadAvailableModsForCurrentVersionAsync();
         Task LoadAvailableModsForVersionAsync(string version);

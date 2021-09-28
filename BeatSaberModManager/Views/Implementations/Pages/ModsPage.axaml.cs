@@ -25,7 +25,7 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         {
             InitializeComponent();
             ViewModel = modsViewModel;
-            _dataGridCollection = new DataGridCollectionView(ViewModel.GridItems);
+            _dataGridCollection = new DataGridCollectionView(ViewModel.GridItems.Values);
             _dataGridCollection.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)));
             ReactiveCommand<string?, Unit> refreshCommand = ReactiveCommand.CreateFromTask<string?>(RefreshDataGridAsync);
             optionsViewModel.WhenAnyValue(x => x.InstallDir).InvokeCommand(refreshCommand);

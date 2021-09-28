@@ -25,9 +25,9 @@
                Content="{DynamicResource ModsView:NoModsAvailable}" />
 
         <DataGrid x:Name="ModsDataGrid"
-                  RowHeight="25"
                   SelectionMode="Single"
                   HorizontalAlignment="Stretch"
+                  AreRowGroupHeadersFrozen="False"
                   IsVisible="{Binding AreModsAvailable}"
                   SelectedItem="{Binding SelectedGridItem}">
 

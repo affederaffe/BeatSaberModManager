@@ -41,26 +41,27 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public HashSet<IMod>? InstalledMods { get; private set; }
         public Dictionary<IMod, HashSet<IMod>> Dependencies { get; } = new();
 
-        public void ResolveDependencies(IMod modToResolve)
+        public IEnumerable<IMod> ResolveDependencies(IMod modToResolve)
         {
-            if (modToResolve is not BeatModsMod beatModsMod) return;
+            if (modToResolve is not BeatModsMod beatModsMod) yield break;
             foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
                 if (dependency.DependingMod is null) continue;
                 if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependents)) dependents.Add(beatModsMod);
                 else Dependencies.Add(dependency.DependingMod, new HashSet<IMod> { beatModsMod });
+                yield return dependency.DependingMod;
             }
         }
 
-        public void UnresolveDependencies(IMod modToUnresolve)
+        public IEnumerable<IMod> UnresolveDependencies(IMod modToUnresolve)
         {
-            if (modToUnresolve is not BeatModsMod beatModsMod) return;
+            if (modToUnresolve is not BeatModsMod beatModsMod) yield break;
             foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
-                if (dependency.DependingMod is null) continue;
-                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependents))
-                    dependents.Remove(beatModsMod);
+                if (dependency.DependingMod is null || !Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependents)) continue;
+                if (dependents.Remove(beatModsMod))
+                    yield return dependency.DependingMod;
             }
         }
 

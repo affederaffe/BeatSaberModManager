@@ -94,15 +94,14 @@ namespace BeatSaberModManager
                 .AddSingleton<IPage, OptionsPage>();
 
         private static IServiceCollection AddApplication(this IServiceCollection services) =>
-            services.AddSingleton(BuildAvaloniaApp())
-                .AddSingleton<Application, App>()
+            services.AddSingleton<Application, App>()
                 .AddSingleton<IClassicDesktopStyleApplicationLifetime, ClassicDesktopStyleApplicationLifetime>()
                 .AddSingleton<ILocalisationManager, LocalisationManager>()
                 .AddSingleton<IThemeManager, ThemeManager>();
 
         private static void RunAvaloniaApp(this ServiceProvider services)
         {
-            AppBuilder builder = services.GetRequiredService<AppBuilder>();
+            AppBuilder builder = BuildAvaloniaApp();
             builder.RuntimePlatformServicesInitializer();
             builder.WindowingSubsystemInitializer();
             builder.RenderingSubsystemInitializer();

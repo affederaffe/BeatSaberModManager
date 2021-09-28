@@ -7,6 +7,5 @@
         string Description { get; init; }
         string Category { get; init; }
         string MoreInfoLink { get; init; }
-        bool Required { get; init; }
     }
 }

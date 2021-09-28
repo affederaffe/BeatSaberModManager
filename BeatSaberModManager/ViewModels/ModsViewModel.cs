@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -36,7 +35,7 @@ namespace BeatSaberModManager.ViewModels
                 .ToProperty(this, nameof(NoModsTextVisible), out _noModsTextVisible);
         }
 
-        public ObservableCollection<ModGridItemViewModel> GridItems { get; } = new();
+        public Dictionary<IMod, ModGridItemViewModel> GridItems { get; } = new();
 
         public bool NoModsTextVisible => _noModsTextVisible.Value;
 
@@ -67,32 +66,23 @@ namespace BeatSaberModManager.ViewModels
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
             AreModsLoading = false;
             AreModsAvailable = _modProvider.AvailableMods?.Length > 0;
-            for (int i = 0; i < _modProvider.AvailableMods?.Length; i++)
+            if (_modProvider.AvailableMods is null) return;
+            foreach (IMod availableMod in _modProvider.AvailableMods)
             {
-                IMod availableMod = _modProvider.AvailableMods[i];
                 IMod? installedMod = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name == availableMod.Name);
-                ModGridItemViewModel gridItem;
-                if (GridItems.Count > i)
-                {
-                    gridItem = GridItems[i];
-                    gridItem.AvailableMod = availableMod;
-                    gridItem.InstalledMod = installedMod;
-                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.SelectedMods.Contains(availableMod.Name);
-                }
-                else
-                {
-                    gridItem = new ModGridItemViewModel(_modVersionComparer, availableMod, installedMod);
-                    GridItems.Add(gridItem);
-                    gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.SelectedMods.Contains(availableMod.Name);
-                    gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
-                }
+                ModGridItemViewModel gridItem = new(_modVersionComparer, availableMod, installedMod);
+                GridItems.Add(availableMod, gridItem);
+                gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.SelectedMods.Contains(availableMod.Name);
             }
+
+            foreach (ModGridItemViewModel gridItem in GridItems.Values)
+                gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
         }
 
         public async Task RefreshModsAsync()
         {
-            ModGridItemViewModel[] modsToInstall = GridItems.Where(x => x.IsCheckBoxChecked && !x.IsUpToDate).ToArray();
-            ModGridItemViewModel[] modsToUninstall = GridItems.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).ToArray();
+            ModGridItemViewModel[] modsToInstall = GridItems.Values.Where(x => x.IsCheckBoxChecked && !x.IsUpToDate).ToArray();
+            ModGridItemViewModel[] modsToUninstall = GridItems.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).ToArray();
             int sum = modsToInstall.Length + modsToUninstall.Length;
 
             _progress.Report(0.0);
@@ -111,21 +101,14 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task UninstallModLoaderAsync()
         {
-            ModGridItemViewModel? gridItem = GridItems.FirstOrDefault(x => x.InstalledMod?.Name.ToLowerInvariant() == _modProvider.ModLoaderName);
-            if (gridItem is not null)
-            {
-                await UninstallModAsync(gridItem);
-                return;
-            }
-
-            IMod? modLoader = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name.ToLowerInvariant() == _modProvider.ModLoaderName);
-            if (modLoader is null) return;
-            await _modInstaller.UninstallModAsync(modLoader);
+            ModGridItemViewModel? gridItem = GridItems.Values.FirstOrDefault(x => x.InstalledMod?.Name.ToLowerInvariant() == _modProvider.ModLoaderName);
+            if (gridItem is null) return;
+            await UninstallModAsync(gridItem);
         }
 
         public async Task UninstallAllModsAsync()
         {
-            foreach (ModGridItemViewModel gridItem in GridItems)
+            foreach (ModGridItemViewModel gridItem in GridItems.Values)
                 await UninstallModAsync(gridItem);
             _modInstaller.RemoveAllMods();
         }
@@ -153,21 +136,23 @@ namespace BeatSaberModManager.ViewModels
         {
             if (gridItem.IsCheckBoxChecked)
             {
-                _modProvider.ResolveDependencies(gridItem.AvailableMod);
                 _appSettings.SelectedMods.Add(gridItem.AvailableMod.Name);
+                foreach (IMod mod in _modProvider.ResolveDependencies(gridItem.AvailableMod))
+                    UpdateDependency(GridItems[mod]);
             }
             else
             {
-                _modProvider.UnresolveDependencies(gridItem.AvailableMod);
                 _appSettings.SelectedMods.Remove(gridItem.AvailableMod.Name);
+                foreach (IMod mod in _modProvider.UnresolveDependencies(gridItem.AvailableMod))
+                    UpdateDependency(GridItems[mod]);
             }
+        }
 
-            foreach (ModGridItemViewModel modGridItem in GridItems)
-            {
-                bool isDependency = modGridItem.AvailableMod.Required || _modProvider.Dependencies.TryGetValue(modGridItem.AvailableMod, out HashSet<IMod>? dependents) && dependents.Count != 0;
-                modGridItem.IsCheckBoxEnabled = !isDependency;
-                modGridItem.IsCheckBoxChecked = modGridItem.IsCheckBoxChecked || isDependency;
-            }
+        private void UpdateDependency(ModGridItemViewModel gridItem)
+        {
+            bool isDependency = _modProvider.Dependencies.TryGetValue(gridItem.AvailableMod, out HashSet<IMod>? dependents) && dependents.Count != 0;
+            gridItem.IsCheckBoxEnabled = !isDependency;
+            gridItem.IsCheckBoxChecked = gridItem.IsCheckBoxChecked || isDependency;
         }
     }
 }
