@@ -16,7 +16,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
             long total = 0;
             long? length = header.Content.Headers.ContentLength;
             byte[] buffer = new byte[8192];
-            await using MemoryStream ms = new();
+            MemoryStream ms = new();
             await using Stream stream = await header.Content.ReadAsStreamAsync().ConfigureAwait(false);
             while (true)
             {
@@ -27,7 +27,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
                 if (length.HasValue) progress?.Report(((double)total + 1) / length.Value);
             }
 
-            header.Content = new ReadOnlyMemoryContent(ms.ToArray());
+            header.Content = new StreamContent(ms);
             return header;
         }
 
@@ -37,10 +37,9 @@ namespace BeatSaberModManager.Services.Implementations.Http
             long total = 0;
             long? length = headers.Select(x => x.Content.Headers.ContentLength).Sum();
             byte[] buffer = new byte[8192];
-            await using MemoryStream ms = new();
             foreach (HttpResponseMessage header in headers)
             {
-                ms.SetLength(0);
+                MemoryStream ms = new();
                 await using Stream stream = await header.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 while (true)
                 {
@@ -51,7 +50,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
                     if (length.HasValue) progress?.Report(((double)total + 1) / length.Value);
                 }
 
-                header.Content = new ReadOnlyMemoryContent(ms.ToArray());
+                header.Content = new StreamContent(ms);
                 yield return header;
             }
         }
