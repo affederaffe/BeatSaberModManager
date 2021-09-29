@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO.Compression;
 using System.Threading.Tasks;
 
@@ -18,6 +19,6 @@ namespace BeatSaberModManager.Services.Interfaces
         Task LoadInstalledModsAsync();
         Task LoadAvailableModsForCurrentVersionAsync();
         Task LoadAvailableModsForVersionAsync(string version);
-        Task<ZipArchive?> DownloadModAsync(string url);
+        IAsyncEnumerable<ZipArchive?> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null);
     }
 }

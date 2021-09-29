@@ -75,6 +75,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
                 using ZipArchive archive = new(stream);
                 bool success = _beatSaverMapInstaller.ExtractBeatSaverMapToFolder(maps[i++]!, archive);
                 if (!success) return false;
+                if (i <= maps.Length) return true;
                 progress?.Report(maps[i]!.Name);
             }
 

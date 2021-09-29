@@ -39,7 +39,7 @@ namespace BeatSaberModManager.Views.Implementations.Localisation
 
         public void Initialize()
         {
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).WhereNotNull().Cast<Language>();
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).OfType<Language>();
             selectedLanguageObservable.Subscribe(l => Application.Current.Resources.MergedDictionaries[0] = l.ResourceProvider);
             selectedLanguageObservable.Subscribe(l => _appSettings.LanguageCode = l.CultureInfo.Name);
         }

@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 using BeatSaberModManager.Models.Interfaces;
 
@@ -7,8 +7,8 @@ namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IModInstaller
     {
-        Task<bool> InstallModAsync(IMod modToInstall);
-        Task<bool> UninstallModAsync(IMod modToUninstall);
+        IAsyncEnumerable<IMod> InstallModsAsync(IEnumerable<IMod> mods);
+        IAsyncEnumerable<IMod> UninstallModsAsync(IEnumerable<IMod> mods);
         void RemoveAllMods();
     }
 }

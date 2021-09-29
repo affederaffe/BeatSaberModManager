@@ -105,12 +105,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             AvailableMods = await GetModsAsync($"mod?status=approved&gameVersion={aliasedGameVersion}").ConfigureAwait(false);
         }
 
-        public async Task<ZipArchive?> DownloadModAsync(string url)
+        public async IAsyncEnumerable<ZipArchive?> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null)
         {
-            HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsBaseUrl + url).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return null;
-            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            return new ZipArchive(stream);
+            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(x => kBeatModsBaseUrl + x), progress))
+            {
+                if (!response.IsSuccessStatusCode) yield return null;
+                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                yield return new ZipArchive(stream);
+            }
         }
 
         private async Task<BeatModsMod[]?> GetModsAsync(string? args)
