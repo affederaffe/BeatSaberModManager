@@ -79,16 +79,16 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             }
 
             InstalledMods = new HashSet<IMod>();
-            IEnumerable<string> hashes = _installedModsLocations.Select(x => Path.Combine(_appSettings.InstallDir, x))
+            IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(_appSettings.InstallDir, x))
                 .Where(Directory.Exists)
                 .SelectMany(Directory.EnumerateFiles)
-                .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal))
-                .Concat(new[] { Path.Combine(_appSettings.InstallDir, "Beat Saber_Data/Managed/IPA.Loader.dll") })
-                .Select(_hashProvider.CalculateHashForFile);
-            foreach (string hash in hashes)
+                .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal));
+            string ipaLoaderPath = Path.Combine(_appSettings.InstallDir, "Beat Saber_Data/Managed/IPA.Loader.dll");
+            if (File.Exists(ipaLoaderPath)) files = files.Concat(new[] { ipaLoaderPath });
+            foreach (string hash in files.Select(_hashProvider.CalculateHashForFile))
             {
-                if (!fileHashModPairs.TryGetValue(hash, out IMod? mod)) continue;
-                InstalledMods.Add(mod);
+                if (fileHashModPairs.TryGetValue(hash, out IMod? mod))
+                    InstalledMods.Add(mod);
             }
         }
 

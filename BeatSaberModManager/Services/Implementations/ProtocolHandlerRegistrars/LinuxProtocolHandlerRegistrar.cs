@@ -32,8 +32,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         public void UnregisterProtocolHandler(string protocol)
         {
             string handlerPath = GetHandlerPathForProtocol(protocol);
-            if (!File.Exists(handlerPath)) return;
-            File.Delete(handlerPath);
+            if (File.Exists(handlerPath)) File.Delete(handlerPath);
         }
 
         private string GetHandlerPathForProtocol(string protocol) => Path.Combine(_localAppDataPath, GetHandlerNameForProtocol(protocol));
