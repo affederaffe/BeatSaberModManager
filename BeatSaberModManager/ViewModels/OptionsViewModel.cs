@@ -43,7 +43,7 @@ namespace BeatSaberModManager.ViewModels
             this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(b => ToggleOneClickHandler(b, kPlaylistProtocol));
             IObservable<string> validatedInstallDirObservable = this.WhenAnyValue(x => x.InstallDir).Where(installDirValidator.ValidateInstallDir)!;
             validatedInstallDirObservable.BindTo(appSettings, x => x.Value.InstallDir);
-            validatedInstallDirObservable.Select(installDirValidator.DetectVRPlatform).BindTo(appSettings, x => x.Value.VRPlatform);
+            validatedInstallDirObservable.Select(installDirValidator.DetectVrPlatform).BindTo(appSettings, x => x.Value.VrPlatform);
             validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
             IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir).Where(x => !string.IsNullOrEmpty(x));
             themesDirObservable.BindTo(appSettings, x => x.Value.ThemesDir);

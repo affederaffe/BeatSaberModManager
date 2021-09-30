@@ -26,7 +26,6 @@
 
         <DataGrid x:Name="ModsDataGrid"
                   SelectionMode="Single"
-                  HorizontalAlignment="Stretch"
                   AreRowGroupHeadersFrozen="False"
                   IsVisible="{Binding AreModsAvailable}"
                   SelectedItem="{Binding SelectedGridItem}">
@@ -56,7 +55,7 @@
 
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.Header>
-                        <Label Padding="0" HorizontalAlignment="Center" Content="{DynamicResource ModsView:InstalledVersionHeader}" />
+                        <Label Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource ModsView:InstalledVersionHeader}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
@@ -67,7 +66,7 @@
 
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.Header>
-                        <Label Padding="0" HorizontalAlignment="Center" Content="{DynamicResource ModsView:LatestVersionHeader}" />
+                        <Label Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource ModsView:LatestVersionHeader}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">

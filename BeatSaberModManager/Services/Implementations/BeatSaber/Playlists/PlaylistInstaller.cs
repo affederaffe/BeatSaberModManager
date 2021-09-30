@@ -68,7 +68,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             int i = 0;
             progress?.Report(maps[i]!.Name);
             progress?.Report(ProgressBarStatusType.Installing);
-            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls, progress))
+            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls, progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) return false;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

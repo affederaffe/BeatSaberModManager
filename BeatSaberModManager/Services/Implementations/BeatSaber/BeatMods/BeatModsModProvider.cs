@@ -73,7 +73,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             Dictionary<string, IMod> fileHashModPairs = new();
             foreach (BeatModsMod mod in allMods)
             {
-                BeatModsDownload download = mod.GetDownloadForVRPlatform(_appSettings.VRPlatform!);
+                BeatModsDownload download = mod.GetDownloadForVrPlatform(_appSettings.VrPlatform!);
                 foreach (BeatModsHash hash in download.Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
             }
@@ -107,7 +107,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async IAsyncEnumerable<ZipArchive?> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null)
         {
-            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(x => kBeatModsBaseUrl + x), progress))
+            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(x => kBeatModsBaseUrl + x), progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) yield return null;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

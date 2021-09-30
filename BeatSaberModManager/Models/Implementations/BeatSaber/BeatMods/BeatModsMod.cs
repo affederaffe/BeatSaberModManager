@@ -41,6 +41,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         [JsonPropertyName("dependencies")]
         public BeatModsDependency[] Dependencies { get; init; } = null!;
 
-        public BeatModsDownload GetDownloadForVRPlatform(string platform) => Downloads.First(x => x.Type.ToLowerInvariant() == "universal" || x.Type == platform);
+        public BeatModsDownload GetDownloadForVrPlatform(string platform) => Downloads.First(x => x.Type.ToLowerInvariant() == "universal" || x.Type == platform);
     }
 }

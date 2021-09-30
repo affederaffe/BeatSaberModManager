@@ -16,13 +16,13 @@ namespace BeatSaberModManager.Views.Implementations.Windows
             ContinueButton.Command = ReactiveCommand.CreateFromTask(ShowFolderDialogAsync);
         }
 
+        public void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);
+
         private async Task ShowFolderDialogAsync()
         {
             OpenFolderDialog dialog = new();
             string? folder = await dialog.ShowAsync(this);
             Close(folder);
         }
-
-        private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);
     }
 }

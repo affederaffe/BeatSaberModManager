@@ -12,93 +12,99 @@ using Microsoft.Win32;
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
-    // Basically everything here is stolen from ModAssistant, thanks!
     public class BeatSaberInstallDirLocator : IInstallDirLocator
     {
-        private const string kBeatSaberAppId = "620980";
+        private readonly IInstallDirValidator _installDirValidator;
 
-        public string? DetectInstallDir()
+        public BeatSaberInstallDirLocator(IInstallDirValidator installDirValidator)
+        {
+            _installDirValidator = installDirValidator;
+        }
+
+        public string? LocateInstallDir()
         {
             if (OperatingSystem.IsWindows()) return LocateWindowsInstallDir();
             if (OperatingSystem.IsLinux()) return LocateLinuxSteamInstallDir();
             throw new PlatformNotSupportedException();
         }
 
-        private static string? LocateWindowsInstallDir()
+        private string? LocateWindowsInstallDir()
         {
             string? steamInstallDir = LocateWindowsSteamInstallDir();
-            return !string.IsNullOrEmpty(steamInstallDir) ? LocateSteamBeatSaberInstallDir(steamInstallDir) : LocateWindowsOculusBeatSaberDir();
+            return steamInstallDir is null ? LocateOculusBeatSaberInstallDir() : LocateSteamBeatSaberInstallDir(steamInstallDir);
         }
 
-        private static string? LocateWindowsSteamInstallDir()
-        {
-            if (!OperatingSystem.IsWindows()) return null;
-            using RegistryKey? steamInstallDirKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam") ??
-                  Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
-            return steamInstallDirKey?.GetValue("InstallPath")?.ToString();
-        }
-
-        private static string? LocateLinuxSteamInstallDir()
+        private string? LocateLinuxSteamInstallDir()
         {
             string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string steamInstallDir = Path.Combine(homeDir, ".steam", "root");
             return LocateSteamBeatSaberInstallDir(steamInstallDir);
         }
 
-        private static string? LocateSteamBeatSaberInstallDir(string steamInstallDir)
+        private string? LocateSteamBeatSaberInstallDir(string steamInstallDir)
         {
-            string vdf = Path.Combine(steamInstallDir, "steamapps/libraryfolders.vdf");
-            if (!File.Exists(vdf)) return null;
-            Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
-            List<string> steamPaths = new() { Path.Combine(steamInstallDir, "steamapps") };
+            Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
+            return GetSteamLibraryPaths(steamInstallDir).Select(path => MatchSteamBeatSaberInstallDir(regex, path)).FirstOrDefault(installDir => installDir is not null);
+        }
 
+        private string? MatchSteamBeatSaberInstallDir(Regex regex, string path)
+        {
+            const string beatSaberAppId = "620980";
+            string acf = Path.Combine(path, "appmanifest_" + beatSaberAppId + ".acf");
+            if (!File.Exists(acf)) return null;
             string? line;
-            using StreamReader vdfReader = new(vdf);
-            while ((line = vdfReader.ReadLine()) is not null)
+            using StreamReader reader = new(acf);
+            while ((line = reader.ReadLine()) is not null)
             {
                 Match match = regex.Match(line);
-                if (match.Success)
-                    steamPaths.Add(Path.Combine(match.Groups[1].Value.Replace(@"\\", "/"), "steamapps"));
-            }
-
-            regex = new Regex("\\s\"installdir\"\\s+\"(.+)\"");
-            foreach (string path in steamPaths)
-            {
-                string acf = Path.Combine(path, "appmanifest_" + kBeatSaberAppId + ".acf");
-                if (!File.Exists(acf)) continue;
-                using StreamReader reader = new(acf);
-                while ((line = reader.ReadLine()) is not null)
-                {
-                    Match match = regex.Match(line);
-                    if (!match.Success) continue;
-                    string installDir = Path.Combine(path, "common", match.Groups[1].Value);
-                    if (File.Exists(Path.Combine(installDir, "Beat Saber.exe")))
-                        return installDir;
-                }
+                if (!match.Success) continue;
+                string installDir = Path.Combine(path, "common", match.Groups[1].Value);
+                if (_installDirValidator.ValidateInstallDir(installDir))
+                    return installDir;
             }
 
             return null;
         }
 
-        private static string? LocateWindowsOculusBeatSaberDir()
+        private string? LocateOculusBeatSaberInstallDir()
         {
-            if (!OperatingSystem.IsWindows()) return null;
+            if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
             using RegistryKey? oculusInstallDirKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
             if (string.IsNullOrEmpty(oculusInstallDir)) return null;
+            string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
+            if (!string.IsNullOrEmpty(oculusInstallDir) && _installDirValidator.ValidateInstallDir(finalPath))
+                return finalPath;
+            return LocateInOculusLibrary();
+        }
 
-            if (!string.IsNullOrEmpty(oculusInstallDir) && File.Exists(Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber", "Beat Saber.exe")))
-                return Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
-
-            // Yoinked this code from Umbranox's Mod Manager. Lot's of thanks and love for Umbra <3
+        private string? LocateInOculusLibrary()
+        {
+            if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
             using RegistryKey? librariesKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Libraries");
             if (librariesKey is null) return null;
+            Dictionary<string, string> guidLetterVolumes = GetWindowsDriveLetters();
+            foreach (string libraryKeyName in librariesKey.GetSubKeyNames())
+            {
+                using RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
+                string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
+                if (libraryPath is null) continue;
+                string guidLetter = guidLetterVolumes.FirstOrDefault(x => libraryPath.Contains(x.Key)).Value;
+                if (string.IsNullOrEmpty(guidLetter)) continue;
+                string finalPath = Path.Combine(guidLetter, libraryPath[49..], "Software", "hyperbolic-magnetism-beat-saber");
+                if (_installDirValidator.ValidateInstallDir(finalPath))
+                    return finalPath;
+            }
 
-            // Oculus libraries uses GUID volume paths like this "\\?\Volume{0fea75bf-8ad6-457c-9c24-cbe2396f1096}\Games\Oculus Apps", we need to transform these to "D:\Game"\Oculus Apps"
+            return null;
+        }
+
+        private static Dictionary<string, string> GetWindowsDriveLetters()
+        {
+            if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
             WqlObjectQuery wqlQuery = new("SELECT * FROM Win32_Volume");
             using ManagementObjectSearcher searcher = new(wqlQuery);
             Dictionary<string, string> guidLetterVolumes = new();
-
             foreach (ManagementBaseObject disk in searcher.Get())
             {
                 string diskId = ((string)disk.GetPropertyValue("DeviceID")).Substring(11, 36);
@@ -107,21 +113,31 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                     guidLetterVolumes.Add(diskId, diskLetter);
             }
 
-            // Search among the library folders
-            foreach (string libraryKeyName in librariesKey.GetSubKeyNames())
-            {
-                using RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
-                string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
-                if (libraryPath is null) return null;
-                // Yoinked this code from Megalon's fix. <3
-                string guidLetter = guidLetterVolumes.FirstOrDefault(x => libraryPath.Contains(x.Key)).Value;
-                if (string.IsNullOrEmpty(guidLetter)) continue;
-                string finalPath = Path.Combine(guidLetter, libraryPath[49..], "Software/hyperbolic-magnetism-beat-saber");
-                if (File.Exists(Path.Combine(finalPath, "Beat Saber.exe")))
-                    return finalPath;
-            }
+            return guidLetterVolumes;
+        }
 
-            return null;
+        private static string? LocateWindowsSteamInstallDir()
+        {
+            if (!OperatingSystem.IsWindows()) throw new PlatformNotSupportedException();
+            using RegistryKey? steamInstallDirKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64).OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam") ??
+                                                    Registry.LocalMachine.OpenSubKey("SOFTWARE")?.OpenSubKey("WOW6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
+            return steamInstallDirKey?.GetValue("InstallPath")?.ToString();
+        }
+
+        private static IEnumerable<string> GetSteamLibraryPaths(string path)
+        {
+            yield return path;
+            string vdf = Path.Combine(path, "steamapps", "libraryfolders.vdf");
+            if (!File.Exists(vdf)) yield break;
+            Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
+            string? line;
+            using StreamReader vdfReader = new(vdf);
+            while ((line = vdfReader.ReadLine()) is not null)
+            {
+                Match match = regex.Match(line);
+                if (match.Success)
+                    yield return Path.Combine(match.Groups[1].Value.Replace(@"\\", "/"), "steamapps");
+            }
         }
     }
 }

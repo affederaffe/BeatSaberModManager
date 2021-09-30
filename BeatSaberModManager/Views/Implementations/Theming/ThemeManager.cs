@@ -36,7 +36,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             };
 
             _buildInThemesCount = Themes.Count;
-            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.ThemeName) ?? Themes.First();
+            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.ThemeName) ?? Themes.Last();
         }
 
         public ObservableCollection<ITheme> Themes { get; }
@@ -70,7 +70,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             if (!File.Exists(filePath)) return null;
             string name = Path.GetFileNameWithoutExtension(filePath);
             string xaml = File.ReadAllText(filePath);
-            IStyle style = AvaloniaRuntimeXamlLoader.Parse<IStyle>(xaml);
+            IStyle style = AvaloniaRuntimeXamlLoader.Parse<Style>(xaml);
             return new Theme(name, style);
         }
 

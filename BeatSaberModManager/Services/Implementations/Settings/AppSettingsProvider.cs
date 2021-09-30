@@ -49,7 +49,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
             }
 
             appSettings ??= new AppSettings();
-            appSettings.InstallDir = _installDirLocator.DetectInstallDir();
+            appSettings.InstallDir = _installDirLocator.LocateInstallDir();
             return appSettings;
         }
     }

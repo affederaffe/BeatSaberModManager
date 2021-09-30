@@ -39,7 +39,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
             IAsyncEnumerable<HttpResponseMessage> enumerable = length is > 0 
                 ? GetWithLengthAsync(headers, progress, length.Value)
                 : GetWithoutLengthAsync(headers, progress);
-            await foreach (HttpResponseMessage response in enumerable)
+            await foreach (HttpResponseMessage response in enumerable.ConfigureAwait(false))
                 yield return response;
         }
 
