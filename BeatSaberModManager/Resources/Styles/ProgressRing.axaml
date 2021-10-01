@@ -1,7 +1,6 @@
-
-<Styles xmlns="https://github.com/avaloniaui"
-		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls">
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls">
 
     <Design.PreviewWith>
 		<Border Padding="0" ClipToBounds="False">
@@ -26,7 +25,11 @@
                     <Arc Stroke="{TemplateBinding Foreground}"
                          StrokeThickness="{TemplateBinding StrokeThickness}"
                          StartAngle="{TemplateBinding StartAngle}"
-                         SweepAngle="{TemplateBinding SweepAngle}" />
+                         SweepAngle="{TemplateBinding SweepAngle}">
+                        <Arc.RenderTransform>
+                            <RotateTransform Angle="-90" />
+                        </Arc.RenderTransform>
+                    </Arc>
                 </Panel>
 			</ControlTemplate>
 		</Setter>

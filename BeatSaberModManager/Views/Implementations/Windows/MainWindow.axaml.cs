@@ -45,8 +45,8 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         private object? GetLocalizedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
         {
             ProgressBarStatusType.None => string.Empty,
-            ProgressBarStatusType.Installing => "MainWindow:InstallModText",
-            ProgressBarStatusType.Uninstalling => "MainWindow:UninstallModText",
+            ProgressBarStatusType.Installing => "Status:Installing",
+            ProgressBarStatusType.Uninstalling => "Status:Uninstalling",
             _ => string.Empty
         });
     }

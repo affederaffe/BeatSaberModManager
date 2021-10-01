@@ -28,7 +28,7 @@ namespace BeatSaberModManager.ViewModels
             modsViewModel.WhenAnyValue(x => x.SelectedGridItem)
                 .Select(mod => mod is not null)
                 .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
-            modsViewModel.WhenAnyValue(x => x.AreModsAvailable)
+            modsViewModel.WhenAnyValue(x => x.IsSuccess)
                 .Select(x => x && Directory.Exists(appSettings.Value.InstallDir))
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
             StatusProgress statusProgress = (StatusProgress)progress;

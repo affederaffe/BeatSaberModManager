@@ -15,19 +15,19 @@
         <c:ProgressRing IsIndeterminate="True"
                         Width="500"
                         Height="500"
-                        IsVisible="{Binding AreModsLoading}" />
+                        IsVisible="{Binding IsLoading}" />
 
         <Label FontSize="33"
                FontWeight="SemiBold"
                VerticalAlignment="Center"
                HorizontalAlignment="Center"
-               IsVisible="{Binding NoModsTextVisible}"
+               IsVisible="{Binding IsFailed}"
                Content="{DynamicResource ModsView:NoModsAvailable}" />
 
         <DataGrid x:Name="ModsDataGrid"
                   SelectionMode="Single"
                   AreRowGroupHeadersFrozen="False"
-                  IsVisible="{Binding AreModsAvailable}"
+                  IsVisible="{Binding IsSuccess}"
                   SelectedItem="{Binding SelectedGridItem}">
 
             <DataGrid.Columns>

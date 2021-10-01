@@ -32,9 +32,9 @@ namespace BeatSaberModManager.ViewModels
         {
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == uri.Scheme);
             if (assetProvider is null) return;
-            bool result = await assetProvider.InstallAssetAsync(uri, _progress);
-            ProgressRingVisible = false;
-            ResultLabelText = result ? "✔" : "✘";
+            IsSuccess = await assetProvider.InstallAssetAsync(uri, _progress);
+            IsFailed = !IsSuccess;
+            IsInstalling = false;
         }
 
         public ObservableCollection<string> Log { get; } = new();
@@ -43,18 +43,25 @@ namespace BeatSaberModManager.ViewModels
 
         public string? AssetName => _assetName.Value;
 
-        private bool _progressRingVisible = true;
-        public bool ProgressRingVisible
+        private bool _isInstalling = true;
+        public bool IsInstalling
         {
-            get => _progressRingVisible;
-            set => this.RaiseAndSetIfChanged(ref _progressRingVisible, value);
+            get => _isInstalling;
+            set => this.RaiseAndSetIfChanged(ref _isInstalling, value);
         }
 
-        private string? _resultLabelText;
-        public string? ResultLabelText
+        private bool _isSuccess;
+        public bool IsSuccess
         {
-            get => _resultLabelText;
-            set => this.RaiseAndSetIfChanged(ref _resultLabelText, value);
+            get => _isSuccess;
+            set => this.RaiseAndSetIfChanged(ref _isSuccess, value);
+        }
+
+        private bool _isFailed;
+        public bool IsFailed
+        {
+            get => _isFailed;
+            set => this.RaiseAndSetIfChanged(ref _isFailed, value);
         }
     }
 }

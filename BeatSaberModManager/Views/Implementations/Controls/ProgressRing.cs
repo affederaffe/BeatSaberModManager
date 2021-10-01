@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -20,11 +20,7 @@ namespace BeatSaberModManager.Views.Implementations.Controls
             MaximumProperty.Changed.Subscribe(CalibrateAngles);
             MinimumProperty.Changed.Subscribe(CalibrateAngles);
             ValueProperty.Changed.Subscribe(CalibrateAngles);
-            MaximumProperty.OverrideMetadata<ProgressRing>(new DirectPropertyMetadata<double>(100));
-            MinimumProperty.OverrideMetadata<ProgressRing>(new DirectPropertyMetadata<double>());
-            ValueProperty.OverrideMetadata<ProgressRing>(new DirectPropertyMetadata<double>(25));
             StrokeThicknessProperty.OverrideDefaultValue<ProgressRing>(20);
-            StartAngleProperty.OverrideDefaultValue<ProgressRing>(-90);
             AffectsRender<ProgressRing>(StartAngleProperty, SweepAngleProperty);
         }
 

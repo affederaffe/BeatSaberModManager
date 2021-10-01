@@ -26,7 +26,7 @@ namespace BeatSaberModManager.Views.Implementations.Windows
             InitializeComponent();
             _uri = new Uri(url);
             ViewModel = assetInstallWindowViewModel;
-            string installText = (string)this.FindResource("AssetInstallWindow:InstallText")!;
+            string? installText = this.FindResource("Status:Installing") as string;
             ViewModel.WhenAnyValue(x => x!.AssetName)
                 .WhereNotNull()
                 .Select(x => $"{installText} {x}")

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -19,7 +18,6 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
-        private readonly ObservableAsPropertyHelper<bool> _noModsTextVisible;
 
         public ModsViewModel(ISettings<AppSettings> appSettings, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
         {
@@ -27,27 +25,29 @@ namespace BeatSaberModManager.ViewModels
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
-            this.WhenAnyValue(x => x.AreModsLoading, x => x.AreModsAvailable)
-                .Select(tuple => !tuple.Item1 && !tuple.Item2)
-                .ToProperty(this, nameof(NoModsTextVisible), out _noModsTextVisible);
         }
 
         public Dictionary<IMod, ModGridItemViewModel> GridItems { get; } = new();
 
-        public bool NoModsTextVisible => _noModsTextVisible.Value;
-
-        private bool _areModsLoading;
-        public bool AreModsLoading
+        private bool _isLoading;
+        public bool IsLoading
         {
-            get => _areModsLoading;
-            set => this.RaiseAndSetIfChanged(ref _areModsLoading, value);
+            get => _isLoading;
+            set => this.RaiseAndSetIfChanged(ref _isLoading, value);
         }
 
-        private bool _areModsAvailable;
-        public bool AreModsAvailable
+        private bool _isSuccess;
+        public bool IsSuccess
         {
-            get => _areModsAvailable;
-            set => this.RaiseAndSetIfChanged(ref _areModsAvailable, value);
+            get => _isSuccess;
+            set => this.RaiseAndSetIfChanged(ref _isSuccess, value);
+        }
+
+        private bool _isFailed;
+        public bool IsFailed
+        {
+            get => _isFailed;
+            set => this.RaiseAndSetIfChanged(ref _isFailed, value);
         }
 
         private ModGridItemViewModel? _selectedGridItem;
@@ -59,10 +59,11 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task RefreshDataGridAsync()
         {
-            AreModsLoading = true;
+            IsLoading = true;
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
-            AreModsLoading = false;
-            AreModsAvailable = _modProvider.AvailableMods?.Length > 0;
+            IsSuccess = _modProvider.AvailableMods?.Length > 0;
+            IsFailed = !IsSuccess;
+            IsLoading = false;
             if (_modProvider.AvailableMods is null) return;
             foreach (IMod availableMod in _modProvider.AvailableMods)
             {

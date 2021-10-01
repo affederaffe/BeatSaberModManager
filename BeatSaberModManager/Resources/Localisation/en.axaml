@@ -7,9 +7,10 @@
     <sys:String x:Key="MainWindow:OptionsHeader">Options</sys:String>
     <sys:String x:Key="MainWindow:MoreInfoButton">More Info</sys:String>
     <sys:String x:Key="MainWindow:RefreshModsButton">Refresh Mods</sys:String>
-    <sys:String x:Key="MainWindow:InstallModText">Installing:</sys:String>
-    <sys:String x:Key="MainWindow:UninstallModText">Uninstalling:</sys:String>
-    
+
+    <sys:String x:Key="Status:Installing">Installing:</sys:String>
+    <sys:String x:Key="Status:Uninstalling">Uninstalling:</sys:String>
+
     <sys:String x:Key="IntroView:Name">Beat Saber Mod Manager</sys:String>
     <sys:String x:Key="IntroView:IntroText:Line1">Please read this page entirely and carefully</sys:String>
     <sys:String x:Key="IntroView:IntroText:Line2">By using this program attest to have read and agree to the following terms:</sys:String>
@@ -44,5 +45,4 @@
     <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Continue</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:CancelButtonText">Cancel</sys:String>
 
-    <sys:String x:Key="AssetInstallWindow:InstallText">Installing:</sys:String>
 </ResourceDictionary>
