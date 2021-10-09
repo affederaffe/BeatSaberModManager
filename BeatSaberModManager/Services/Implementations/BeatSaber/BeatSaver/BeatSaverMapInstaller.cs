@@ -18,14 +18,16 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
     public class BeatSaverMapInstaller
     {
         private readonly AppSettings _appSettings;
+        private readonly IInstallDirValidator _installDirValidator;
         private readonly HttpProgressClient _httpClient;
 
         private const string kBeatSaverUrlPrefix = "https://api.beatsaver.com";
         private const string kBeatSaverKeyEndpoint = "/maps/id/";
 
-        public BeatSaverMapInstaller(ISettings<AppSettings> appSettings, HttpProgressClient httpClient)
+        public BeatSaverMapInstaller(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, HttpProgressClient httpClient)
         {
             _appSettings = appSettings.Value;
+            _installDirValidator = installDirValidator;
             _httpClient = httpClient;
         }
 
@@ -54,8 +56,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
         public bool ExtractBeatSaverMapToFolder(BeatSaverMap map, ZipArchive archive)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return false;
-            string customLevelsDirectoryPath = Path.Combine(_appSettings.InstallDir, "Beat Saber_Data", "CustomLevels");
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return false;
+            string customLevelsDirectoryPath = Path.Combine(_appSettings.InstallDir.Value!, "Beat Saber_Data", "CustomLevels");
             if (!Directory.Exists(customLevelsDirectoryPath)) Directory.CreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);

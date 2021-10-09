@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace BeatSaberModManager.ViewModels
 {
     public class OptionsViewModel : ReactiveObject
     {
+        private readonly AppSettings _appSettings;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<bool> _hasValidatedInstallDir;
@@ -27,10 +29,9 @@ namespace BeatSaberModManager.ViewModels
 
         public OptionsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
         {
+            _appSettings = appSettings.Value;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
-            _installDir = appSettings.Value.InstallDir;
-            _themesDir = appSettings.Value.ThemesDir;
             _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
             _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
             _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
@@ -41,13 +42,8 @@ namespace BeatSaberModManager.ViewModels
             this.WhenAnyValue(x => x.BeatSaverOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kBeatSaverProtocol));
             this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kModelSaberProtocol));
             this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(b => ToggleOneClickHandler(b, kPlaylistProtocol));
-            IObservable<string> validatedInstallDirObservable = this.WhenAnyValue(x => x.InstallDir).Where(installDirValidator.ValidateInstallDir)!;
-            validatedInstallDirObservable.BindTo(appSettings, x => x.Value.InstallDir);
-            validatedInstallDirObservable.Select(installDirValidator.DetectVrPlatform).BindTo(appSettings, x => x.Value.VrPlatform);
-            validatedInstallDirObservable.Select(_ => true).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
-            IObservable<string?> themesDirObservable = this.WhenAnyValue(x => x.ThemesDir).Where(x => !string.IsNullOrEmpty(x));
-            themesDirObservable.BindTo(appSettings, x => x.Value.ThemesDir);
-            themesDirObservable.Select(_ => true).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
+            _appSettings.InstallDir.Select(installDirValidator.ValidateInstallDir).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
+            _appSettings.ThemesDir.Select(Directory.Exists).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
 
         public ReactiveCommand<Unit, Unit> OpenInstallDirCommand { get; }
@@ -62,18 +58,16 @@ namespace BeatSaberModManager.ViewModels
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
-        private string? _installDir;
         public string? InstallDir
         {
-            get => _installDir;
-            set => this.RaiseAndSetIfChanged(ref _installDir, value);
+            get => _appSettings.InstallDir.Value;
+            set => _appSettings.InstallDir.Value = value;
         }
 
-        private string? _themesDir;
         public string? ThemesDir
         {
-            get => _themesDir;
-            set => this.RaiseAndSetIfChanged(ref _themesDir, value);
+            get => _appSettings.ThemesDir.Value;
+            set => _appSettings.ThemesDir.Value = value;
         }
 
         private bool _beatSaverOneClickCheckboxChecked;

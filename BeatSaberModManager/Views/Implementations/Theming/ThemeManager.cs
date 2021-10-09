@@ -50,6 +50,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
 
         public void Initialize()
         {
+            _appSettings.ThemesDir.Subscribe(ReloadExternalThemes);
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).OfType<Theme>();
             selectedThemeObservable.Subscribe(t => Application.Current.Styles[0] = t.Style);
             selectedThemeObservable.Subscribe(t => _appSettings.ThemeName = t.Name);

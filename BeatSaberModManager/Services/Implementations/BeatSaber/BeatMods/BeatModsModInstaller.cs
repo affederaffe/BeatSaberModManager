@@ -19,22 +19,24 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
     {
         private readonly AppSettings _appSettings;
         private readonly IModProvider _modProvider;
+        private readonly IInstallDirValidator _installDirValidator;
         private readonly IStatusProgress _progress;
 
-        public BeatModsModInstaller(ISettings<AppSettings> appSettings, IModProvider modProvider, IStatusProgress progress)
+        public BeatModsModInstaller(ISettings<AppSettings> appSettings, IModProvider modProvider, IInstallDirValidator installDirValidator, IStatusProgress progress)
         {
             _appSettings = appSettings.Value;
             _modProvider = modProvider;
+            _installDirValidator = installDirValidator;
             _progress = progress;
         }
 
         public async IAsyncEnumerable<IMod> InstallModsAsync(IEnumerable<IMod> mods)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) yield break;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) yield break;
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
-            IEnumerable<string> urls = beatModsMods.Select(x => x.GetDownloadForVrPlatform(_appSettings.VrPlatform!).Url);
-            string pendingDirPath = Path.Combine(_appSettings.InstallDir, "IPA", "Pending");
+            IEnumerable<string> urls = beatModsMods.Select(x => x.Downloads.First().Url);
+            string pendingDirPath = Path.Combine(_appSettings.InstallDir.Value!, "IPA", "Pending");
             if (!Directory.Exists(pendingDirPath)) Directory.CreateDirectory(pendingDirPath);
             int i = 0;
             _progress.Report(beatModsMods[i].Name);
@@ -43,7 +45,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 if (beatModsMods[i].Name.ToLowerInvariant() == _modProvider.ModLoaderName)
                 {
-                    archive?.ExtractToDirectory(_appSettings.InstallDir, true);
+                    archive?.ExtractToDirectory(_appSettings.InstallDir.Value!, true);
                     await InstallBsipaAsync().ConfigureAwait(false);
                 }
                 else
@@ -60,7 +62,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async IAsyncEnumerable<IMod> UninstallModsAsync(IEnumerable<IMod> mods)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) yield break;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) yield break;
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
             _progress.Report(ProgressBarStatusType.Uninstalling);
@@ -78,11 +80,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public void RemoveAllMods()
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return;
-            string pluginsDirPath = Path.Combine(_appSettings.InstallDir, "Plugins");
-            string libsDirPath = Path.Combine(_appSettings.InstallDir, "Libs");
-            string ipaDirPath = Path.Combine(_appSettings.InstallDir, "IPA");
-            string winhttpPath = Path.Combine(_appSettings.InstallDir, "winhttp.dll");
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
+            string pluginsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Plugins");
+            string libsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Libs");
+            string ipaDirPath = Path.Combine(_appSettings.InstallDir.Value!, "IPA");
+            string winhttpPath = Path.Combine(_appSettings.InstallDir.Value!, "winhttp.dll");
             if (Directory.Exists(pluginsDirPath)) Directory.Delete(pluginsDirPath, true);
             if (Directory.Exists(libsDirPath)) Directory.Delete(libsDirPath, true);
             if (Directory.Exists(ipaDirPath)) Directory.Delete(ipaDirPath, true);
@@ -105,14 +107,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private async Task InstallBsipaWindowsAsync()
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return;
-            string winhttpPath = Path.Combine(_appSettings.InstallDir, "winhttp.dll");
-            string bsipaPath = Path.Combine(_appSettings.InstallDir, "IPA.exe");
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
+            string winhttpPath = Path.Combine(_appSettings.InstallDir.Value!, "winhttp.dll");
+            string bsipaPath = Path.Combine(_appSettings.InstallDir.Value!, "IPA.exe");
             if (File.Exists(winhttpPath) || !File.Exists(bsipaPath)) return;
             ProcessStartInfo processStartInfo = new()
             {
                 FileName = bsipaPath,
-                WorkingDirectory = _appSettings.InstallDir,
+                WorkingDirectory = _appSettings.InstallDir.Value!,
                 Arguments = "-n"
             };
 
@@ -123,12 +125,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private async Task InstallBsipaLinux()
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
             string oldDir = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(_appSettings.InstallDir);
+            Directory.SetCurrentDirectory(_appSettings.InstallDir.Value!);
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
-            string protonPrefixPath = Path.Combine($"{_appSettings.InstallDir}/../..", "compatdata/620980/pfx/user.reg");
+            string protonPrefixPath = Path.Combine($"{_appSettings.InstallDir.Value}/../..", "compatdata/620980/pfx/user.reg");
             if (!File.Exists(protonPrefixPath)) return;
             string[] lines = await File.ReadAllLinesAsync(protonPrefixPath);
             await using StreamWriter streamWriter = File.AppendText(protonPrefixPath);
@@ -140,8 +142,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private async Task UninstallBsipaWindowsAsync(BeatModsMod bsipa)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return;
-            string bsipaPath = Path.Combine(_appSettings.InstallDir, "IPA.exe");
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
+            string bsipaPath = Path.Combine(_appSettings.InstallDir.Value!, "IPA.exe");
             if (!File.Exists(bsipaPath))
             {
                 RemoveModFiles(bsipa);
@@ -151,7 +153,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             ProcessStartInfo processStartInfo = new()
             {
                 FileName = bsipaPath,
-                WorkingDirectory = _appSettings.InstallDir,
+                WorkingDirectory = _appSettings.InstallDir.Value!,
                 Arguments = "--revert -n"
             };
 
@@ -163,9 +165,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private Task UninstallBsipaLinux(BeatModsMod bsipa)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return Task.CompletedTask;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return Task.CompletedTask;
             string oldDir = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(_appSettings.InstallDir);
+            Directory.SetCurrentDirectory(_appSettings.InstallDir.Value!);
             IPA.Program.Main(new[] { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
             RemoveModFiles(bsipa);
@@ -174,12 +176,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private void RemoveModFiles(BeatModsMod mod)
         {
-            string pendingDirPath = Path.Combine(_appSettings.InstallDir!, "IPA", "Pending");
-            BeatModsDownload download = mod.GetDownloadForVrPlatform(_appSettings.VrPlatform!);
+            string pendingDirPath = Path.Combine(_appSettings.InstallDir.Value!, "IPA", "Pending");
+            BeatModsDownload download = mod.Downloads.First();
             foreach (BeatModsHash hash in download.Hashes)
             {
                 string pendingPath = Path.Combine(pendingDirPath, hash.File);
-                string normalPath = Path.Combine(_appSettings.InstallDir!, hash.File);
+                string normalPath = Path.Combine(_appSettings.InstallDir.Value!, hash.File);
                 if (File.Exists(pendingPath)) File.Delete(pendingPath);
                 if (File.Exists(normalPath)) File.Delete(normalPath);
             }

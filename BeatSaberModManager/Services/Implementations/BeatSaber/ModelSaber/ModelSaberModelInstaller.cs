@@ -16,19 +16,21 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
     public class ModelSaberModelInstaller
     {
         private readonly AppSettings _appSettings;
+        private readonly IInstallDirValidator _installDirValidator;
         private readonly HttpProgressClient _httpClient;
 
         private const string kModelSaberFilesEndpoint = "https://modelsaber.com/files/";
 
-        public ModelSaberModelInstaller(ISettings<AppSettings> appSettings, HttpProgressClient httpClient)
+        public ModelSaberModelInstaller(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, HttpProgressClient httpClient)
         {
             _appSettings = appSettings.Value;
+            _installDirValidator = installDirValidator;
             _httpClient = httpClient;
         }
 
         public async Task<bool> InstallModelAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return false;
             string? folderName = uri.Host switch
             {
                 "avatar" => "CustomAvatars",
@@ -39,7 +41,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             };
 
             if (folderName is null) return false;
-            string folderPath = Path.Combine(_appSettings.InstallDir, folderName);
+            string folderPath = Path.Combine(_appSettings.InstallDir.Value!, folderName);
             if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);

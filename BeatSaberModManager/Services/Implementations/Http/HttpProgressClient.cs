@@ -34,9 +34,9 @@ namespace BeatSaberModManager.Services.Implementations.Http
         public async IAsyncEnumerable<HttpResponseMessage> GetAsync(IEnumerable<string> urls, IProgress<double>? progress)
         {
             progress?.Report(0);
-            HttpResponseMessage[] headers = await Task.WhenAll(urls.Select(async x => await GetAsync(x, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false)));
+            HttpResponseMessage[] headers = await Task.WhenAll(urls.Select(x => GetAsync(x, HttpCompletionOption.ResponseHeadersRead))).ConfigureAwait(false);
             long? length = headers.Select(x => x.Content.Headers.ContentLength).Sum();
-            IAsyncEnumerable<HttpResponseMessage> enumerable = length is > 0 
+            IAsyncEnumerable<HttpResponseMessage> enumerable = length is > 0
                 ? GetWithLengthAsync(headers, progress, length.Value)
                 : GetWithoutLengthAsync(headers, progress);
             await foreach (HttpResponseMessage response in enumerable.ConfigureAwait(false))

@@ -22,23 +22,25 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
     public class PlaylistInstaller
     {
         private readonly AppSettings _appSettings;
+        private readonly IInstallDirValidator _installDirValidator;
         private readonly HttpProgressClient _httpClient;
         private readonly BeatSaverMapInstaller _beatSaverMapInstaller;
 
-        public PlaylistInstaller(ISettings<AppSettings> appSettings, HttpProgressClient httpClient, BeatSaverMapInstaller beatSaverMapInstaller)
+        public PlaylistInstaller(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, HttpProgressClient httpClient, BeatSaverMapInstaller beatSaverMapInstaller)
         {
             _appSettings = appSettings.Value;
+            _installDirValidator = installDirValidator;
             _httpClient = httpClient;
             _beatSaverMapInstaller = beatSaverMapInstaller;
         }
 
         public async Task<bool> InstallPlaylistAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return false;
             using HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            string playlistsDirPath = Path.Combine(_appSettings.InstallDir, "Playlists");
+            string playlistsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Playlists");
             string fileName = uri.Segments.Last();
             string filePath = Path.Combine(playlistsDirPath, fileName);
             if (!Directory.Exists(playlistsDirPath)) Directory.CreateDirectory(playlistsDirPath);
@@ -49,9 +51,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         public async Task<bool> InstallPlaylistAsync(string filePath, IStatusProgress? progress = null)
         {
-            if (!Directory.Exists(_appSettings.InstallDir)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return false;
             string json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-            string playlistsDirPath = Path.Combine(_appSettings.InstallDir, "Playlists");
+            string playlistsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Playlists");
             string fileName = Path.GetFileName(filePath);
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
             if (!Directory.Exists(playlistsDirPath)) Directory.CreateDirectory(playlistsDirPath);
@@ -62,7 +64,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         private async Task<bool> InstallPlaylistAsync(Playlist playlist, IStatusProgress? progress = null)
         {
-            BeatSaverMap?[] maps = await Task.WhenAll(playlist.Songs.Select(x => _beatSaverMapInstaller.GetBeatSaverMapAsync(x.Id)));
+            BeatSaverMap?[] maps = await Task.WhenAll(playlist.Songs.Select(x => _beatSaverMapInstaller.GetBeatSaverMapAsync(x.Id))).ConfigureAwait(false);
             if (maps.Any(x => x is null || x.Versions.Length <= 0)) return false;
             IEnumerable<string> urls = maps.Select(x => x!.Versions.Last().DownloadUrl);
             int i = 0;
@@ -75,7 +77,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
                 using ZipArchive archive = new(stream);
                 bool success = _beatSaverMapInstaller.ExtractBeatSaverMapToFolder(maps[i++]!, archive);
                 if (!success) return false;
-                if (i <= maps.Length) return true;
+                if (i >= maps.Length) return true;
                 progress?.Report(maps[i]!.Name);
             }
 

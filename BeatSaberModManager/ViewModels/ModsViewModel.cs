@@ -80,28 +80,35 @@ namespace BeatSaberModManager.ViewModels
         public async Task RefreshModsAsync()
         {
             IEnumerable<IMod> mods = GridItems.Values.Where(x => x.IsCheckBoxChecked && !x.IsUpToDate).Select(x => x.AvailableMod);
-            await foreach (IMod mod in _modInstaller.InstallModsAsync(mods))
-                GridItems[mod].InstalledMod = mod;
-
+            await InstallMods(mods);
             mods = GridItems.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
-            await foreach (IMod mod in _modInstaller.UninstallModsAsync(mods))
-                GridItems[mod].InstalledMod = null;
+            await UninstallMods(mods);
         }
 
         public async Task UninstallModLoaderAsync()
         {
-            IMod? modLoader = GridItems.Values.FirstOrDefault(x => x.InstalledMod?.Name.ToLowerInvariant() == _modProvider.ModLoaderName)?.InstalledMod;
+            IMod? modLoader = GridItems.Values.FirstOrDefault(x => x.InstalledMod?.Name.ToLowerInvariant() == _modProvider.ModLoaderName)?.AvailableMod;
             if (modLoader is null) return;
-            await foreach (IMod mod in _modInstaller.UninstallModsAsync(new []{ modLoader }))
-                GridItems[mod].InstalledMod = null;
+            await UninstallMods(new[] { modLoader });
         }
 
         public async Task UninstallAllModsAsync()
         {
             IEnumerable<IMod> mods = GridItems.Values.Where(x => x.InstalledMod is not null).Select(x => x.AvailableMod);
+            await UninstallMods(mods);
+            _modInstaller.RemoveAllMods();
+        }
+
+        private async Task InstallMods(IEnumerable<IMod> mods)
+        {
+            await foreach (IMod mod in _modInstaller.InstallModsAsync(mods))
+                GridItems[mod].InstalledMod = mod;
+        }
+
+        private async Task UninstallMods(IEnumerable<IMod> mods)
+        {
             await foreach (IMod mod in _modInstaller.UninstallModsAsync(mods))
                 GridItems[mod].InstalledMod = null;
-            _modInstaller.RemoveAllMods();
         }
 
         private void OnCheckboxUpdated(ModGridItemViewModel gridItem)

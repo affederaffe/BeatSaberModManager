@@ -14,15 +14,15 @@ namespace BeatSaberModManager.ViewModels
 {
     public class AssetInstallWindowViewModel : ReactiveObject
     {
-        private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly IStatusProgress _progress;
+        private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
         private readonly ObservableAsPropertyHelper<string?> _assetName;
 
         public AssetInstallWindowViewModel(IEnumerable<IAssetProvider> assetProviders, IStatusProgress progress)
         {
-            _assetProviders = assetProviders;
             _progress = progress;
+            _assetProviders = assetProviders;
             StatusProgress statusProgress = (StatusProgress)progress;
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
             statusProgress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
@@ -31,8 +31,7 @@ namespace BeatSaberModManager.ViewModels
         public async Task InstallAsset(Uri uri)
         {
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == uri.Scheme);
-            if (assetProvider is null) return;
-            IsSuccess = await assetProvider.InstallAssetAsync(uri, _progress);
+            if (assetProvider is not null) IsSuccess = await assetProvider.InstallAssetAsync(uri, _progress);
             IsFailed = !IsSuccess;
             IsInstalling = false;
         }

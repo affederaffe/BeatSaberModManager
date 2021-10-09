@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Reactive;
+﻿using System.Reactive;
 using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -21,7 +20,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<string?> _progressBarText;
         private readonly ObservableAsPropertyHelper<ProgressBarStatusType> _progressBarStatusType;
 
-        public MainWindowViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress)
+        public MainWindowViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress)
         {
             MoreInfoButtonCommand = ReactiveCommand.Create(() => PlatformUtils.OpenBrowser(modsViewModel.SelectedGridItem?.AvailableMod.MoreInfoLink));
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync);
@@ -29,7 +28,7 @@ namespace BeatSaberModManager.ViewModels
                 .Select(mod => mod is not null)
                 .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
             modsViewModel.WhenAnyValue(x => x.IsSuccess)
-                .Select(x => x && Directory.Exists(appSettings.Value.InstallDir))
+                .Select(x => x && installDirValidator.ValidateInstallDir(appSettings.Value.InstallDir.Value))
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
             StatusProgress statusProgress = (StatusProgress)progress;
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressBarValue), out _progressBarValue);

@@ -40,16 +40,12 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         private AppSettings Load()
         {
             if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
-            AppSettings? appSettings = null;
-            if (File.Exists(_saveFilePath))
-            {
-                string json = File.ReadAllText(_saveFilePath);
-                appSettings = JsonSerializer.Deserialize<AppSettings>(json);
-                if (_installDirValidator.ValidateInstallDir(appSettings?.InstallDir)) return appSettings!;
-            }
-
+            if (!File.Exists(_saveFilePath)) return new AppSettings();
+            string json = File.ReadAllText(_saveFilePath);
+            AppSettings? appSettings = JsonSerializer.Deserialize<AppSettings>(json);
+            if (_installDirValidator.ValidateInstallDir(appSettings?.InstallDir.Value)) return appSettings!;
             appSettings ??= new AppSettings();
-            appSettings.InstallDir = _installDirLocator.LocateInstallDir();
+            appSettings.InstallDir.Value = _installDirLocator.LocateInstallDir();
             return appSettings;
         }
     }
