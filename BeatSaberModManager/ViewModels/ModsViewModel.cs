@@ -57,7 +57,7 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedGridItem, value);
         }
 
-        public async Task RefreshDataGridAsync()
+        public async Task InitializeDataGridAsync()
         {
             IsLoading = true;
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
@@ -79,10 +79,10 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task RefreshModsAsync()
         {
-            IEnumerable<IMod> mods = GridItems.Values.Where(x => x.IsCheckBoxChecked && !x.IsUpToDate).Select(x => x.AvailableMod);
-            await InstallMods(mods);
-            mods = GridItems.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
-            await UninstallMods(mods);
+            IEnumerable<IMod> install = GridItems.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.ForceReinstallMods)).Select(x => x.AvailableMod);
+            await InstallMods(install);
+            IEnumerable<IMod> uninstall = GridItems.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
+            await UninstallMods(uninstall);
         }
 
         public async Task UninstallModLoaderAsync()

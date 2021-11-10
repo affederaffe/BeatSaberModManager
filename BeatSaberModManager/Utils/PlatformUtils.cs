@@ -10,16 +10,16 @@ namespace BeatSaberModManager.Utils
         public static void OpenFolder(string? path)
         {
             if (!Directory.Exists(path)) return;
-            OpenBrowserOrFolder(path);
+            OpenUri(path);
         }
 
         public static void OpenBrowser(string? url)
         {
             if (url is null) return;
-            OpenBrowserOrFolder(url);
+            OpenUri(url);
         }
 
-        private static void OpenBrowserOrFolder(string uri)
+        private static void OpenUri(string uri)
         {
             if (OperatingSystem.IsWindows())
                 Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });

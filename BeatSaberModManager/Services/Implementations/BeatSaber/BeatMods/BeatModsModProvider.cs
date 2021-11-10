@@ -70,16 +70,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public async Task LoadInstalledModsAsync()
         {
             if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
-            BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
-            if (allMods is null) return;
-            Dictionary<string, IMod> fileHashModPairs = new();
-            foreach (BeatModsMod mod in allMods)
-            {
-                BeatModsDownload download = mod.Downloads.First();
-                foreach (BeatModsHash hash in download.Hashes)
-                    fileHashModPairs.TryAdd(hash.Hash, mod);
-            }
-
+            Dictionary<string, IMod>? fileHashModPairs = await GetInstalledModHashesAsync();
+            if (fileHashModPairs is null) return;
             InstalledMods = new HashSet<IMod>();
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(_appSettings.InstallDir.Value!, x))
                 .Where(Directory.Exists)
@@ -111,7 +103,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(x => kBeatModsBaseUrl + x), progress).ConfigureAwait(false))
             {
-                if (!response.IsSuccessStatusCode) yield return null;
+                if (!response.IsSuccessStatusCode) continue;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 yield return new ZipArchive(stream);
             }
@@ -138,14 +130,28 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             string aliasBody = await aliasResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(aliasBody);
             if (aliases is null) return null;
-
             foreach ((string version, string[] alias) in aliases)
             {
                 if (alias.Any(aliasedVersions => aliasedVersions == gameVersion))
                     return version;
             }
 
-            return versions.FirstOrDefault();
+            return null;
+        }
+
+        private async Task<Dictionary<string, IMod>?> GetInstalledModHashesAsync()
+        {
+            BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
+            if (allMods is null) return null;
+            Dictionary<string, IMod> fileHashModPairs = new();
+            foreach (BeatModsMod mod in allMods)
+            {
+                BeatModsDownload download = mod.Downloads.First();
+                foreach (BeatModsHash hash in download.Hashes)
+                    fileHashModPairs.TryAdd(hash.Hash, mod);
+            }
+
+            return fileHashModPairs;
         }
 
         private static readonly string[] _installedModsLocations = { "IPA/Pending/Plugins", "IPA/Pending/Libs", "Plugins", "Libs" };

@@ -41,17 +41,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             return LocateSteamBeatSaberInstallDir(steamInstallDir);
         }
 
-        private string? LocateSteamBeatSaberInstallDir(string steamInstallDir)
-        {
-            Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
-            return GetSteamLibraryPaths(steamInstallDir).Select(path => MatchSteamBeatSaberInstallDir(regex, path)).FirstOrDefault(installDir => installDir is not null);
-        }
+        private string? LocateSteamBeatSaberInstallDir(string steamInstallDir) =>
+            GetSteamLibraryPaths(steamInstallDir).Select(MatchSteamBeatSaberInstallDir).FirstOrDefault(installDir => installDir is not null);
 
-        private string? MatchSteamBeatSaberInstallDir(Regex regex, string path)
+        private string? MatchSteamBeatSaberInstallDir(string path)
         {
             const string beatSaberAppId = "620980";
             string acf = Path.Combine(path, "appmanifest_" + beatSaberAppId + ".acf");
             if (!File.Exists(acf)) return null;
+            Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
             string? line;
             using StreamReader reader = new(acf);
             while ((line = reader.ReadLine()) is not null)

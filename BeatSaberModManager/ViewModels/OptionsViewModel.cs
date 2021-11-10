@@ -70,6 +70,12 @@ namespace BeatSaberModManager.ViewModels
             set => _appSettings.ThemesDir.Value = value;
         }
 
+        public bool ForceReinstallMods
+        {
+            get => _appSettings.ForceReinstallMods;
+            set => _appSettings.ForceReinstallMods = value;
+        }
+
         private bool _beatSaverOneClickCheckboxChecked;
         public bool BeatSaverOneClickCheckboxChecked
         {

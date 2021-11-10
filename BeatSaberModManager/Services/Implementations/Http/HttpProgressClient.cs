@@ -24,7 +24,8 @@ namespace BeatSaberModManager.Services.Implementations.Http
                 if (read <= 0) break;
                 await ms.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
                 total += read;
-                if (length.HasValue) progress?.Report(((double)total + 1) / length.Value);
+                if (!length.HasValue) continue;
+                progress?.Report(((double)total + 1) / length.Value);
             }
 
             header.Content = new StreamContent(ms);

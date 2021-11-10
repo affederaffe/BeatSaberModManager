@@ -11,6 +11,8 @@ namespace BeatSaberModManager.Models.Implementations.Settings
 
         public string? LanguageCode { get; set; }
 
+        public bool ForceReinstallMods { get; set; }
+
         private ObservableVariable<string>? _installDir;
         public ObservableVariable<string> InstallDir
         {

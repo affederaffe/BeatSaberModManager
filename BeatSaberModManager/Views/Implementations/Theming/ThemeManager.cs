@@ -56,7 +56,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             selectedThemeObservable.Subscribe(t => _appSettings.ThemeName = t.Name);
         }
 
-        public void ReloadExternalThemes(string path)
+        public void ReloadExternalThemes(string? path)
         {
             if (!Directory.Exists(path)) return;
             for (int i = _buildInThemesCount; i < Themes.Count; i++)

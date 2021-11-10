@@ -7,7 +7,7 @@ using BeatSaberModManager.Models.Interfaces;
 
 namespace BeatSaberModManager.Models.Implementations.Observables
 {
-    public class ObservableVariable<T> : IObservableVariable<T>
+    public class ObservableVariable<T> : IObservableVariable<T?>
     {
         private readonly Subject<T?> _subject = new();
 
@@ -25,10 +25,10 @@ namespace BeatSaberModManager.Models.Implementations.Observables
             _subject.OnNext(value);
         }
 
-        public IDisposable Subscribe(IObserver<T> observer)
+        public IDisposable Subscribe(IObserver<T?> observer)
         {
-            observer.OnNext(_value!);
-            return _subject.Subscribe(observer!);
+            observer.OnNext(_value);
+            return _subject.Subscribe(observer);
         }
     }
 }

@@ -25,7 +25,7 @@
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>
     <sys:String x:Key="ModsView:LatestVersionHeader">Neuste</sys:String>
     <sys:String x:Key="ModsView:ModDescriptionHeader">Beschreibung</sys:String>
-    <sys:String x:Key="ModsView:NoModsAvailable">Keine Mods für diese Version verfügbar</sys:String>
+    <sys:String x:Key="ModsView:NoModsAvailable">Noch keine Mods für diese Version verfügbar</sys:String>
 
     <sys:String x:Key="OptionsView:InstallationLabel">Installationsordner</sys:String>
     <sys:String x:Key="OptionsView:OpenFolderButton">Ordner öffnen</sys:String>
@@ -33,10 +33,12 @@
     <sys:String x:Key="OptionsView:UninstallModLoaderButton">Deinstalliere BSIPA</sys:String>
     <sys:String x:Key="OptionsView:UninstallAllModsButton">Deinstalliere alle Mods</sys:String>
     <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Unterstützung</sys:String>
-    <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver:</sys:String>
-    <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber:</sys:String>
-    <sys:String x:Key="OptionsView:PlaylistLabel">Playlist:</sys:String>
+    <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver</sys:String>
+    <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber</sys:String>
+    <sys:String x:Key="OptionsView:PlaylistLabel">Playlist</sys:String>
     <sys:String x:Key="OptionsView:LanguageLabel">Sprache</sys:String>
+    <sys:String x:Key="OptionsView:ForceReinstallModsButton">Installierte Mods neu installieren</sys:String>
+    <sys:String x:Key="OptionsView:MiscLabel">Verschiedenes</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themen</sys:String>
     <sys:String x:Key="OptionsView:ToolsLabel">Werkzeuge</sys:String>
     <sys:String x:Key="OptionsView:InstallPlaylistButton">Playlist installieren</sys:String>

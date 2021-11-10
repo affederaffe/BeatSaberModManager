@@ -29,13 +29,13 @@ namespace BeatSaberModManager.Views.Implementations.Pages
             ViewModel = modsViewModel;
             _dataGridCollection = new DataGridCollectionView(ViewModel.GridItems.Values);
             _dataGridCollection.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)));
-            ReactiveCommand<string?, Unit> refreshCommand = ReactiveCommand.CreateFromTask<string?>(RefreshDataGridAsync);
+            ReactiveCommand<string?, Unit> refreshCommand = ReactiveCommand.CreateFromTask<string?>(InitializeDataGridAsync);
             appSettings.Value.InstallDir.InvokeCommand(refreshCommand);
         }
 
-        private async Task RefreshDataGridAsync(string? _)
+        private async Task InitializeDataGridAsync(string? _)
         {
-            await ViewModel!.RefreshDataGridAsync();
+            await ViewModel!.InitializeDataGridAsync();
             ModsDataGrid.Items = _dataGridCollection;
         }
     }
