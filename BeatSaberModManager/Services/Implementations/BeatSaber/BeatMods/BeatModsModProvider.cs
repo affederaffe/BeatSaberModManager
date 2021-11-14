@@ -41,29 +41,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public string ModLoaderName => "bsipa";
         public IMod[]? AvailableMods { get; private set; }
         public HashSet<IMod>? InstalledMods { get; private set; }
-        public Dictionary<IMod, HashSet<IMod>> Dependencies { get; } = new();
 
-        public IEnumerable<IMod> ResolveDependencies(IMod modToResolve)
+        public IEnumerable<IMod> GetDependencies(IMod mod)
         {
-            if (modToResolve is not BeatModsMod beatModsMod) yield break;
+            if (mod is not BeatModsMod beatModsMod) yield break;
             foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
                 if (dependency.DependingMod is null) continue;
-                if (Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependents)) dependents.Add(beatModsMod);
-                else Dependencies.Add(dependency.DependingMod, new HashSet<IMod> { beatModsMod });
                 yield return dependency.DependingMod;
-            }
-        }
-
-        public IEnumerable<IMod> UnresolveDependencies(IMod modToUnresolve)
-        {
-            if (modToUnresolve is not BeatModsMod beatModsMod) yield break;
-            foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
-            {
-                if (dependency.DependingMod is null || !Dependencies.TryGetValue(dependency.DependingMod, out HashSet<IMod>? dependents)) continue;
-                if (dependents.Remove(beatModsMod))
-                    yield return dependency.DependingMod;
             }
         }
 

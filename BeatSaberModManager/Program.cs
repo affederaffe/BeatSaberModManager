@@ -13,6 +13,7 @@ using BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
+using BeatSaberModManager.Services.Implementations.DependencyManagement;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars;
@@ -69,6 +70,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddModServices(this IServiceCollection services) =>
             services.AddSingleton<IHashProvider, MD5HashProvider>()
+                .AddSingleton<IDependencyManager, DependencyManager>()
                 .AddSingleton<IModProvider, BeatModsModProvider>()
                 .AddSingleton<IModInstaller, BeatModsModInstaller>()
                 .AddSingleton<IModVersionComparer, SystemVersionComparer>()

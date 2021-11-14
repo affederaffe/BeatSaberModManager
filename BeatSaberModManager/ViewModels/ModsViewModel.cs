@@ -15,13 +15,15 @@ namespace BeatSaberModManager.ViewModels
     public class ModsViewModel : ReactiveObject
     {
         private readonly AppSettings _appSettings;
+        private readonly IDependencyManager _dependencyManager;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
 
-        public ModsViewModel(ISettings<AppSettings> appSettings, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
+        public ModsViewModel(ISettings<AppSettings> appSettings, IDependencyManager dependencyManager, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
         {
             _appSettings = appSettings.Value;
+            _dependencyManager = dependencyManager;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
@@ -116,22 +118,26 @@ namespace BeatSaberModManager.ViewModels
             if (gridItem.IsCheckBoxChecked)
             {
                 _appSettings.SelectedMods.Add(gridItem.AvailableMod.Name);
-                foreach (IMod mod in _modProvider.ResolveDependencies(gridItem.AvailableMod))
-                    UpdateGridItem(GridItems[mod]);
+                IEnumerable<IMod> affectedMods = _dependencyManager.ResolveDependencies(gridItem.AvailableMod);
+                UpdateGridItems(affectedMods);
             }
             else
             {
                 _appSettings.SelectedMods.Remove(gridItem.AvailableMod.Name);
-                foreach (IMod mod in _modProvider.UnresolveDependencies(gridItem.AvailableMod))
-                    UpdateGridItem(GridItems[mod]);
+                IEnumerable<IMod> affectedMods = _dependencyManager.UnresolveDependencies(gridItem.AvailableMod);
+                UpdateGridItems(affectedMods);
             }
         }
 
-        private void UpdateGridItem(ModGridItemViewModel gridItem)
+        private void UpdateGridItems(IEnumerable<IMod> mods)
         {
-            bool isDependency = _modProvider.Dependencies.TryGetValue(gridItem.AvailableMod, out HashSet<IMod>? dependents) && dependents.Count != 0;
-            gridItem.IsCheckBoxEnabled = !isDependency;
-            gridItem.IsCheckBoxChecked = gridItem.IsCheckBoxChecked || isDependency;
+            foreach (IMod mod in mods)
+            {
+                ModGridItemViewModel gridItem = GridItems[mod];
+                bool isDependency = _dependencyManager.IsDependency(gridItem.AvailableMod);
+                gridItem.IsCheckBoxEnabled = !isDependency;
+                gridItem.IsCheckBoxChecked = gridItem.IsCheckBoxChecked || isDependency;
+            }
         }
     }
 }
