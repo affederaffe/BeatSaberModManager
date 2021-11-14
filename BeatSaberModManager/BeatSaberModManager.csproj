@@ -18,6 +18,7 @@
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AssemblyVersion>0.0.1</AssemblyVersion>
+    <ApplicationIcon>./Resources/icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
