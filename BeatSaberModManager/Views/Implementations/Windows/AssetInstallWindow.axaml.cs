@@ -32,7 +32,7 @@ namespace BeatSaberModManager.Views.Implementations.Windows
                 .Select(x => $"{installText} {x}")
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
-            this.WhenActivated(_ => InstallAsset().ConfigureAwait(false));
+            InstallAsset().ConfigureAwait(false);
         }
 
         private async Task InstallAsset()

@@ -6,6 +6,7 @@
         xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.AssetInstallWindow"
+        Icon="/Resources/icon.ico"
         Title="OneClick™ Installer"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
