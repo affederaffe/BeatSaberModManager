@@ -31,19 +31,13 @@
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
                      IsVisible="{Binding IsSuccess}">
-                <Path Stroke="DarkGreen"
-                      Fill="Green"
-                      StrokeThickness="1"
-                      Data="m 0.85597638,35.957829 3.57188002,-4.7625 16.4996796,10.8847 c 6.20289,-19.81438 17.26777,-32.9908999 26.9584,-41.24589985 l 4.16718,4.76249995 C 41.475606,13.846339 26.950246,33.840899 25.264056,52.031009 Z" />
+                <Path Stroke="DarkGreen" Fill="Green" StrokeThickness="1" Data="{StaticResource Icons:Checkmark}" />
             </Viewbox>
             <Viewbox Grid.Row="0"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
                      IsVisible="{Binding IsFailed}">
-                <Path Stroke="DarkRed"
-                      StrokeThickness="1"
-                      Fill="Red"
-                      Data="M 5.0832662,0.82859815 0.84173023,5.8329282 C 7.7838682,11.634446 14.515926,17.780452 20.914874,24.083092 13.503101,31.670548 6.6705012,39.455119 0.84173023,46.965317 L 5.7529262,51.132504 C 11.828289,43.784496 18.54262,36.27615 25.733201,28.91994 c 7.190581,7.35621 13.904912,14.864556 19.980275,22.212564 l 4.911196,-4.167187 C 44.795901,39.455119 37.963301,31.670283 30.551528,24.083092 36.950476,17.780717 43.682799,11.634446 50.624672,5.8329282 L 46.383136,0.82859815 C 39.29389,6.5592092 32.329793,12.788294 25.733201,19.245979 19.136609,12.788294 12.172512,6.5592092 5.0832662,0.82859815 Z" />
+                <Path Stroke="DarkRed" Fill="Red" StrokeThickness="1" Data="{StaticResource Icons:Cross}" />
             </Viewbox>
             <ScrollViewer Grid.Row="1">
                 <ItemsRepeater Items="{Binding Log}" />

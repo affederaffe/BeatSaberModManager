@@ -1,0 +1,34 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <TabControl Classes="Sidebar">
+                <TabItem Header="Item1" />
+                <TabItem Header="Item2" />
+            </TabControl>
+        </Border>
+    </Design.PreviewWith>
+
+    <Style Selector="TabControl.Sidebar > TabItem">
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="7"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+
+    <Style Selector="TabControl.Sidebar > TabItem:selected /template/ Border#PART_SelectedPipe">
+        <Setter Property="IsVisible" Value="False" />
+    </Style>
+
+    <Style Selector="TabControl.Sidebar > TabItem:selected">
+        <Setter Property="Background" Value="#1fffffff"/>
+    </Style>
+
+    <Style Selector="TabControl.Sidebar > TabItem:pointerover /template/ Border#PART_LayoutRoot">
+        <Setter Property="Background" Value="#3fffffff"/>
+    </Style>
+
+</Styles>

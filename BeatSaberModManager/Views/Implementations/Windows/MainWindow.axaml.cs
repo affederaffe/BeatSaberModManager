@@ -35,10 +35,13 @@ namespace BeatSaberModManager.Views.Implementations.Windows
             _installDirValidator = installDirValidator;
             ViewModel = mainWindowViewModel;
             Title = nameof(BeatSaberModManager);
-            Pages.Items = pages.Select(x => new TabItem { Content = x }).ToArray();
+            int i = 0;
+            IPage[] pageItems = pages.ToArray();
+            foreach (TabItem tabItem in Pages.Items)
+                tabItem.Content = pageItems[i++];
             ViewModel.WhenAnyValue(x => x.ProgressBarStatusType)
                 .Select(GetLocalizedStatus)
-                .BindTo(this, x => x.ProgressBarStatusText.Content);
+                .BindTo(ViewModel, x => x.ProgressBarStatusText);
         }
 
         protected override async void OnOpened(EventArgs e)

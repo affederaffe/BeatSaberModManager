@@ -64,7 +64,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         private async Task<bool> InstallPlaylistAsync(Playlist playlist, IStatusProgress? progress = null)
         {
-            BeatSaverMap?[] maps = await Task.WhenAll(playlist.Songs.Select(x => _beatSaverMapInstaller.GetBeatSaverMapAsync(x.Id))).ConfigureAwait(false);
+            BeatSaverMap?[] maps = await GetMapsAsync(playlist).ConfigureAwait(false);
             if (maps.Any(x => x is null || x.Versions.Length <= 0)) return false;
             IEnumerable<string> urls = maps.Select(x => x!.Versions.Last().DownloadUrl);
             int i = 0;
@@ -82,6 +82,18 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             }
 
             return true;
+        }
+
+        private async Task<BeatSaverMap?[]> GetMapsAsync(Playlist playlist)
+        {
+            List<BeatSaverMap?> maps = new(playlist.Songs.Length);
+            foreach (PlaylistSong song in playlist.Songs)
+            {
+                BeatSaverMap? map = await _beatSaverMapInstaller.GetBeatSaverMapAsync(song.Id).ConfigureAwait(false);
+                maps.Add(map);
+            }
+
+            return maps.ToArray();
         }
     }
 }

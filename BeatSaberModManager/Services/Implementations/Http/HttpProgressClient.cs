@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
             HttpResponseMessage header = await base.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
             long total = 0;
             long? length = header.Content.Headers.ContentLength;
-            byte[] buffer = new byte[8192];
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
             MemoryStream ms = new();
             await using Stream stream = await header.Content.ReadAsStreamAsync().ConfigureAwait(false);
             while (true)
@@ -28,6 +29,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
                 progress?.Report(((double)total + 1) / length.Value);
             }
 
+            ArrayPool<byte>.Shared.Return(buffer);
             header.Content = new StreamContent(ms);
             return header;
         }
@@ -35,23 +37,34 @@ namespace BeatSaberModManager.Services.Implementations.Http
         public async IAsyncEnumerable<HttpResponseMessage> GetAsync(IEnumerable<string> urls, IProgress<double>? progress)
         {
             progress?.Report(0);
-            HttpResponseMessage[] headers = await Task.WhenAll(urls.Select(x => GetAsync(x, HttpCompletionOption.ResponseHeadersRead))).ConfigureAwait(false);
-            long? length = headers.Select(x => x.Content.Headers.ContentLength).Sum();
-            IAsyncEnumerable<HttpResponseMessage> enumerable = length is > 0
-                ? GetWithLengthAsync(headers, progress, length.Value)
-                : GetWithoutLengthAsync(headers, progress);
-            await foreach (HttpResponseMessage response in enumerable.ConfigureAwait(false))
+            Uri[] uris = urls.Select(x => new Uri(x)).ToArray();
+            long? length = await GetLengthAsync(uris);
+            IAsyncEnumerable<HttpResponseMessage> e = length > 0 ? GetWithLengthAsync(uris, progress, length.Value) : GetWithoutLengthAsync(uris, progress);
+            await foreach (HttpResponseMessage response in e.ConfigureAwait(false))
                 yield return response;
         }
 
-        private static async IAsyncEnumerable<HttpResponseMessage> GetWithLengthAsync(IEnumerable<HttpResponseMessage> headers, IProgress<double>? progress, double length)
+        private async Task<long?> GetLengthAsync(IEnumerable<Uri> uris)
+        {
+            long? result = 0;
+            foreach (Uri uri in uris)
+            {
+                using HttpResponseMessage header = await GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
+                result += header.Content.Headers.ContentLength;
+            }
+
+            return result;
+        }
+
+        private async IAsyncEnumerable<HttpResponseMessage> GetWithLengthAsync(IEnumerable<Uri> uris, IProgress<double>? progress, double length)
         {
             long total = 0;
-            byte[] buffer = new byte[8192];
-            foreach (HttpResponseMessage header in headers)
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
+            foreach (Uri uri in uris)
             {
+                HttpResponseMessage response = await GetAsync(uri);
                 MemoryStream ms = new();
-                await using Stream stream = await header.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                await using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 while (true)
                 {
                     int read = await stream.ReadAsync(buffer).ConfigureAwait(false);
@@ -61,29 +74,34 @@ namespace BeatSaberModManager.Services.Implementations.Http
                     progress?.Report(((double)total + 1) / length);
                 }
 
-                header.Content = new StreamContent(ms);
-                yield return header;
+                response.Content = new StreamContent(ms);
+                yield return response;
             }
+
+            ArrayPool<byte>.Shared.Return(buffer);
         }
 
-        private static async IAsyncEnumerable<HttpResponseMessage> GetWithoutLengthAsync(IReadOnlyList<HttpResponseMessage> headers, IProgress<double>? progress)
+        private async IAsyncEnumerable<HttpResponseMessage> GetWithoutLengthAsync(IReadOnlyList<Uri> uris, IProgress<double>? progress)
         {
-            byte[] buffer = new byte[8192];
-            for (int i = 0; i < headers.Count; i++)
+            byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
+            for (int i = 0; i < uris.Count; i++)
             {
+                HttpResponseMessage response = await GetAsync(uris[i]);
                 MemoryStream ms = new();
-                await using Stream stream = await headers[i].Content.ReadAsStreamAsync().ConfigureAwait(false);
+                await using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 while (true)
                 {
                     int read = await stream.ReadAsync(buffer).ConfigureAwait(false);
                     if (read <= 0) break;
                     await ms.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
-                    progress?.Report(((double)i + 1) / headers.Count);
+                    progress?.Report(((double)i + 1) / uris.Count);
                 }
 
-                headers[i].Content = new StreamContent(ms);
-                yield return headers[i];
+                response.Content = new StreamContent(ms);
+                yield return response;
             }
+
+            ArrayPool<byte>.Shared.Return(buffer);
         }
     }
 }

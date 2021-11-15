@@ -4,7 +4,7 @@
 
     <Application.Styles>
         <FluentTheme Mode="Dark" />
-        <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
+        <StyleInclude Source="/Resources/Styles/Sidebar.axaml" />
         <StyleInclude Source="/Resources/Styles/ProgressRing.axaml" />
     </Application.Styles>
 
@@ -12,6 +12,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/Resources/Localisation/en.axaml" />
+                <ResourceInclude Source="/Resources/Icons.axaml"></ResourceInclude>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

@@ -50,11 +50,11 @@ namespace BeatSaberModManager.ViewModels
 
         public ProgressBarStatusType ProgressBarStatusType => _progressBarStatusType.Value;
 
-        private int _selectedIndex;
-        public int SelectedIndex
+        private string? _progressBarStatusText;
+        public string? ProgressBarStatusText
         {
-            get => _selectedIndex;
-            set => this.RaiseAndSetIfChanged(ref _selectedIndex, value);
+            get => _progressBarStatusText;
+            set => this.RaiseAndSetIfChanged(ref _progressBarStatusText, value);
         }
     }
 }

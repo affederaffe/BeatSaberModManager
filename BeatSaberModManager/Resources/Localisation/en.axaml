@@ -4,7 +4,7 @@
 
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
-    <sys:String x:Key="MainWindow:OptionsHeader">Options</sys:String>
+    <sys:String x:Key="MainWindow:SettingsHeader">Options</sys:String>
     <sys:String x:Key="MainWindow:MoreInfoButton">More Info</sys:String>
     <sys:String x:Key="MainWindow:RefreshModsButton">Refresh Mods</sys:String>
 
