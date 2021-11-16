@@ -109,14 +109,14 @@ namespace BeatSaberModManager
             builder.RenderingSubsystemInitializer();
             builder.AfterPlatformServicesSetupCallback(builder);
             Application app = services.GetRequiredService<Application>();
-            ClassicDesktopStyleApplicationLifetime lifetime = (ClassicDesktopStyleApplicationLifetime)services.GetRequiredService<IClassicDesktopStyleApplicationLifetime>();
+            IClassicDesktopStyleApplicationLifetime lifetime = services.GetRequiredService<IClassicDesktopStyleApplicationLifetime>();
             app.ApplicationLifetime = lifetime;
             app.RegisterServices();
             app.Initialize();
             builder.AfterSetupCallback(builder);
             lifetime.MainWindow = services.GetRequiredService<Window>();
             app.OnFrameworkInitializationCompleted();
-            lifetime.Start(null);
+            ((ClassicDesktopStyleApplicationLifetime)lifetime).Start(null);
             services.Dispose();
         }
     }
