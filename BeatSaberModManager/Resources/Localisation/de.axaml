@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=System.Runtime">
 
+    <sys:String x:Key="MainWindow:Title">BeatSaberModManager</sys:String>
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
     <sys:String x:Key="MainWindow:SettingsHeader">Optionen</sys:String>

@@ -114,8 +114,8 @@ namespace BeatSaberModManager
             app.RegisterServices();
             app.Initialize();
             builder.AfterSetupCallback(builder);
-            app.OnFrameworkInitializationCompleted();
             lifetime.MainWindow = services.GetRequiredService<Window>();
+            app.OnFrameworkInitializationCompleted();
             lifetime.Start(null);
             services.Dispose();
         }

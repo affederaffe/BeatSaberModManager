@@ -47,7 +47,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             if (!response.IsSuccessStatusCode)
             {
                 await WaitForRateLimitAsync();
-                return await GetBeatSaverMapAsync(key, retries - 1);
+                return await GetBeatSaverMapAsync(key, retries - 1).ConfigureAwait(false);
             }
 
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
