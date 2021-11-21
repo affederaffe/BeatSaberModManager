@@ -5,7 +5,7 @@ using BeatSaberModManager.Models.Interfaces;
 
 namespace BeatSaberModManager.Services.Interfaces
 {
-    public interface IDependencyManager
+    public interface IDependencyResolver
     {
         bool IsDependency(IMod mod);
         IEnumerable<IMod> ResolveDependencies(IMod mod);

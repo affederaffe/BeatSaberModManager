@@ -12,7 +12,7 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.ViewModels
 {
-    public class MainWindowViewModel : ReactiveObject
+    public class MainWindowViewModel : ViewModelBase
     {
         private readonly ObservableAsPropertyHelper<bool> _moreInfoButtonEnabled;
         private readonly ObservableAsPropertyHelper<bool> _installButtonEnabled;
@@ -20,8 +20,10 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<string?> _progressBarText;
         private readonly ObservableAsPropertyHelper<ProgressBarStatusType> _progressBarStatusType;
 
-        public MainWindowViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress)
+        public MainWindowViewModel(ISettings<AppSettings> appSettings, ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, IInstallDirValidator installDirValidator, IStatusProgress progress)
         {
+            ModsViewModel = modsViewModel;
+            SettingsViewModel = settingsViewModel;
             MoreInfoButtonCommand = ReactiveCommand.Create(() => PlatformUtils.OpenBrowser(modsViewModel.SelectedGridItem?.AvailableMod.MoreInfoLink));
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync);
             modsViewModel.WhenAnyValue(x => x.SelectedGridItem)
@@ -35,6 +37,10 @@ namespace BeatSaberModManager.ViewModels
             statusProgress.StatusText.ToProperty(this, nameof(ProgressBarText), out _progressBarText);
             statusProgress.StatusType.ToProperty(this, nameof(ProgressBarStatusType), out _progressBarStatusType);
         }
+
+        public ModsViewModel ModsViewModel { get; }
+
+        public SettingsViewModel SettingsViewModel { get; }
 
         public ReactiveCommand<Unit, Unit> MoreInfoButtonCommand { get; }
 

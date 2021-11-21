@@ -29,6 +29,8 @@ using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using ReactiveUI;
+
 
 namespace BeatSaberModManager
 {
@@ -49,8 +51,9 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddWindows(this IServiceCollection services, IReadOnlyList<string> args) =>
             args.Count is 2 && args[0] == "--install"
-                ? services.AddSingleton<AssetInstallWindowViewModel>()
-                    .AddSingleton<Window, AssetInstallWindow>(provider => new AssetInstallWindow(provider.GetRequiredService<AssetInstallWindowViewModel>(), args[1]))
+                ? services.AddSingleton(new Uri(args[1]))
+                    .AddSingleton<AssetInstallWindowViewModel>()
+                    .AddSingleton<Window, AssetInstallWindow>()
                 : services.AddProtocolHandlerRegistrar()
                     .AddModServices()
                     .AddViewModels()
@@ -61,7 +64,7 @@ namespace BeatSaberModManager
                 .AddSingleton<IStatusProgress, StatusProgress>()
                 .AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>()
                 .AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>()
-                .AddSingleton<ISettings<AppSettings>, AppSettingsProvider>();
+                .AddSingleton<ISettings<AppSettings>, JsonSettingsProvider<AppSettings>>();
 
         private static IServiceCollection AddProtocolHandlerRegistrar(this IServiceCollection services) =>
             OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>()
@@ -70,7 +73,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddModServices(this IServiceCollection services) =>
             services.AddSingleton<IHashProvider, MD5HashProvider>()
-                .AddSingleton<IDependencyManager, DependencyManager>()
+                .AddSingleton<IDependencyResolver, DependencyResolver>()
                 .AddSingleton<IModProvider, BeatModsModProvider>()
                 .AddSingleton<IModInstaller, BeatModsModInstaller>()
                 .AddSingleton<IModVersionComparer, SystemVersionComparer>()
@@ -87,13 +90,12 @@ namespace BeatSaberModManager
         private static IServiceCollection AddViewModels(this IServiceCollection services) =>
             services.AddSingleton<MainWindowViewModel>()
                 .AddSingleton<ModsViewModel>()
-                .AddSingleton<OptionsViewModel>();
+                .AddSingleton<SettingsViewModel>();
 
         private static IServiceCollection AddViews(this IServiceCollection services) =>
             services.AddSingleton<Window, MainWindow>()
-                .AddSingleton<IPage, IntroPage>()
-                .AddSingleton<IPage, ModsPage>()
-                .AddSingleton<IPage, OptionsPage>();
+                .AddSingleton<IViewFor<ModsViewModel>, ModsPage>()
+                .AddSingleton<IViewFor<SettingsViewModel>, SettingsPage>();
 
         private static IServiceCollection AddApplication(this IServiceCollection services) =>
             services.AddSingleton<Application, App>()

@@ -8,7 +8,6 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
-using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,30 +16,29 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Implementations.Pages
 {
-    public partial class ModsPage : ReactiveUserControl<ModsViewModel>, IPage
+    public partial class ModsPage : ReactiveUserControl<ModsViewModel>
     {
         private readonly IInstallDirValidator _installDirValidator = null!;
-        private readonly DataGridCollectionView _dataGridCollection = null!;
 
         public ModsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public ModsPage(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator)
+        public ModsPage(ModsViewModel viewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator)
         {
             InitializeComponent();
-            ViewModel = modsViewModel;
+            ViewModel = viewModel;
             _installDirValidator = installDirValidator;
-            _dataGridCollection = new DataGridCollectionView(ViewModel.GridItems.Values);
-            _dataGridCollection.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)));
             ReactiveCommand<string?, Unit> refreshCommand = ReactiveCommand.CreateFromTask<string?>(InitializeDataGridAsync);
             appSettings.Value.InstallDir.Changed.InvokeCommand(refreshCommand);
+            DataGridCollectionView dataGridCollection = new(ViewModel.GridItems.Values);
+            dataGridCollection.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)));
+            ModsDataGrid.Items = dataGridCollection;
         }
 
         private async Task InitializeDataGridAsync(string? installDir)
         {
             if (!_installDirValidator.ValidateInstallDir(installDir)) return;
             await ViewModel!.InitializeDataGridAsync();
-            ModsDataGrid.Items = _dataGridCollection;
         }
     }
 }

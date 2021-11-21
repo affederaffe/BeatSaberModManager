@@ -1,3 +1,5 @@
+using System;
+
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -25,7 +27,7 @@ namespace BeatSaberModManager.Views.Implementations
         public App() { }
 
         [ActivatorUtilitiesConstructor]
-        public App(ISettings<AppSettings> appSettings, IClassicDesktopStyleApplicationLifetime lifetime, ILocalisationManager localisationManager, IThemeManager themeManager, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        public App(IServiceProvider services, ISettings<AppSettings> appSettings, IClassicDesktopStyleApplicationLifetime lifetime, ILocalisationManager localisationManager, IThemeManager themeManager, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
             _appSettings = appSettings.Value;
             _lifetime = lifetime;
@@ -33,6 +35,7 @@ namespace BeatSaberModManager.Views.Implementations
             _themeManager = themeManager;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
+            DataTemplates.Add(new ViewLocator(services));
         }
 
         public override void RegisterServices()

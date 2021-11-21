@@ -9,7 +9,7 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.ViewModels
 {
-    public class ModGridItemViewModel : ReactiveObject
+    public class ModGridItemViewModel : ViewModelBase
     {
         private readonly ObservableAsPropertyHelper<bool> _isUpToDate;
         private readonly ObservableAsPropertyHelper<string> _installedVersionColor;

@@ -56,7 +56,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public async Task LoadInstalledModsAsync()
         {
             if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
-            Dictionary<string, IMod>? fileHashModPairs = await GetInstalledModHashesAsync();
+            Dictionary<string, IMod>? fileHashModPairs = await GetMappedModHashesAsync();
             if (fileHashModPairs is null) return;
             InstalledMods = new HashSet<IMod>();
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(_appSettings.InstallDir.Value!, x))
@@ -87,7 +87,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async IAsyncEnumerable<ZipArchive?> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null)
         {
-            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(x => kBeatModsBaseUrl + x), progress).ConfigureAwait(false))
+            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(x => kBeatModsBaseUrl + x).ToArray(), progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) continue;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
@@ -125,7 +125,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return null;
         }
 
-        private async Task<Dictionary<string, IMod>?> GetInstalledModHashesAsync()
+        private async Task<Dictionary<string, IMod>?> GetMappedModHashesAsync()
         {
             BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
             if (allMods is null) return null;

@@ -15,9 +15,10 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.ViewModels
 {
-    public class OptionsViewModel : ReactiveObject
+    public class SettingsViewModel : ViewModelBase
     {
         private readonly AppSettings _appSettings;
+        private readonly IInstallDirValidator _installDirValidator;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<bool> _hasValidatedInstallDir;
@@ -27,9 +28,10 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public OptionsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, IInstallDirValidator installDirValidator)
+        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings.Value;
+            _installDirValidator = installDirValidator;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
             _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
@@ -61,7 +63,7 @@ namespace BeatSaberModManager.ViewModels
         public string? InstallDir
         {
             get => _appSettings.InstallDir.Value;
-            set => _appSettings.InstallDir.Value = value;
+            set => ValidateAndSetInstallDir(value);
         }
 
         public string? ThemesDir
@@ -103,6 +105,12 @@ namespace BeatSaberModManager.ViewModels
         {
             if (active) _protocolHandlerRegistrar.RegisterProtocolHandler(protocol);
             else _protocolHandlerRegistrar.UnregisterProtocolHandler(protocol);
+        }
+
+        private void ValidateAndSetInstallDir(string? value)
+        {
+            if (_installDirValidator.ValidateInstallDir(value))
+                _appSettings.InstallDir.Value = value;
         }
     }
 }

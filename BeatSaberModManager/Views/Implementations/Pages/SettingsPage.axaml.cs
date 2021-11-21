@@ -15,20 +15,20 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Implementations.Pages
 {
-    public partial class OptionsPage : ReactiveUserControl<OptionsViewModel>, IPage
+    public partial class SettingsPage : ReactiveUserControl<SettingsViewModel>
     {
         private readonly IClassicDesktopStyleApplicationLifetime _lifetime = null!;
         private readonly IInstallDirValidator _installDirValidator = null!;
 
-        public OptionsPage() { }
+        public SettingsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public OptionsPage(OptionsViewModel optionsViewModel, IClassicDesktopStyleApplicationLifetime lifetime, IInstallDirValidator installDirValidator, IThemeManager themeManager, ILocalisationManager localisationManager)
+        public SettingsPage(SettingsViewModel viewModel, IClassicDesktopStyleApplicationLifetime lifetime, IInstallDirValidator installDirValidator, IThemeManager themeManager, ILocalisationManager localisationManager)
         {
             InitializeComponent();
             _lifetime = lifetime;
             _installDirValidator = installDirValidator;
-            ViewModel = optionsViewModel;
+            ViewModel = viewModel;
             LocalisationManager = localisationManager;
             ThemeManager = themeManager;
             SelectInstallFolderButton.Command = ReactiveCommand.CreateFromTask(SelectInstallFolderAsync);

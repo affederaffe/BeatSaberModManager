@@ -12,15 +12,17 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.ViewModels
 {
-    public class AssetInstallWindowViewModel : ReactiveObject
+    public class AssetInstallWindowViewModel : ViewModelBase
     {
+        private readonly Uri _uri;
         private readonly IStatusProgress _progress;
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
         private readonly ObservableAsPropertyHelper<string?> _assetName;
 
-        public AssetInstallWindowViewModel(IEnumerable<IAssetProvider> assetProviders, IStatusProgress progress)
+        public AssetInstallWindowViewModel(Uri uri, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
         {
+            _uri = uri;
             _progress = progress;
             _assetProviders = assetProviders;
             StatusProgress statusProgress = (StatusProgress)progress;
@@ -28,10 +30,10 @@ namespace BeatSaberModManager.ViewModels
             statusProgress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
         }
 
-        public async Task InstallAsset(Uri uri)
+        public async Task InstallAsset()
         {
-            IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == uri.Scheme);
-            if (assetProvider is not null) IsSuccess = await assetProvider.InstallAssetAsync(uri, _progress);
+            IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
+            if (assetProvider is not null) IsSuccess = await assetProvider.InstallAssetAsync(_uri, _progress);
             IsFailed = !IsSuccess;
             IsInstalling = false;
         }

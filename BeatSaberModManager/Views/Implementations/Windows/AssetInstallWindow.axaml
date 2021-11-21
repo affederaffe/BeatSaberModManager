@@ -6,7 +6,7 @@
         xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.AssetInstallWindow"
-        Icon="/Resources/icon.ico"
+        Icon="/Resources/Icons/AppIcon.ico"
         Title="OneClick™ Installer"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
@@ -39,7 +39,7 @@
                      IsVisible="{Binding IsFailed}">
                 <Path Stroke="DarkRed" Fill="Red" StrokeThickness="1" Data="{StaticResource Icons:Cross}" />
             </Viewbox>
-            <ScrollViewer Grid.Row="1">
+            <ScrollViewer Grid.Row="1" Padding="10">
                 <ItemsRepeater Items="{Binding Log}" />
             </ScrollViewer>
         </Grid>

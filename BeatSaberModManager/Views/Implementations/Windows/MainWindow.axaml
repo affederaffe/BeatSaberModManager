@@ -3,10 +3,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+        xmlns:p="clr-namespace:BeatSaberModManager.Views.Implementations.Pages"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.MainWindow"
         Title="{StaticResource MainWindow:Title}"
-        Icon="/Resources/icon.ico"
+        Icon="/Resources/Icons/AppIcon.ico"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
@@ -17,7 +18,7 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <TabControl x:Name="Pages" Classes="Sidebar">
+    <TabControl Classes="Sidebar">
         <TabControl.Template>
             <ControlTemplate>
                 <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
@@ -94,6 +95,7 @@
                 </ItemsPanelTemplate>
         </TabControl.ItemsPanel>
         <TabItem>
+            <p:IntroPage />
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <PathIcon Data="{StaticResource Icons:Info}" />
@@ -101,7 +103,7 @@
                 </StackPanel>
             </TabItem.Header>
         </TabItem>
-        <TabItem>
+        <TabItem Content="{Binding ModsViewModel}">
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <PathIcon Data="{StaticResource Icons:Database}" />
@@ -109,7 +111,7 @@
                 </StackPanel>
             </TabItem.Header>
         </TabItem>
-        <TabItem>
+        <TabItem Content="{Binding SettingsViewModel}">
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
                     <PathIcon Data="{StaticResource Icons:Gear}" />

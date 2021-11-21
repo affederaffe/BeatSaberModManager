@@ -6,12 +6,12 @@ using BeatSaberModManager.Services.Interfaces;
 
 namespace BeatSaberModManager.Services.Implementations.DependencyManagement
 {
-    public class DependencyManager : IDependencyManager
+    public class DependencyResolver : IDependencyResolver
     {
         private readonly IModProvider _modProvider;
         private readonly Dictionary<IMod, HashSet<IMod>> _dependencyRegistry;
 
-        public DependencyManager(IModProvider modProvider)
+        public DependencyResolver(IModProvider modProvider)
         {
             _modProvider = modProvider;
             _dependencyRegistry = new Dictionary<IMod, HashSet<IMod>>();
