@@ -5,7 +5,7 @@
     <sys:String x:Key="MainWindow:Title">BeatSaberModManager</sys:String>
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
-    <sys:String x:Key="MainWindow:SettingsHeader">Options</sys:String>
+    <sys:String x:Key="MainWindow:SettingsHeader">Settings</sys:String>
     <sys:String x:Key="MainWindow:MoreInfoButton">More Info</sys:String>
     <sys:String x:Key="MainWindow:RefreshModsButton">Refresh Mods</sys:String>
 
@@ -39,7 +39,7 @@
     <sys:String x:Key="OptionsView:PlaylistLabel">Playlist</sys:String>
     <sys:String x:Key="OptionsView:LanguageLabel">Language</sys:String>
     <sys:String x:Key="OptionsView:ForceReinstallModsButton">Reinstall installed mods</sys:String>
-    <sys:String x:Key="OptionsView:MiscLabel">Misc</sys:String>
+    <sys:String x:Key="OptionsView:MiscLabel">Miscellaneous</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themes</sys:String>
     <sys:String x:Key="OptionsView:ToolsLabel">Tools</sys:String>
     <sys:String x:Key="OptionsView:InstallPlaylistButton">Install Playlist</sys:String>
