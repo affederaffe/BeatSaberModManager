@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.IO;
 
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
@@ -32,7 +33,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         public void UnregisterProtocolHandler(string protocol)
         {
             string handlerPath = GetHandlerPathForProtocol(protocol);
-            if (File.Exists(handlerPath)) File.Delete(handlerPath);
+            IOUtils.SafeDeleteFile(handlerPath);
         }
 
         private string GetHandlerPathForProtocol(string protocol) => Path.Combine(_localAppDataPath, GetHandlerNameForProtocol(protocol));

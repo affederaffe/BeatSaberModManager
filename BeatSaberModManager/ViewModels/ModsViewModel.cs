@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -20,13 +22,15 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
 
-        public ModsViewModel(ISettings<AppSettings> appSettings, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
+        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
         {
             _appSettings = appSettings.Value;
             _dependencyResolver = dependencyResolver;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
+            ReactiveCommand<Unit, Unit> initializeCommand = ReactiveCommand.CreateFromTask(InitializeDataGridAsync);
+            _appSettings.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).Select(_ => Unit.Default).InvokeCommand(initializeCommand);
         }
 
         public Dictionary<IMod, ModGridItemViewModel> GridItems { get; } = new();

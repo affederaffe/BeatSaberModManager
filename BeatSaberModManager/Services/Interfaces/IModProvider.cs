@@ -17,6 +17,6 @@ namespace BeatSaberModManager.Services.Interfaces
         Task LoadInstalledModsAsync();
         Task LoadAvailableModsForCurrentVersionAsync();
         Task LoadAvailableModsForVersionAsync(string version);
-        IAsyncEnumerable<ZipArchive?> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null);
+        IAsyncEnumerable<ZipArchive> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null);
     }
 }

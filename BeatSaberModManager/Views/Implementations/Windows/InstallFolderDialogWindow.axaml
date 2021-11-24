@@ -25,10 +25,10 @@
                   HorizontalAlignment="Center"
                   VerticalAlignment="Bottom">
                 <Button Grid.Column="0"
-                        x:Name="ContinueButton"
                         Margin="10, 0"
                         HorizontalAlignment="Center"
-                        Content="{DynamicResource InstallDirDialogWindow:ContinueButtonText}" />
+                        Content="{DynamicResource InstallDirDialogWindow:ContinueButtonText}"
+                        Click="OnContinueButtonClicked" />
                 <Button Grid.Column="1"
                         Margin="10, 0"
                         Content="{DynamicResource InstallDirDialogWindow:CancelButtonText}"

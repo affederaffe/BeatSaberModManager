@@ -11,6 +11,7 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
@@ -61,7 +62,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             if (!Directory.Exists(customLevelsDirectoryPath)) Directory.CreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
-            archive.ExtractToDirectory(levelDirectoryPath, true);
+            IOUtils.SafeExtractArchive(archive, levelDirectoryPath, true);
             return true;
         }
 

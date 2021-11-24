@@ -39,9 +39,6 @@ namespace BeatSaberModManager
         public static void Main(string[] args) =>
             CreateServiceCollection(args).BuildServiceProvider().RunAvaloniaApp();
 
-        private static AppBuilder BuildAvaloniaApp() =>
-            AppBuilder.Configure<App>().UsePlatformDetect().UseReactiveUI();
-
         private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>
             new ServiceCollection()
                 .AddCoreServices()
@@ -105,19 +102,9 @@ namespace BeatSaberModManager
 
         private static void RunAvaloniaApp(this ServiceProvider services)
         {
-            AppBuilder builder = BuildAvaloniaApp();
-            builder.RuntimePlatformServicesInitializer();
-            builder.WindowingSubsystemInitializer();
-            builder.RenderingSubsystemInitializer();
-            builder.AfterPlatformServicesSetupCallback(builder);
-            Application app = services.GetRequiredService<Application>();
+            AppBuilder.Configure(services.GetRequiredService<Application>).UsePlatformDetect().UseReactiveUI().SetupWithoutStarting();
             IClassicDesktopStyleApplicationLifetime lifetime = services.GetRequiredService<IClassicDesktopStyleApplicationLifetime>();
-            app.ApplicationLifetime = lifetime;
-            app.RegisterServices();
-            app.Initialize();
-            builder.AfterSetupCallback(builder);
             lifetime.MainWindow = services.GetRequiredService<Window>();
-            app.OnFrameworkInitializationCompleted();
             ((ClassicDesktopStyleApplicationLifetime)lifetime).Start(null);
             services.Dispose();
         }

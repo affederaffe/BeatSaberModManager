@@ -35,10 +35,10 @@
                 Command="{Binding OpenInstallDirCommand}" />
         <Button Grid.Column="3"
                 Grid.Row="1"
-                x:Name="SelectInstallFolderButton"
                 Margin="10, 2.5"
                 HorizontalAlignment="Center"
-                Content="{DynamicResource OptionsView:SelectFolderButton}" />
+                Content="{DynamicResource OptionsView:SelectFolderButton}"
+                Click="OnSelectInstallFolderButtonClicked"/>
         <StackPanel Grid.Column="1"
                     Grid.Row="2"
                     Orientation="Horizontal"
@@ -147,10 +147,10 @@
                 Command="{Binding OpenThemesDirCommand}" />
         <Button Grid.Column="3"
                 Grid.Row="10"
-                x:Name="SelectThemesFolderButton"
                 Margin="10, 2.5"
                 HorizontalAlignment="Center"
-                Content="{DynamicResource OptionsView:SelectFolderButton}" />
+                Content="{DynamicResource OptionsView:SelectFolderButton}"
+                Click="OnSelectThemesButtonClicked"/>
         <ComboBox Grid.Column="1"
                   Grid.Row="11"
                   Margin="10, 2.5"
@@ -171,11 +171,11 @@
                Content="{DynamicResource OptionsView:ToolsLabel}" />
         <Button Grid.Column="1"
                 Grid.Row="13"
-                x:Name="InstallPlaylistButton"
                 Margin="50, 2.5, 10, 2.5"
                 HorizontalAlignment="Left"
                 IsEnabled="{Binding HasValidatedInstallDir}"
-                Content="{DynamicResource OptionsView:InstallPlaylistButton}" />
+                Content="{DynamicResource OptionsView:InstallPlaylistButton}"
+                Click="OnInstallPlaylistButtonClicked" />
     </Grid>
 
 </UserControl>

@@ -37,8 +37,8 @@ namespace BeatSaberModManager.ViewModels
             _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
             _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
             _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
-            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenFolder(InstallDir));
-            OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenFolder(ThemesDir));
+            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(InstallDir!), this.WhenAnyValue(x => x.InstallDir).Select(Directory.Exists));
+            OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(ThemesDir!), this.WhenAnyValue(x => x.ThemesDir).Select(Directory.Exists));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
             this.WhenAnyValue(x => x.BeatSaverOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kBeatSaverProtocol));
@@ -69,7 +69,7 @@ namespace BeatSaberModManager.ViewModels
         public string? ThemesDir
         {
             get => _appSettings.ThemesDir.Value;
-            set => _appSettings.ThemesDir.Value = value;
+            set => ValidateAndSetThemesDir(value);
         }
 
         public bool ForceReinstallMods
@@ -111,6 +111,12 @@ namespace BeatSaberModManager.ViewModels
         {
             if (_installDirValidator.ValidateInstallDir(value))
                 _appSettings.InstallDir.Value = value;
+        }
+
+        private void ValidateAndSetThemesDir(string? value)
+        {
+            if (Directory.Exists(value))
+                _appSettings.ThemesDir.Value = value;
         }
     }
 }

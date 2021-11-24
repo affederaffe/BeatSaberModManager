@@ -38,12 +38,6 @@ namespace BeatSaberModManager.Views.Implementations
             DataTemplates.Add(new ViewLocator(services));
         }
 
-        public override void RegisterServices()
-        {
-            AvaloniaLocator.CurrentMutable.BindToSelf(this as Application);
-            base.RegisterServices();
-        }
-
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
