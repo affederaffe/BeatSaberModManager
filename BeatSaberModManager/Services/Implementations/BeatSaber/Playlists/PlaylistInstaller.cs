@@ -15,6 +15,7 @@ using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utilities;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
@@ -43,7 +44,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string playlistsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Playlists");
             string fileName = uri.Segments.Last();
             string filePath = Path.Combine(playlistsDirPath, fileName);
-            if (!Directory.Exists(playlistsDirPath)) Directory.CreateDirectory(playlistsDirPath);
+            IOUtils.SafeCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
             Playlist? playlist = JsonSerializer.Deserialize<Playlist>(body);
             return playlist is not null && await InstallPlaylistAsync(playlist, progress).ConfigureAwait(false);
@@ -56,7 +57,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string playlistsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Playlists");
             string fileName = Path.GetFileName(filePath);
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
-            if (!Directory.Exists(playlistsDirPath)) Directory.CreateDirectory(playlistsDirPath);
+            IOUtils.SafeCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);
             Playlist? playlist = JsonSerializer.Deserialize<Playlist>(json);
             return playlist is not null && await InstallPlaylistAsync(playlist, progress).ConfigureAwait(false);

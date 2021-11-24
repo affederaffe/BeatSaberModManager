@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
+using BeatSaberModManager.Utilities;
 
 
 namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars

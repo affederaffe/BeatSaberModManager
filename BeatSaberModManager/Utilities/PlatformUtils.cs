@@ -2,7 +2,7 @@
 using System.Diagnostics;
 
 
-namespace BeatSaberModManager.Utils
+namespace BeatSaberModManager.Utilities
 {
     public static class PlatformUtils
     {

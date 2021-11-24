@@ -3,6 +3,7 @@ using System.IO;
 using System.Text.Json;
 
 using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Utilities;
 
 
 namespace BeatSaberModManager.Services.Implementations.Settings
@@ -27,13 +28,13 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         private void Save()
         {
             string json = JsonSerializer.Serialize(Value, new JsonSerializerOptions { WriteIndented = true });
-            if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
+            IOUtils.SafeCreateDirectory(_saveDirPath);
             File.WriteAllText(_saveFilePath, json);
         }
 
         private T Load()
         {
-            if (!Directory.Exists(_saveDirPath)) Directory.CreateDirectory(_saveDirPath);
+            IOUtils.SafeCreateDirectory(_saveDirPath);
             if (!File.Exists(_saveFilePath)) return new T();
             string json = File.ReadAllText(_saveFilePath);
             T? settings = JsonSerializer.Deserialize<T>(json);

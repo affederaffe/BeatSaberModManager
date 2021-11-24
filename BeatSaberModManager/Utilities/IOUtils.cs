@@ -3,7 +3,7 @@ using System.IO;
 using System.IO.Compression;
 
 
-namespace BeatSaberModManager.Utils
+namespace BeatSaberModManager.Utilities
 {
     public static class IOUtils
     {
@@ -17,6 +17,17 @@ namespace BeatSaberModManager.Utils
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
             
+        }
+
+        public static void SafeCreateDirectory(string path)
+        {
+            try
+            {
+                Directory.CreateDirectory(path);
+            }
+            catch (ArgumentException) { }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
         }
 
         public static void SafeDeleteDirectory(string path, bool recursive)

@@ -8,7 +8,7 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
+using BeatSaberModManager.Utilities;
 
 using ReactiveUI;
 
@@ -18,6 +18,7 @@ namespace BeatSaberModManager.ViewModels
     public class SettingsViewModel : ViewModelBase
     {
         private readonly AppSettings _appSettings;
+        private readonly IStatusProgress _progress;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
         private readonly PlaylistInstaller _playlistInstaller;
@@ -28,9 +29,10 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller)
+        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings.Value;
+            _progress = progress;
             _installDirValidator = installDirValidator;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
@@ -99,7 +101,7 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
 
-        public async Task InstallPlaylistsAsync(string path) => await Task.Run(() => _playlistInstaller.InstallPlaylistAsync(path));
+        public async Task InstallPlaylistsAsync(string path) => await _playlistInstaller.InstallPlaylistAsync(path, _progress);
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {

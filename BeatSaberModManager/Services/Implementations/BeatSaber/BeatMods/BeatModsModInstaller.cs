@@ -11,7 +11,7 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
+using BeatSaberModManager.Utilities;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
@@ -38,7 +38,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             if (beatModsMods.Length <= 0) yield break;
             IEnumerable<string> urls = beatModsMods.Select(x => x.Downloads.First().Url);
             string pendingDirPath = Path.Combine(_appSettings.InstallDir.Value!, "IPA", "Pending");
-            if (!Directory.Exists(pendingDirPath)) Directory.CreateDirectory(pendingDirPath);
+            IOUtils.SafeCreateDirectory(pendingDirPath);
             int i = 0;
             _progress.Report(beatModsMods[i].Name);
             _progress.Report(ProgressBarStatusType.Installing);

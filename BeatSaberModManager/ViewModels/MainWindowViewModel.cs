@@ -5,7 +5,7 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
+using BeatSaberModManager.Utilities;
 
 using ReactiveUI;
 

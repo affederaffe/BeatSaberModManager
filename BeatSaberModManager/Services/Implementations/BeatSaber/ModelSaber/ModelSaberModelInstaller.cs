@@ -9,6 +9,7 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utilities;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
@@ -42,7 +43,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 
             if (folderName is null) return false;
             string folderPath = Path.Combine(_appSettings.InstallDir.Value!, folderName);
-            if (!Directory.Exists(folderPath)) Directory.CreateDirectory(folderPath);
+            IOUtils.SafeCreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);
             using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath, progress);
