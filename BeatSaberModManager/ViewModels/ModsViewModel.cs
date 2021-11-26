@@ -66,7 +66,7 @@ namespace BeatSaberModManager.ViewModels
         public async Task InitializeDataGridAsync()
         {
             IsLoading = true;
-            await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync));
+            await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync)).ConfigureAwait(false);
             IsSuccess = _modProvider.AvailableMods?.Length > 0;
             IsFailed = !IsSuccess;
             IsLoading = false;
@@ -86,34 +86,34 @@ namespace BeatSaberModManager.ViewModels
         public async Task RefreshModsAsync()
         {
             IEnumerable<IMod> install = GridItems.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.ForceReinstallMods)).Select(x => x.AvailableMod);
-            await InstallMods(install);
+            await InstallMods(install).ConfigureAwait(false);
             IEnumerable<IMod> uninstall = GridItems.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
-            await UninstallMods(uninstall);
+            await UninstallMods(uninstall).ConfigureAwait(false);
         }
 
         public async Task UninstallModLoaderAsync()
         {
             IMod? modLoader = GridItems.Values.FirstOrDefault(x => x.InstalledMod?.Name.ToLowerInvariant() == _modProvider.ModLoaderName)?.AvailableMod;
             if (modLoader is null) return;
-            await UninstallMods(new[] { modLoader });
+            await UninstallMods(new[] { modLoader }).ConfigureAwait(false);
         }
 
         public async Task UninstallAllModsAsync()
         {
             IEnumerable<IMod> mods = GridItems.Values.Where(x => x.InstalledMod is not null).Select(x => x.AvailableMod);
-            await UninstallMods(mods);
+            await UninstallMods(mods).ConfigureAwait(false);
             _modInstaller.RemoveAllMods();
         }
 
         private async Task InstallMods(IEnumerable<IMod> mods)
         {
-            await foreach (IMod mod in _modInstaller.InstallModsAsync(mods))
+            await foreach (IMod mod in _modInstaller.InstallModsAsync(mods).ConfigureAwait(false))
                 GridItems[mod].InstalledMod = mod;
         }
 
         private async Task UninstallMods(IEnumerable<IMod> mods)
         {
-            await foreach (IMod mod in _modInstaller.UninstallModsAsync(mods))
+            await foreach (IMod mod in _modInstaller.UninstallModsAsync(mods).ConfigureAwait(false))
                 GridItems[mod].InstalledMod = null;
         }
 

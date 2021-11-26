@@ -50,7 +50,7 @@ namespace BeatSaberModManager.Views.Implementations
             if (_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
             _appSettings.InstallDir.Value = _installDirLocator.LocateInstallDir();
             if (_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
-            _appSettings.InstallDir.Value = await new InstallFolderDialogWindow().ShowDialog<string?>(_lifetime.MainWindow);
+            _appSettings.InstallDir.Value = await new InstallFolderDialogWindow().ShowDialog<string?>(_lifetime.MainWindow).ConfigureAwait(false);
         }
     }
 }

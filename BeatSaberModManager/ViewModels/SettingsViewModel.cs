@@ -101,7 +101,7 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
 
-        public async Task InstallPlaylistsAsync(string path) => await _playlistInstaller.InstallPlaylistAsync(path, _progress);
+        public async Task InstallPlaylistsAsync(string path) => await _playlistInstaller.InstallPlaylistAsync(path, _progress).ConfigureAwait(false);
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {

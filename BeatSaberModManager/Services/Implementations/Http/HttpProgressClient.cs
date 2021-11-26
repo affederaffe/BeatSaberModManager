@@ -12,12 +12,12 @@ namespace BeatSaberModManager.Services.Implementations.Http
     {
         public async Task<HttpResponseMessage> GetAsync(string url, IProgress<double>? progress)
         {
-            HttpResponseMessage response = await GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            HttpResponseMessage response = await GetAsync(url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
             long total = 0;
             long? length = response.Content.Headers.ContentLength;
             byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
             MemoryStream ms = new();
-            await using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             while (true)
             {
                 int read = await stream.ReadAsync(buffer).ConfigureAwait(false);
@@ -39,9 +39,9 @@ namespace BeatSaberModManager.Services.Implementations.Http
             byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
             foreach (string url in urls)
             {
-                HttpResponseMessage response = await GetAsync(url);
+                HttpResponseMessage response = await GetAsync(url).ConfigureAwait(false);
                 MemoryStream ms = new();
-                await using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 while (true)
                 {
                     int read = await stream.ReadAsync(buffer).ConfigureAwait(false);
@@ -64,9 +64,9 @@ namespace BeatSaberModManager.Services.Implementations.Http
             byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
             for (int i = 0; i < urls.Count; i++)
             {
-                HttpResponseMessage response = await GetAsync(urls[i]);
+                HttpResponseMessage response = await GetAsync(urls[i]).ConfigureAwait(false);
                 MemoryStream ms = new();
-                await using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 while (true)
                 {
                     int read = await stream.ReadAsync(buffer).ConfigureAwait(false);

@@ -56,7 +56,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public async Task LoadInstalledModsAsync()
         {
             if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
-            Dictionary<string, IMod>? fileHashModPairs = await GetMappedModHashesAsync();
+            Dictionary<string, IMod>? fileHashModPairs = await GetMappedModHashesAsync().ConfigureAwait(false);
             if (fileHashModPairs is null) return;
             InstalledMods = new HashSet<IMod>();
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(_appSettings.InstallDir.Value!, x))

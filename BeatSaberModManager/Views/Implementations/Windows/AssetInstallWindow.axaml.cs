@@ -34,8 +34,8 @@ namespace BeatSaberModManager.Views.Implementations.Windows
 
         private async Task InstallAsset()
         {
-            await ViewModel!.InstallAsset();
-            await Task.Delay(2000);
+            await ViewModel!.InstallAsset().ConfigureAwait(false);
+            await Task.Delay(2000).ConfigureAwait(false);
             Close();
         }
     }

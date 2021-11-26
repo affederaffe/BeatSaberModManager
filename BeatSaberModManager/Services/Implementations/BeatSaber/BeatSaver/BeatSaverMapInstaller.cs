@@ -34,7 +34,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
         public async Task<bool> InstallBeatSaverMapAsync(string key, IStatusProgress? progress = null)
         {
-            BeatSaverMap? map = await GetBeatSaverMapAsync(key);
+            BeatSaverMap? map = await GetBeatSaverMapAsync(key).ConfigureAwait(false);
             if (map is null || map.Versions.Length <= 0) return false;
             progress?.Report(map.Name);
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
@@ -47,7 +47,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
-                await WaitForRateLimitAsync();
+                await WaitForRateLimitAsync().ConfigureAwait(false);
                 return await GetBeatSaverMapAsync(key, retries - 1).ConfigureAwait(false);
             }
 
@@ -72,8 +72,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
-                await WaitForRateLimitAsync();
-                return await DownloadBeatSaverMapAsync(mapVersion, progress, retries - 1);
+                await WaitForRateLimitAsync().ConfigureAwait(false);
+                return await DownloadBeatSaverMapAsync(mapVersion, progress, retries - 1).ConfigureAwait(false);
             }
 
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

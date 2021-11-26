@@ -46,11 +46,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             IOUtils.SafeCreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);
-            using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath, progress);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath, progress).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
-            byte[] body = await response.Content.ReadAsByteArrayAsync();
+            byte[] body = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             string filePath = Path.Combine(folderPath, modelName);
-            await File.WriteAllBytesAsync(filePath, body);
+            await File.WriteAllBytesAsync(filePath, body).ConfigureAwait(false);
             return true;
         }
     }

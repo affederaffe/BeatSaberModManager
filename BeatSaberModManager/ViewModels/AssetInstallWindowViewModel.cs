@@ -33,7 +33,7 @@ namespace BeatSaberModManager.ViewModels
         public async Task InstallAsset()
         {
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
-            if (assetProvider is not null) IsSuccess = await assetProvider.InstallAssetAsync(_uri, _progress);
+            if (assetProvider is not null) IsSuccess = await assetProvider.InstallAssetAsync(_uri, _progress).ConfigureAwait(false);
             IsFailed = !IsSuccess;
             IsInstalling = false;
         }

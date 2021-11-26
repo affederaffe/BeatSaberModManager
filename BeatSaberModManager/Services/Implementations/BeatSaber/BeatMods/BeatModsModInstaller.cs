@@ -72,7 +72,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 _progress.Report(beatModsMods[i].Name);
                 _progress.Report(((double)i + 1) / beatModsMods.Length);
                 if (beatModsMods[i].Name.ToLowerInvariant() == _modProvider.ModLoaderName)
-                    await UninstallBsipaAsync(beatModsMods[i]);
+                    await UninstallBsipaAsync(beatModsMods[i]).ConfigureAwait(false);
                 RemoveModFiles(beatModsMods[i]);
                 _modProvider.InstalledMods?.Remove(beatModsMods[i]);
                 yield return beatModsMods[i];
@@ -133,12 +133,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             Directory.SetCurrentDirectory(oldDir);
             string protonPrefixPath = Path.Combine($"{_appSettings.InstallDir.Value}/../..", "compatdata/620980/pfx/user.reg");
             if (!File.Exists(protonPrefixPath)) return;
-            string[] lines = await File.ReadAllLinesAsync(protonPrefixPath);
-            await using StreamWriter streamWriter = File.AppendText(protonPrefixPath);
+            string[] lines = await File.ReadAllLinesAsync(protonPrefixPath).ConfigureAwait(false);
+            StreamWriter streamWriter = File.AppendText(protonPrefixPath);
             if (!lines.Contains("[Software\\\\Wine\\\\DllOverrides]"))
-                await streamWriter.WriteLineAsync("[Software\\\\Wine\\\\DllOverrides]");
+                await streamWriter.WriteLineAsync("[Software\\\\Wine\\\\DllOverrides]").ConfigureAwait(false);
             if (!lines.Contains("\"winhttp\"=\"native,builtin\""))
-                await streamWriter.WriteLineAsync("\"winhttp\"=\"native,builtin\"");
+                await streamWriter.WriteLineAsync("\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
         }
 
         private async Task UninstallBsipaWindowsAsync(BeatModsMod bsipa)

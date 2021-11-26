@@ -16,7 +16,6 @@ namespace BeatSaberModManager.Utilities
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
-            
         }
 
         public static void SafeCreateDirectory(string path)
