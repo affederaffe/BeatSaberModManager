@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Resources/**" />
+    <None Include="Resources/Icons/AppIcon.png" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>
