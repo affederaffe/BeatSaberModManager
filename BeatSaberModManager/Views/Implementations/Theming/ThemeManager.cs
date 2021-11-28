@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 
-using Avalonia;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
@@ -29,8 +28,8 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             _appSettings = appSettings.Value;
             Themes = new ObservableCollection<ITheme>
             {
-                LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultLight.axaml"),
-                LoadBuildInTheme("Default Dark", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseDark.xaml", "avares://BeatSaberModManager/Resources/Styles/DefaultDark.axaml"),
+                LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Fluent/Accents/BaseLight.xaml", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"),
+                LoadBuildInTheme("Default Dark", "avares://Avalonia.Themes.Fluent/Accents/BaseDark.xaml", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseDark.xaml"),
                 LoadBuildInTheme("Fluent Light", "avares://Avalonia.Themes.Fluent/FluentLight.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"),
                 LoadBuildInTheme("Fluent Dark", "avares://Avalonia.Themes.Fluent/FluentDark.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
             };
@@ -48,11 +47,11 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
-        public void Initialize()
+        public void Initialize(Action<ITheme> applyTheme)
         {
             _appSettings.ThemesDir.Changed.Subscribe(ReloadExternalThemes);
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).OfType<Theme>();
-            selectedThemeObservable.Subscribe(t => Application.Current.Styles[0] = t.Style);
+            selectedThemeObservable.Subscribe(applyTheme);
             selectedThemeObservable.Subscribe(t => _appSettings.ThemeName = t.Name);
         }
 

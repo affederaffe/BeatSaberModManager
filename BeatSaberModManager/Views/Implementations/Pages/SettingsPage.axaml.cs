@@ -4,7 +4,6 @@ using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
-using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,18 +17,12 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         public SettingsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public SettingsPage(SettingsViewModel viewModel, IClassicDesktopStyleApplicationLifetime lifetime, IThemeManager themeManager, ILocalisationManager localisationManager)
+        public SettingsPage(SettingsViewModel viewModel, IClassicDesktopStyleApplicationLifetime lifetime)
         {
             InitializeComponent();
             _lifetime = lifetime;
             ViewModel = viewModel;
-            LocalisationManager = localisationManager;
-            ThemeManager = themeManager;
         }
-
-        public IThemeManager ThemeManager { get; } = null!;
-
-        public ILocalisationManager LocalisationManager { get; } = null!;
 
         public async void OnSelectInstallFolderButtonClicked(object? sender, RoutedEventArgs e)
         {

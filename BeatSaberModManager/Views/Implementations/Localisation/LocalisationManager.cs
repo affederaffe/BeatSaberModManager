@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
 
-using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -37,10 +36,10 @@ namespace BeatSaberModManager.Views.Implementations.Localisation
             set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
         }
 
-        public void Initialize()
+        public void Initialize(Action<ILanguage> applyLanguage)
         {
             IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).OfType<Language>();
-            selectedLanguageObservable.Subscribe(l => Application.Current.Resources.MergedDictionaries[0] = l.ResourceProvider);
+            selectedLanguageObservable.Subscribe(applyLanguage);
             selectedLanguageObservable.Subscribe(l => _appSettings.LanguageCode = l.CultureInfo.Name);
         }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 
 
@@ -7,7 +8,7 @@ namespace BeatSaberModManager.Views.Interfaces
     {
         ITheme SelectedTheme { get; set; }
         ObservableCollection<ITheme> Themes { get; }
-        void Initialize();
+        void Initialize(Action<ITheme> applyTheme);
         void ReloadExternalThemes(string path);
     }
 }

@@ -9,6 +9,7 @@ using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Views.Interfaces;
 
 using ReactiveUI;
 
@@ -29,7 +30,7 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller)
+        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, ILocalisationManager localisationManager, IThemeManager themeManager)
         {
             _appSettings = appSettings.Value;
             _progress = progress;
@@ -39,6 +40,8 @@ namespace BeatSaberModManager.ViewModels
             _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
             _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
             _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
+            LocalisationManager = localisationManager;
+            ThemeManager = themeManager;
             OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(InstallDir!), this.WhenAnyValue(x => x.InstallDir).Select(Directory.Exists));
             OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(ThemesDir!), this.WhenAnyValue(x => x.ThemesDir).Select(Directory.Exists));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
@@ -61,6 +64,10 @@ namespace BeatSaberModManager.ViewModels
         public bool HasValidatedInstallDir => _hasValidatedInstallDir.Value;
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
+
+        public ILocalisationManager LocalisationManager { get; }
+
+        public IThemeManager ThemeManager { get; }
 
         public string? InstallDir
         {

@@ -7,6 +7,8 @@ using Avalonia.Markup.Xaml;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Views.Implementations.Localisation;
+using BeatSaberModManager.Views.Implementations.Theming;
 using BeatSaberModManager.Views.Implementations.Windows;
 using BeatSaberModManager.Views.Interfaces;
 
@@ -41,8 +43,8 @@ namespace BeatSaberModManager.Views.Implementations
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-            _localisationManager.Initialize();
-            _themeManager.Initialize();
+            _localisationManager.Initialize(l => Resources.MergedDictionaries[0] = ((Language)l).ResourceProvider);
+            _themeManager.Initialize(t => Styles[0] = ((Theme)t).Style);
         }
 
         public override async void OnFrameworkInitializationCompleted()
