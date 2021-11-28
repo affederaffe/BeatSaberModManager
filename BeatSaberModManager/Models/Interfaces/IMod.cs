@@ -2,10 +2,10 @@
 {
     public interface IMod
     {
-        string Name { get; init; }
-        string Version { get; init; }
-        string Description { get; init; }
-        string Category { get; init; }
-        string MoreInfoLink { get; init; }
+        string Name { get; set; }
+        string Version { get; set; }
+        string Description { get; set; }
+        string Category { get; set; }
+        string MoreInfoLink { get; set; }
     }
 }

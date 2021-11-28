@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
@@ -46,7 +47,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string filePath = Path.Combine(playlistsDirPath, fileName);
             IOUtils.SafeCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
-            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(body);
+            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(body, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(playlist, progress).ConfigureAwait(false);
         }
 
@@ -59,7 +60,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
             IOUtils.SafeCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);
-            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(json);
+            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(json, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(playlist, progress).ConfigureAwait(false);
         }
 

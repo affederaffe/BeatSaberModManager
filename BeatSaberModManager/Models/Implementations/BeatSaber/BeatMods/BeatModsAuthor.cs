@@ -6,9 +6,9 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
     public class BeatModsAuthor
     {
         [JsonPropertyName("_id")]
-        public string Id { get; init; } = null!;
+        public string Id { get; set; } = null!;
 
         [JsonPropertyName("userName")]
-        public string Username { get; init; } = null!;
+        public string Username { get; set; } = null!;
     }
 }

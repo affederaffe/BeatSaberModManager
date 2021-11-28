@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
+using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Http;
@@ -52,7 +53,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             }
 
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonSerializer.Deserialize<BeatSaverMap>(body);
+            return JsonSerializer.Deserialize<BeatSaverMap>(body, BeatSaverJsonSerializerContext.Default.BeatSaverMap);
         }
 
         public bool ExtractBeatSaverMapToFolder(BeatSaverMap map, ZipArchive archive)
