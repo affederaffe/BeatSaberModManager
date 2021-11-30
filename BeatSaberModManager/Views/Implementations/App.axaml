@@ -13,7 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source="/Resources/Localisation/en.axaml" />
-                <ResourceInclude Source="/Resources/Icons/Icons.axaml" />
+                <ResourceInclude Source="/Resources/Styles/Icons.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

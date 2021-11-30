@@ -2,11 +2,12 @@ pkgname="beatsabermodmanager"
 _pkgname="BeatSaberModManager"
 pkgver="0.0.1b"
 pkgrel="1"
+pkgdesc="Yet another mod installer for Beat Saber, heavily inspired by ModAssistant"
 arch=("x86_64")
 url="https://github.com/affederaffe/BeatSaberModManager"
 license=("MIT")
 depends=("dotnet-runtime" "ttf-ms-fonts")
-makedepends=("dotnet-sdk")
+makedepends=("git" "dotnet-sdk")
 options=("!strip")
 source=("$url/archive/v$pkgver.tar.gz")
 sha256sums=("SKIP")
@@ -20,7 +21,6 @@ build() {
 package() {
     install -d "$pkgdir/usr/bin"
     cp "$_pkgname/$_pkgname" "$pkgdir/usr/bin/$pkgname"
-    install -Dm644 "$_pkgname/Resources/Icons/AppIcon.png" "$pkgdir/usr/share/pixmaps/$pkgname.png"
-    echo -e "[Desktop Entry]\nName=$_pkgname\nExec=$pkgname %U\nIcon=$pkgname\nType=Application\nCategories=Game" > $pkgname.desktop
-    install -Dm644 "$pkgname.desktop" "$pkgdir/usr/share/applications/$pkgname.desktop"
+    install -Dm644 "$_pkgname/Resources/Application/Icon.png" "$pkgdir/usr/share/pixmaps/$pkgname.png"
+    install -Dm644 "$_pkgname/Resources/App.desktop" "$pkgdir/usr/share/applications/$pkgname.desktop"
 }

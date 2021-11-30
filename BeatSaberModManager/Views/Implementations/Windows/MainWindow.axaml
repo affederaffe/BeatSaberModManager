@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.MainWindow"
         Title="{StaticResource MainWindow:Title}"
-        Icon="/Resources/Icons/AppIcon.png"
+        Icon="/Resources/Application/Icon.ico"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
