@@ -38,7 +38,7 @@ namespace BeatSaberModManager
         public static void Main(string[] args)
         {
             using ServiceProvider services = CreateServiceCollection(args).BuildServiceProvider();
-            AppBuilder.Configure(services.GetRequiredService<Application>).UsePlatformDetect().UseReactiveUI().StartWithClassicDesktopLifetime(null);
+            AppBuilder.Configure(services.GetRequiredService<Application>).UsePlatformDetect().UseReactiveUI().StartWithClassicDesktopLifetime(args);
         }
 
         private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>

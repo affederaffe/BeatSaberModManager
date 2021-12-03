@@ -14,8 +14,8 @@ namespace BeatSaberModManager.Services.Interfaces
         IMod[]? AvailableMods { get; }
         HashSet<IMod>? InstalledMods { get; }
         IEnumerable<IMod> GetDependencies(IMod mod);
-        Task LoadInstalledModsAsync();
-        Task LoadAvailableModsForCurrentVersionAsync();
+        Task LoadInstalledModsAsync(string installDir);
+        Task LoadAvailableModsForCurrentVersionAsync(string installDir);
         Task LoadAvailableModsForVersionAsync(string version);
         IAsyncEnumerable<ZipArchive> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null);
     }

@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
-using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
@@ -19,27 +17,23 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 {
     public class BeatSaverMapInstaller
     {
-        private readonly ISettings<AppSettings> _appSettings;
-        private readonly IInstallDirValidator _installDirValidator;
         private readonly HttpProgressClient _httpClient;
 
         private const string kBeatSaverUrlPrefix = "https://api.beatsaver.com";
         private const string kBeatSaverKeyEndpoint = "/maps/id/";
 
-        public BeatSaverMapInstaller(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, HttpProgressClient httpClient)
+        public BeatSaverMapInstaller(HttpProgressClient httpClient)
         {
-            _appSettings = appSettings;
-            _installDirValidator = installDirValidator;
             _httpClient = httpClient;
         }
 
-        public async Task<bool> InstallBeatSaverMapAsync(string key, IStatusProgress? progress = null)
+        public async Task<bool> InstallBeatSaverMapAsync(string installDir, string key, IStatusProgress? progress = null)
         {
             BeatSaverMap? map = await GetBeatSaverMapAsync(key).ConfigureAwait(false);
             if (map is null || map.Versions.Length <= 0) return false;
             progress?.Report(map.Name);
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
-            return archive is not null && ExtractBeatSaverMapToFolder(map, archive);
+            return archive is not null && ExtractBeatSaverMapToDir(installDir, map, archive);
         }
 
         public async Task<BeatSaverMap?> GetBeatSaverMapAsync(string key, int retries = 2)
@@ -56,17 +50,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             return JsonSerializer.Deserialize<BeatSaverMap>(body, BeatSaverJsonSerializerContext.Default.BeatSaverMap);
         }
 
-        public bool ExtractBeatSaverMapToFolder(BeatSaverMap map, ZipArchive archive)
-        {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
-            string customLevelsDirectoryPath = Path.Combine(_appSettings.Value.InstallDir.Value!, "Beat Saber_Data", "CustomLevels");
-            IOUtils.SafeCreateDirectory(customLevelsDirectoryPath);
-            string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
-            string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
-            IOUtils.SafeExtractArchive(archive, levelDirectoryPath, true);
-            return true;
-        }
-
         private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion, IProgress<double>? progress = null, int retries = 2)
         {
             if (retries == 0) return null;
@@ -79,6 +62,16 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             return new ZipArchive(stream);
+        }
+
+        public bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
+        {
+            string customLevelsDirectoryPath = Path.Combine(installDir, "Beat Saber_Data", "CustomLevels");
+            IOUtils.SafeCreateDirectory(customLevelsDirectoryPath);
+            string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
+            string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
+            IOUtils.SafeExtractArchive(archive, levelDirectoryPath, true);
+            return true;
         }
 
         private static Task WaitForRateLimitAsync() => Task.Delay(1000);

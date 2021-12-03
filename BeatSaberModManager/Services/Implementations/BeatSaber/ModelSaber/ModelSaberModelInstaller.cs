@@ -5,8 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
@@ -16,22 +14,17 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 {
     public class ModelSaberModelInstaller
     {
-        private readonly ISettings<AppSettings> _appSettings;
-        private readonly IInstallDirValidator _installDirValidator;
         private readonly HttpProgressClient _httpClient;
 
         private const string kModelSaberFilesEndpoint = "https://modelsaber.com/files/";
 
-        public ModelSaberModelInstaller(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, HttpProgressClient httpClient)
+        public ModelSaberModelInstaller(HttpProgressClient httpClient)
         {
-            _appSettings = appSettings;
-            _installDirValidator = installDirValidator;
             _httpClient = httpClient;
         }
 
-        public async Task<bool> InstallModelAsync(Uri uri, IStatusProgress? progress = null)
+        public async Task<bool> InstallModelAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
             string? folderName = uri.Host switch
             {
                 "avatar" => "CustomAvatars",
@@ -42,7 +35,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             };
 
             if (folderName is null) return false;
-            string folderPath = Path.Combine(_appSettings.Value.InstallDir.Value!, folderName);
+            string folderPath = Path.Combine(installDir, folderName);
             IOUtils.SafeCreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);

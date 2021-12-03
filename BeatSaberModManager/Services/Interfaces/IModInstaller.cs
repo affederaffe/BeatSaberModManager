@@ -7,8 +7,8 @@ namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IModInstaller
     {
-        IAsyncEnumerable<IMod> InstallModsAsync(IEnumerable<IMod> mods);
-        IAsyncEnumerable<IMod> UninstallModsAsync(IEnumerable<IMod> mods);
-        void RemoveAllMods();
+        IAsyncEnumerable<IMod> InstallModsAsync(string installDir, IEnumerable<IMod> mods);
+        IAsyncEnumerable<IMod> UninstallModsAsync(string installDir, IEnumerable<IMod> mods);
+        void RemoveAllMods(string installDir);
     }
 }

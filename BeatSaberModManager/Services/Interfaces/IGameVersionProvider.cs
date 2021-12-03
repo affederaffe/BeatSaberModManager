@@ -2,6 +2,6 @@
 {
     public interface IGameVersionProvider
     {
-        string? DetectGameVersion();
+        string? DetectGameVersion(string installDir);
     }
 }

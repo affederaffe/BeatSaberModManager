@@ -17,7 +17,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 
         public string Protocol => "modelsaber";
 
-        public async Task<bool> InstallAssetAsync(Uri uri, IStatusProgress? progress = null)
-            => await _modelSaberModelInstaller.InstallModelAsync(uri, progress).ConfigureAwait(false);
+        public async Task<bool> InstallAssetAsync(string installDir, Uri uri, IStatusProgress? progress = null)
+            => await _modelSaberModelInstaller.InstallModelAsync(installDir, uri, progress).ConfigureAwait(false);
     }
 }
