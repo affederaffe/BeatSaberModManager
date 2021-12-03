@@ -26,13 +26,13 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         public async void OnSelectInstallFolderButtonClicked(object? sender, RoutedEventArgs e)
         {
             OpenFolderDialog openFolderDialog = new();
-            ViewModel!.InstallDir = await openFolderDialog.ShowAsync(_mainWindow).ConfigureAwait(false);
+            ViewModel!.InstallDir = await openFolderDialog.ShowAsync(_mainWindow);
         }
 
         public async void OnSelectThemesButtonClicked(object? sender, RoutedEventArgs e)
         {
             OpenFolderDialog openFolderDialog = new();
-            ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(_mainWindow).ConfigureAwait(false);
+            ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(_mainWindow);
         }
 
         public async void OnInstallPlaylistButtonClicked(object? sender, RoutedEventArgs e)
@@ -43,9 +43,9 @@ namespace BeatSaberModManager.Views.Implementations.Pages
                 Filters = { new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" } }
             };
 
-            string[]? filePaths = await openFileDialog.ShowAsync(_mainWindow).ConfigureAwait(false);
+            string[]? filePaths = await openFileDialog.ShowAsync(_mainWindow);
             if (filePaths?.Length is not 1) return;
-            await ViewModel!.InstallPlaylistsAsync(filePaths[0]).ConfigureAwait(false);
+            await ViewModel!.InstallPlaylistsAsync(filePaths[0]);
         }
     }
 }

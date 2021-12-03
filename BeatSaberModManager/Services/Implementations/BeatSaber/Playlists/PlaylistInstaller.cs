@@ -69,7 +69,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
                 if (!response.IsSuccessStatusCode) return false;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using ZipArchive archive = new(stream);
-                bool success = _beatSaverMapInstaller.ExtractBeatSaverMapToDir(installDir, maps[i]!, archive);
+                bool success = BeatSaverMapInstaller.ExtractBeatSaverMapToDir(installDir, maps[i]!, archive);
                 if (!success) return false;
                 if (++i >= maps.Length) return true;
                 progress?.Report(maps[i]!.Name);

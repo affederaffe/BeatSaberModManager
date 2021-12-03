@@ -29,13 +29,13 @@ namespace BeatSaberModManager.Views.Implementations.Windows
                 .Select(x => $"{installText} {x}")
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
-            InstallAsset().ConfigureAwait(false);
+            InstallAsset().RunSynchronously();
         }
 
         private async Task InstallAsset()
         {
-            await ViewModel!.InstallAsset().ConfigureAwait(false);
-            await Task.Delay(2000).ConfigureAwait(false);
+            await ViewModel!.InstallAsset();
+            await Task.Delay(2000);
             Close();
         }
     }

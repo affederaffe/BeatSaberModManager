@@ -64,7 +64,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             return new ZipArchive(stream);
         }
 
-        public bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
+        public static bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
         {
             string customLevelsDirectoryPath = Path.Combine(installDir, "Beat Saber_Data", "CustomLevels");
             IOUtils.SafeCreateDirectory(customLevelsDirectoryPath);
