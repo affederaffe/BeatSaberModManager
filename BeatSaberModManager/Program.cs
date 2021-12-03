@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -36,8 +35,11 @@ namespace BeatSaberModManager
 {
     public static class Program
     {
-        public static void Main(string[] args) =>
-            CreateServiceCollection(args).BuildServiceProvider().RunAvaloniaApp();
+        public static void Main(string[] args)
+        {
+            using ServiceProvider services = CreateServiceCollection(args).BuildServiceProvider();
+            AppBuilder.Configure(services.GetRequiredService<Application>).UsePlatformDetect().UseReactiveUI().StartWithClassicDesktopLifetime(null);
+        }
 
         private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>
             new ServiceCollection()
@@ -96,17 +98,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddApplication(this IServiceCollection services) =>
             services.AddSingleton<Application, App>()
-                .AddSingleton<IClassicDesktopStyleApplicationLifetime, ClassicDesktopStyleApplicationLifetime>()
                 .AddSingleton<ILocalisationManager, LocalisationManager>()
                 .AddSingleton<IThemeManager, ThemeManager>();
-
-        private static void RunAvaloniaApp(this ServiceProvider services)
-        {
-            AppBuilder.Configure(services.GetRequiredService<Application>).UsePlatformDetect().UseReactiveUI().SetupWithoutStarting();
-            IClassicDesktopStyleApplicationLifetime lifetime = services.GetRequiredService<IClassicDesktopStyleApplicationLifetime>();
-            lifetime.MainWindow = services.GetRequiredService<Window>();
-            ((ClassicDesktopStyleApplicationLifetime)lifetime).Start(null);
-            services.Dispose();
-        }
     }
 }

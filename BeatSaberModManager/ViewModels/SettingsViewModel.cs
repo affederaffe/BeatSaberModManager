@@ -18,7 +18,7 @@ namespace BeatSaberModManager.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IStatusProgress _progress;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
@@ -32,7 +32,7 @@ namespace BeatSaberModManager.ViewModels
 
         public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, ILocalisationManager localisationManager, IThemeManager themeManager)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             _progress = progress;
             _installDirValidator = installDirValidator;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
@@ -49,8 +49,8 @@ namespace BeatSaberModManager.ViewModels
             this.WhenAnyValue(x => x.BeatSaverOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kBeatSaverProtocol));
             this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kModelSaberProtocol));
             this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(b => ToggleOneClickHandler(b, kPlaylistProtocol));
-            _appSettings.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
-            _appSettings.ThemesDir.Changed.Select(Directory.Exists).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
+            _appSettings.Value.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
+            _appSettings.Value.ThemesDir.Changed.Select(Directory.Exists).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
         }
 
         public ReactiveCommand<Unit, Unit> OpenInstallDirCommand { get; }
@@ -71,20 +71,20 @@ namespace BeatSaberModManager.ViewModels
 
         public string? InstallDir
         {
-            get => _appSettings.InstallDir.Value;
+            get => _appSettings.Value.InstallDir.Value;
             set => ValidateAndSetInstallDir(value);
         }
 
         public string? ThemesDir
         {
-            get => _appSettings.ThemesDir.Value;
+            get => _appSettings.Value.ThemesDir.Value;
             set => ValidateAndSetThemesDir(value);
         }
 
         public bool ForceReinstallMods
         {
-            get => _appSettings.ForceReinstallMods;
-            set => _appSettings.ForceReinstallMods = value;
+            get => _appSettings.Value.ForceReinstallMods;
+            set => _appSettings.Value.ForceReinstallMods = value;
         }
 
         private bool _beatSaverOneClickCheckboxChecked;
@@ -119,13 +119,13 @@ namespace BeatSaberModManager.ViewModels
         private void ValidateAndSetInstallDir(string? value)
         {
             if (_installDirValidator.ValidateInstallDir(value))
-                _appSettings.InstallDir.Value = value;
+                _appSettings.Value.InstallDir.Value = value;
         }
 
         private void ValidateAndSetThemesDir(string? value)
         {
             if (Directory.Exists(value))
-                _appSettings.ThemesDir.Value = value;
+                _appSettings.Value.ThemesDir.Value = value;
         }
     }
 }

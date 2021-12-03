@@ -16,7 +16,7 @@ namespace BeatSaberModManager.ViewModels
 {
     public class ModsViewModel : ViewModelBase
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IDependencyResolver _dependencyResolver;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
@@ -24,13 +24,13 @@ namespace BeatSaberModManager.ViewModels
 
         public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             _dependencyResolver = dependencyResolver;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
             ReactiveCommand<Unit, Unit> initializeCommand = ReactiveCommand.CreateFromTask(InitializeDataGridAsync);
-            _appSettings.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).Select(_ => Unit.Default).InvokeCommand(initializeCommand);
+            _appSettings.Value.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).Select(_ => Unit.Default).InvokeCommand(initializeCommand);
         }
 
         public Dictionary<IMod, ModGridItemViewModel> GridItems { get; } = new();
@@ -63,7 +63,7 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedGridItem, value);
         }
 
-        public async Task InitializeDataGridAsync()
+        private async Task InitializeDataGridAsync()
         {
             IsLoading = true;
             await Task.WhenAll(Task.Run(_modProvider.LoadAvailableModsForCurrentVersionAsync), Task.Run(_modProvider.LoadInstalledModsAsync)).ConfigureAwait(false);
@@ -76,7 +76,7 @@ namespace BeatSaberModManager.ViewModels
                 IMod? installedMod = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name == availableMod.Name);
                 ModGridItemViewModel gridItem = new(_modVersionComparer, availableMod, installedMod);
                 GridItems.Add(availableMod, gridItem);
-                gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.SelectedMods.Contains(availableMod.Name);
+                gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.Value.SelectedMods.Contains(availableMod.Name);
             }
 
             foreach (ModGridItemViewModel gridItem in GridItems.Values)
@@ -85,7 +85,7 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task RefreshModsAsync()
         {
-            IEnumerable<IMod> install = GridItems.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.ForceReinstallMods)).Select(x => x.AvailableMod);
+            IEnumerable<IMod> install = GridItems.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(x => x.AvailableMod);
             await InstallMods(install).ConfigureAwait(false);
             IEnumerable<IMod> uninstall = GridItems.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
             await UninstallMods(uninstall).ConfigureAwait(false);
@@ -121,13 +121,13 @@ namespace BeatSaberModManager.ViewModels
         {
             if (gridItem.IsCheckBoxChecked)
             {
-                _appSettings.SelectedMods.Add(gridItem.AvailableMod.Name);
+                _appSettings.Value.SelectedMods.Add(gridItem.AvailableMod.Name);
                 IEnumerable<IMod> affectedMods = _dependencyResolver.ResolveDependencies(gridItem.AvailableMod);
                 UpdateGridItems(affectedMods);
             }
             else
             {
-                _appSettings.SelectedMods.Remove(gridItem.AvailableMod.Name);
+                _appSettings.Value.SelectedMods.Remove(gridItem.AvailableMod.Name);
                 IEnumerable<IMod> affectedMods = _dependencyResolver.UnresolveDependencies(gridItem.AvailableMod);
                 UpdateGridItems(affectedMods);
             }

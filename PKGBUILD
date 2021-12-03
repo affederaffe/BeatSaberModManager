@@ -22,5 +22,5 @@ package() {
     install -d "$pkgdir/usr/bin"
     cp "$_pkgname/$_pkgname" "$pkgdir/usr/bin/$pkgname"
     install -Dm644 "$_pkgname/Resources/Application/Icon.png" "$pkgdir/usr/share/pixmaps/$pkgname.png"
-    install -Dm644 "$_pkgname/Resources/App.desktop" "$pkgdir/usr/share/applications/$pkgname.desktop"
+    install -Dm644 "$_pkgname/Resources/Application/App.desktop" "$pkgdir/usr/share/applications/$pkgname.desktop"
 }

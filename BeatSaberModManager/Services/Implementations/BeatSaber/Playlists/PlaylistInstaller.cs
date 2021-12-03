@@ -23,14 +23,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 {
     public class PlaylistInstaller
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly HttpProgressClient _httpClient;
         private readonly BeatSaverMapInstaller _beatSaverMapInstaller;
 
         public PlaylistInstaller(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, HttpProgressClient httpClient, BeatSaverMapInstaller beatSaverMapInstaller)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             _installDirValidator = installDirValidator;
             _httpClient = httpClient;
             _beatSaverMapInstaller = beatSaverMapInstaller;
@@ -38,11 +38,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         public async Task<bool> InstallPlaylistAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
             using HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            string playlistsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Playlists");
+            string playlistsDirPath = Path.Combine(_appSettings.Value.InstallDir.Value!, "Playlists");
             string fileName = uri.Segments.Last();
             string filePath = Path.Combine(playlistsDirPath, fileName);
             IOUtils.SafeCreateDirectory(playlistsDirPath);
@@ -53,9 +53,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         public async Task<bool> InstallPlaylistAsync(string filePath, IStatusProgress? progress = null)
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
             string json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-            string playlistsDirPath = Path.Combine(_appSettings.InstallDir.Value!, "Playlists");
+            string playlistsDirPath = Path.Combine(_appSettings.Value.InstallDir.Value!, "Playlists");
             string fileName = Path.GetFileName(filePath);
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
             IOUtils.SafeCreateDirectory(playlistsDirPath);

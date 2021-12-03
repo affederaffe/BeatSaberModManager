@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
@@ -12,28 +11,28 @@ namespace BeatSaberModManager.Views.Implementations.Pages
 {
     public partial class SettingsPage : ReactiveUserControl<SettingsViewModel>
     {
-        private readonly IClassicDesktopStyleApplicationLifetime _lifetime = null!;
+        private readonly Window _mainWindow = null!;
 
         public SettingsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public SettingsPage(SettingsViewModel viewModel, IClassicDesktopStyleApplicationLifetime lifetime)
+        public SettingsPage(SettingsViewModel viewModel, Window window)
         {
             InitializeComponent();
-            _lifetime = lifetime;
+            _mainWindow = window;
             ViewModel = viewModel;
         }
 
         public async void OnSelectInstallFolderButtonClicked(object? sender, RoutedEventArgs e)
         {
             OpenFolderDialog openFolderDialog = new();
-            ViewModel!.InstallDir = await openFolderDialog.ShowAsync(_lifetime.MainWindow).ConfigureAwait(false);
+            ViewModel!.InstallDir = await openFolderDialog.ShowAsync(_mainWindow).ConfigureAwait(false);
         }
 
         public async void OnSelectThemesButtonClicked(object? sender, RoutedEventArgs e)
         {
             OpenFolderDialog openFolderDialog = new();
-            ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(_lifetime.MainWindow).ConfigureAwait(false);
+            ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(_mainWindow).ConfigureAwait(false);
         }
 
         public async void OnInstallPlaylistButtonClicked(object? sender, RoutedEventArgs e)
@@ -44,7 +43,7 @@ namespace BeatSaberModManager.Views.Implementations.Pages
                 Filters = { new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" } }
             };
 
-            string[]? filePaths = await openFileDialog.ShowAsync(_lifetime.MainWindow).ConfigureAwait(false);
+            string[]? filePaths = await openFileDialog.ShowAsync(_mainWindow).ConfigureAwait(false);
             if (filePaths?.Length is not 1) return;
             await ViewModel!.InstallPlaylistsAsync(filePaths[0]).ConfigureAwait(false);
         }

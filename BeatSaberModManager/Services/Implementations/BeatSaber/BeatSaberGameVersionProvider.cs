@@ -10,19 +10,19 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     public class BeatSaberGameVersionProvider : IGameVersionProvider
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IInstallDirValidator _installDirValidator;
 
         public BeatSaberGameVersionProvider(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             _installDirValidator = installDirValidator;
         }
 
-        public string? GetGameVersion()
+        public string? DetectGameVersion()
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return null;
-            string filePath = Path.Combine(_appSettings.InstallDir.Value!, "Beat Saber_Data", "globalgamemanagers");
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return null;
+            string filePath = Path.Combine(_appSettings.Value.InstallDir.Value!, "Beat Saber_Data", "globalgamemanagers");
             using FileStream stream = File.OpenRead(filePath);
             using BinaryReader reader = new(stream, Encoding.UTF8);
             const string key = "public.app-category.games";

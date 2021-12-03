@@ -1,6 +1,7 @@
 using System;
 
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
@@ -19,8 +20,8 @@ namespace BeatSaberModManager.Views.Implementations
 {
     public class App : Application
     {
-        private readonly AppSettings _appSettings = null!;
-        private readonly IClassicDesktopStyleApplicationLifetime _lifetime = null!;
+        private readonly IServiceProvider _services = null!;
+        private readonly ISettings<AppSettings> _appSettings = null!;
         private readonly ILocalisationManager _localisationManager = null!;
         private readonly IThemeManager _themeManager = null!;
         private readonly IInstallDirValidator _installDirValidator = null!;
@@ -29,15 +30,15 @@ namespace BeatSaberModManager.Views.Implementations
         public App() { }
 
         [ActivatorUtilitiesConstructor]
-        public App(IServiceProvider services, ISettings<AppSettings> appSettings, IClassicDesktopStyleApplicationLifetime lifetime, ILocalisationManager localisationManager, IThemeManager themeManager, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        public App(IServiceProvider services, ISettings<AppSettings> appSettings, ILocalisationManager localisationManager, IThemeManager themeManager, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
-            _appSettings = appSettings.Value;
-            _lifetime = lifetime;
+            _services = services;
+            _appSettings = appSettings;
             _localisationManager = localisationManager;
             _themeManager = themeManager;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
-            DataTemplates.Add(new ViewLocator(services));
+            DataTemplates.Add(new ViewLocator(_services));
         }
 
         public override void Initialize()
@@ -49,10 +50,12 @@ namespace BeatSaberModManager.Views.Implementations
 
         public override async void OnFrameworkInitializationCompleted()
         {
-            if (_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
-            _appSettings.InstallDir.Value = _installDirLocator.LocateInstallDir();
-            if (_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
-            _appSettings.InstallDir.Value = await new InstallFolderDialogWindow().ShowDialog<string?>(_lifetime.MainWindow).ConfigureAwait(false);
+            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
+            lifetime.MainWindow = _services.GetRequiredService<Window>();
+            if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return;
+            _appSettings.Value.InstallDir.Value = _installDirLocator.LocateInstallDir();
+            if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return;
+            _appSettings.Value.InstallDir.Value = await new InstallFolderDialogWindow().ShowDialog<string?>(lifetime.MainWindow).ConfigureAwait(false);
         }
     }
 }

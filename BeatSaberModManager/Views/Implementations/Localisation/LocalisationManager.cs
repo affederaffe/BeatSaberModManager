@@ -16,13 +16,13 @@ namespace BeatSaberModManager.Views.Implementations.Localisation
 {
     public class LocalisationManager : ReactiveObject, ILocalisationManager
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
 
         public LocalisationManager(ISettings<AppSettings> appSettings)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
-            SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _appSettings.LanguageCode) ??
+            SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _appSettings.Value.LanguageCode) ??
                                Languages.FirstOrDefault(x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
                                Languages.First();
         }
@@ -40,7 +40,7 @@ namespace BeatSaberModManager.Views.Implementations.Localisation
         {
             IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).OfType<Language>();
             selectedLanguageObservable.Subscribe(applyLanguage);
-            selectedLanguageObservable.Subscribe(l => _appSettings.LanguageCode = l.CultureInfo.Name);
+            selectedLanguageObservable.Subscribe(l => _appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }
 
         private static ILanguage LoadLanguage(string languageCode)

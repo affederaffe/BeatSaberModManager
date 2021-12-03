@@ -2,6 +2,6 @@
 {
     public interface IGameVersionProvider
     {
-        string? GetGameVersion();
+        string? DetectGameVersion();
     }
 }

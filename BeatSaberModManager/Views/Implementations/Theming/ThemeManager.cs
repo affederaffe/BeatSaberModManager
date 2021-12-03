@@ -20,12 +20,12 @@ namespace BeatSaberModManager.Views.Implementations.Theming
 {
     public class ThemeManager : ReactiveObject, IThemeManager
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly int _buildInThemesCount;
 
         public ThemeManager(ISettings<AppSettings> appSettings)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             Themes = new ObservableCollection<ITheme>
             {
                 LoadBuildInTheme("Default Light", "avares://Avalonia.Themes.Fluent/Accents/BaseLight.xaml", "avares://Avalonia.Themes.Default/DefaultTheme.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Default.xaml", "avares://Avalonia.Themes.Default/Accents/BaseLight.xaml"),
@@ -35,7 +35,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             };
 
             _buildInThemesCount = Themes.Count;
-            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.ThemeName) ?? Themes.Last();
+            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.Value.ThemeName) ?? Themes.Last();
         }
 
         public ObservableCollection<ITheme> Themes { get; }
@@ -49,10 +49,10 @@ namespace BeatSaberModManager.Views.Implementations.Theming
 
         public void Initialize(Action<ITheme> applyTheme)
         {
-            _appSettings.ThemesDir.Changed.Subscribe(ReloadExternalThemes);
+            _appSettings.Value.ThemesDir.Changed.Subscribe(ReloadExternalThemes);
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).OfType<Theme>();
             selectedThemeObservable.Subscribe(applyTheme);
-            selectedThemeObservable.Subscribe(t => _appSettings.ThemeName = t.Name);
+            selectedThemeObservable.Subscribe(t => _appSettings.Value.ThemeName = t.Name);
         }
 
         public void ReloadExternalThemes(string? path)
@@ -60,14 +60,13 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             if (!Directory.Exists(path)) return;
             for (int i = _buildInThemesCount; i < Themes.Count; i++)
                 Themes.RemoveAt(i);
-            IEnumerable<ITheme> themes = Directory.EnumerateFiles(path, "*.xaml").Select(LoadTheme).Where(x => x is not null)!;
+            IEnumerable<ITheme> themes = Directory.EnumerateFiles(path, "*.xaml").Select(LoadTheme);
             foreach (ITheme theme in themes)
                 Themes.Add(theme);
         }
 
-        private static ITheme? LoadTheme(string filePath)
+        private static ITheme LoadTheme(string filePath)
         {
-            if (!File.Exists(filePath)) return null;
             string name = Path.GetFileNameWithoutExtension(filePath);
             string xaml = File.ReadAllText(filePath);
             IStyle style = AvaloniaRuntimeXamlLoader.Parse<Style>(xaml);

@@ -16,7 +16,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 {
     public class ModelSaberModelInstaller
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly HttpProgressClient _httpClient;
 
@@ -24,14 +24,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 
         public ModelSaberModelInstaller(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, HttpProgressClient httpClient)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             _installDirValidator = installDirValidator;
             _httpClient = httpClient;
         }
 
         public async Task<bool> InstallModelAsync(Uri uri, IStatusProgress? progress = null)
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
             string? folderName = uri.Host switch
             {
                 "avatar" => "CustomAvatars",
@@ -42,7 +42,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             };
 
             if (folderName is null) return false;
-            string folderPath = Path.Combine(_appSettings.InstallDir.Value!, folderName);
+            string folderPath = Path.Combine(_appSettings.Value.InstallDir.Value!, folderName);
             IOUtils.SafeCreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);

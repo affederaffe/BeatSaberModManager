@@ -19,7 +19,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 {
     public class BeatModsModProvider : IModProvider
     {
-        private readonly AppSettings _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly HttpProgressClient _httpClient;
         private readonly IHashProvider _hashProvider;
         private readonly IGameVersionProvider _gameVersionProvider;
@@ -32,7 +32,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public BeatModsModProvider(ISettings<AppSettings> appSettings, HttpProgressClient httpClient, IHashProvider hashProvider, IGameVersionProvider gameVersionProvider, IInstallDirValidator installDirValidator)
         {
-            _appSettings = appSettings.Value;
+            _appSettings = appSettings;
             _httpClient = httpClient;
             _hashProvider = hashProvider;
             _gameVersionProvider = gameVersionProvider;
@@ -56,15 +56,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async Task LoadInstalledModsAsync()
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.InstallDir.Value)) return;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return;
             Dictionary<string, IMod>? fileHashModPairs = await GetMappedModHashesAsync().ConfigureAwait(false);
             if (fileHashModPairs is null) return;
             InstalledMods = new HashSet<IMod>();
-            IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(_appSettings.InstallDir.Value!, x))
+            IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(_appSettings.Value.InstallDir.Value!, x))
                 .Where(Directory.Exists)
                 .SelectMany(Directory.EnumerateFiles)
                 .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal));
-            string ipaLoaderPath = Path.Combine(_appSettings.InstallDir.Value!, "Beat Saber_Data/Managed/IPA.Loader.dll");
+            string ipaLoaderPath = Path.Combine(_appSettings.Value.InstallDir.Value!, "Beat Saber_Data/Managed/IPA.Loader.dll");
             if (File.Exists(ipaLoaderPath)) files = files.Concat(new[] { ipaLoaderPath });
             foreach (string hash in files.Select(_hashProvider.CalculateHashForFile))
             {
@@ -75,7 +75,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async Task LoadAvailableModsForCurrentVersionAsync()
         {
-            string? version = _gameVersionProvider.GetGameVersion();
+            string? version = _gameVersionProvider.DetectGameVersion();
             await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 
