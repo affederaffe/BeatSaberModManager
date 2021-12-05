@@ -15,8 +15,7 @@ namespace BeatSaberModManager.Views.Implementations.Windows
 
         public async void OnContinueButtonClicked(object? sender, RoutedEventArgs e)
         {
-            OpenFolderDialog dialog = new();
-            string? folder = await dialog.ShowAsync(this);
+            string? folder = await new OpenFolderDialog().ShowAsync(this);
             Close(folder);
         }
     }

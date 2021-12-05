@@ -26,12 +26,8 @@ namespace BeatSaberModManager.ViewModels
             SettingsViewModel = settingsViewModel;
             MoreInfoButtonCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(modsViewModel.SelectedGridItem?.AvailableMod.MoreInfoLink!), modsViewModel.WhenAnyValue(x => x.SelectedGridItem).Select(x => x?.AvailableMod.MoreInfoLink is not null));
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync, appSettings.Value.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir));
-            modsViewModel.WhenAnyValue(x => x.SelectedGridItem)
-                .Select(mod => mod is not null)
-                .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
-            modsViewModel.WhenAnyValue(x => x.IsSuccess)
-                .Select(x => x && installDirValidator.ValidateInstallDir(appSettings.Value.InstallDir.Value))
-                .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
+            modsViewModel.WhenAnyValue(x => x.SelectedGridItem).Select(mod => mod is not null).ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
+            modsViewModel.WhenAnyValue(x => x.IsSuccess).Select(x => x && installDirValidator.ValidateInstallDir(appSettings.Value.InstallDir.Value)).ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
             StatusProgress statusProgress = (StatusProgress)progress;
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressBarValue), out _progressBarValue);
             statusProgress.StatusText.ToProperty(this, nameof(ProgressBarText), out _progressBarText);
