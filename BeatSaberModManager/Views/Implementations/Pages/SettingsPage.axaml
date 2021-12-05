@@ -16,6 +16,7 @@
         <Label Grid.Column="1"
                Grid.Row="0"
                Margin="10, 5, 10, 0"
+               IsHitTestVisible="False"
                FontWeight="Bold"
                HorizontalAlignment="Stretch"
                Content="{DynamicResource OptionsView:InstallationLabel}" />
@@ -97,8 +98,7 @@
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
             <Label Content="A 文" FontSize="22" />
-            <ComboBox Items="{Binding LocalisationManager.Languages}"
-                      SelectedItem="{Binding LocalisationManager.SelectedLanguage}">
+            <ComboBox x:Name="LanguagesComboBox">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="i:ILanguage">
                         <Label Content="{Binding CultureInfo.DisplayName}" />
@@ -149,12 +149,11 @@
                 HorizontalAlignment="Center"
                 Content="{DynamicResource OptionsView:SelectFolderButton}"
                 Click="OnSelectThemesButtonClicked"/>
-        <ComboBox Grid.Column="1"
+        <ComboBox x:Name="ThemesComboBox"
+                  Grid.Column="1"
                   Grid.Row="11"
                   Margin="10, 2.5"
-                  VerticalAlignment="Center"
-                  Items="{Binding ThemeManager.Themes}"
-                  SelectedItem="{Binding ThemeManager.SelectedTheme}">
+                  VerticalAlignment="Center">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="i:ITheme">
                     <Label Content="{Binding Name}" />

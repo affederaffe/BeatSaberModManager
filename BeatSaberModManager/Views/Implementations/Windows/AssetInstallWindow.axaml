@@ -21,7 +21,7 @@
     <Panel>
         <Grid RowDefinitions="2.75*, *">
             <Rectangle Grid.Row="0" IsHitTestVisible="False" Opacity="0.85" Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
-            <Rectangle Grid.Row="1" IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}"/>
+            <Rectangle Grid.Row="1" IsHitTestVisible="False" Opacity="0.95" Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
             <c:ProgressRing Grid.Row="0"
                             Width="200"
                             Height="200"

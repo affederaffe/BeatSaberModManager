@@ -1,8 +1,12 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
+using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,11 +20,17 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         public SettingsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public SettingsPage(SettingsViewModel viewModel, Window window)
+        public SettingsPage(SettingsViewModel viewModel, Window window, ILocalisationManager localisationManager, IThemeManager themeManager)
         {
             InitializeComponent();
             _mainWindow = window;
             ViewModel = viewModel;
+            LanguagesComboBox.DataContext = localisationManager;
+            LanguagesComboBox.Items = localisationManager.Languages;
+            LanguagesComboBox.Bind(SelectingItemsControl.SelectedItemProperty, new Binding(nameof(ILocalisationManager.SelectedLanguage)));
+            ThemesComboBox.DataContext = themeManager;
+            ThemesComboBox.Bind(ItemsControl.ItemsProperty, new Binding(nameof(IThemeManager.Themes)));
+            ThemesComboBox.Bind(SelectingItemsControl.SelectedItemProperty, new Binding(nameof(IThemeManager.SelectedTheme)));
         }
 
         public async void OnSelectInstallFolderButtonClicked(object? sender, RoutedEventArgs e)

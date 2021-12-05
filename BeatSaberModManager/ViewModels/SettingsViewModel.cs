@@ -9,7 +9,6 @@ using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
-using BeatSaberModManager.Views.Interfaces;
 
 using ReactiveUI;
 
@@ -30,7 +29,7 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller, ILocalisationManager localisationManager, IThemeManager themeManager)
+        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings;
             _progress = progress;
@@ -40,12 +39,10 @@ namespace BeatSaberModManager.ViewModels
             _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
             _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
             _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
-            LocalisationManager = localisationManager;
-            ThemeManager = themeManager;
             OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(InstallDir!), this.WhenAnyValue(x => x.InstallDir).Select(Directory.Exists));
             OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(ThemesDir!), this.WhenAnyValue(x => x.ThemesDir).Select(Directory.Exists));
-            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
-            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
+            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, appSettings.Value.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir));
+            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, appSettings.Value.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir));
             this.WhenAnyValue(x => x.BeatSaverOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kBeatSaverProtocol));
             this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kModelSaberProtocol));
             this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(b => ToggleOneClickHandler(b, kPlaylistProtocol));
@@ -64,10 +61,6 @@ namespace BeatSaberModManager.ViewModels
         public bool HasValidatedInstallDir => _hasValidatedInstallDir.Value;
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
-
-        public ILocalisationManager LocalisationManager { get; }
-
-        public IThemeManager ThemeManager { get; }
 
         public string? InstallDir
         {
@@ -122,14 +115,18 @@ namespace BeatSaberModManager.ViewModels
 
         private void ValidateAndSetInstallDir(string? value)
         {
-            if (_installDirValidator.ValidateInstallDir(value))
-                _appSettings.Value.InstallDir.Value = value;
+            if (!_installDirValidator.ValidateInstallDir(value)) return;
+            this.RaisePropertyChanging(nameof(InstallDir));
+            _appSettings.Value.InstallDir.Value = value;
+            this.RaisePropertyChanged(nameof(InstallDir));
         }
 
         private void ValidateAndSetThemesDir(string? value)
         {
-            if (Directory.Exists(value))
-                _appSettings.Value.ThemesDir.Value = value;
+            if (!Directory.Exists(value)) return;
+            this.RaisePropertyChanging(nameof(ThemesDir));
+            _appSettings.Value.ThemesDir.Value = value;
+            this.RaisePropertyChanged(nameof(ThemesDir));
         }
     }
 }

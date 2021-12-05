@@ -38,7 +38,7 @@ namespace BeatSaberModManager.Views.Implementations
             _themeManager = themeManager;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
-            DataTemplates.Add(new ViewLocator(_services));
+            DataTemplates.Add(new ViewLocator(services));
         }
 
         public override void Initialize()

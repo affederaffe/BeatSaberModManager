@@ -26,6 +26,7 @@
 
         <DataGrid x:Name="ModsDataGrid"
                   SelectionMode="Single"
+                  RowHeight="26"
                   AreRowGroupHeadersFrozen="False"
                   IsVisible="{Binding IsSuccess}"
                   SelectedItem="{Binding SelectedGridItem}">

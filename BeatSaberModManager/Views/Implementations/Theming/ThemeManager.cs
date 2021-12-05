@@ -60,7 +60,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             if (!Directory.Exists(path)) return;
             for (int i = _buildInThemesCount; i < Themes.Count; i++)
                 Themes.RemoveAt(i);
-            IEnumerable<ITheme> themes = Directory.EnumerateFiles(path, "*.xaml").Select(LoadTheme);
+            IEnumerable<ITheme> themes = Directory.EnumerateFiles(path, "*.axaml").Select(LoadTheme);
             foreach (ITheme theme in themes)
                 Themes.Add(theme);
         }
@@ -69,7 +69,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
         {
             string name = Path.GetFileNameWithoutExtension(filePath);
             string xaml = File.ReadAllText(filePath);
-            IStyle style = AvaloniaRuntimeXamlLoader.Parse<Style>(xaml);
+            IStyle style = AvaloniaRuntimeXamlLoader.Parse<Styles>(xaml);
             return new Theme(name, style);
         }
 
