@@ -11,6 +11,7 @@
 
     <sys:String x:Key="Status:Installing">Installing:</sys:String>
     <sys:String x:Key="Status:Uninstalling">Uninstalling:</sys:String>
+    <sys:String x:Key="Status:Completed">Finished installing mods</sys:String>
 
     <sys:String x:Key="IntroView:Name">Beat Saber Mod Manager</sys:String>
     <sys:String x:Key="IntroView:IntroText:Line1">Please read this page entirely and carefully</sys:String>

@@ -40,7 +40,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string filePath = Path.Combine(playlistsDirPath, fileName);
             IOUtils.SafeCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
-            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(body, PlaylistJsonSerializerContext.Default.Playlist);
+            Playlist? playlist = JsonSerializer.Deserialize(body, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
         }
 
@@ -52,7 +52,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
             IOUtils.SafeCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);
-            Playlist? playlist = JsonSerializer.Deserialize<Playlist>(json, PlaylistJsonSerializerContext.Default.Playlist);
+            Playlist? playlist = JsonSerializer.Deserialize(json, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
         }
 

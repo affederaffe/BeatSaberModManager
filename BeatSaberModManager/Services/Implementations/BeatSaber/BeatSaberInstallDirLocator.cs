@@ -21,12 +21,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             _installDirValidator = installDirValidator;
         }
 
-        public string? LocateInstallDir()
-        {
-            if (OperatingSystem.IsWindows()) return LocateWindowsInstallDir();
-            if (OperatingSystem.IsLinux()) return LocateLinuxSteamInstallDir();
-            throw new PlatformNotSupportedException();
-        }
+        public string? LocateInstallDir() =>
+            OperatingSystem.IsWindows() ? LocateWindowsInstallDir()
+                : OperatingSystem.IsLinux() ? LocateLinuxSteamInstallDir()
+                    : throw new PlatformNotSupportedException();
 
         private string? LocateWindowsInstallDir()
         {
@@ -71,9 +69,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
             if (string.IsNullOrEmpty(oculusInstallDir)) return null;
             string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
-            if (!string.IsNullOrEmpty(oculusInstallDir) && _installDirValidator.ValidateInstallDir(finalPath))
-                return finalPath;
-            return LocateInOculusLibrary();
+            return !string.IsNullOrEmpty(oculusInstallDir) && _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
         }
 
         private string? LocateInOculusLibrary()

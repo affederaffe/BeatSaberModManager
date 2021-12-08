@@ -47,7 +47,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             }
 
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonSerializer.Deserialize<BeatSaverMap>(body, BeatSaverJsonSerializerContext.Default.BeatSaverMap);
+            return JsonSerializer.Deserialize(body, BeatSaverJsonSerializerContext.Default.BeatSaverMap);
         }
 
         private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion, IProgress<double>? progress = null, int retries = 2)

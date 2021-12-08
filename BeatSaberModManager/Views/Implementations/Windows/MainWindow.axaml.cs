@@ -23,15 +23,16 @@ namespace BeatSaberModManager.Views.Implementations.Windows
             InitializeComponent();
             ViewModel = viewModel;
             ViewModel.WhenAnyValue(x => x.ProgressBarStatusType)
-                .Select(GetLocalizedStatus)
+                .Select(GetLocalisedStatus)
                 .BindTo(ViewModel, x => x.ProgressBarStatusText);
         }
 
-        private string? GetLocalizedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
+        private string? GetLocalisedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
         {
             ProgressBarStatusType.None => string.Empty,
             ProgressBarStatusType.Installing => "Status:Installing",
             ProgressBarStatusType.Uninstalling => "Status:Uninstalling",
+            ProgressBarStatusType.Completed => "Status:Completed",
             _ => string.Empty
         }) as string;
     }

@@ -95,7 +95,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage response = await _httpClient.GetAsync(kBeatModsApiUrl + args).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return default;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonSerializer.Deserialize<BeatModsMod[]>(body, BeatModsModJsonSerializerContext.Default.BeatModsModArray);
+            return JsonSerializer.Deserialize(body, BeatModsModJsonSerializerContext.Default.BeatModsModArray);
         }
 
         private async Task<string?> GetAliasedGameVersion(string? gameVersion)
@@ -103,13 +103,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage versionsResponse = await _httpClient.GetAsync(kBeatModsVersionsUrl).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode) return null;
             string versionsBody = await versionsResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            string[]? versions = JsonSerializer.Deserialize<string[]>(versionsBody, CommonJsonSerializerContext.Default.StringArray);
+            string[]? versions = JsonSerializer.Deserialize(versionsBody, CommonJsonSerializerContext.Default.StringArray);
             if (versions is null) return null;
             if (versions.Contains(gameVersion)) return gameVersion;
             using HttpResponseMessage aliasResponse = await _httpClient.GetAsync(kBeatModsAliasUrl).ConfigureAwait(false);
             if (!aliasResponse.IsSuccessStatusCode) return null;
             string aliasBody = await aliasResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize<Dictionary<string, string[]>>(aliasBody, CommonJsonSerializerContext.Default.DictionaryStringStringArray);
+            Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize(aliasBody, CommonJsonSerializerContext.Default.DictionaryStringStringArray);
             if (aliases is null) return null;
             foreach ((string version, string[] alias) in aliases)
             {

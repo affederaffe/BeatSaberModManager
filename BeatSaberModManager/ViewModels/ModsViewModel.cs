@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 
 using ReactiveUI;
@@ -17,14 +18,16 @@ namespace BeatSaberModManager.ViewModels
     public class ModsViewModel : ViewModelBase
     {
         private readonly ISettings<AppSettings> _appSettings;
+        private readonly IStatusProgress _progress;
         private readonly IDependencyResolver _dependencyResolver;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
 
-        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
+        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
         {
             _appSettings = appSettings;
+            _progress = progress;
             _dependencyResolver = dependencyResolver;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
@@ -109,12 +112,16 @@ namespace BeatSaberModManager.ViewModels
         {
             await foreach (IMod mod in _modInstaller.InstallModsAsync(installDir, mods).ConfigureAwait(false))
                 GridItems[mod].InstalledMod = mod;
+            _progress.Report(string.Empty);
+            _progress.Report(ProgressBarStatusType.Completed);
         }
 
         private async Task UninstallMods(string installDir, IEnumerable<IMod> mods)
         {
             await foreach (IMod mod in _modInstaller.UninstallModsAsync(installDir, mods).ConfigureAwait(false))
                 GridItems[mod].InstalledMod = null;
+            _progress.Report(string.Empty);
+            _progress.Report(ProgressBarStatusType.Completed);
         }
 
         private void OnCheckboxUpdated(ModGridItemViewModel gridItem)

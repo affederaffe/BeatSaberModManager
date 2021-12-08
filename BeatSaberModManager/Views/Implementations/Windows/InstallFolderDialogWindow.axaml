@@ -13,7 +13,7 @@
 
         <Panel>
             <Rectangle IsHitTestVisible="False"
-                       Opacity="0.975"
+                       Opacity="0.9"
                        Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
             <TextBlock Margin="20"
                        TextWrapping="Wrap"

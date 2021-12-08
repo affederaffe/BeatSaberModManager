@@ -26,13 +26,12 @@
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                IsHitTestVisible="False"
-                               Opacity="0.85"
+                               Opacity="0.9"
                                Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
                     <Rectangle Grid.Column="1"
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                IsHitTestVisible="False" 
-                               Opacity="0.95"
                                Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
                     <ItemsPresenter x:Name="PART_ItemsPresenter"
                                     Grid.Column="0"
@@ -69,8 +68,8 @@
                                     Orientation="Horizontal"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center">
-                            <Label FontSize="22" Content="{Binding ProgressBarStatusText}" />
-                            <Label FontSize="22" Content="{Binding ProgressBarText}" />
+                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21" Content="{Binding ProgressBarStatusText}" />
+                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21" Content="{Binding ProgressBarText}" />
                         </StackPanel>
                         <Button Grid.Column="1"
                                 Margin="5, 0, 5, 0"

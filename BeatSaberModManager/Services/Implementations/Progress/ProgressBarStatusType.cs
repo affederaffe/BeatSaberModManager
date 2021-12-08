@@ -4,6 +4,7 @@
     {
         None,
         Installing,
-        Uninstalling
+        Uninstalling,
+        Completed
     }
 }
