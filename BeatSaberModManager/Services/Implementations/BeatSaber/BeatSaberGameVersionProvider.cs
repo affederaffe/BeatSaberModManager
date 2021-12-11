@@ -1,18 +1,20 @@
 ﻿using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utilities;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     public class BeatSaberGameVersionProvider : IGameVersionProvider
     {
-        public string? DetectGameVersion(string installDir)
+        public async Task<string?> DetectGameVersion(string installDir)
         {
             string filePath = Path.Combine(installDir, "Beat Saber_Data", "globalgamemanagers");
-            if (!File.Exists(filePath)) return null;
-            using FileStream stream = File.OpenRead(filePath);
+            await using FileStream? stream = IOUtils.SafeOpenFile(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
+            if (stream is null) return null;
             using BinaryReader reader = new(stream, Encoding.UTF8);
             const string key = "public.app-category.games";
 

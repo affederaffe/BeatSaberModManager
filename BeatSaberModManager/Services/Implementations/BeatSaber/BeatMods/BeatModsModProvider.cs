@@ -69,7 +69,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async Task LoadAvailableModsForCurrentVersionAsync(string installDir)
         {
-            string? version = _gameVersionProvider.DetectGameVersion(installDir);
+            string? version = await _gameVersionProvider.DetectGameVersion(installDir);
             await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 

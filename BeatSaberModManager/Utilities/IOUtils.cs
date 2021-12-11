@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 
@@ -49,6 +50,26 @@ namespace BeatSaberModManager.Utilities
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
+        }
+
+        public static FileStream? SafeOpenFile(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, FileOptions options)
+        {
+            try
+            {
+                return new FileStream(path, fileMode, fileAccess, fileShare, 4096, options);
+            }
+            catch (ArgumentException) { }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+            return null;
+        }
+
+        public static async IAsyncEnumerable<string> ReadAllLinesAsync(Stream stream)
+        {
+            string? line;
+            StreamReader reader = new(stream);
+            while ((line = await reader.ReadLineAsync()) is not null)
+                yield return line;
         }
     }
 }

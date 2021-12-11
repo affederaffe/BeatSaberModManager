@@ -1,7 +1,10 @@
-﻿namespace BeatSaberModManager.Services.Interfaces
+﻿using System.Threading.Tasks;
+
+
+namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IGameVersionProvider
     {
-        string? DetectGameVersion(string installDir);
+        Task<string?> DetectGameVersion(string installDir);
     }
 }

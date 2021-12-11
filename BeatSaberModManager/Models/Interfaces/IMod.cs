@@ -3,6 +3,7 @@
     public interface IMod
     {
         string Name { get; set; }
+        string Id { get; set; }
         string Version { get; set; }
         string Description { get; set; }
         string Category { get; set; }

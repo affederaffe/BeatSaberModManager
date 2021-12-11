@@ -1,7 +1,10 @@
+using System.Threading.Tasks;
+
+
 namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IInstallDirLocator
     {
-        string? LocateInstallDir();
+        ValueTask<string?> LocateInstallDir();
     }
 }

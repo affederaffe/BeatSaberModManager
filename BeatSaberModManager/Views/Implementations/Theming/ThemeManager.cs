@@ -49,15 +49,14 @@ namespace BeatSaberModManager.Views.Implementations.Theming
 
         public void Initialize(Action<ITheme> applyTheme)
         {
-            _appSettings.Value.ThemesDir.Changed.Subscribe(ReloadExternalThemes);
+            _appSettings.Value.ThemesDir.Changed.Where(Directory.Exists).Subscribe(ReloadExternalThemes!);
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).OfType<Theme>();
             selectedThemeObservable.Subscribe(applyTheme);
             selectedThemeObservable.Subscribe(t => _appSettings.Value.ThemeName = t.Name);
         }
 
-        public void ReloadExternalThemes(string? path)
+        public void ReloadExternalThemes(string path)
         {
-            if (!Directory.Exists(path)) return;
             for (int i = _buildInThemesCount; i < Themes.Count; i++)
                 Themes.RemoveAt(i);
             IEnumerable<ITheme> themes = Directory.EnumerateFiles(path, "*.axaml").Select(LoadTheme);

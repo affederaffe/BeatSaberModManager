@@ -53,7 +53,7 @@ namespace BeatSaberModManager.Views.Implementations
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
             lifetime.MainWindow = _services.GetRequiredService<Window>();
             if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return;
-            _appSettings.Value.InstallDir.Value = _installDirLocator.LocateInstallDir();
+            _appSettings.Value.InstallDir.Value = await _installDirLocator.LocateInstallDir();
             if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return;
             _appSettings.Value.InstallDir.Value = await new InstallFolderDialogWindow().ShowDialog<string?>(lifetime.MainWindow);
         }
