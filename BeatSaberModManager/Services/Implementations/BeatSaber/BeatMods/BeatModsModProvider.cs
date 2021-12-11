@@ -57,12 +57,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(installDir, x))
                 .Where(Directory.Exists)
                 .SelectMany(Directory.EnumerateFiles)
-                .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal));
-            string ipaLoaderPath = Path.Combine(installDir, "Beat Saber_Data/Managed/IPA.Loader.dll");
-            if (File.Exists(ipaLoaderPath)) files = files.Concat(new[] { ipaLoaderPath });
-            foreach (string hash in files.Select(_hashProvider.CalculateHashForFile))
+                .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal))
+                .Concat(new[] { Path.Combine(installDir, "Beat Saber_Data/Managed/IPA.Loader.dll") });
+            string?[] hashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFile));
+            foreach (string? hash in hashes)
             {
-                if (fileHashModPairs.TryGetValue(hash, out IMod? mod))
+                if (hash is not null && fileHashModPairs.TryGetValue(hash, out IMod? mod))
                     InstalledMods.Add(mod);
             }
         }
@@ -124,7 +124,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
             if (allMods is null) return null;
-            Dictionary<string, IMod> fileHashModPairs = new();
+            Dictionary<string, IMod> fileHashModPairs = new(allMods.Length);
             foreach (BeatModsMod mod in allMods)
             {
                 BeatModsDownload download = mod.Downloads.First();

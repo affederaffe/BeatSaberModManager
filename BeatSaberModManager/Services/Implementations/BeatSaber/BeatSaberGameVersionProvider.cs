@@ -18,17 +18,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             using BinaryReader reader = new(stream, Encoding.UTF8);
             const string key = "public.app-category.games";
 
-            int pos = 0;
-            while (stream.Position < stream.Length && pos < key.Length)
-            {
-                if (reader.ReadByte() == key[pos]) pos++;
-                else pos = 0;
-            }
-
-            if (stream.Position == stream.Length) // we went through the entire stream without finding the key
-                return null;
-
-            while (stream.Position < stream.Length && !char.IsDigit((char)reader.ReadByte())) { }
+            SearchForKey(reader, key);
+            if (stream.Position == stream.Length) return null; // we went through the entire stream without finding the key
+            ReadWhileDigit(reader);
 
             const int rewind = -sizeof(int) - sizeof(byte);
             stream.Seek(rewind, SeekOrigin.Current); // rewind to the string length
@@ -36,6 +28,26 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             int len = reader.ReadInt32();
             byte[] bytes = reader.ReadBytes(len);
             return Encoding.UTF8.GetString(bytes);
+        }
+
+        private static void SearchForKey(BinaryReader reader, string key)
+        {
+            int pos = 0;
+            while (reader.BaseStream.Position < reader.BaseStream.Length && pos < key.Length)
+            {
+                if (reader.ReadByte() == key[pos]) pos++;
+                else pos = 0;
+            }
+        }
+
+        private static void ReadWhileDigit(BinaryReader reader)
+        {
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            {
+                char current = (char)reader.ReadByte();
+                if (char.IsDigit(current))
+                    break;
+            }
         }
     }
 }

@@ -9,14 +9,7 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <Nullable>enable</Nullable>
-    <WarningsAsErrors>true</WarningsAsErrors>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <CodeAnalysisTreatWarningsAsErrors>true</CodeAnalysisTreatWarningsAsErrors>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-    <AnalysisLevel>preview</AnalysisLevel>
-    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AssemblyVersion>0.0.1</AssemblyVersion>
     <ApplicationIcon>Resources/Application/Icon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -53,8 +46,8 @@
     <PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="0.10.10" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10" />
-    <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
     <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
   </ItemGroup>
 

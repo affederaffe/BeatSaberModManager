@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using System.Threading.Tasks;
 
 
 namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IHashProvider
     {
-        string CalculateHashForFile(string path);
-        string CalculateHashForStream(Stream stream);
+        Task<string?> CalculateHashForFile(string path);
+        Task<string?> CalculateHashForStream(Stream stream);
     }
 }

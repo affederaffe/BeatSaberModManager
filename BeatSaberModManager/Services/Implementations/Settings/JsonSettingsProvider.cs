@@ -35,8 +35,8 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         private T Load()
         {
             IOUtils.SafeCreateDirectory(_saveDirPath);
-            if (!File.Exists(_saveFilePath)) return new T();
-            string json = File.ReadAllText(_saveFilePath);
+            string? json = IOUtils.SafeReadAllText(_saveFilePath);
+            if (json is null) return new T();
             T? settings = JsonSerializer.Deserialize<T>(json);
             settings ??= new T();
             return settings;

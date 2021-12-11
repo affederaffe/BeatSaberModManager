@@ -64,6 +64,18 @@ namespace BeatSaberModManager.Utilities
             return null;
         }
 
+        public static string? SafeReadAllText(string path)
+        {
+            try
+            {
+                return File.ReadAllText(path);
+            }
+            catch (ArgumentException) { }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+            return null;
+        }
+
         public static async IAsyncEnumerable<string> ReadAllLinesAsync(Stream stream)
         {
             string? line;
