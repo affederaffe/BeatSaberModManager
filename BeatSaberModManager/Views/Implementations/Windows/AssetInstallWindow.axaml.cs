@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -25,20 +24,18 @@ namespace BeatSaberModManager.Views.Implementations.Windows
             InitializeComponent();
             ViewModel = viewModel;
             string? installText = this.FindResource("Status:Installing") as string;
-            ViewModel.WhenAnyValue(x => x!.AssetName)
+            ViewModel.WhenAnyValue(x => x.AssetName)
                 .WhereNotNull()
                 .Select(x => $"{installText} {x}")
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
-            ReactiveCommand<AssetInstallWindowViewModel, Unit> installAssetCommand = ReactiveCommand.CreateFromTask<AssetInstallWindowViewModel>(InstallAsset);
-            this.WhenAnyValue(x => x.ViewModel).InvokeCommand(installAssetCommand!);
+            Observable.StartAsync(InstallAssetAsync).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => Close());
         }
 
-        private async Task InstallAsset(AssetInstallWindowViewModel viewModel)
+        private async Task InstallAssetAsync()
         {
-            await viewModel.InstallAsset();
+            await ViewModel!.InstallAssetAsync();
             await Task.Delay(2000);
-            Close();
         }
     }
 }

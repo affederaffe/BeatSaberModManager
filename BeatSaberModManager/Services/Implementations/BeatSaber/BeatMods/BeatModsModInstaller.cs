@@ -121,15 +121,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             Directory.SetCurrentDirectory(installDir);
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
-            string protonPrefixPath = Path.Combine($"{installDir}/../..", "compatdata/620980/pfx/user.reg");
-            await using FileStream? fileStream = IOUtils.SafeOpenFile(protonPrefixPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.Asynchronous);
+            string protonRegPath = Path.Combine($"{installDir}/../..", "compatdata/620980/pfx/user.reg");
+            await using FileStream? fileStream = IOUtils.SafeOpenFile(protonRegPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.Asynchronous);
             if (fileStream is null) return;
-            string[] lines = await IOUtils.ReadAllLinesAsync(fileStream).ToArrayAsync().ConfigureAwait(false);
-            StreamWriter streamWriter = new(fileStream);
-            if (!lines.Contains("[Software\\\\Wine\\\\DllOverrides]"))
-                await streamWriter.WriteLineAsync("[Software\\\\Wine\\\\DllOverrides]").ConfigureAwait(false);
-            if (!lines.Contains("\"winhttp\"=\"native,builtin\""))
-                await streamWriter.WriteLineAsync("\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
+            using StreamReader reader = new(fileStream);
+            string content = await reader.ReadToEndAsync().ConfigureAwait(false);
+            await using StreamWriter streamWriter = new(fileStream);
+            if (!content.Contains("[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\""))
+                await streamWriter.WriteLineAsync("\n[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
         }
 
         private static async ValueTask UninstallBsipaWindowsAsync(string installDir, BeatModsMod bsipa)

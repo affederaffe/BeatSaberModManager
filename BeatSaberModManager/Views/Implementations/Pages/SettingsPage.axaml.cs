@@ -1,14 +1,17 @@
-﻿using Avalonia;
+﻿using System.Threading.Tasks;
+
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
-using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
+
+using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Implementations.Pages
@@ -22,8 +25,8 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         [ActivatorUtilitiesConstructor]
         public SettingsPage(SettingsViewModel viewModel, Window window, ILocalisationManager localisationManager, IThemeManager themeManager)
         {
-            InitializeComponent();
             _mainWindow = window;
+            InitializeComponent();
             ViewModel = viewModel;
             LanguagesComboBox.DataContext = localisationManager;
             LanguagesComboBox.Items = localisationManager.Languages;
@@ -31,21 +34,24 @@ namespace BeatSaberModManager.Views.Implementations.Pages
             ThemesComboBox.DataContext = themeManager;
             ThemesComboBox.Bind(ItemsControl.ItemsProperty, new Binding(nameof(IThemeManager.Themes)));
             ThemesComboBox.Bind(SelectingItemsControl.SelectedItemProperty, new Binding(nameof(IThemeManager.SelectedTheme)));
+            SelectInstallFolderButton.Command = ReactiveCommand.CreateFromTask(OnSelectInstallFolderButtonClicked);
+            SelectThemeFolderButton.Command = ReactiveCommand.CreateFromTask(OnSelectThemeFolderButtonClicked);
+            InstallPlaylistButton.Command = ReactiveCommand.CreateFromTask(OnInstallPlaylistButtonClicked);
         }
 
-        public async void OnSelectInstallFolderButtonClicked(object? sender, RoutedEventArgs e)
+        private async Task OnSelectInstallFolderButtonClicked()
         {
             OpenFolderDialog openFolderDialog = new();
             ViewModel!.InstallDir = await openFolderDialog.ShowAsync(_mainWindow);
         }
 
-        public async void OnSelectThemesButtonClicked(object? sender, RoutedEventArgs e)
+        private async Task OnSelectThemeFolderButtonClicked()
         {
             OpenFolderDialog openFolderDialog = new();
             ViewModel!.ThemesDir = await openFolderDialog.ShowAsync(_mainWindow);
         }
 
-        public async void OnInstallPlaylistButtonClicked(object? sender, RoutedEventArgs e)
+        private async Task OnInstallPlaylistButtonClicked()
         {
             OpenFileDialog openFileDialog = new()
             {

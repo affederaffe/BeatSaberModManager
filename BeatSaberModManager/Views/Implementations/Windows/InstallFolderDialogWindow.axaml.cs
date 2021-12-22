@@ -1,5 +1,9 @@
-﻿using Avalonia.Controls;
+﻿using System.Threading.Tasks;
+
+using Avalonia.Controls;
 using Avalonia.Interactivity;
+
+using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Implementations.Windows
@@ -9,11 +13,12 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         public InstallFolderDialogWindow()
         {
             InitializeComponent();
+            ContinueButton.Command = ReactiveCommand.CreateFromTask(OnContinueButtonClicked);
         }
 
         public void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);
 
-        public async void OnContinueButtonClicked(object? sender, RoutedEventArgs e)
+        private async Task OnContinueButtonClicked()
         {
             string? folder = await new OpenFolderDialog().ShowAsync(this);
             Close(folder);

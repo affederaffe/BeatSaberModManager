@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.Styling;
@@ -49,25 +51,26 @@ namespace BeatSaberModManager.Views.Implementations.Theming
 
         public void Initialize(Action<ITheme> applyTheme)
         {
-            _appSettings.Value.ThemesDir.Changed.Where(Directory.Exists).Subscribe(ReloadExternalThemes!);
+            ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
+            _appSettings.Value.ThemesDir.Changed.Where(Directory.Exists).InvokeCommand(reloadThemesCommand!);
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).OfType<Theme>();
             selectedThemeObservable.Subscribe(applyTheme);
             selectedThemeObservable.Subscribe(t => _appSettings.Value.ThemeName = t.Name);
         }
 
-        public void ReloadExternalThemes(string path)
+        private async Task ReloadExternalThemes(string path)
         {
             for (int i = _buildInThemesCount; i < Themes.Count; i++)
                 Themes.RemoveAt(i);
-            IEnumerable<ITheme> themes = Directory.EnumerateFiles(path, "*.axaml").Select(LoadTheme);
-            foreach (ITheme theme in themes)
-                Themes.Add(theme);
+            IEnumerable<Task<ITheme>> themes = Directory.EnumerateFiles(path, "*.axaml").Select(LoadTheme);
+            foreach (Task<ITheme> theme in themes)
+                Themes.Add(await theme);
         }
 
-        private static ITheme LoadTheme(string filePath)
+        private static async Task<ITheme> LoadTheme(string filePath)
         {
             string name = Path.GetFileNameWithoutExtension(filePath);
-            string xaml = File.ReadAllText(filePath);
+            string xaml = await File.ReadAllTextAsync(filePath);
             IStyle style = AvaloniaRuntimeXamlLoader.Parse<Styles>(xaml);
             return new Theme(name, style);
         }

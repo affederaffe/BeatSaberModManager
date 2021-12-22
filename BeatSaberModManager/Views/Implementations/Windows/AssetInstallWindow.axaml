@@ -23,15 +23,20 @@
             <Rectangle Grid.Row="0"
                        IsHitTestVisible="False"
                        Opacity="0.9"
-                       Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+                       Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+            </Rectangle>
             <Rectangle Grid.Row="1"
                        IsHitTestVisible="False"
-                       Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+                       Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+            </Rectangle>
+
             <c:ProgressRing Grid.Row="0"
                             Width="200"
                             Height="200"
                             Value="{Binding ProgressValue}"
-                            IsVisible="{Binding IsInstalling}" />
+                            IsVisible="{Binding IsInstalling}">
+            </c:ProgressRing>
+
             <Viewbox Grid.Row="0"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"

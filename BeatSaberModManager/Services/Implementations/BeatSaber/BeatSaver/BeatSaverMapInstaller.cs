@@ -38,30 +38,40 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
         public async Task<BeatSaverMap?> GetBeatSaverMapAsync(string key, int retries = 2)
         {
-            if (retries == 0) return null;
-            using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode)
+            while (retries != 0)
             {
-                await WaitForRateLimitAsync().ConfigureAwait(false);
-                return await GetBeatSaverMapAsync(key, retries - 1).ConfigureAwait(false);
+                using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                {
+                    await WaitForRateLimitAsync().ConfigureAwait(false);
+                    retries -= 1;
+                    continue;
+                }
+
+                string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return JsonSerializer.Deserialize(body, BeatSaverJsonSerializerContext.Default.BeatSaverMap);
             }
 
-            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonSerializer.Deserialize(body, BeatSaverJsonSerializerContext.Default.BeatSaverMap);
+            return null;
         }
 
         private async Task<ZipArchive?> DownloadBeatSaverMapAsync(BeatSaverMapVersion mapVersion, IProgress<double>? progress = null, int retries = 2)
         {
-            if (retries == 0) return null;
-            HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode)
+            while (retries != 0)
             {
-                await WaitForRateLimitAsync().ConfigureAwait(false);
-                return await DownloadBeatSaverMapAsync(mapVersion, progress, retries - 1).ConfigureAwait(false);
+                HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                {
+                    await WaitForRateLimitAsync().ConfigureAwait(false);
+                    retries -= 1;
+                    continue;
+                }
+
+                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return new ZipArchive(stream);
             }
 
-            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            return new ZipArchive(stream);
+            return null;
         }
 
         public static bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)

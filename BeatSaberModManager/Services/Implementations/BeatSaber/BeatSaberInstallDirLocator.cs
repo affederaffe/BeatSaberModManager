@@ -41,8 +41,16 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             return LocateSteamBeatSaberInstallDir(steamInstallDir);
         }
 
-        private ValueTask<string?> LocateSteamBeatSaberInstallDir(string steamInstallDir) =>
-            GetSteamLibraryPaths(steamInstallDir).SelectAwait(async x => await MatchSteamBeatSaberInstallDir(x)).FirstOrDefaultAsync(x => x is not null);
+        private async ValueTask<string?> LocateSteamBeatSaberInstallDir(string steamInstallDir)
+        {
+            await foreach (string libPath in GetSteamLibraryPaths(steamInstallDir))
+            {
+                string? installDir = await MatchSteamBeatSaberInstallDir(libPath);
+                if (installDir is not null) return installDir;
+            }
+
+            return null;
+        }
 
         private async Task<string?> MatchSteamBeatSaberInstallDir(string path)
         {

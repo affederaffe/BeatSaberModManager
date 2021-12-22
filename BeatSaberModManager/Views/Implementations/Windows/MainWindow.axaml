@@ -22,17 +22,20 @@
         <TabControl.Template>
             <ControlTemplate>
                 <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
-                    <Rectangle Grid.Column="0"
+                   <Rectangle Grid.Column="0"
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                IsHitTestVisible="False"
                                Opacity="0.9"
-                               Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}" />
+                               Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                    </Rectangle>
                     <Rectangle Grid.Column="1"
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                IsHitTestVisible="False" 
-                               Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}" />
+                               Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+                    </Rectangle>
+
                     <ItemsPresenter x:Name="PART_ItemsPresenter"
                                     Grid.Column="0"
                                     Grid.Row="0"
@@ -41,7 +44,8 @@
                                     ItemsPanel="{TemplateBinding ItemsPanel}"
                                     ItemTemplate="{TemplateBinding ItemTemplate}"
                                     HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalAlignment}" />
+                                    VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                    </ItemsPresenter>
                     <ContentPresenter x:Name="PART_SelectedContentHost"
                                       Grid.Column="1"
                                       Grid.Row="0"
@@ -51,7 +55,9 @@
                                       VerticalAlignment="{TemplateBinding VerticalAlignment}"
                                       HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
+                                      ContentTemplate="{TemplateBinding SelectedContentTemplate}">
+                    </ContentPresenter>
+
                     <Grid Grid.Column="1"
                           Grid.Row="1"
                           Height="30"
@@ -61,7 +67,8 @@
                                      Margin="10, 0, 5, 0"
                                      HorizontalAlignment="Stretch"
                                      VerticalAlignment="Stretch"
-                                     Value="{Binding ProgressBarValue}" />
+                                     Value="{Binding ProgressBarValue}">
+                        </ProgressBar>
                         <StackPanel Grid.Column="0"
                                     ZIndex="1"
                                     Margin="10, 0, 5, 0"
@@ -77,23 +84,27 @@
                                 VerticalAlignment="Stretch"
                                 Content="{DynamicResource MainWindow:MoreInfoButton}"
                                 IsEnabled="{Binding MoreInfoButtonEnabled}"
-                                Command="{Binding MoreInfoButtonCommand}" />
+                                Command="{Binding MoreInfoButtonCommand}">
+                        </Button>
                         <Button Grid.Column="2"
                                 Margin="5, 0, 10, 0"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Stretch"
                                 Content="{DynamicResource MainWindow:RefreshModsButton}"
                                 IsEnabled="{Binding InstallButtonEnabled}"
-                                Command="{Binding InstallButtonCommand}" />
+                                Command="{Binding InstallButtonCommand}">
+                        </Button>
                     </Grid>
                 </Grid>
             </ControlTemplate>
         </TabControl.Template>
+
         <TabControl.ItemsPanel>
             <ItemsPanelTemplate>
                     <StackPanel Orientation="Vertical" Margin="0, 30, 0, 0" />
                 </ItemsPanelTemplate>
         </TabControl.ItemsPanel>
+
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>

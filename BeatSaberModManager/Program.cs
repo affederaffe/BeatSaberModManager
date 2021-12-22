@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Media;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -30,6 +31,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using ReactiveUI;
 
+using SkiaSharp;
+
 
 namespace BeatSaberModManager
 {
@@ -38,7 +41,9 @@ namespace BeatSaberModManager
         public static int Main(string[] args)
         {
             using ServiceProvider services = CreateServiceCollection(args).BuildServiceProvider();
-            return AppBuilder.Configure(services.GetRequiredService<Application>).UsePlatformDetect().UseReactiveUI().StartWithClassicDesktopLifetime(args);
+            X11PlatformOptions x11Options = new() { UseEGL = true };
+            FontManagerOptions fontManagerOptions = new() { DefaultFamilyName = string.IsNullOrEmpty(SKTypeface.Default.FamilyName) ? SKFontManager.Default.GetFamilyName(0) : SKTypeface.Default.FamilyName };
+            return AppBuilder.Configure(services.GetRequiredService<Application>).With(fontManagerOptions).With(x11Options).UsePlatformDetect().UseReactiveUI().StartWithClassicDesktopLifetime(args);
         }
 
         private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>

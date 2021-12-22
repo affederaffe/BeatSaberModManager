@@ -36,7 +36,7 @@ namespace BeatSaberModManager.ViewModels
             statusProgress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
         }
 
-        public async Task InstallAsset()
+        public async Task InstallAssetAsync()
         {
             if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value))
             {

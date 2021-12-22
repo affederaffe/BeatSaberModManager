@@ -15,14 +15,16 @@
         <c:ProgressRing IsIndeterminate="True"
                         Width="500"
                         Height="500"
-                        IsVisible="{Binding IsLoading}" />
+                        IsVisible="{Binding IsLoading}">
+        </c:ProgressRing>
 
         <Label FontSize="33"
                FontWeight="SemiBold"
                VerticalAlignment="Center"
                HorizontalAlignment="Center"
                IsVisible="{Binding IsFailed}"
-               Content="{DynamicResource ModsView:NoModsAvailable}" />
+               Content="{DynamicResource ModsView:NoModsAvailable}">
+        </Label>
 
         <DataGrid x:Name="ModsDataGrid"
                   SelectionMode="Single"
@@ -30,7 +32,6 @@
                   AreRowGroupHeadersFrozen="False"
                   IsVisible="{Binding IsSuccess}"
                   SelectedItem="{Binding SelectedGridItem}">
-
             <DataGrid.Columns>
                 <DataGridTemplateColumn Width="25">
                     <DataGridTemplateColumn.CellTemplate>
@@ -45,7 +46,7 @@
 
                 <DataGridTemplateColumn Width="275">
                     <DataGridTemplateColumn.Header>
-                        <Label Padding="0" Content="{DynamicResource ModsView:ModNameHeader}" />
+                        <Label Content="{DynamicResource ModsView:ModNameHeader}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
@@ -56,7 +57,7 @@
 
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.Header>
-                        <Label Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource ModsView:InstalledVersionHeader}" />
+                        <Label Content="{DynamicResource ModsView:InstalledVersionHeader}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
@@ -67,7 +68,7 @@
 
                 <DataGridTemplateColumn Width="100">
                     <DataGridTemplateColumn.Header>
-                        <Label Padding="0" VerticalAlignment="Center" HorizontalAlignment="Center" Content="{DynamicResource ModsView:LatestVersionHeader}" />
+                        <Label Content="{DynamicResource ModsView:LatestVersionHeader}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
@@ -78,7 +79,7 @@
 
                 <DataGridTemplateColumn>
                     <DataGridTemplateColumn.Header>
-                        <Label Padding="0" Content="{DynamicResource ModsView:ModDescriptionHeader}" />
+                        <Label Content="{DynamicResource ModsView:ModDescriptionHeader}" />
                     </DataGridTemplateColumn.Header>
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
