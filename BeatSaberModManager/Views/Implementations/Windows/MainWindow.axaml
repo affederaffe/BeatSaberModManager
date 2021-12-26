@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.MainWindow"
         Title="{StaticResource MainWindow:Title}"
-        Icon="/Resources/Application/Icon.ico"
+        Icon="/Resources/Icons/Icon.ico"
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
@@ -22,7 +22,7 @@
         <TabControl.Template>
             <ControlTemplate>
                 <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
-                   <Rectangle Grid.Column="0"
+                    <Rectangle Grid.Column="0"
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                IsHitTestVisible="False"

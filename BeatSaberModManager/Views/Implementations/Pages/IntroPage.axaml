@@ -5,13 +5,8 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Implementations.Pages.IntroPage">
 
-    <StackPanel Margin="20"
-                Orientation="Vertical">
-        <Label IsHitTestVisible="False"
-               FontSize="30"
-               Margin="0, 0, 0, 10"
-               HorizontalAlignment="Center"
-               Content="{DynamicResource IntroView:Name}" />
+    <StackPanel Margin="20" Orientation="Vertical" IsHitTestVisible="False">
+        <Label FontSize="30" Margin="0, 0, 0, 10" HorizontalAlignment="Center" Content="{DynamicResource IntroView:Name}" />
         <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line1}" />
         <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line2}" />
         <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line3}" />

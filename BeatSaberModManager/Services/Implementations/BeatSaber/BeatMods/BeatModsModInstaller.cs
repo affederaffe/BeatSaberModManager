@@ -38,7 +38,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             _progress.Report(ProgressBarStatusType.Installing);
             await foreach (ZipArchive archive in _modProvider.DownloadModsAsync(urls, _progress).ConfigureAwait(false))
             {
-                if (beatModsMods[i].Name.ToLowerInvariant() == _modProvider.ModLoaderName)
+                if (_modProvider.IsModLoader(beatModsMods[i]))
                 {
                     IOUtils.SafeExtractArchive(archive, installDir, true);
                     await InstallBsipaAsync(installDir).ConfigureAwait(false);
@@ -50,9 +50,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
                 _modProvider.InstalledMods?.Add(beatModsMods[i]);
                 yield return beatModsMods[i++];
-                if (i >= beatModsMods.Length) yield break;
+                if (i >= beatModsMods.Length) break;
                 _progress.Report(beatModsMods[i].Name);
             }
+
+            _progress.Report(string.Empty);
+            _progress.Report(ProgressBarStatusType.Completed);
         }
 
         public async IAsyncEnumerable<IMod> UninstallModsAsync(string installDir, IEnumerable<IMod> mods)
@@ -64,12 +67,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 _progress.Report(beatModsMods[i].Name);
                 _progress.Report(((double)i + 1) / beatModsMods.Length);
-                if (beatModsMods[i].Name.ToLowerInvariant() == _modProvider.ModLoaderName)
+                if (_modProvider.IsModLoader(beatModsMods[i]))
                     await UninstallBsipaAsync(installDir, beatModsMods[i]).ConfigureAwait(false);
                 RemoveModFiles(installDir, beatModsMods[i]);
                 _modProvider.InstalledMods?.Remove(beatModsMods[i]);
                 yield return beatModsMods[i];
             }
+
+            _progress.Report(string.Empty);
+            _progress.Report(ProgressBarStatusType.Completed);
         }
 
         public void RemoveAllMods(string installDir)
@@ -165,8 +171,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private static void RemoveBsipaFiles(string installDir, BeatModsMod bsipa)
         {
-            BeatModsDownload download = bsipa.Downloads.First();
-            foreach (BeatModsHash hash in download.Hashes)
+            foreach (BeatModsHash hash in bsipa.Downloads.First().Hashes)
             {
                 string fileName = hash.File.Replace("IPA/Data", "Beat Saber_Data");
                 string path = Path.Combine(installDir, fileName);

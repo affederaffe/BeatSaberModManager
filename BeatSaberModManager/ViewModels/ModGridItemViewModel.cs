@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
@@ -12,18 +11,13 @@ namespace BeatSaberModManager.ViewModels
     public class ModGridItemViewModel : ViewModelBase
     {
         private readonly ObservableAsPropertyHelper<bool> _isUpToDate;
-        private readonly ObservableAsPropertyHelper<string> _installedVersionColor;
 
         public ModGridItemViewModel(IModVersionComparer modVersionComparer, IMod availableMod, IMod? installedMod)
         {
             _availableMod = availableMod;
             _installedMod = installedMod;
-            IObservable<bool> isUpToDateObservable = this.WhenAnyValue(x => x.InstalledMod).Select(x => modVersionComparer.CompareVersions(AvailableMod.Version, x?.Version) >= 0);
-            isUpToDateObservable.ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
-            isUpToDateObservable.Select(x => x ? "Green" : "Red").ToProperty(this, nameof(InstalledVersionColor), out _installedVersionColor);
+            this.WhenAnyValue(x => x.InstalledMod).Select(x => modVersionComparer.CompareVersions(AvailableMod.Version, x?.Version) >= 0).ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
         }
-
-        public string InstalledVersionColor => _installedVersionColor.Value;
 
         public bool IsUpToDate => _isUpToDate.Value;
 

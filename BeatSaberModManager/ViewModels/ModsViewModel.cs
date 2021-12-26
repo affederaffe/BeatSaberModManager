@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
-using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 
 using ReactiveUI;
@@ -18,46 +16,39 @@ namespace BeatSaberModManager.ViewModels
     public class ModsViewModel : ViewModelBase
     {
         private readonly ISettings<AppSettings> _appSettings;
-        private readonly IStatusProgress _progress;
         private readonly IDependencyResolver _dependencyResolver;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
+        private readonly Dictionary<IMod, ModGridItemViewModel> _modGridItemPairs;
+        private readonly ObservableAsPropertyHelper<bool> _isLoading;
+        private readonly ObservableAsPropertyHelper<bool> _isSuccess;
+        private readonly ObservableAsPropertyHelper<bool> _isFailed;
+        private readonly ObservableAsPropertyHelper<IEnumerable<ModGridItemViewModel>?> _gridItems;
 
-        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
+        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
         {
             _appSettings = appSettings;
-            _progress = progress;
             _dependencyResolver = dependencyResolver;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
-            ReactiveCommand<string, Unit> initializeCommand = ReactiveCommand.CreateFromTask<string>(InitializeDataGridAsync);
+            _modGridItemPairs = new Dictionary<IMod, ModGridItemViewModel>();
+            ReactiveCommand<string, IEnumerable<ModGridItemViewModel>?> initializeCommand = ReactiveCommand.CreateFromTask<string, IEnumerable<ModGridItemViewModel>?>(InitializeDataGridAsync);
+            initializeCommand.IsExecuting.ToProperty(this, nameof(IsLoading), out _isLoading);
+            initializeCommand.Select(x => x is not null).ToProperty(this, nameof(IsSuccess), out _isSuccess);
+            initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
+            this.WhenAnyValue(x => x.IsLoading, x => x.IsSuccess).Select(x => !x.Item1 && !x.Item2).ToProperty(this, nameof(IsFailed), out _isFailed);
             _appSettings.Value.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).InvokeCommand(initializeCommand!);
         }
 
-        public Dictionary<IMod, ModGridItemViewModel>? GridItems { get; private set; }
+        public bool IsLoading => _isLoading.Value;
 
-        private bool _isLoading;
-        public bool IsLoading
-        {
-            get => _isLoading;
-            set => this.RaiseAndSetIfChanged(ref _isLoading, value);
-        }
+        public bool IsSuccess => _isSuccess.Value;
 
-        private bool _isSuccess;
-        public bool IsSuccess
-        {
-            get => _isSuccess;
-            set => this.RaiseAndSetIfChanged(ref _isSuccess, value);
-        }
+        public bool IsFailed => _isFailed.Value;
 
-        private bool _isFailed;
-        public bool IsFailed
-        {
-            get => _isFailed;
-            set => this.RaiseAndSetIfChanged(ref _isFailed, value);
-        }
+        public IEnumerable<ModGridItemViewModel>? GridItems => _gridItems.Value;
 
         private ModGridItemViewModel? _selectedGridItem;
         public ModGridItemViewModel? SelectedGridItem
@@ -66,48 +57,43 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _selectedGridItem, value);
         }
 
-        private async Task InitializeDataGridAsync(string installDir)
+        private async Task<IEnumerable<ModGridItemViewModel>?> InitializeDataGridAsync(string installDir)
         {
-            IsLoading = true;
             await Task.WhenAll(Task.Run(() => _modProvider.LoadAvailableModsForCurrentVersionAsync(installDir)), Task.Run(() => _modProvider.LoadInstalledModsAsync(installDir))).ConfigureAwait(false);
-            IsSuccess = _modProvider.AvailableMods?.Length > 0;
-            IsFailed = !IsSuccess;
-            IsLoading = false;
-            if (_modProvider.AvailableMods is null) return;
-            GridItems = new Dictionary<IMod, ModGridItemViewModel>();
+            if (_modProvider.AvailableMods is null) return null;
             foreach (IMod availableMod in _modProvider.AvailableMods)
             {
-                IMod? installedMod = _modProvider.InstalledMods?.FirstOrDefault(x => x.Name == availableMod.Name);
+                IMod? installedMod = _modProvider.InstalledMods?.FirstOrDefault(x => x.Id == availableMod.Id);
                 ModGridItemViewModel gridItem = new(_modVersionComparer, availableMod, installedMod);
-                GridItems.Add(availableMod, gridItem);
-                gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.Value.SelectedMods.Contains(availableMod.Name);
-                gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
+                _modGridItemPairs.Add(availableMod, gridItem);
+                gridItem.IsCheckBoxChecked = gridItem.InstalledMod is not null || _appSettings.Value.SelectedMods.Contains(availableMod.Id);
             }
+
+            foreach (ModGridItemViewModel gridItem in _modGridItemPairs.Values)
+                gridItem.WhenAnyValue(x => x.IsCheckBoxChecked).Subscribe(_ => OnCheckboxUpdated(gridItem));
+
+            return _modGridItemPairs.Values;
         }
 
         public async Task RefreshModsAsync()
         {
-            IEnumerable<IMod>? install = GridItems?.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(x => x.AvailableMod);
-            if (install is not null)
-                await InstallMods(_appSettings.Value.InstallDir.Value!, install).ConfigureAwait(false);
-            IEnumerable<IMod>? uninstall = GridItems?.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
-            if (uninstall is not null)
-                await UninstallMods(_appSettings.Value.InstallDir.Value!, uninstall).ConfigureAwait(false);
+            IEnumerable<IMod> install = _modGridItemPairs.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(x => x.AvailableMod);
+            await InstallMods(_appSettings.Value.InstallDir.Value!, install).ConfigureAwait(false);
+            IEnumerable<IMod> uninstall = _modGridItemPairs.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
+            await UninstallMods(_appSettings.Value.InstallDir.Value!, uninstall).ConfigureAwait(false);
         }
 
         public async Task UninstallModLoaderAsync()
         {
-            IMod? modLoader = GridItems?.Values.FirstOrDefault(x => x.InstalledMod?.Name.ToLowerInvariant() == _modProvider.ModLoaderName)?.AvailableMod ??
-                              _modProvider.InstalledMods?.FirstOrDefault(x => x.Name.ToLowerInvariant() == _modProvider.ModLoaderName);
+            IMod? modLoader = _modGridItemPairs.Values.FirstOrDefault(x => _modProvider.IsModLoader(x.InstalledMod))?.AvailableMod ??
+                              _modProvider.InstalledMods?.FirstOrDefault(_modProvider.IsModLoader);
             if (modLoader is null) return;
             await UninstallMods(_appSettings.Value.InstallDir.Value!, new[] { modLoader }).ConfigureAwait(false);
         }
 
         public async Task UninstallAllModsAsync()
         {
-            IEnumerable<IMod>? mods = GridItems?.Values.Where(x => x.InstalledMod is not null).Select(x => x.AvailableMod) ??
-                                     _modProvider.InstalledMods;
-            if (mods is null) return;
+            IEnumerable<IMod> mods = _modGridItemPairs.Values.Where(x => x.InstalledMod is not null).Select(x => x.AvailableMod);
             await UninstallMods(_appSettings.Value.InstallDir.Value!, mods).ConfigureAwait(false);
             _modInstaller.RemoveAllMods(_appSettings.Value.InstallDir.Value!);
         }
@@ -116,37 +102,31 @@ namespace BeatSaberModManager.ViewModels
         {
             await foreach (IMod mod in _modInstaller.InstallModsAsync(installDir, mods).ConfigureAwait(false))
             {
-                if (GridItems?.TryGetValue(mod, out ModGridItemViewModel? gridItem) is true)
+                if (_modGridItemPairs.TryGetValue(mod, out ModGridItemViewModel? gridItem))
                     gridItem.InstalledMod = mod;
             }
-
-            _progress.Report(string.Empty);
-            _progress.Report(ProgressBarStatusType.Completed);
         }
 
         private async Task UninstallMods(string installDir, IEnumerable<IMod> mods)
         {
             await foreach (IMod mod in _modInstaller.UninstallModsAsync(installDir, mods).ConfigureAwait(false))
             {
-                if (GridItems?.TryGetValue(mod, out ModGridItemViewModel? gridItem) is true)
+                if (_modGridItemPairs.TryGetValue(mod, out ModGridItemViewModel? gridItem))
                     gridItem.InstalledMod = null;
             }
-
-            _progress.Report(string.Empty);
-            _progress.Report(ProgressBarStatusType.Completed);
         }
 
         private void OnCheckboxUpdated(ModGridItemViewModel gridItem)
         {
             if (gridItem.IsCheckBoxChecked)
             {
-                _appSettings.Value.SelectedMods.Add(gridItem.AvailableMod.Name);
+                _appSettings.Value.SelectedMods.Add(gridItem.AvailableMod.Id);
                 IEnumerable<IMod> affectedMods = _dependencyResolver.ResolveDependencies(gridItem.AvailableMod);
                 UpdateGridItems(affectedMods);
             }
             else
             {
-                _appSettings.Value.SelectedMods.Remove(gridItem.AvailableMod.Name);
+                _appSettings.Value.SelectedMods.Remove(gridItem.AvailableMod.Id);
                 IEnumerable<IMod> affectedMods = _dependencyResolver.UnresolveDependencies(gridItem.AvailableMod);
                 UpdateGridItems(affectedMods);
             }
@@ -156,7 +136,7 @@ namespace BeatSaberModManager.ViewModels
         {
             foreach (IMod mod in mods)
             {
-                if (GridItems?.TryGetValue(mod, out ModGridItemViewModel? gridItem) is not true) continue;
+                if (!_modGridItemPairs.TryGetValue(mod, out ModGridItemViewModel? gridItem)) continue;
                 bool isDependency = _dependencyResolver.IsDependency(gridItem.AvailableMod);
                 gridItem.IsCheckBoxEnabled = !isDependency;
                 gridItem.IsCheckBoxChecked = gridItem.IsCheckBoxChecked || isDependency;

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -23,6 +25,9 @@ namespace BeatSaberModManager.ViewModels
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
         private readonly ObservableAsPropertyHelper<string?> _assetName;
+        private readonly ObservableAsPropertyHelper<bool> _isInstalling;
+        private readonly ObservableAsPropertyHelper<bool> _isSuccess;
+        private readonly ObservableAsPropertyHelper<bool> _isFailed;
 
         public AssetInstallWindowViewModel(Uri uri, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
         {
@@ -34,23 +39,13 @@ namespace BeatSaberModManager.ViewModels
             StatusProgress statusProgress = (StatusProgress)progress;
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
             statusProgress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
+            InstallCommand = ReactiveCommand.CreateFromTask(InstallAssetAsync);
+            InstallCommand.IsExecuting.ToProperty(this, nameof(IsInstalling), out _isInstalling);
+            InstallCommand.ToProperty(this, nameof(IsSuccess), out _isSuccess);
+            this.WhenAnyValue(x => x.IsInstalling, x => x.IsSuccess).Select(x => !x.Item1 && !x.Item2).ToProperty(this, nameof(IsFailed), out _isFailed);
         }
 
-        public async Task InstallAssetAsync()
-        {
-            if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value))
-            {
-                IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
-                if (assetProvider is not null) IsSuccess = await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir.Value!, _uri, _progress).ConfigureAwait(false);
-                IsFailed = !IsSuccess;
-                IsInstalling = false;
-            }
-            else
-            {
-                IsFailed = true;
-                IsInstalling = false;
-            }
-        }
+        public ReactiveCommand<Unit, bool> InstallCommand { get; }
 
         public ObservableCollection<string> Log { get; } = new();
 
@@ -58,25 +53,18 @@ namespace BeatSaberModManager.ViewModels
 
         public string? AssetName => _assetName.Value;
 
-        private bool _isInstalling = true;
-        public bool IsInstalling
-        {
-            get => _isInstalling;
-            set => this.RaiseAndSetIfChanged(ref _isInstalling, value);
-        }
+        public bool IsInstalling => _isInstalling.Value;
 
-        private bool _isSuccess;
-        public bool IsSuccess
-        {
-            get => _isSuccess;
-            set => this.RaiseAndSetIfChanged(ref _isSuccess, value);
-        }
+        public bool IsSuccess => _isSuccess.Value;
 
-        private bool _isFailed;
-        public bool IsFailed
+        public bool IsFailed => _isFailed.Value;
+
+        private async Task<bool> InstallAssetAsync()
         {
-            get => _isFailed;
-            set => this.RaiseAndSetIfChanged(ref _isFailed, value);
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
+            IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
+            if (assetProvider is null) return false;
+            return await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir.Value!, _uri, _progress).ConfigureAwait(false);
         }
     }
 }

@@ -10,9 +10,9 @@ namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IModProvider
     {
-        string ModLoaderName { get; }
         IMod[]? AvailableMods { get; }
         HashSet<IMod>? InstalledMods { get; }
+        bool IsModLoader(IMod? mod);
         IEnumerable<IMod> GetDependencies(IMod mod);
         Task LoadInstalledModsAsync(string installDir);
         Task LoadAvailableModsForCurrentVersionAsync(string installDir);

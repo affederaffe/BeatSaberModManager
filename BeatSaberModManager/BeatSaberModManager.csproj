@@ -11,7 +11,7 @@
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AssemblyVersion>0.0.1</AssemblyVersion>
-    <ApplicationIcon>Resources/Application/Icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources/Icons/Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -26,16 +26,10 @@
     <DebugType>none</DebugType>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(RuntimeIdentifier)'=='linux-x64'">
-    <None Include="Resources/Application/Icon.png" CopyToOutputDirectory="PreserveNewest" />
-    <None Include="Resources/Application/App.desktop" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
   <ItemGroup>
-    <AvaloniaResource Include="Resources/Application/Icon.ico" />
-    <AvaloniaResource Include="Resources/Localisation/**" />
-    <AvaloniaResource Include="Resources/Styles/**" />
+    <AvaloniaResource Include="Resources/**" />
     <TrimmerRootDescriptor Include="TrimmerRoots.xml" Visible="false" />
+    <None Include="Resources/Icons/Icon.ico" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
              xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
+             xmlns:p="clr-namespace:BeatSaberModManager.Views.Implementations.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Implementations.Pages.ModsPage">
 
@@ -39,15 +40,13 @@
                             <CheckBox VerticalAlignment="Center"
                                       HorizontalAlignment="Center"
                                       IsEnabled="{Binding IsCheckBoxEnabled}"
-                                      IsChecked="{Binding IsCheckBoxChecked}" />
+                                      IsChecked="{Binding IsCheckBoxChecked}">
+                            </CheckBox>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="275">
-                    <DataGridTemplateColumn.Header>
-                        <Label Content="{DynamicResource ModsView:ModNameHeader}" />
-                    </DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn Width="275" Header="{DynamicResource ModsView:ModNameHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Name}" />
@@ -55,21 +54,15 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="100">
-                    <DataGridTemplateColumn.Header>
-                        <Label Content="{DynamicResource ModsView:InstalledVersionHeader}" />
-                    </DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn Width="100" Header="{DynamicResource ModsView:InstalledVersionHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
-                            <Label VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="{Binding InstalledVersionColor}" Content="{Binding InstalledMod.Version}" />
+                            <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding InstalledMod.Version}" Foreground="{Binding IsUpToDate, Converter={x:Static p:ModsPage.IsUpToDateColorConverter}}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="100">
-                    <DataGridTemplateColumn.Header>
-                        <Label Content="{DynamicResource ModsView:LatestVersionHeader}" />
-                    </DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn Width="100" Header="{DynamicResource ModsView:LatestVersionHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding AvailableMod.Version}" />
@@ -77,10 +70,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn>
-                    <DataGridTemplateColumn.Header>
-                        <Label Content="{DynamicResource ModsView:ModDescriptionHeader}" />
-                    </DataGridTemplateColumn.Header>
+                <DataGridTemplateColumn Header="{DynamicResource ModsView:ModDescriptionHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Description}" />

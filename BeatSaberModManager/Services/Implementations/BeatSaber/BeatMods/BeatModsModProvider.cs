@@ -34,9 +34,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             _gameVersionProvider = gameVersionProvider;
         }
 
-        public string ModLoaderName => "bsipa";
         public IMod[]? AvailableMods { get; private set; }
         public HashSet<IMod>? InstalledMods { get; private set; }
+
+        public bool IsModLoader(IMod? mod) => mod?.Name.ToLowerInvariant() == "bsipa";
 
         public IEnumerable<IMod> GetDependencies(IMod mod)
         {
