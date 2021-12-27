@@ -4,6 +4,8 @@ using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
+using ReactiveUI;
+
 
 namespace BeatSaberModManager.Views.Implementations.Windows
 {
@@ -13,7 +15,8 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         {
             InitializeComponent();
             ContinueButton.GetObservable(Button.ClickEvent)
-                .Select(_ => new OpenFolderDialog().ShowAsync(this))
+                .SelectMany(_ => new OpenFolderDialog().ShowAsync(this))
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(Close);
         }
 

@@ -80,8 +80,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             IOUtils.TryCreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
-            IOUtils.TryExtractArchive(archive, levelDirectoryPath, true);
-            return true;
+            return IOUtils.TryExtractArchive(archive, levelDirectoryPath, true);
         }
 
         private static Task WaitForRateLimitAsync() => Task.Delay(1000);

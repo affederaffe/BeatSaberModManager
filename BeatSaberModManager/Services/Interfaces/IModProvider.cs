@@ -10,7 +10,7 @@ namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IModProvider
     {
-        IMod[]? AvailableMods { get; }
+        IReadOnlyList<IMod>? AvailableMods { get; }
         HashSet<IMod>? InstalledMods { get; }
         bool IsModLoader(IMod? mod);
         IEnumerable<IMod> GetDependencies(IMod mod);

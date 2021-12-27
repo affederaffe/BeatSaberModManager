@@ -21,7 +21,6 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
         private readonly Dictionary<IMod, ModGridItemViewModel> _modGridItemPairs;
-        private readonly ObservableAsPropertyHelper<bool> _isLoading;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
         private readonly ObservableAsPropertyHelper<IEnumerable<ModGridItemViewModel>?> _gridItems;
@@ -34,18 +33,18 @@ namespace BeatSaberModManager.ViewModels
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
             _modGridItemPairs = new Dictionary<IMod, ModGridItemViewModel>();
-            ReactiveCommand<string, IEnumerable<ModGridItemViewModel>?> initializeCommand = ReactiveCommand.CreateFromTask<string, IEnumerable<ModGridItemViewModel>?>(InitializeDataGridAsync);
-            initializeCommand.IsExecuting.ToProperty(this, nameof(IsLoading), out _isLoading);
-            initializeCommand.Select(x => x is not null)
+            InitializeCommand = ReactiveCommand.CreateFromTask<string, IEnumerable<ModGridItemViewModel>?>(InitializeDataGridAsync);
+            InitializeCommand.Select(x => x is not null)
                 .ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
-            this.WhenAnyValue(x => x.IsLoading, x => x.IsSuccess)
+            InitializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
+            this.WhenAnyValue(x => x.IsSuccess)
+                .CombineLatest(InitializeCommand.IsExecuting)
                 .Select(x => !x.Item1 && !x.Item2)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
-            _appSettings.Value.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).InvokeCommand(initializeCommand!);
+            _appSettings.Value.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).InvokeCommand(InitializeCommand!);
         }
 
-        public bool IsLoading => _isLoading.Value;
+        public ReactiveCommand<string, IEnumerable<ModGridItemViewModel>?> InitializeCommand { get; }
 
         public bool IsSuccess => _isSuccess.Value;
 

@@ -14,7 +14,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             string filePath = Path.Combine(installDir, "Beat Saber_Data", "globalgamemanagers");
             if (!IOUtils.TryOpenFile(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) return null;
-            await using FileStream fs = fileStream!;
+            await using FileStream fs = fileStream;
             using BinaryReader reader = new(fs, Encoding.UTF8);
             const string key = "public.app-category.games";
 

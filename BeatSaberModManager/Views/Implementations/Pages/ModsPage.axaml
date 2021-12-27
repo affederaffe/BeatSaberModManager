@@ -16,7 +16,7 @@
         <c:ProgressRing IsIndeterminate="True"
                         Width="500"
                         Height="500"
-                        IsVisible="{Binding IsLoading}">
+                        IsVisible="{Binding InitializeCommand.IsExecuting^}">
         </c:ProgressRing>
 
         <Label FontSize="33"

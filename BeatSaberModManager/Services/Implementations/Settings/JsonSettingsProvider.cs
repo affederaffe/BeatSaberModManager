@@ -36,7 +36,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         {
             IOUtils.TryCreateDirectory(_saveDirPath);
             if (!IOUtils.TryReadAllText(_saveFilePath, out string? json)) return new T();
-            T? settings = JsonSerializer.Deserialize<T>(json!);
+            T? settings = JsonSerializer.Deserialize<T>(json);
             settings ??= new T();
             return settings;
         }

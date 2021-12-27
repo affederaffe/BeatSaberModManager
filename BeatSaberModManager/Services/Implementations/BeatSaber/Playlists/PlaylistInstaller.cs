@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
-using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.Http;

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-using BeatSaberModManager.Models.Implementations.BeatSaber.Playlist;
+using BeatSaberModManager.Models.Implementations.BeatSaber.Playlists;
 
 
 namespace BeatSaberModManager.Models.Implementations.JsonSerializerContexts

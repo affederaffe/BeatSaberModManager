@@ -34,10 +34,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             _gameVersionProvider = gameVersionProvider;
         }
 
-        public IMod[]? AvailableMods { get; private set; }
+        public IReadOnlyList<IMod>? AvailableMods { get; private set; }
         public HashSet<IMod>? InstalledMods { get; private set; }
 
-        public bool IsModLoader(IMod? mod) => mod?.Name.ToLowerInvariant() == "bsipa";
+        public bool IsModLoader(IMod? mod) => mod?.Name.ToUpperInvariant() == "BSIPA";
 
         public IEnumerable<IMod> GetDependencies(IMod mod)
         {
@@ -60,7 +60,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 .SelectMany(Directory.EnumerateFiles)
                 .Where(x => x.EndsWith(".dll", StringComparison.Ordinal) || x.EndsWith(".manifest", StringComparison.Ordinal))
                 .Concat(new[] { Path.Combine(installDir, "Beat Saber_Data/Managed/IPA.Loader.dll") });
-            string?[] hashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFile));
+            string?[] hashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFile)).ConfigureAwait(false);
             foreach (string? hash in hashes)
             {
                 if (hash is not null && fileHashModPairs.TryGetValue(hash, out IMod? mod))
@@ -70,7 +70,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async Task LoadAvailableModsForCurrentVersionAsync(string installDir)
         {
-            string? version = await _gameVersionProvider.DetectGameVersion(installDir);
+            string? version = await _gameVersionProvider.DetectGameVersion(installDir).ConfigureAwait(false);
             await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 

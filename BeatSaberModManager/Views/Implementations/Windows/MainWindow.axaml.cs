@@ -1,3 +1,4 @@
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +20,6 @@ namespace BeatSaberModManager.Views.Implementations.Windows
 {
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
-        private readonly IInstallDirValidator _installDirValidator = null!;
         private readonly IInstallDirLocator _installDirLocator = null!;
 
         public MainWindow() { }
@@ -27,25 +27,26 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         [ActivatorUtilitiesConstructor]
         public MainWindow(MainWindowViewModel viewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
-            _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
             InitializeComponent();
             ViewModel = viewModel;
-            ViewModel.WhenAnyValue(x => x.ProgressBarStatusType)
-                .Select(GetLocalisedStatus)
-                .BindTo(ViewModel, x => x.ProgressBarStatusText);
-            appSettings.Value.InstallDir.Changed.FirstAsync()
-                .Where(x => !installDirValidator.ValidateInstallDir(x))
-                .SelectMany(_ => EnsureInstallDirAsync())
-                .BindTo(appSettings, x => x.Value.InstallDir.Value);
+            this.WhenActivated(disposable =>
+            {
+                ViewModel.WhenAnyValue(x => x.ProgressBarStatusType)
+                    .Select(GetLocalisedStatus)
+                    .BindTo(ViewModel, x => x.ProgressBarStatusText)
+                    .DisposeWith(disposable);
+                appSettings.Value.InstallDir.Changed.FirstAsync()
+                    .Where(x => !installDirValidator.ValidateInstallDir(x))
+                    .SelectMany(_ => EnsureInstallDirAsync())
+                    .BindTo(appSettings, x => x.Value.InstallDir.Value)
+                    .DisposeWith(disposable);
+            });
         }
 
-        private async Task<string?> EnsureInstallDirAsync()
-        {
-            string? installDir = await _installDirLocator.LocateInstallDir();
-            if (_installDirValidator.ValidateInstallDir(installDir)) return installDir;
-            return await new InstallFolderDialogWindow().ShowDialog<string?>(this);
-        }
+        private async Task<string?> EnsureInstallDirAsync() =>
+            await _installDirLocator.LocateInstallDir().ConfigureAwait(false) ??
+            await new InstallFolderDialogWindow().ShowDialog<string?>(this).ConfigureAwait(false);
 
         private string? GetLocalisedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
         {

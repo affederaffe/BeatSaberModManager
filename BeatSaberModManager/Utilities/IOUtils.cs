@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
 
@@ -53,7 +54,7 @@ namespace BeatSaberModManager.Utilities
             return false;
         }
 
-        public static bool TryOpenFile(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, FileOptions options, out FileStream? fileStream)
+        public static bool TryOpenFile(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, FileOptions options, [MaybeNullWhen(false)] out FileStream fileStream)
         {
             fileStream = null;
             try
@@ -67,7 +68,7 @@ namespace BeatSaberModManager.Utilities
             return false;
         }
 
-        public static bool TryReadAllText(string path, out string? text)
+        public static bool TryReadAllText(string path, [MaybeNullWhen(false)] out string text)
         {
             text = null;
             try

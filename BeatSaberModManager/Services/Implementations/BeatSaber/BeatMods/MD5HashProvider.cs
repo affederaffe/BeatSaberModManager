@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public async Task<string?> CalculateHashForFile(string path)
         {
             if (!IOUtils.TryOpenFile(path, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) return null;
-            await using FileStream fs = fileStream!;
+            await using FileStream fs = fileStream;
             return await CalculateHashForStream(fs);
         }
 

@@ -34,13 +34,13 @@
                             Width="200"
                             Height="200"
                             Value="{Binding ProgressValue}"
-                            IsVisible="{Binding IsInstalling}">
+                            IsVisible="{Binding InstallCommand.IsExecuting^}">
             </c:ProgressRing>
 
             <Viewbox Grid.Row="0"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
-                     IsVisible="{Binding IsSuccess}">
+                     IsVisible="{Binding InstallCommand^}">
                 <Path Stroke="DarkGreen" Fill="Green" StrokeThickness="1" Data="{StaticResource Icons:Checkmark}" />
             </Viewbox>
             <Viewbox Grid.Row="0"
