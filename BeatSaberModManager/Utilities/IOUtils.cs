@@ -54,18 +54,16 @@ namespace BeatSaberModManager.Utilities
             return false;
         }
 
-        public static bool TryOpenFile(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, FileOptions options, [MaybeNullWhen(false)] out FileStream fileStream)
+        public static FileStream? TryOpenFile(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, FileOptions options)
         {
-            fileStream = null;
             try
             {
-                fileStream = new FileStream(path, fileMode, fileAccess, fileShare, 4096, options);
-                return true;
+                return new FileStream(path, fileMode, fileAccess, fileShare, 4096, options);
             }
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
-            return false;
+            return null;
         }
 
         public static bool TryReadAllText(string path, [MaybeNullWhen(false)] out string text)

@@ -45,7 +45,7 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         }
 
         private async Task<string?> EnsureInstallDirAsync() =>
-            await _installDirLocator.LocateInstallDir().ConfigureAwait(false) ??
+            await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false) ??
             await new InstallFolderDialogWindow().ShowDialog<string?>(this).ConfigureAwait(false);
 
         private string? GetLocalisedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch

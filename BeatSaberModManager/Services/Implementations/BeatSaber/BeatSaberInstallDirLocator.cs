@@ -22,42 +22,43 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             _installDirValidator = installDirValidator;
         }
 
-        public ValueTask<string?> LocateInstallDir() =>
-            OperatingSystem.IsWindows() ? LocateWindowsInstallDir()
-                : OperatingSystem.IsLinux() ? LocateLinuxSteamInstallDir()
+        public ValueTask<string?> LocateInstallDirAsync() =>
+            OperatingSystem.IsWindows() ? LocateWindowsInstallDirAsync()
+                : OperatingSystem.IsLinux() ? LocateLinuxSteamInstallDirAsync()
                     : throw new PlatformNotSupportedException();
 
         [SupportedOSPlatform("windows")]
-        private ValueTask<string?> LocateWindowsInstallDir()
+        private ValueTask<string?> LocateWindowsInstallDirAsync()
         {
             string? steamInstallDir = LocateWindowsSteamInstallDir();
-            return steamInstallDir is null ? LocateOculusBeatSaberInstallDir() : LocateSteamBeatSaberInstallDir(steamInstallDir);
+            return steamInstallDir is null ? LocateOculusBeatSaberInstallDirAsync() : LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
         [SupportedOSPlatform("linux")]
-        private ValueTask<string?> LocateLinuxSteamInstallDir()
+        private ValueTask<string?> LocateLinuxSteamInstallDirAsync()
         {
             string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string steamInstallDir = Path.Combine(homeDir, ".steam", "root");
-            return LocateSteamBeatSaberInstallDir(steamInstallDir);
+            return LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
-        private async ValueTask<string?> LocateSteamBeatSaberInstallDir(string steamInstallDir)
+        private async ValueTask<string?> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
         {
-            await foreach (string libPath in GetSteamLibraryPaths(steamInstallDir))
+            await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir))
             {
-                string? installDir = await MatchSteamBeatSaberInstallDir(libPath).ConfigureAwait(false);
+                string? installDir = await MatchSteamBeatSaberInstallDirAsync(libPath).ConfigureAwait(false);
                 if (installDir is not null) return installDir;
             }
 
             return null;
         }
 
-        private async Task<string?> MatchSteamBeatSaberInstallDir(string path)
+        private async Task<string?> MatchSteamBeatSaberInstallDirAsync(string path)
         {
             const string beatSaberAppId = "620980";
             string acf = Path.Combine(path, "appmanifest_" + beatSaberAppId + ".acf");
-            if (!IOUtils.TryOpenFile(acf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) return null;
+            await using FileStream? fileStream = IOUtils.TryOpenFile(acf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
+            if (fileStream is null) return null;
             Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
             string? line;
             using StreamReader reader = new(fileStream);
@@ -70,20 +71,19 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                     return installDir;
             }
 
-            await fileStream.DisposeAsync().ConfigureAwait(false);
             return null;
         }
 
         [SupportedOSPlatform("windows")]
-        private ValueTask<string?> LocateOculusBeatSaberInstallDir()
+        private ValueTask<string?> LocateOculusBeatSaberInstallDirAsync()
         {
             using RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
             using RegistryKey? oculusInstallDirKey = baseKey.OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
-            if (string.IsNullOrEmpty(oculusInstallDir)) return new ValueTask<string?>();
+            if (string.IsNullOrEmpty(oculusInstallDir)) return ValueTask.FromResult<string?>(null);
             string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
             string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
-            return new ValueTask<string?>(installDir);
+            return ValueTask.FromResult(installDir);
         }
 
         [SupportedOSPlatform("windows")]
@@ -111,11 +111,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             return steamInstallDirKey?.GetValue("InstallPath")?.ToString();
         }
 
-        private static async IAsyncEnumerable<string> GetSteamLibraryPaths(string path)
+        private static async IAsyncEnumerable<string> EnumerateSteamLibraryPathsAsync(string path)
         {
             yield return path;
             string vdf = Path.Combine(path, "steamapps", "libraryfolders.vdf");
-            if (!IOUtils.TryOpenFile(vdf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) yield break;
+            await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
+            if (fileStream is null) yield break;
             Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
             string? line;
             using StreamReader vdfReader = new(fileStream);
@@ -125,8 +126,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                 if (match.Success)
                     yield return Path.Combine(match.Groups[1].Value.Replace(@"\\", "/", StringComparison.Ordinal), "steamapps");
             }
-
-            await fileStream.DisposeAsync().ConfigureAwait(false);
         }
     }
 }

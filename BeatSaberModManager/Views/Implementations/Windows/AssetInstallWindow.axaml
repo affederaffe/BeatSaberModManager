@@ -40,7 +40,7 @@
             <Viewbox Grid.Row="0"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"
-                     IsVisible="{Binding InstallCommand^}">
+                     IsVisible="{Binding IsSuccess}">
                 <Path Stroke="DarkGreen" Fill="Green" StrokeThickness="1" Data="{StaticResource Icons:Checkmark}" />
             </Viewbox>
             <Viewbox Grid.Row="0"

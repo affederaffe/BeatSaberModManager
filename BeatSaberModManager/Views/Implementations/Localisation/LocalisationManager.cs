@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reactive.Linq;
@@ -24,10 +25,10 @@ namespace BeatSaberModManager.Views.Implementations.Localisation
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
             SelectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _appSettings.Value.LanguageCode) ??
                                Languages.FirstOrDefault(x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
-                               Languages.First();
+                               Languages[0];
         }
 
-        public ILanguage[] Languages { get; }
+        public IReadOnlyList<ILanguage> Languages { get; }
 
         private ILanguage _selectedLanguage = null!;
         public ILanguage SelectedLanguage

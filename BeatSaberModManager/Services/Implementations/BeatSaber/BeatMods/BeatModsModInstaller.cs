@@ -96,7 +96,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             OperatingSystem.IsWindows()
                 ? UninstallBsipaWindowsAsync(installDir, bsipa)
                 : OperatingSystem.IsLinux()
-                    ? UninstallBsipaLinux(installDir, bsipa)
+                    ? UninstallBsipaLinuxAsync(installDir, bsipa)
                     : throw new PlatformNotSupportedException();
 
         [SupportedOSPlatform("windows")]
@@ -125,11 +125,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
             string protonRegPath = Path.Combine($"{installDir}/../..", "compatdata/620980/pfx/user.reg");
-            if (!IOUtils.TryOpenFile(protonRegPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) return;
-            await using FileStream fs = fileStream;
-            using StreamReader reader = new(fs);
+            await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.Asynchronous);
+            if (fileStream is null) return;
+            using StreamReader reader = new(fileStream);
             string content = await reader.ReadToEndAsync().ConfigureAwait(false);
-            await using StreamWriter streamWriter = new(fs);
+            await using StreamWriter streamWriter = new(fileStream);
             if (!content.Contains("[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\""))
                 await streamWriter.WriteLineAsync("\n[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
         }
@@ -158,14 +158,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         }
 
         [SupportedOSPlatform("linux")]
-        private static ValueTask UninstallBsipaLinux(string installDir, BeatModsMod bsipa)
+        private static ValueTask UninstallBsipaLinuxAsync(string installDir, BeatModsMod bsipa)
         {
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(installDir);
             IPA.Program.Main(new[] { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
             RemoveBsipaFiles(installDir, bsipa);
-            return new ValueTask();
+            return ValueTask.CompletedTask;
         }
 
         private static void RemoveBsipaFiles(string installDir, BeatModsMod bsipa)

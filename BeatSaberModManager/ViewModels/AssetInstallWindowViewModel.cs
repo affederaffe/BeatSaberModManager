@@ -25,6 +25,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
         private readonly ObservableAsPropertyHelper<string?> _assetName;
+        private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
 
         public AssetInstallWindowViewModel(Uri uri, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
@@ -38,6 +39,7 @@ namespace BeatSaberModManager.ViewModels
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
             statusProgress.StatusText.ToProperty(this, nameof(AssetName), out _assetName);
             InstallCommand = ReactiveCommand.CreateFromTask(InstallAssetAsync);
+            InstallCommand.ToProperty(this, nameof(IsSuccess), out _isSuccess);
             InstallCommand.CombineLatest(InstallCommand.IsExecuting)
                 .Select(x => !x.Item1 && !x.Item2)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
@@ -50,6 +52,8 @@ namespace BeatSaberModManager.ViewModels
         public double ProgressValue => _progressValue.Value;
 
         public string? AssetName => _assetName.Value;
+
+        public bool IsSuccess => _isSuccess.Value;
 
         public bool IsFailed => _isFailed.Value;
 

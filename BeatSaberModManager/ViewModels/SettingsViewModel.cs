@@ -33,9 +33,6 @@ namespace BeatSaberModManager.ViewModels
             _appSettings = appSettings;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
-            _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
-            _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
-            _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
             LocalisationManager = localisationManager;
             ThemeManager = themeManager;
             OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(InstallDir!));
@@ -70,14 +67,14 @@ namespace BeatSaberModManager.ViewModels
         private string? _installDir;
         public string? InstallDir
         {
-            get => _appSettings.Value.InstallDir.Value;
+            get => _installDir ??= _appSettings.Value.InstallDir.Value;
             set => this.RaiseAndSetIfChanged(ref _installDir, value);
         }
 
         private string? _themesDir;
         public string? ThemesDir
         {
-            get => _appSettings.Value.ThemesDir.Value;
+            get => _themesDir ??= _appSettings.Value.ThemesDir.Value;
             set => this.RaiseAndSetIfChanged(ref _themesDir, value);
         }
 
@@ -87,24 +84,24 @@ namespace BeatSaberModManager.ViewModels
             set => _appSettings.Value.ForceReinstallMods = value;
         }
 
-        private bool _beatSaverOneClickCheckboxChecked;
+        private bool? _beatSaverOneClickCheckboxChecked;
         public bool BeatSaverOneClickCheckboxChecked
         {
-            get => _beatSaverOneClickCheckboxChecked;
+            get => _beatSaverOneClickCheckboxChecked ??= _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
             set => this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
         }
 
-        private bool _modelSaberOneClickCheckboxChecked;
+        private bool? _modelSaberOneClickCheckboxChecked;
         public bool ModelSaberOneClickCheckboxChecked
         {
-            get => _modelSaberOneClickCheckboxChecked;
+            get => _modelSaberOneClickCheckboxChecked ??= _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
             set => this.RaiseAndSetIfChanged(ref _modelSaberOneClickCheckboxChecked, value);
         }
 
-        private bool _playlistOneClickCheckBoxChecked;
+        private bool? _playlistOneClickCheckBoxChecked;
         public bool PlaylistOneClickCheckBoxChecked
         {
-            get => _playlistOneClickCheckBoxChecked;
+            get => _playlistOneClickCheckBoxChecked ??= _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
 
