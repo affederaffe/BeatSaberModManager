@@ -9,6 +9,7 @@ using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Views.Interfaces;
 
 using ReactiveUI;
 
@@ -18,8 +19,6 @@ namespace BeatSaberModManager.ViewModels
     public class SettingsViewModel : ViewModelBase
     {
         private readonly ISettings<AppSettings> _appSettings;
-        private readonly IStatusProgress _progress;
-        private readonly IInstallDirValidator _installDirValidator;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<bool> _hasValidatedInstallDir;
@@ -29,26 +28,32 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, PlaylistInstaller playlistInstaller)
+        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, ILocalisationManager localisationManager, IThemeManager themeManager, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings;
-            _progress = progress;
-            _installDirValidator = installDirValidator;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
             _beatSaverOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kModelSaberProtocol);
             _modelSaberOneClickCheckboxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kBeatSaverProtocol);
             _playlistOneClickCheckBoxChecked = _protocolHandlerRegistrar.IsProtocolHandlerRegistered(kPlaylistProtocol);
+            LocalisationManager = localisationManager;
+            ThemeManager = themeManager;
             OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(InstallDir!));
             OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(ThemesDir!));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
             appSettings.Value.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir).ToProperty(this, nameof(HasValidatedInstallDir), out _hasValidatedInstallDir);
             appSettings.Value.ThemesDir.Changed.Select(Directory.Exists).ToProperty(this, nameof(OpenThemesDirButtonActive), out _openThemesDirButtonActive);
-            this.WhenAnyValue(x => x.BeatSaverOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kBeatSaverProtocol));
-            this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(b => ToggleOneClickHandler(b, kModelSaberProtocol));
-            this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(b => ToggleOneClickHandler(b, kPlaylistProtocol));
+            this.WhenAnyValue(x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, kBeatSaverProtocol));
+            this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, kModelSaberProtocol));
+            this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, kPlaylistProtocol));
+            this.WhenAnyValue(x => x.InstallDir).Where(installDirValidator.ValidateInstallDir).BindTo(appSettings, x => x.Value.InstallDir.Value);
+            this.WhenAnyValue(x => x.ThemesDir).Where(Directory.Exists).BindTo(appSettings, x => x.Value.ThemesDir.Value);
         }
+
+        public ILocalisationManager LocalisationManager { get; }
+
+        public IThemeManager ThemeManager { get; }
 
         public ReactiveCommand<Unit, Unit> OpenInstallDirCommand { get; }
 
@@ -62,16 +67,18 @@ namespace BeatSaberModManager.ViewModels
 
         public bool OpenThemesDirButtonActive => _openThemesDirButtonActive.Value;
 
+        private string? _installDir;
         public string? InstallDir
         {
             get => _appSettings.Value.InstallDir.Value;
-            set => ValidateAndSetInstallDir(value);
+            set => this.RaiseAndSetIfChanged(ref _installDir, value);
         }
 
+        private string? _themesDir;
         public string? ThemesDir
         {
             get => _appSettings.Value.ThemesDir.Value;
-            set => ValidateAndSetThemesDir(value);
+            set => this.RaiseAndSetIfChanged(ref _themesDir, value);
         }
 
         public bool ForceReinstallMods
@@ -101,29 +108,13 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
 
-        public async Task InstallPlaylistsAsync(string path) =>
-            await _playlistInstaller.InstallPlaylistAsync(_appSettings.Value.InstallDir.Value!, path, _progress).ConfigureAwait(false);
+        public Task<bool> InstallPlaylistAsync(string path, IStatusProgress progress) =>
+            _playlistInstaller.InstallPlaylistAsync(_appSettings.Value.InstallDir.Value!, path, progress);
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {
             if (active) _protocolHandlerRegistrar.RegisterProtocolHandler(protocol);
             else _protocolHandlerRegistrar.UnregisterProtocolHandler(protocol);
-        }
-
-        private void ValidateAndSetInstallDir(string? value)
-        {
-            if (!_installDirValidator.ValidateInstallDir(value)) return;
-            this.RaisePropertyChanging(nameof(InstallDir));
-            _appSettings.Value.InstallDir.Value = value;
-            this.RaisePropertyChanged(nameof(InstallDir));
-        }
-
-        private void ValidateAndSetThemesDir(string? value)
-        {
-            if (!Directory.Exists(value)) return;
-            this.RaisePropertyChanging(nameof(ThemesDir));
-            _appSettings.Value.ThemesDir.Value = value;
-            this.RaisePropertyChanged(nameof(ThemesDir));
         }
     }
 }

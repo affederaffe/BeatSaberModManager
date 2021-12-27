@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Management;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -56,11 +54,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             const string beatSaberAppId = "620980";
             string acf = Path.Combine(path, "appmanifest_" + beatSaberAppId + ".acf");
-            await using FileStream? fileStream = IOUtils.SafeOpenFile(acf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
-            if (fileStream is null) return null;
+            if (!IOUtils.TryOpenFile(acf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) return null;
+            await using FileStream fs = fileStream!;
             Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
             string? line;
-            using StreamReader reader = new(acf);
+            using StreamReader reader = new(fs);
             while ((line = await reader.ReadLineAsync()) is not null)
             {
                 Match match = regex.Match(line);
@@ -80,7 +78,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
             if (string.IsNullOrEmpty(oculusInstallDir)) return new ValueTask<string?>();
             string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
-            string? installDir = !string.IsNullOrEmpty(oculusInstallDir) && _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
+            string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
             return new ValueTask<string?>(installDir);
         }
 
@@ -89,37 +87,17 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             if (!OperatingSystem.IsWindows()) throw new InvalidOperationException();
             using RegistryKey? librariesKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Libraries");
             if (librariesKey is null) return null;
-            Dictionary<string, string> guidLetterVolumes = GetWindowsDriveLetters();
             foreach (string libraryKeyName in librariesKey.GetSubKeyNames())
             {
                 using RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
                 string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
                 if (libraryPath is null) continue;
-                string guidLetter = guidLetterVolumes.FirstOrDefault(x => libraryPath.Contains(x.Key)).Value;
-                if (string.IsNullOrEmpty(guidLetter)) continue;
-                string finalPath = Path.Combine(guidLetter, libraryPath[49..], "Software", "hyperbolic-magnetism-beat-saber");
+                string finalPath = Path.Combine(libraryPath, "Software", "hyperbolic-magnetism-beat-saber");
                 if (_installDirValidator.ValidateInstallDir(finalPath))
                     return finalPath;
             }
 
             return null;
-        }
-
-        private static Dictionary<string, string> GetWindowsDriveLetters()
-        {
-            if (!OperatingSystem.IsWindows()) throw new InvalidOperationException();
-            WqlObjectQuery wqlQuery = new("SELECT * FROM Win32_Volume");
-            using ManagementObjectSearcher searcher = new(wqlQuery);
-            Dictionary<string, string> guidLetterVolumes = new();
-            foreach (ManagementBaseObject disk in searcher.Get())
-            {
-                string diskId = ((string)disk.GetPropertyValue("DeviceID")).Substring(11, 36);
-                string diskLetter = (string)disk.GetPropertyValue("DriveLetter") + "/";
-                if (!string.IsNullOrWhiteSpace(diskLetter))
-                    guidLetterVolumes.Add(diskId, diskLetter);
-            }
-
-            return guidLetterVolumes;
         }
 
         private static string? LocateWindowsSteamInstallDir()
@@ -134,11 +112,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             yield return path;
             string vdf = Path.Combine(path, "steamapps", "libraryfolders.vdf");
-            await using FileStream? fileStream = IOUtils.SafeOpenFile(vdf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
-            if (fileStream is null) yield break;
+            if (!IOUtils.TryOpenFile(vdf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) yield break;
+            await using FileStream fs = fileStream!;
             Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
             string? line;
-            using StreamReader vdfReader = new(vdf);
+            using StreamReader vdfReader = new(fs);
             while ((line = await vdfReader.ReadLineAsync()) is not null)
             {
                 Match match = regex.Match(line);

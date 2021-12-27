@@ -44,7 +44,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);
-                    retries -= 1;
+                    --retries;
                     continue;
                 }
 
@@ -63,7 +63,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);
-                    retries -= 1;
+                    --retries;
                     continue;
                 }
 
@@ -77,10 +77,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         public static bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
         {
             string customLevelsDirectoryPath = Path.Combine(installDir, "Beat Saber_Data", "CustomLevels");
-            IOUtils.SafeCreateDirectory(customLevelsDirectoryPath);
+            IOUtils.TryCreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
-            IOUtils.SafeExtractArchive(archive, levelDirectoryPath, true);
+            IOUtils.TryExtractArchive(archive, levelDirectoryPath, true);
             return true;
         }
 

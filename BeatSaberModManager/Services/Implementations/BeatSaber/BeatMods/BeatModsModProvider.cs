@@ -128,8 +128,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             Dictionary<string, IMod> fileHashModPairs = new(allMods.Length);
             foreach (BeatModsMod mod in allMods)
             {
-                BeatModsDownload download = mod.Downloads.First();
-                foreach (BeatModsHash hash in download.Hashes)
+                foreach (BeatModsHash hash in mod.Downloads.First().Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
             }
 

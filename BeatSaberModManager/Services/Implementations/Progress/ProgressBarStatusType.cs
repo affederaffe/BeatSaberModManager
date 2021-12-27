@@ -5,6 +5,7 @@
         None,
         Installing,
         Uninstalling,
-        Completed
+        Completed,
+        Failed
     }
 }

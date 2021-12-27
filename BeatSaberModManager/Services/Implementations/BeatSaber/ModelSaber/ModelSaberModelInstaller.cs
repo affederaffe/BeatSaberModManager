@@ -36,7 +36,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 
             if (folderName is null) return false;
             string folderPath = Path.Combine(installDir, folderName);
-            IOUtils.SafeCreateDirectory(folderPath);
+            IOUtils.TryCreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(modelName);
             using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath, progress).ConfigureAwait(false);

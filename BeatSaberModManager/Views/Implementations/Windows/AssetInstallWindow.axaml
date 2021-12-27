@@ -49,6 +49,7 @@
                      IsVisible="{Binding IsFailed}">
                 <Path Stroke="DarkRed" Fill="Red" StrokeThickness="1" Data="{StaticResource Icons:Cross}" />
             </Viewbox>
+
             <ScrollViewer Grid.Row="1" Padding="10">
                 <ItemsRepeater Items="{Binding Log}" />
             </ScrollViewer>

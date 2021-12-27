@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -38,7 +37,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string playlistsDirPath = Path.Combine(installDir, "Playlists");
             string fileName = uri.Segments.Last();
             string filePath = Path.Combine(playlistsDirPath, fileName);
-            IOUtils.SafeCreateDirectory(playlistsDirPath);
+            IOUtils.TryCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
             Playlist? playlist = JsonSerializer.Deserialize(body, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
@@ -50,7 +49,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string playlistsDirPath = Path.Combine(installDir, "Playlists");
             string fileName = Path.GetFileName(filePath);
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
-            IOUtils.SafeCreateDirectory(playlistsDirPath);
+            IOUtils.TryCreateDirectory(playlistsDirPath);
             await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);
             Playlist? playlist = JsonSerializer.Deserialize(json, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
@@ -80,14 +79,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         private async Task<BeatSaverMap?[]> GetMapsAsync(Playlist playlist)
         {
-            List<BeatSaverMap?> maps = new(playlist.Songs.Length);
-            foreach (PlaylistSong song in playlist.Songs)
-            {
-                BeatSaverMap? map = await _beatSaverMapInstaller.GetBeatSaverMapAsync(song.Id).ConfigureAwait(false);
-                maps.Add(map);
-            }
-
-            return maps.ToArray();
+            BeatSaverMap?[] maps = new BeatSaverMap?[playlist.Songs.Length];
+            for (int i = 0; i < maps.Length; i++)
+                maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapAsync(playlist.Songs[i].Id).ConfigureAwait(false);
+            return maps;
         }
     }
 }

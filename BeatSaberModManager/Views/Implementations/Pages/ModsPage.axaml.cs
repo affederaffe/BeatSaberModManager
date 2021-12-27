@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Reactive.Linq;
 
 using Avalonia.Collections;
 using Avalonia.Data.Converters;
@@ -24,15 +23,11 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         {
             InitializeComponent();
             ViewModel = viewModel;
-            ViewModel.WhenAnyValue(x => x.GridItems).WhereNotNull().Subscribe(InitializeDataGrid);
-        }
-
-        private void InitializeDataGrid(IEnumerable<ModGridItemViewModel> gridItems)
-        {
-            DataGridCollectionView dataGridCollection = new(gridItems);
-            dataGridCollection.GroupDescriptions.Add(new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)));
-            ModsDataGrid.Items = dataGridCollection;
-            dataGridCollection.MoveCurrentTo(null);
+            ViewModel.WhenAnyValue(x => x.GridItems)
+                .WhereNotNull()
+                .Select(x => new DataGridCollectionView(x) { GroupDescriptions = { new DataGridPathGroupDescription(nameof(ModGridItemViewModel.AvailableMod) + "." + nameof(ModGridItemViewModel.AvailableMod.Category)) }})
+                .Do(x => x.MoveCurrentTo(null))
+                .BindTo(ModsDataGrid, x => x.Items);
         }
 
         public static readonly FuncValueConverter<bool, IBrush> IsUpToDateColorConverter = new(x => x ? Brushes.Green : Brushes.Red);

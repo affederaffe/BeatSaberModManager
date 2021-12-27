@@ -29,7 +29,7 @@ namespace BeatSaberModManager.Views.Implementations.Windows
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
             ViewModel.InstallCommand.Execute()
-                .Throttle(TimeSpan.FromMilliseconds(2000))
+                .Delay(TimeSpan.FromMilliseconds(2000))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(_ => Close());
         }

@@ -16,7 +16,9 @@ namespace BeatSaberModManager.ViewModels
         {
             _availableMod = availableMod;
             _installedMod = installedMod;
-            this.WhenAnyValue(x => x.InstalledMod).Select(x => modVersionComparer.CompareVersions(AvailableMod.Version, x?.Version) >= 0).ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
+            this.WhenAnyValue(x => x.InstalledMod)
+                .Select(x => modVersionComparer.CompareVersions(AvailableMod.Version, x?.Version) >= 0)
+                .ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
         }
 
         public bool IsUpToDate => _isUpToDate.Value;

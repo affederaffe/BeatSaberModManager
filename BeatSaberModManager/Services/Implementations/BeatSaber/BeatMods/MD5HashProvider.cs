@@ -13,9 +13,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
     {
         public async Task<string?> CalculateHashForFile(string path)
         {
-            await using Stream? stream = IOUtils.SafeOpenFile(path, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
-            if (stream is null) return null;
-            return await CalculateHashForStream(stream);
+            if (!IOUtils.TryOpenFile(path, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) return null;
+            await using FileStream fs = fileStream!;
+            return await CalculateHashForStream(fs);
         }
 
         public async Task<string?> CalculateHashForStream(Stream stream)

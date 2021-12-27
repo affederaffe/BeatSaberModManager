@@ -7,7 +7,7 @@ namespace BeatSaberModManager.Utilities
 {
     public static class IOUtils
     {
-        public static void SafeDeleteFile(string path)
+        public static void TryDeleteFile(string path)
         {
             try
             {
@@ -18,7 +18,7 @@ namespace BeatSaberModManager.Utilities
             catch (UnauthorizedAccessException) { }
         }
 
-        public static void SafeCreateDirectory(string path)
+        public static void TryCreateDirectory(string path)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace BeatSaberModManager.Utilities
             catch (UnauthorizedAccessException) { }
         }
 
-        public static void SafeDeleteDirectory(string path, bool recursive)
+        public static void TryDeleteDirectory(string path, bool recursive)
         {
             try
             {
@@ -40,39 +40,45 @@ namespace BeatSaberModManager.Utilities
             catch (UnauthorizedAccessException) { }
         }
 
-        public static void SafeExtractArchive(ZipArchive archive, string path, bool overrideFiles)
+        public static bool TryExtractArchive(ZipArchive archive, string path, bool overrideFiles)
         {
             try
             {
                 archive.ExtractToDirectory(path, overrideFiles);
+                return true;
             }
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
+            return false;
         }
 
-        public static FileStream? SafeOpenFile(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, FileOptions options)
+        public static bool TryOpenFile(string path, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, FileOptions options, out FileStream? fileStream)
         {
+            fileStream = null;
             try
             {
-                return new FileStream(path, fileMode, fileAccess, fileShare, 4096, options);
+                fileStream = new FileStream(path, fileMode, fileAccess, fileShare, 4096, options);
+                return true;
             }
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
-            return null;
+            return false;
         }
 
-        public static string? SafeReadAllText(string path)
+        public static bool TryReadAllText(string path, out string? text)
         {
+            text = null;
             try
             {
-                return File.ReadAllText(path);
+                text = File.ReadAllText(path);
+                return true;
             }
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
-            return null;
+            return false;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             if (beatModsMods.Length <= 0) yield break;
             IEnumerable<string> urls = beatModsMods.Select(x => x.Downloads.First().Url);
             string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
-            IOUtils.SafeCreateDirectory(pendingDirPath);
+            IOUtils.TryCreateDirectory(pendingDirPath);
             int i = 0;
             _progress.Report(beatModsMods[i].Name);
             _progress.Report(ProgressBarStatusType.Installing);
@@ -40,12 +40,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 if (_modProvider.IsModLoader(beatModsMods[i]))
                 {
-                    IOUtils.SafeExtractArchive(archive, installDir, true);
+                    IOUtils.TryExtractArchive(archive, installDir, true);
                     await InstallBsipaAsync(installDir).ConfigureAwait(false);
                 }
                 else
                 {
-                    IOUtils.SafeExtractArchive(archive, pendingDirPath, true);
+                    IOUtils.TryExtractArchive(archive, pendingDirPath, true);
                 }
 
                 _modProvider.InstalledMods?.Add(beatModsMods[i]);
@@ -84,10 +84,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             string libsDirPath = Path.Combine(installDir, "Libs");
             string ipaDirPath = Path.Combine(installDir, "IPA");
             string winhttpPath = Path.Combine(installDir, "winhttp.dll");
-            IOUtils.SafeDeleteDirectory(pluginsDirPath, true);
-            IOUtils.SafeDeleteDirectory(libsDirPath, true);
-            IOUtils.SafeDeleteDirectory(ipaDirPath, true);
-            IOUtils.SafeDeleteFile(winhttpPath);
+            IOUtils.TryDeleteDirectory(pluginsDirPath, true);
+            IOUtils.TryDeleteDirectory(libsDirPath, true);
+            IOUtils.TryDeleteDirectory(ipaDirPath, true);
+            IOUtils.TryDeleteFile(winhttpPath);
         }
 
         private static Task InstallBsipaAsync(string installDir) =>
@@ -128,11 +128,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
             string protonRegPath = Path.Combine($"{installDir}/../..", "compatdata/620980/pfx/user.reg");
-            await using FileStream? fileStream = IOUtils.SafeOpenFile(protonRegPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.Asynchronous);
-            if (fileStream is null) return;
-            using StreamReader reader = new(fileStream);
+            if (!IOUtils.TryOpenFile(protonRegPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.Asynchronous, out FileStream? fileStream)) return;
+            await using FileStream fs = fileStream!;
+            using StreamReader reader = new(fs);
             string content = await reader.ReadToEndAsync().ConfigureAwait(false);
-            await using StreamWriter streamWriter = new(fileStream);
+            await using StreamWriter streamWriter = new(fs);
             if (!content.Contains("[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\""))
                 await streamWriter.WriteLineAsync("\n[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
         }
@@ -175,7 +175,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 string fileName = hash.File.Replace("IPA/Data", "Beat Saber_Data");
                 string path = Path.Combine(installDir, fileName);
-                IOUtils.SafeDeleteFile(path);
+                IOUtils.TryDeleteFile(path);
             }
         }
 
@@ -187,8 +187,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 string pendingPath = Path.Combine(pendingDirPath, hash.File);
                 string normalPath = Path.Combine(installDir, hash.File);
-                IOUtils.SafeDeleteFile(pendingPath);
-                IOUtils.SafeDeleteFile(normalPath);
+                IOUtils.TryDeleteFile(pendingPath);
+                IOUtils.TryDeleteFile(normalPath);
             }
         }
     }

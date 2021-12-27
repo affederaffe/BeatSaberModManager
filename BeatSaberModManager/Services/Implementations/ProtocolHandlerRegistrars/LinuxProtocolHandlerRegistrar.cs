@@ -33,7 +33,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         public void UnregisterProtocolHandler(string protocol)
         {
             string handlerPath = GetHandlerPathForProtocol(protocol);
-            IOUtils.SafeDeleteFile(handlerPath);
+            IOUtils.TryDeleteFile(handlerPath);
         }
 
         private string GetHandlerPathForProtocol(string protocol) => Path.Combine(_localAppDataPath, GetHandlerNameForProtocol(protocol));

@@ -19,7 +19,6 @@ namespace BeatSaberModManager.Views.Implementations.Windows
 {
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
-        private readonly ISettings<AppSettings> _appSettings = null!;
         private readonly IInstallDirValidator _installDirValidator = null!;
         private readonly IInstallDirLocator _installDirLocator = null!;
 
@@ -28,21 +27,24 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         [ActivatorUtilitiesConstructor]
         public MainWindow(MainWindowViewModel viewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
-            _appSettings = appSettings;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
             InitializeComponent();
             ViewModel = viewModel;
-            ViewModel.WhenAnyValue(x => x.ProgressBarStatusType).Select(GetLocalisedStatus).BindTo(ViewModel, x => x.ProgressBarStatusText);
-            _appSettings.Value.InstallDir.Changed.FirstAsync().InvokeCommand(ReactiveCommand.CreateFromTask<string?>(EnsureInstallDir));
+            ViewModel.WhenAnyValue(x => x.ProgressBarStatusType)
+                .Select(GetLocalisedStatus)
+                .BindTo(ViewModel, x => x.ProgressBarStatusText);
+            appSettings.Value.InstallDir.Changed.FirstAsync()
+                .Where(x => !installDirValidator.ValidateInstallDir(x))
+                .SelectMany(_ => EnsureInstallDirAsync())
+                .BindTo(appSettings, x => x.Value.InstallDir.Value);
         }
 
-        private async Task EnsureInstallDir(string? installDir)
+        private async Task<string?> EnsureInstallDirAsync()
         {
-            if (_installDirValidator.ValidateInstallDir(installDir)) return;
-            _appSettings.Value.InstallDir.Value = await _installDirLocator.LocateInstallDir();
-            if (_installDirValidator.ValidateInstallDir(installDir)) return;
-            _appSettings.Value.InstallDir.Value = await new InstallFolderDialogWindow().ShowDialog<string?>(this);
+            string? installDir = await _installDirLocator.LocateInstallDir();
+            if (_installDirValidator.ValidateInstallDir(installDir)) return installDir;
+            return await new InstallFolderDialogWindow().ShowDialog<string?>(this);
         }
 
         private string? GetLocalisedStatus(ProgressBarStatusType statusType) => this.FindResource(statusType switch
@@ -51,6 +53,7 @@ namespace BeatSaberModManager.Views.Implementations.Windows
             ProgressBarStatusType.Installing => "Status:Installing",
             ProgressBarStatusType.Uninstalling => "Status:Uninstalling",
             ProgressBarStatusType.Completed => "Status:Completed",
+            ProgressBarStatusType.Failed => "Status:Failed",
             _ => string.Empty
         }) as string;
     }
