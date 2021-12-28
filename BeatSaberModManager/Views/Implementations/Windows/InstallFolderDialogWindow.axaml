@@ -12,10 +12,7 @@
         ClientSize="320, 140">
 
         <Panel>
-            <Rectangle IsHitTestVisible="False"
-                       Opacity="0.9"
-                       Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
-            </Rectangle>
+            <Rectangle IsHitTestVisible="False" Fill="{DynamicResource BackgroundMediumLowBrush}" />
 
             <TextBlock Margin="20"
                        TextWrapping="Wrap"
