@@ -3,10 +3,7 @@
              x:Class="BeatSaberModManager.Views.Implementations.App">
 
     <Application.Styles>
-        <FluentTheme Mode="Dark" />
-        <StyleInclude Source="/Resources/Styles/Sidebar.axaml" />
-        <StyleInclude Source="/Resources/Styles/ProgressRing.axaml" />
-        <StyleInclude Source="/Resources/Styles/DataGrid.axaml" />
+        <StyleInclude Source="/Resources/Styles/FluentTheme.axaml" />
     </Application.Styles>
 
     <Application.Resources>

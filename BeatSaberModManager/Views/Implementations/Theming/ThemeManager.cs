@@ -29,8 +29,8 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             _appSettings = appSettings;
             Themes = new ObservableCollection<ITheme>
             {
-                LoadBuildInTheme("Fluent Light", "avares://Avalonia.Themes.Fluent/FluentLight.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"),
-                LoadBuildInTheme("Fluent Dark", "avares://Avalonia.Themes.Fluent/FluentDark.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml")
+                LoadBuildInTheme("Fluent Light", "avares://Avalonia.Themes.Fluent/FluentLight.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml", "avares://BeatSaberModManager/Resources/Styles/FluentTheme.axaml"),
+                LoadBuildInTheme("Fluent Dark", "avares://Avalonia.Themes.Fluent/FluentDark.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml", "avares://BeatSaberModManager/Resources/Styles/FluentTheme.axaml")
             };
 
             _buildInThemesCount = Themes.Count;

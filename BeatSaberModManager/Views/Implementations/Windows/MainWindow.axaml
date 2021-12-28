@@ -18,7 +18,7 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <TabControl Classes="Sidebar">
+    <TabControl Classes="SideBar">
         <TabControl.Template>
             <ControlTemplate>
                 <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
@@ -26,14 +26,13 @@
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                IsHitTestVisible="False"
-                               Opacity="0.9"
-                               Fill="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}">
+                               Fill="{DynamicResource BackgroundMediumLowBrush}">
                     </Rectangle>
                     <Rectangle Grid.Column="1"
                                Grid.Row="0"
                                Grid.RowSpan="2"
                                IsHitTestVisible="False" 
-                               Fill="{DynamicResource SystemControlBackgroundChromeMediumBrush}">
+                               Fill="{DynamicResource BackgroundMediumBrush}">
                     </Rectangle>
 
                     <ItemsPresenter x:Name="PART_ItemsPresenter"
@@ -109,7 +108,7 @@
             <p:IntroPage />
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Info}" />
+                    <PathIcon Data="{StaticResource Icons:Info}" Foreground="{DynamicResource InfoIconBrush}" />
                     <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:IntroHeader}" />
                 </StackPanel>
             </TabItem.Header>
@@ -117,7 +116,7 @@
         <TabItem Content="{Binding ModsViewModel}">
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Database}" />
+                    <PathIcon Data="{StaticResource Icons:Database}" Foreground="{DynamicResource DatabaseIconBrush}" />
                     <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:ModsHeader}" />
                 </StackPanel>
             </TabItem.Header>
@@ -125,7 +124,7 @@
         <TabItem Content="{Binding SettingsViewModel}">
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Gear}" />
+                    <PathIcon Data="{StaticResource Icons:Gear}" Foreground="{DynamicResource GearIconBrush}" />
                     <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:SettingsHeader}" />
                 </StackPanel>
             </TabItem.Header>
