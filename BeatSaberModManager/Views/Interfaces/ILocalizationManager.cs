@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace BeatSaberModManager.Views.Interfaces
 {
-    public interface ILocalisationManager
+    public interface ILocalizationManager
     {
         ILanguage SelectedLanguage { get; set; }
         IReadOnlyList<ILanguage> Languages { get; }

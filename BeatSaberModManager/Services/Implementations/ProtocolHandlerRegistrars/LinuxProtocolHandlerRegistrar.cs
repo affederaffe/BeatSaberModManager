@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.Versioning;
 
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
@@ -8,6 +9,7 @@ using BeatSaberModManager.Utilities;
 
 namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
 {
+    [SupportedOSPlatform("linux")]
     public class LinuxProtocolHandlerRegistrar : IProtocolHandlerRegistrar
     {
         private readonly string _localAppDataPath;

@@ -13,13 +13,13 @@ using BeatSaberModManager.Views.Interfaces;
 using ReactiveUI;
 
 
-namespace BeatSaberModManager.Views.Implementations.Localisation
+namespace BeatSaberModManager.Views.Implementations.Localization
 {
-    public class LocalisationManager : ReactiveObject, ILocalisationManager
+    public class LocalizationManager : ReactiveObject, ILocalizationManager
     {
         private readonly ISettings<AppSettings> _appSettings;
 
-        public LocalisationManager(ISettings<AppSettings> appSettings)
+        public LocalizationManager(ISettings<AppSettings> appSettings)
         {
             _appSettings = appSettings;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();

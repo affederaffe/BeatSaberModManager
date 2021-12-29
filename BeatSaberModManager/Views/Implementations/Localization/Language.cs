@@ -5,7 +5,7 @@ using Avalonia.Controls;
 using BeatSaberModManager.Views.Interfaces;
 
 
-namespace BeatSaberModManager.Views.Implementations.Localisation
+namespace BeatSaberModManager.Views.Implementations.Localization
 {
     public class Language : ILanguage
     {

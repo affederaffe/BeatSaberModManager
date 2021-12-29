@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Services.Implementations.Http;
+using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
 
@@ -38,7 +39,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             string folderPath = Path.Combine(installDir, folderName);
             IOUtils.TryCreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
-            progress?.Report(modelName);
+            progress?.Report(new ProgressInfo(StatusType.Installing, modelName));
             using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath, progress).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             byte[] body = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);

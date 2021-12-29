@@ -114,8 +114,8 @@
                     HorizontalAlignment="Left"
                     Orientation="Horizontal">
             <Label Content="A 文" FontSize="22" />
-            <ComboBox Items="{Binding LocalisationManager.Languages}"
-                      SelectedItem="{Binding LocalisationManager.SelectedLanguage}">
+            <ComboBox Items="{Binding LocalizationManager.Languages}"
+                      SelectedItem="{Binding LocalizationManager.SelectedLanguage}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <Label Content="{Binding CultureInfo.DisplayName}" />
@@ -165,7 +165,7 @@
                 Margin="10, 2.5"
                 HorizontalAlignment="Center"
                 Content="{DynamicResource OptionsView:OpenFolderButton}"
-                IsEnabled="{Binding OpenThemesDirButtonActive}"
+                IsEnabled="{Binding HasThemesDir}"
                 Command="{Binding OpenThemesDirCommand}">
         </Button>
         <Button x:Name="SelectThemesFolderButton"

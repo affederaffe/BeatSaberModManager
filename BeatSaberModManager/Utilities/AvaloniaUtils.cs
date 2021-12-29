@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml;
 
@@ -8,14 +9,15 @@ namespace BeatSaberModManager.Utilities
 {
     public static class AvaloniaUtils
     {
-        public static bool TryParse<T>(string xaml, [MaybeNullWhen(false)] out T style)
+        public static bool TryParse<T>(string xaml, string dir, [MaybeNullWhen(false)] out T style)
         {
             style = default;
             try
             {
-                style = AvaloniaRuntimeXamlLoader.Parse<T>(xaml);
+                style = (T)AvaloniaRuntimeXamlLoader.Load(xaml, null, null, new Uri(dir));
                 return true;
             }
+            catch (ArgumentException) { }
             catch (XmlException) { }
             return false;
         }

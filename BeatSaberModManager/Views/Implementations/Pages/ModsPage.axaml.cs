@@ -1,11 +1,10 @@
 ﻿using System.Reactive.Linq;
 
 using Avalonia.Collections;
-using Avalonia.Data.Converters;
-using Avalonia.Media;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
+using BeatSaberModManager.Views.Implementations.Converters;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,6 +29,6 @@ namespace BeatSaberModManager.Views.Implementations.Pages
                 .BindTo(ModsDataGrid, x => x.Items);
         }
 
-        public static readonly FuncValueConverter<bool, IBrush> IsUpToDateColorConverter = new(x => x ? Brushes.Green : Brushes.Red);
+        public static readonly IsUpToDateColorConverter IsUpToDateColorConverter = new();
     }
 }

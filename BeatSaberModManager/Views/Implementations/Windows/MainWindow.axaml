@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
         xmlns:p="clr-namespace:BeatSaberModManager.Views.Implementations.Pages"
+        xmlns:windows="clr-namespace:BeatSaberModManager.Views.Implementations.Windows"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.MainWindow"
         Title="{StaticResource MainWindow:Title}"
@@ -62,21 +63,22 @@
                           Height="30"
                           ColumnDefinitions="*, Auto, Auto"
                           Margin="0, 5">
-                        <ProgressBar Grid.Column="0"
+                        <ProgressBar x:Name="ProgressBar"
+                                     Grid.Column="0"
                                      Margin="10, 0, 5, 0"
                                      HorizontalAlignment="Stretch"
                                      VerticalAlignment="Stretch"
-                                     Value="{Binding ProgressBarValue}">
+                                     Value="{Binding StatusProgress.ProgressValue^}">
                         </ProgressBar>
-                        <StackPanel Grid.Column="0"
-                                    ZIndex="1"
-                                    Margin="10, 0, 5, 0"
-                                    Orientation="Horizontal"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21" Content="{Binding ProgressBarStatusText}" />
-                            <Label HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="21" Content="{Binding ProgressBarText}" />
-                        </StackPanel>
+                        <Viewbox Grid.Column="0"
+                                 ZIndex="1"
+                                 Width="{Binding #ProgressBar.Width}"
+                                 Height="{Binding #ProgressBar.Height}">
+                            <Label HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Content="{Binding StatusProgress.ProgressInfo^, Converter={x:Static windows:MainWindow.LocalizedStatusConverter}}">
+                            </Label>
+                        </Viewbox>
                         <Button Grid.Column="1"
                                 Margin="5, 0, 5, 0"
                                 HorizontalAlignment="Stretch"

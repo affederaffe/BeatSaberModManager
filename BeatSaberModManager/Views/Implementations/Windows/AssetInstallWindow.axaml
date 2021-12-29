@@ -29,27 +29,30 @@
                        Fill="{DynamicResource BackgroundMediumBrush}">
             </Rectangle>
 
-            <c:ProgressRing Grid.Row="0"
-                            Width="200"
-                            Height="200"
-                            Value="{Binding ProgressValue}"
-                            IsVisible="{Binding InstallCommand.IsExecuting^}">
-            </c:ProgressRing>
-
-            <Viewbox Grid.Row="0"
-                     HorizontalAlignment="Center"
-                     VerticalAlignment="Center"
-                     IsVisible="{Binding IsSuccess}">
-                <Path Stroke="DarkGreen" Fill="Green" StrokeThickness="1" Data="{StaticResource Icons:Checkmark}" />
+            <Viewbox Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Panel>
+                    <c:ProgressRing Width="200"
+                                    Height="200"
+                                    Margin="50"
+                                    Value="{Binding StatusProgress.ProgressValue^}"
+                                    IsVisible="{Binding InstallCommand.IsExecuting^}">
+                    </c:ProgressRing>
+                    <Path Stroke="DarkGreen"
+                          StrokeThickness="1"
+                          Fill="Green"
+                          Data="{StaticResource Icons:Checkmark}"
+                          IsVisible="{Binding IsSuccess}">
+                    </Path>
+                    <Path Stroke="DarkRed"
+                          StrokeThickness="1"
+                          Fill="Red"
+                          Data="{StaticResource Icons:Cross}"
+                          IsVisible="{Binding IsFailed}">
+                    </Path>
+                </Panel>
             </Viewbox>
-            <Viewbox Grid.Row="0"
-                     HorizontalAlignment="Center"
-                     VerticalAlignment="Center"
-                     IsVisible="{Binding IsFailed}">
-                <Path Stroke="DarkRed" Fill="Red" StrokeThickness="1" Data="{StaticResource Icons:Cross}" />
-            </Viewbox>
 
-            <ScrollViewer Grid.Row="1" Padding="10">
+            <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                 <ItemsRepeater Items="{Binding Log}" />
             </ScrollViewer>
         </Grid>

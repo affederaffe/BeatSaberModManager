@@ -1,6 +1,6 @@
 ﻿namespace BeatSaberModManager.Services.Implementations.Progress
 {
-    public enum ProgressBarStatusType
+    public enum StatusType
     {
         None,
         Installing,

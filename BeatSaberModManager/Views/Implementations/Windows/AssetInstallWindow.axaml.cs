@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Reactive.Linq;
 
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
+using BeatSaberModManager.Views.Implementations.Converters;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,10 +22,9 @@ namespace BeatSaberModManager.Views.Implementations.Windows
         {
             InitializeComponent();
             ViewModel = viewModel;
-            string? installText = this.FindResource("Status:Installing") as string;
-            ViewModel.WhenAnyValue(x => x.AssetName)
-                .WhereNotNull()
-                .Select(x => $"{installText} {x}")
+            LocalizedStatusConverter converter = new(this);
+            ViewModel.StatusProgress.ProgressInfo
+                .Select(converter.Convert)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
             ViewModel.InstallCommand.Execute()

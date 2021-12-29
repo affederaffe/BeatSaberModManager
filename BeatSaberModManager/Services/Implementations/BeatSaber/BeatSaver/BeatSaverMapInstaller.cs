@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
 using BeatSaberModManager.Services.Implementations.Http;
+using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
 
@@ -31,7 +32,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             BeatSaverMap? map = await GetBeatSaverMapAsync(key).ConfigureAwait(false);
             if (map is null || map.Versions.Length <= 0) return false;
-            progress?.Report(map.Name);
+            progress?.Report(new ProgressInfo(StatusType.Installing, map.Name));
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
             return archive is not null && ExtractBeatSaverMapToDir(installDir, map, archive);
         }

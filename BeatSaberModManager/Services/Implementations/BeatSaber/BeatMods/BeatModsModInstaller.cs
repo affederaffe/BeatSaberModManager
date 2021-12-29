@@ -19,15 +19,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
     public class BeatModsModInstaller : IModInstaller
     {
         private readonly IModProvider _modProvider;
-        private readonly IStatusProgress _progress;
 
-        public BeatModsModInstaller(IModProvider modProvider, IStatusProgress progress)
+        public BeatModsModInstaller(IModProvider modProvider)
         {
             _modProvider = modProvider;
-            _progress = progress;
         }
 
-        public async IAsyncEnumerable<IMod> InstallModsAsync(string installDir, IEnumerable<IMod> mods)
+        public async IAsyncEnumerable<IMod> InstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null)
         {
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
@@ -35,9 +33,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
             IOUtils.TryCreateDirectory(pendingDirPath);
             int i = 0;
-            _progress.Report(beatModsMods[i].Name);
-            _progress.Report(ProgressBarStatusType.Installing);
-            await foreach (ZipArchive archive in _modProvider.DownloadModsAsync(urls, _progress).ConfigureAwait(false))
+            progress?.Report(new ProgressInfo(StatusType.Installing, beatModsMods[i].Name));
+            await foreach (ZipArchive archive in _modProvider.DownloadModsAsync(urls, progress).ConfigureAwait(false))
             {
                 bool isModLoader = _modProvider.IsModLoader(beatModsMods[i]);
                 string extractDir = isModLoader ? installDir : pendingDirPath;
@@ -46,22 +43,20 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 _modProvider.InstalledMods?.Add(beatModsMods[i]);
                 yield return beatModsMods[i++];
                 if (i >= beatModsMods.Length) break;
-                _progress.Report(beatModsMods[i].Name);
+                progress?.Report(new ProgressInfo(StatusType.Installing, beatModsMods[i].Name));
             }
 
-            _progress.Report(string.Empty);
-            _progress.Report(ProgressBarStatusType.Completed);
+            progress?.Report(new ProgressInfo(StatusType.Completed, null));
         }
 
-        public async IAsyncEnumerable<IMod> UninstallModsAsync(string installDir, IEnumerable<IMod> mods)
+        public async IAsyncEnumerable<IMod> UninstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null)
         {
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
-            _progress.Report(ProgressBarStatusType.Uninstalling);
             for (int i = 0; i < beatModsMods.Length; i++)
             {
-                _progress.Report(beatModsMods[i].Name);
-                _progress.Report(((double)i + 1) / beatModsMods.Length);
+                progress?.Report(new ProgressInfo(StatusType.Uninstalling, beatModsMods[i].Name));
+                progress?.Report(((double)i + 1) / beatModsMods.Length);
                 bool isModLoader = _modProvider.IsModLoader(beatModsMods[i]);
                 if (isModLoader) await UninstallBsipaAsync(installDir, beatModsMods[i]).ConfigureAwait(false);
                 else RemoveModFiles(installDir, beatModsMods[i]);
@@ -69,8 +64,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 yield return beatModsMods[i];
             }
 
-            _progress.Report(string.Empty);
-            _progress.Report(ProgressBarStatusType.Completed);
+            progress?.Report(new ProgressInfo(StatusType.Completed, null));
         }
 
         public void RemoveAllMods(string installDir)

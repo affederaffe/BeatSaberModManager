@@ -20,18 +20,20 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
         private readonly IModVersionComparer _modVersionComparer;
+        private readonly IStatusProgress _progress;
         private readonly Dictionary<IMod, ModGridItemViewModel> _modGridItemPairs;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
         private readonly ObservableAsPropertyHelper<IEnumerable<ModGridItemViewModel>?> _gridItems;
 
-        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer)
+        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
         {
             _appSettings = appSettings;
             _dependencyResolver = dependencyResolver;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
             _modVersionComparer = modVersionComparer;
+            _progress = progress;
             _modGridItemPairs = new Dictionary<IMod, ModGridItemViewModel>();
             InitializeCommand = ReactiveCommand.CreateFromTask<string, IEnumerable<ModGridItemViewModel>?>(InitializeDataGridAsync);
             InitializeCommand.Select(x => x is not null)
@@ -103,7 +105,7 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task InstallMods(string installDir, IEnumerable<IMod> mods)
         {
-            await foreach (IMod mod in _modInstaller.InstallModsAsync(installDir, mods).ConfigureAwait(false))
+            await foreach (IMod mod in _modInstaller.InstallModsAsync(installDir, mods, _progress).ConfigureAwait(false))
             {
                 if (_modGridItemPairs.TryGetValue(mod, out ModGridItemViewModel? gridItem))
                     gridItem.InstalledMod = mod;
@@ -112,7 +114,7 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task UninstallMods(string installDir, IEnumerable<IMod> mods)
         {
-            await foreach (IMod mod in _modInstaller.UninstallModsAsync(installDir, mods).ConfigureAwait(false))
+            await foreach (IMod mod in _modInstaller.UninstallModsAsync(installDir, mods, _progress).ConfigureAwait(false))
             {
                 if (_modGridItemPairs.TryGetValue(mod, out ModGridItemViewModel? gridItem))
                     gridItem.InstalledMod = null;

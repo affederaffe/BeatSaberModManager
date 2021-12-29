@@ -21,7 +21,7 @@ using BeatSaberModManager.Services.Implementations.Settings;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Implementations;
-using BeatSaberModManager.Views.Implementations.Localisation;
+using BeatSaberModManager.Views.Implementations.Localization;
 using BeatSaberModManager.Views.Implementations.Pages;
 using BeatSaberModManager.Views.Implementations.Theming;
 using BeatSaberModManager.Views.Implementations.Windows;
@@ -103,7 +103,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddApplication(this IServiceCollection services) =>
             services.AddSingleton<Application, App>()
-                .AddSingleton<ILocalisationManager, LocalisationManager>()
+                .AddSingleton<ILocalizationManager, LocalizationManager>()
                 .AddSingleton<IThemeManager, ThemeManager>();
     }
 }

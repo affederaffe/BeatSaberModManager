@@ -6,7 +6,6 @@ using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Services.Implementations.Progress;
-using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +20,7 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         public SettingsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public SettingsPage(SettingsViewModel viewModel, Window window, IStatusProgress progress)
+        public SettingsPage(SettingsViewModel viewModel, Window window)
         {
             InitializeComponent();
             ViewModel = viewModel;
@@ -36,10 +35,10 @@ namespace BeatSaberModManager.Views.Implementations.Pages
                 .Where(x => x?.Length is 1)
                 .Select(x => x![0])
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .SelectMany(x => ViewModel.InstallPlaylistAsync(x, progress))
-                .Select(x => x ? ProgressBarStatusType.Completed : ProgressBarStatusType.Failed)
-                .Do(_ => progress.Report(string.Empty))
-                .Subscribe(progress.Report);
+                .SelectMany(ViewModel.InstallPlaylistAsync)
+                .Select(x => new ProgressInfo(x ? StatusType.Completed : StatusType.Failed, null))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe(ViewModel.StatusProgress.Report);
         }
     }
 }

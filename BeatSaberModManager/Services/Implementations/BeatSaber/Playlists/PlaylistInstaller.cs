@@ -57,32 +57,30 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         private async Task<bool> InstallPlaylistAsync(string installDir, Playlist playlist, IStatusProgress? progress = null)
         {
-            BeatSaverMap?[] maps = await GetMapsAsync(playlist).ConfigureAwait(false);
-            if (maps.Any(x => x is null || x.Versions.Length <= 0)) return false;
-            string[] urls = maps.Select(x => x!.Versions.Last().DownloadUrl).ToArray();
+            BeatSaverMap[] maps = await GetMapsAsync(playlist).ConfigureAwait(false);
+            string[] urls = maps.Select(x => x.Versions.Last().DownloadUrl).ToArray();
             int i = 0;
-            progress?.Report(maps[i]!.Name);
-            progress?.Report(ProgressBarStatusType.Installing);
+            progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name ));
             await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls, progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) return false;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using ZipArchive archive = new(stream);
-                bool success = BeatSaverMapInstaller.ExtractBeatSaverMapToDir(installDir, maps[i]!, archive);
+                bool success = BeatSaverMapInstaller.ExtractBeatSaverMapToDir(installDir, maps[i], archive);
                 if (!success) return false;
                 if (++i >= maps.Length) return true;
-                progress?.Report(maps[i]!.Name);
+                progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
             }
 
             return true;
         }
 
-        private async Task<BeatSaverMap?[]> GetMapsAsync(Playlist playlist)
+        private async Task<BeatSaverMap[]> GetMapsAsync(Playlist playlist)
         {
             BeatSaverMap?[] maps = new BeatSaverMap?[playlist.Songs.Length];
             for (int i = 0; i < maps.Length; i++)
                 maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapAsync(playlist.Songs[i].Id).ConfigureAwait(false);
-            return maps;
+            return maps.Where(x => x?.Versions.Length is > 0).ToArray()!;
         }
     }
 }

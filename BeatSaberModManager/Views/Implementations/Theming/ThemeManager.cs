@@ -70,8 +70,9 @@ namespace BeatSaberModManager.Views.Implementations.Theming
         private static async Task<ITheme?> LoadTheme(string filePath)
         {
             string name = Path.GetFileNameWithoutExtension(filePath);
+            string dir = Path.GetDirectoryName(filePath)!;
             string xaml = await File.ReadAllTextAsync(filePath);
-            return AvaloniaUtils.TryParse<Styles>(xaml, out Styles? styles) ? new Theme(name, styles) : null;
+            return AvaloniaUtils.TryParse<Styles>(xaml, dir, out Styles? styles) ? new Theme(name, styles) : null;
         }
 
         private static Theme LoadBuildInTheme(string name, params string[] uris)
