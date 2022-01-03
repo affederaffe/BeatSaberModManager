@@ -63,17 +63,13 @@
                           Height="30"
                           ColumnDefinitions="*, Auto, Auto"
                           Margin="0, 5">
-                        <ProgressBar x:Name="ProgressBar"
-                                     Grid.Column="0"
+                        <ProgressBar Grid.Column="0"
                                      Margin="10, 0, 5, 0"
                                      HorizontalAlignment="Stretch"
                                      VerticalAlignment="Stretch"
                                      Value="{Binding StatusProgress.ProgressValue^}">
                         </ProgressBar>
-                        <Viewbox Grid.Column="0"
-                                 ZIndex="1"
-                                 Width="{Binding #ProgressBar.Width}"
-                                 Height="{Binding #ProgressBar.Height}">
+                        <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
                             <Label HorizontalAlignment="Center"
                                    VerticalAlignment="Center"
                                    Content="{Binding StatusProgress.ProgressInfo^, Converter={x:Static windows:MainWindow.LocalizedStatusConverter}}">

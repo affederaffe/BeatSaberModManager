@@ -29,17 +29,17 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             _appSettings = appSettings;
             Themes = new ObservableCollection<ITheme>
             {
-                LoadBuildInTheme("Fluent Light", "avares://Avalonia.Themes.Fluent/FluentLight.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml", "avares://BeatSaberModManager/Resources/Styles/FluentTheme.axaml"),
-                LoadBuildInTheme("Fluent Dark", "avares://Avalonia.Themes.Fluent/FluentDark.xaml", "avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml", "avares://BeatSaberModManager/Resources/Styles/FluentTheme.axaml")
+                new Theme("Fluent Light", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentLight.axaml") }),
+                new Theme("Fluent Dark", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentDark.axaml") })
             };
 
             _buildInThemesCount = Themes.Count;
-            SelectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.Value.ThemeName) ?? Themes.Last();
+            _selectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.Value.ThemeName) ?? Themes[0];
         }
 
         public ObservableCollection<ITheme> Themes { get; }
 
-        private ITheme _selectedTheme = null!;
+        private ITheme _selectedTheme;
         public ITheme SelectedTheme
         {
             get => _selectedTheme;
@@ -62,8 +62,8 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             foreach (string file in Directory.EnumerateFiles(path, "*.axaml"))
             {
                 ITheme? theme = await LoadTheme(file);
-                if (theme is not null)
-                    Themes.Add(theme);
+                if (theme is null) continue;
+                Themes.Add(theme);
             }
         }
 
@@ -73,14 +73,6 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             string dir = Path.GetDirectoryName(filePath)!;
             string xaml = await File.ReadAllTextAsync(filePath);
             return AvaloniaUtils.TryParse<Styles>(xaml, dir, out Styles? styles) ? new Theme(name, styles) : null;
-        }
-
-        private static Theme LoadBuildInTheme(string name, params string[] uris)
-        {
-            Styles styles = new();
-            foreach (string uri in uris)
-                styles.Add(new StyleInclude((null as Uri)!) { Source = new Uri(uri) });
-            return new Theme(name, styles);
         }
     }
 }

@@ -1,9 +1,0 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-
-    <StyleInclude Source="/Resources/Styles/Brushes.axaml" />
-    <StyleInclude Source="/Resources/Styles/DataGrid.axaml" />
-    <StyleInclude Source="/Resources/Styles/ProgressRing.axaml" />
-    <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
-
-</Styles>

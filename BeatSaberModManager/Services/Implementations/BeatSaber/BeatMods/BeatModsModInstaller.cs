@@ -29,7 +29,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
-            IEnumerable<string> urls = beatModsMods.Select(x => x.Downloads.First().Url);
+            IEnumerable<string> urls = beatModsMods.Select(x => x.Downloads[0].Url);
             string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
             IOUtils.TryCreateDirectory(pendingDirPath);
             int i = 0;
@@ -164,7 +164,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private static void RemoveBsipaFiles(string installDir, BeatModsMod bsipa)
         {
-            foreach (BeatModsHash hash in bsipa.Downloads.First().Hashes)
+            foreach (BeatModsHash hash in bsipa.Downloads[0].Hashes)
             {
                 string fileName = hash.File.Replace("IPA/Data", "Beat Saber_Data");
                 string path = Path.Combine(installDir, fileName);
@@ -175,8 +175,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         private static void RemoveModFiles(string installDir, BeatModsMod mod)
         {
             string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
-            BeatModsDownload download = mod.Downloads.First();
-            foreach (BeatModsHash hash in download.Hashes)
+            foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
             {
                 string pendingPath = Path.Combine(pendingDirPath, hash.File);
                 string normalPath = Path.Combine(installDir, hash.File);

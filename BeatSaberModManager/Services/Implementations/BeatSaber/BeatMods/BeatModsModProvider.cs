@@ -71,10 +71,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public async Task LoadAvailableModsForCurrentVersionAsync(string installDir)
         {
             string? version = await _gameVersionProvider.DetectGameVersion(installDir).ConfigureAwait(false);
+            if (version is null) return;
             await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 
-        public async Task LoadAvailableModsForVersionAsync(string? version)
+        public async Task LoadAvailableModsForVersionAsync(string version)
         {
             string? aliasedGameVersion = await GetAliasedGameVersion(version).ConfigureAwait(false);
             if (aliasedGameVersion is null) return;
@@ -99,7 +100,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return JsonSerializer.Deserialize(body, BeatModsModJsonSerializerContext.Default.BeatModsModArray);
         }
 
-        private async Task<string?> GetAliasedGameVersion(string? gameVersion)
+        private async Task<string?> GetAliasedGameVersion(string gameVersion)
         {
             using HttpResponseMessage versionsResponse = await _httpClient.GetAsync(kBeatModsVersionsUrl).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode) return null;
@@ -128,7 +129,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             Dictionary<string, IMod> fileHashModPairs = new(allMods.Length);
             foreach (BeatModsMod mod in allMods)
             {
-                foreach (BeatModsHash hash in mod.Downloads.First().Hashes)
+                foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
             }
 

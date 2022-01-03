@@ -8,5 +8,5 @@
         <SolidColorBrush x:Key="DatabaseIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
         <SolidColorBrush x:Key="GearIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
     </Styles.Resources>
-    
+
 </Styles>
