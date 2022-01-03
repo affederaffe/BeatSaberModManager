@@ -16,7 +16,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
             long total = 0;
             long? length = response.Content.Headers.ContentLength;
             byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
-            MemoryStream ms = new(length.HasValue ? (int)length.Value : 0);
+            MemoryStream ms = length.HasValue ? new MemoryStream((int)length.Value) : new MemoryStream();
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             while (true)
             {

@@ -166,7 +166,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             foreach (BeatModsHash hash in bsipa.Downloads[0].Hashes)
             {
-                string fileName = hash.File.Replace("IPA/Data", "Beat Saber_Data");
+                string fileName = hash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal);
                 string path = Path.Combine(installDir, fileName);
                 IOUtils.TryDeleteFile(path);
             }

@@ -26,16 +26,8 @@ jobs:
         uses: actions/setup-dotnet@v1.8.1
         with: 
           dotnet-version: "6.0.x"
-          include-prerelease: true
-      - name: Build Self-Contained
-        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishTrimmed=true
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: BeatSaberModManager-linux-x64-self-contained
-          path: BeatSaberModManager/bin/Release/linux-x64/publish/BeatSaberModManager
       - name: Build Framework Dependent
-        run: dotnet publish -c Release -r linux-x64 --no-self-contained -p:PublishTrimmed=false
+        run: dotnet publish -c Release -r linux-x64 --no-self-contained
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
@@ -52,16 +44,8 @@ jobs:
         uses: actions/setup-dotnet@v1.8.1
         with:
           dotnet-version: "6.0.x"
-          include-prerelease: true
-      - name: Build Self-Contained
-        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishTrimmed=true
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: BeatSaberModManager-win-x64-self-contained
-          path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe
       - name: Build Framework Dependent
-        run: dotnet publish -c Release -r win-x64 --no-self-contained -p:PublishTrimmed=false
+        run: dotnet publish -c Release -r win-x64 --no-self-contained
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:

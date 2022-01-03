@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
@@ -14,10 +15,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public async Task<string?> CalculateHashForFile(string path)
         {
             await using FileStream? fileStream = IOUtils.TryOpenFile(path, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
-            if (fileStream is null) return null;
-            return await CalculateHashForStream(fileStream).ConfigureAwait(false);
+            return fileStream is null ? null : await CalculateHashForStream(fileStream).ConfigureAwait(false);
         }
 
+        [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms")]
         public async Task<string?> CalculateHashForStream(Stream stream)
         {
             using MD5 md5 = MD5.Create();

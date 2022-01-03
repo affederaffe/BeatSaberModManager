@@ -60,7 +60,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             BeatSaverMap[] maps = await GetMapsAsync(playlist).ConfigureAwait(false);
             string[] urls = maps.Select(x => x.Versions.Last().DownloadUrl).ToArray();
             int i = 0;
-            progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name ));
+            progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
             await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls, progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) return false;

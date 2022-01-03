@@ -17,25 +17,25 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
             _dependencyRegistry = new Dictionary<IMod, HashSet<IMod>>();
         }
 
-        public bool IsDependency(IMod mod) =>
-            _dependencyRegistry.TryGetValue(mod, out HashSet<IMod>? dependents) && dependents.Count != 0;
+        public bool IsDependency(IMod modification) =>
+            _dependencyRegistry.TryGetValue(modification, out HashSet<IMod>? dependents) && dependents.Count != 0;
 
-        public IEnumerable<IMod> ResolveDependencies(IMod mod)
+        public IEnumerable<IMod> ResolveDependencies(IMod modification)
         {
-            foreach (IMod dependency in _modProvider.GetDependencies(mod))
+            foreach (IMod dependency in _modProvider.GetDependencies(modification))
             {
-                if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) dependents.Add(mod);
-                else _dependencyRegistry.Add(dependency, new HashSet<IMod> { mod });
+                if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) dependents.Add(modification);
+                else _dependencyRegistry.Add(dependency, new HashSet<IMod> { modification });
                 yield return dependency;
             }
         }
 
-        public IEnumerable<IMod> UnresolveDependencies(IMod mod)
+        public IEnumerable<IMod> UnresolveDependencies(IMod modification)
         {
-            foreach (IMod dependency in _modProvider.GetDependencies(mod))
+            foreach (IMod dependency in _modProvider.GetDependencies(modification))
             {
                 if (!_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) continue;
-                dependents.Remove(mod);
+                dependents.Remove(modification);
                 yield return dependency;
             }
         }

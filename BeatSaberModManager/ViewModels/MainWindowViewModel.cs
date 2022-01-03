@@ -1,6 +1,9 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
 using System.Reactive.Linq;
 
+using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
@@ -15,7 +18,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _moreInfoButtonEnabled;
         private readonly ObservableAsPropertyHelper<bool> _installButtonEnabled;
 
-        public MainWindowViewModel(ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, IStatusProgress statusProgress)
+        public MainWindowViewModel(ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator, IStatusProgress statusProgress)
         {
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;
@@ -24,6 +27,11 @@ namespace BeatSaberModManager.ViewModels
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync);
             modsViewModel.WhenAnyValue(x => x.SelectedGridItem).Select(x => x?.AvailableMod.MoreInfoLink is not null).ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
             modsViewModel.WhenAnyValue(x => x.IsSuccess).ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
+            ManualInstallDirSelectionRequested = appSettings.Value.InstallDir.Changed.FirstAsync()
+                .Where(x => !installDirValidator.ValidateInstallDir(x))
+                .SelectMany(async _ => appSettings.Value.InstallDir.Value = await installDirLocator.LocateInstallDirAsync())
+                .Where(x => !installDirValidator.ValidateInstallDir(x))
+                .Select(_ => Unit.Default);
         }
 
         public ModsViewModel ModsViewModel { get; }
@@ -31,6 +39,8 @@ namespace BeatSaberModManager.ViewModels
         public SettingsViewModel SettingsViewModel { get; }
 
         public StatusProgress StatusProgress { get; }
+
+        public IObservable<Unit> ManualInstallDirSelectionRequested { get; }
 
         public ReactiveCommand<Unit, Unit> MoreInfoButtonCommand { get; }
 

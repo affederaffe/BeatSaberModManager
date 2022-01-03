@@ -37,7 +37,7 @@ namespace BeatSaberModManager.ViewModels
             InstallCommand = ReactiveCommand.CreateFromTask(InstallAssetAsync);
             InstallCommand.ToProperty(this, nameof(IsSuccess), out _isSuccess);
             InstallCommand.CombineLatest(InstallCommand.IsExecuting)
-                .Select(x => !x.Item1 && !x.Item2)
+                .Select(x => !x.First && !x.Second)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
         }
 
@@ -55,8 +55,7 @@ namespace BeatSaberModManager.ViewModels
         {
             if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
-            if (assetProvider is null) return false;
-            return await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir.Value!, _uri, _progress).ConfigureAwait(false);
+            return assetProvider is not null && await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir.Value!, _uri, _progress).ConfigureAwait(false);
         }
     }
 }

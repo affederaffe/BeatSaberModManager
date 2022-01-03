@@ -3,12 +3,13 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <PublishSingleFile>true</PublishSingleFile>
-    <TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <Nullable>enable</Nullable>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>recommended</AnalysisMode>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AssemblyVersion>0.0.1</AssemblyVersion>
     <ApplicationIcon>Resources/Icons/Icon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -27,7 +28,6 @@
 
   <ItemGroup>
     <AvaloniaResource Include="Resources/**" />
-    <TrimmerRootDescriptor Include="TrimmerRoots.xml" Visible="false" />
     <None Include="Resources/Icons/Icon.ico" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

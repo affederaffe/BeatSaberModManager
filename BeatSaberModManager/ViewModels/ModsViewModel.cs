@@ -41,7 +41,7 @@ namespace BeatSaberModManager.ViewModels
             InitializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             this.WhenAnyValue(x => x.IsSuccess)
                 .CombineLatest(InitializeCommand.IsExecuting)
-                .Select(x => !x.Item1 && !x.Item2)
+                .Select(x => !x.First && !x.Second)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
             _appSettings.Value.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).InvokeCommand(InitializeCommand!);
         }

@@ -37,11 +37,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public IReadOnlyList<IMod>? AvailableMods { get; private set; }
         public HashSet<IMod>? InstalledMods { get; private set; }
 
-        public bool IsModLoader(IMod? mod) => mod?.Name.ToUpperInvariant() == "BSIPA";
+        public bool IsModLoader(IMod? modification) => modification?.Name.ToUpperInvariant() == "BSIPA";
 
-        public IEnumerable<IMod> GetDependencies(IMod mod)
+        public IEnumerable<IMod> GetDependencies(IMod modification)
         {
-            if (mod is not BeatModsMod beatModsMod) yield break;
+            if (modification is not BeatModsMod beatModsMod) yield break;
             foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
                 dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);

@@ -1,9 +1,9 @@
 ﻿namespace BeatSaberModManager.Services.Implementations.Progress
 {
-    public struct ProgressInfo
+    public readonly struct ProgressInfo
     {
-        public StatusType StatusType;
-        public string? Text;
+        public StatusType StatusType { get; }
+        public string? Text { get; }
 
         public ProgressInfo(StatusType statusType, string? text)
         {

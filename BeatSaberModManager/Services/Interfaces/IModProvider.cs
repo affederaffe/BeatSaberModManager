@@ -12,8 +12,8 @@ namespace BeatSaberModManager.Services.Interfaces
     {
         IReadOnlyList<IMod>? AvailableMods { get; }
         HashSet<IMod>? InstalledMods { get; }
-        bool IsModLoader(IMod? mod);
-        IEnumerable<IMod> GetDependencies(IMod mod);
+        bool IsModLoader(IMod? modification);
+        IEnumerable<IMod> GetDependencies(IMod modification);
         Task LoadInstalledModsAsync(string installDir);
         Task LoadAvailableModsForCurrentVersionAsync(string installDir);
         Task LoadAvailableModsForVersionAsync(string version);
