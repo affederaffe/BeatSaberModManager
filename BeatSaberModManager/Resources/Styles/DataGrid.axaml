@@ -5,6 +5,9 @@
         <Setter Property="IsHitTestVisible" Value="False" />
     </Style>
 
+    <Style Selector="DataGridRowGroupHeader">
+        <Setter Property="Background" Value="Transparent" />
+    </Style>
     <Style Selector="DataGridRowGroupHeader:current /template/ Rectangle#CurrencyVisual">
         <Setter Property="IsVisible" Value="False" />
     </Style>

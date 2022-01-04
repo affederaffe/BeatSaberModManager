@@ -19,11 +19,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             const string key = "public.app-category.games";
 
             SearchForKey(reader, key);
-            if (fileStream .Position == fileStream .Length) return null; // we went through the entire stream without finding the key
+            if (fileStream.Position == fileStream.Length) return null; // we went through the entire stream without finding the key
             ReadWhileDigit(reader);
 
             const int rewind = -sizeof(int) - sizeof(byte);
-            fileStream .Seek(rewind, SeekOrigin.Current); // rewind to the string length
+            fileStream.Seek(rewind, SeekOrigin.Current); // rewind to the string length
 
             int len = reader.ReadInt32();
             byte[] bytes = reader.ReadBytes(len);

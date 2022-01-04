@@ -6,17 +6,15 @@
              xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
              xmlns:p="clr-namespace:BeatSaberModManager.Views.Implementations.Pages"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="BeatSaberModManager.Views.Implementations.Pages.ModsPage">
-
-    <Design.DataContext>
-        <vm:ModsViewModel />
-    </Design.DataContext>
+             x:Class="BeatSaberModManager.Views.Implementations.Pages.ModsPage"
+             x:CompileBindings="True"
+             x:DataType="vm:ModsViewModel">
 
     <Panel>
         <c:ProgressRing IsIndeterminate="True"
                         Width="500"
                         Height="500"
-                        IsVisible="{Binding InitializeCommand.IsExecuting^}">
+                        IsVisible="{Binding IsExecuting}">
         </c:ProgressRing>
 
         <Label FontSize="33"

@@ -22,6 +22,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModVersionComparer _modVersionComparer;
         private readonly IStatusProgress _progress;
         private readonly Dictionary<IMod, ModGridItemViewModel> _modGridItemPairs;
+        private readonly ObservableAsPropertyHelper<bool> _isExecuting;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
         private readonly ObservableAsPropertyHelper<IEnumerable<ModGridItemViewModel>?> _gridItems;
@@ -36,6 +37,7 @@ namespace BeatSaberModManager.ViewModels
             _progress = progress;
             _modGridItemPairs = new Dictionary<IMod, ModGridItemViewModel>();
             InitializeCommand = ReactiveCommand.CreateFromTask<string, IEnumerable<ModGridItemViewModel>?>(InitializeDataGridAsync);
+            InitializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
             InitializeCommand.Select(x => x is not null)
                 .ToProperty(this, nameof(IsSuccess), out _isSuccess);
             InitializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
@@ -47,6 +49,8 @@ namespace BeatSaberModManager.ViewModels
         }
 
         public ReactiveCommand<string, IEnumerable<ModGridItemViewModel>?> InitializeCommand { get; }
+
+        public bool IsExecuting => _isExecuting.Value;
 
         public bool IsSuccess => _isSuccess.Value;
 

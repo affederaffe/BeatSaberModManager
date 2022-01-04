@@ -6,6 +6,9 @@
         xmlns:c="clr-namespace:BeatSaberModManager.Views.Implementations.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Implementations.Windows.AssetInstallWindow"
+        x:CompileBindings="True"
+        x:DataType="vm:AssetInstallWindowViewModel"
+        x:Name="Window"
         Title="OneClick™ Installer"
         Icon="/Resources/Icons/Icon.ico"
         TransparencyLevelHint="AcrylicBlur"
@@ -14,11 +17,7 @@
         Width="300"
         Height="500">
 
-    <Design.DataContext>
-        <vm:AssetInstallWindowViewModel />
-    </Design.DataContext>
-
-    <Panel>
+    <Panel Margin="{Binding #Window.OffScreenMargin}">
         <Grid RowDefinitions="2.75*, *">
             <Rectangle Grid.Row="0"
                        IsHitTestVisible="False"
@@ -34,8 +33,8 @@
                     <c:ProgressRing Width="200"
                                     Height="200"
                                     Margin="50"
-                                    Value="{Binding StatusProgress.ProgressValue^}"
-                                    IsVisible="{Binding InstallCommand.IsExecuting^}">
+                                    Value="{Binding ProgressValue}"
+                                    IsVisible="{Binding IsExecuting}">
                     </c:ProgressRing>
                     <Path Stroke="DarkGreen"
                           StrokeThickness="1"
