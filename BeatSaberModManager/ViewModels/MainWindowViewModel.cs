@@ -24,6 +24,7 @@ namespace BeatSaberModManager.ViewModels
         {
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;
+            AppSettings = appSettings;
             MoreInfoButtonCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink));
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync);
             modsViewModel.WhenAnyValue(x => x.SelectedGridItem).Select(x => x?.AvailableMod.MoreInfoLink is not null).ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
@@ -41,6 +42,8 @@ namespace BeatSaberModManager.ViewModels
         public ModsViewModel ModsViewModel { get; }
 
         public SettingsViewModel SettingsViewModel { get; }
+
+        public ISettings<AppSettings> AppSettings { get; }
 
         public IObservable<Unit> ManualInstallDirSelectionRequested { get; }
 

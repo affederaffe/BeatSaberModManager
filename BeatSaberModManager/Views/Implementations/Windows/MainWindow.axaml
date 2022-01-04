@@ -18,7 +18,7 @@
         Width="1100"
         Height="600">
 
-    <TabControl Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}">
+    <TabControl x:Name="TabControl" Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}">
         <TabControl.Template>
             <ControlTemplate>
                 <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
