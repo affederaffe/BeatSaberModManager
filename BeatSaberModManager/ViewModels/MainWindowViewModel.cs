@@ -27,8 +27,13 @@ namespace BeatSaberModManager.ViewModels
             AppSettings = appSettings;
             MoreInfoButtonCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink));
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync);
-            modsViewModel.WhenAnyValue(x => x.SelectedGridItem).Select(x => x?.AvailableMod.MoreInfoLink is not null).ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
-            modsViewModel.WhenAnyValue(x => x.IsSuccess).ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
+            modsViewModel.WhenAnyValue(x => x.SelectedGridItem)
+                .Select(x => x?.AvailableMod.MoreInfoLink is not null)
+                .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
+            modsViewModel.WhenAnyValue(x => x.IsSuccess)
+                .CombineLatest(appSettings.Value.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir))
+                .Select(x => x.First && x.Second)
+                .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
             ManualInstallDirSelectionRequested = appSettings.Value.InstallDir.Changed.FirstAsync()
                 .Where(x => !installDirValidator.ValidateInstallDir(x))
                 .SelectMany(async _ => appSettings.Value.InstallDir.Value = await installDirLocator.LocateInstallDirAsync())

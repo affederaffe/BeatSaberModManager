@@ -22,8 +22,7 @@ namespace BeatSaberModManager.Views.Implementations.Pages
         {
             InitializeComponent();
             ViewModel = viewModel;
-            ViewModel.WhenAnyValue(x => x.GridItems)
-                .WhereNotNull()
+            ViewModel.InitializeCommand.WhereNotNull()
                 .Select(x => new DataGridCollectionView(x) { GroupDescriptions = { new DataGridPathGroupDescription($"{nameof(ModGridItemViewModel.AvailableMod)}.{nameof(ModGridItemViewModel.AvailableMod.Category)}") } })
                 .Do(x => x.MoveCurrentTo(null))
                 .BindTo(ModsDataGrid, x => x.Items);

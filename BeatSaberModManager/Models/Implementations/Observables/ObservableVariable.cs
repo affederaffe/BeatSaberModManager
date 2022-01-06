@@ -14,13 +14,13 @@ namespace BeatSaberModManager.Models.Implementations.Observables
         public T? Value
         {
             get => _value;
-            set => SetAndRaiseIfChanged(value);
+            set => RaiseAndSetIfChanged(value);
         }
 
         [JsonIgnore]
         public IObservable<T?> Changed => _subject;
 
-        private void SetAndRaiseIfChanged(T? value)
+        private void RaiseAndSetIfChanged(T? value)
         {
             if (EqualityComparer<T>.Default.Equals(_value, value)) return;
             _value = value;

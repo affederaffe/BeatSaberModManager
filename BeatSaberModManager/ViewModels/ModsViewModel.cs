@@ -25,7 +25,6 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
-        private readonly ObservableAsPropertyHelper<IEnumerable<ModGridItemViewModel>?> _gridItems;
 
         public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IModVersionComparer modVersionComparer, IStatusProgress progress)
         {
@@ -40,7 +39,6 @@ namespace BeatSaberModManager.ViewModels
             InitializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
             InitializeCommand.Select(x => x is not null)
                 .ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            InitializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             this.WhenAnyValue(x => x.IsSuccess)
                 .CombineLatest(InitializeCommand.IsExecuting)
                 .Select(x => !x.First && !x.Second)
@@ -55,8 +53,6 @@ namespace BeatSaberModManager.ViewModels
         public bool IsSuccess => _isSuccess.Value;
 
         public bool IsFailed => _isFailed.Value;
-
-        public IEnumerable<ModGridItemViewModel>? GridItems => _gridItems.Value;
 
         private ModGridItemViewModel? _selectedGridItem;
         public ModGridItemViewModel? SelectedGridItem
