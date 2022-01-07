@@ -9,7 +9,8 @@
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
-        ClientSize="320, 140">
+        MinWidth="320" MinHeight="140"
+        Width="320" Height="140">
 
         <Panel>
             <Rectangle IsHitTestVisible="False" Fill="{DynamicResource BackgroundMediumLowBrush}" />

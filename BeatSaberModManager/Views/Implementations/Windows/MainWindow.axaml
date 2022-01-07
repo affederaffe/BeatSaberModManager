@@ -15,8 +15,8 @@
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
-        Width="1100"
-        Height="600">
+        MinWidth="820" MinHeight="350"
+        Width="1100" Height="600">
 
     <TabControl x:Name="TabControl" Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}">
         <TabControl.Template>

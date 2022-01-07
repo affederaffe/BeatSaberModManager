@@ -14,8 +14,8 @@
         TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
-        Width="300"
-        Height="500">
+        MinWidth="200" MinHeight="200"
+        Width="300" Height="500">
 
     <Panel Margin="{Binding #Window.OffScreenMargin}">
         <Grid RowDefinitions="2.75*, *">

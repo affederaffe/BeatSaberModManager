@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -52,7 +53,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async Task LoadInstalledModsAsync(string installDir)
         {
-            Dictionary<string, IMod>? fileHashModPairs = await GetMappedModHashesAsync().ConfigureAwait(false);
+            Dictionary<string, BeatModsMod>? fileHashModPairs = await GetMappedModHashesAsync().ConfigureAwait(false);
             if (fileHashModPairs is null) return;
             InstalledMods = new HashSet<IMod>();
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(installDir, x))
@@ -63,7 +64,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             string?[] hashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFile)).ConfigureAwait(false);
             foreach (string? hash in hashes)
             {
-                if (hash is not null && fileHashModPairs.TryGetValue(hash, out IMod? mod))
+                if (hash is not null && fileHashModPairs.TryGetValue(hash, out BeatModsMod? mod) && IsModFullyInstalled(mod, installDir))
                     InstalledMods.Add(mod);
             }
         }
@@ -122,18 +123,30 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return null;
         }
 
-        private async Task<Dictionary<string, IMod>?> GetMappedModHashesAsync()
+        private async Task<Dictionary<string, BeatModsMod>?> GetMappedModHashesAsync()
         {
-            BeatModsMod[]? allMods = await GetModsAsync("mod?status=approved").ConfigureAwait(false);
-            if (allMods is null) return null;
-            Dictionary<string, IMod> fileHashModPairs = new(allMods.Length);
-            foreach (BeatModsMod mod in allMods)
+            ConfiguredTaskAwaitable<BeatModsMod[]?> approvedTask = GetModsAsync("mod?status=approved").ConfigureAwait(false);
+            ConfiguredTaskAwaitable<BeatModsMod[]?> inactiveTask = GetModsAsync("mod?status=inactive").ConfigureAwait(false);
+            BeatModsMod[]? approved = await approvedTask;
+            BeatModsMod[]? inactive = await inactiveTask;
+            if (approved is null || inactive is null) return null;
+            BeatModsMod[] allMods = new BeatModsMod[approved.Length + inactive.Length];
+            approved.CopyTo(allMods, 0);
+            inactive.CopyTo(allMods, approved.Length);
+            Dictionary<string, BeatModsMod> fileHashModPairs = new(allMods.Length);
+            foreach (BeatModsMod mod in allMods.Where(x => x.Downloads.Length == 1))
             {
                 foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
             }
 
             return fileHashModPairs;
+        }
+
+        private static bool IsModFullyInstalled(BeatModsMod mod, string installDir)
+        {
+            string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
+            return mod.Downloads[0].Hashes.All(x => File.Exists(Path.Combine(installDir, x.File)) || File.Exists(Path.Combine(pendingDirPath, x.File)));
         }
 
         private static readonly string[] _installedModsLocations = { "IPA/Pending/Plugins", "IPA/Pending/Libs", "Plugins", "Libs" };
