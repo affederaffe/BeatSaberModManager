@@ -72,7 +72,7 @@ namespace BeatSaberModManager.Views.Implementations.Theming
             string name = Path.GetFileNameWithoutExtension(filePath);
             string dir = Path.GetDirectoryName(filePath)!;
             string xaml = await File.ReadAllTextAsync(filePath);
-            return AvaloniaUtils.TryParse<Styles>(xaml, dir, out Styles? styles) ? new Theme(name, styles) : null;
+            return AvaloniaUtils.TryParse<IStyle>(xaml, dir, out IStyle? style) ? new Theme(name, style) : null;
         }
     }
 }

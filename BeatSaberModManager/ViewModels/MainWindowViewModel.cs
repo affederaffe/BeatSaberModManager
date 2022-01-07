@@ -36,7 +36,8 @@ namespace BeatSaberModManager.ViewModels
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
             ManualInstallDirSelectionRequested = appSettings.Value.InstallDir.Changed.FirstAsync()
                 .Where(x => !installDirValidator.ValidateInstallDir(x))
-                .SelectMany(async _ => appSettings.Value.InstallDir.Value = await installDirLocator.LocateInstallDirAsync())
+                .SelectMany(_ => installDirLocator.LocateInstallDirAsync().AsTask())
+                .Do(x => appSettings.Value.InstallDir.Value = x)
                 .Where(x => !installDirValidator.ValidateInstallDir(x))
                 .Select(_ => Unit.Default);
             StatusProgress statusProgress = (StatusProgress)progress;

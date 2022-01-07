@@ -44,7 +44,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 
         private async ValueTask<string?> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
         {
-            await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir))
+            await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir).ConfigureAwait(false))
             {
                 string? installDir = await MatchSteamBeatSaberInstallDirAsync(libPath).ConfigureAwait(false);
                 if (installDir is not null) return installDir;
