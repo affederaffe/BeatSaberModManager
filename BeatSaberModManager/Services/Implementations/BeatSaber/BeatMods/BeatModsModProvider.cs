@@ -66,7 +66,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             // and check if all other files of the mod are installed as well
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(installDir, x))
                 .Where(Directory.Exists)
-                .SelectMany(Directory.EnumerateFiles)
+                .SelectMany(x => Directory.EnumerateFiles(x, string.Empty, SearchOption.AllDirectories))
                 .Where(x => Path.GetExtension(x) is ".dll" or ".manifest" or ".exe");
             string?[] rawHashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFile)).ConfigureAwait(false);
             string[] hashes = rawHashes.Where(x => x is not null).ToArray()!;
