@@ -145,7 +145,7 @@ namespace BeatSaberModManager.ViewModels
                 if (!_modGridItemPairs.TryGetValue(mod, out ModGridItemViewModel? gridItem)) continue;
                 bool isDependency = _dependencyResolver.IsDependency(gridItem.AvailableMod);
                 gridItem.IsCheckBoxEnabled = !isDependency;
-                gridItem.IsCheckBoxChecked = gridItem.IsCheckBoxChecked || isDependency;
+                gridItem.IsCheckBoxChecked = isDependency || (gridItem.IsCheckBoxChecked && gridItem.InstalledMod is not null);
             }
         }
     }
