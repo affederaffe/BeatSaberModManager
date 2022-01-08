@@ -156,6 +156,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return fileHashModPairs;
         }
 
-        private static readonly string[] _installedModsLocations = { "IPA/Pending/Plugins", "IPA/Pending/Libs", "Plugins", "Libs" };
+        private static readonly string[] _installedModsLocations = { "IPA/Pending", "Plugins", "Libs" };
     }
 }
