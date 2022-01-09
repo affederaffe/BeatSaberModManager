@@ -19,6 +19,17 @@ namespace BeatSaberModManager.Utilities
             catch (UnauthorizedAccessException) { }
         }
 
+        public static void TryMoveFile(string path, string dest)
+        {
+            try
+            {
+                File.Move(path, dest);
+            }
+            catch (ArgumentException) { }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+        }
+
         public static void TryCreateDirectory(string path)
         {
             try

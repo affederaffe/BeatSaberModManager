@@ -2,12 +2,10 @@
 
 using Avalonia.Controls;
 
-using BeatSaberModManager.Views.Interfaces;
-
 
 namespace BeatSaberModManager.Views.Implementations.Localization
 {
-    public class Language : ILanguage
+    public class Language
     {
         public Language(CultureInfo cultureInfo, IResourceProvider resourceProvider)
         {

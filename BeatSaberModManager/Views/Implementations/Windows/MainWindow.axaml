@@ -18,89 +18,7 @@
         MinWidth="820" MinHeight="350"
         Width="1100" Height="600">
 
-    <TabControl x:Name="TabControl" Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}">
-        <TabControl.Template>
-            <ControlTemplate>
-                <Grid ColumnDefinitions="*, 8.75*" RowDefinitions="*, Auto">
-                    <Rectangle Grid.Column="0"
-                               Grid.Row="0"
-                               Grid.RowSpan="2"
-                               IsHitTestVisible="False"
-                               Fill="{DynamicResource BackgroundMediumLowBrush}">
-                    </Rectangle>
-                    <Rectangle Grid.Column="1"
-                               Grid.Row="0"
-                               Grid.RowSpan="2"
-                               IsHitTestVisible="False" 
-                               Fill="{DynamicResource BackgroundMediumBrush}">
-                    </Rectangle>
-
-                    <ItemsPresenter x:Name="PART_ItemsPresenter"
-                                    Grid.Column="0"
-                                    Grid.Row="0"
-                                    Grid.RowSpan="2" 
-                                    Items="{TemplateBinding Items}"
-                                    ItemsPanel="{TemplateBinding ItemsPanel}"
-                                    ItemTemplate="{TemplateBinding ItemTemplate}"
-                                    HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalAlignment}">
-                    </ItemsPresenter>
-                    <ContentPresenter x:Name="PART_SelectedContentHost"
-                                      Grid.Column="1"
-                                      Grid.Row="0"
-                                      Margin="0"
-                                      Content="{TemplateBinding SelectedContent}"
-                                      HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
-                                      VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      ContentTemplate="{TemplateBinding SelectedContentTemplate}">
-                    </ContentPresenter>
-
-                    <Grid Grid.Column="1"
-                          Grid.Row="1"
-                          Height="30"
-                          ColumnDefinitions="*, Auto, Auto"
-                          Margin="0, 5">
-                        <ProgressBar Grid.Column="0"
-                                     Margin="10, 0, 5, 0"
-                                     HorizontalAlignment="Stretch"
-                                     VerticalAlignment="Stretch"
-                                     Value="{Binding ProgressValue}">
-                        </ProgressBar>
-                        <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
-                            <Label HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"
-                                   Content="{Binding ProgressInfo, Converter={x:Static w:MainWindow.LocalizedStatusConverter}}">
-                            </Label>
-                        </Viewbox>
-                        <Button Grid.Column="1"
-                                Margin="5, 0, 5, 0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Content="{DynamicResource MainWindow:MoreInfoButton}"
-                                IsEnabled="{Binding MoreInfoButtonEnabled}"
-                                Command="{Binding MoreInfoButtonCommand}">
-                        </Button>
-                        <Button Grid.Column="2"
-                                Margin="5, 0, 10, 0"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"
-                                Content="{DynamicResource MainWindow:RefreshModsButton}"
-                                IsEnabled="{Binding InstallButtonEnabled}"
-                                Command="{Binding InstallButtonCommand}">
-                        </Button>
-                    </Grid>
-                </Grid>
-            </ControlTemplate>
-        </TabControl.Template>
-
-        <TabControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" Margin="0, 30, 0, 0" />
-                </ItemsPanelTemplate>
-        </TabControl.ItemsPanel>
-
+    <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="SideBar">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
@@ -126,6 +44,42 @@
                 </StackPanel>
             </TabItem.Header>
         </TabItem>
+
+        <TabControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Vertical" Margin="0, 30, 0, 0" />
+            </ItemsPanelTemplate>
+        </TabControl.ItemsPanel>
+
+        <TabControl.Tag>
+            <Grid Height="30"
+                  ColumnDefinitions="*, Auto, Auto"
+                  Margin="0, 5">
+                <ProgressBar Grid.Column="0"
+                             Margin="10, 0, 5, 0"
+                             HorizontalAlignment="Stretch"
+                             VerticalAlignment="Stretch"
+                             Value="{Binding ProgressValue}">
+                </ProgressBar>
+                <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
+                    <Label Margin="10, 0, 5, 0"
+                           Content="{Binding ProgressInfo, Converter={x:Static w:MainWindow.LocalizedStatusConverter}}">
+                    </Label>
+                </Viewbox>
+                <Button Grid.Column="1"
+                        Margin="5, 0, 5, 0"
+                        Content="{DynamicResource MainWindow:MoreInfoButton}"
+                        IsEnabled="{Binding MoreInfoButtonEnabled}"
+                        Command="{Binding MoreInfoButtonCommand}">
+                </Button>
+                <Button Grid.Column="2"
+                        Margin="5, 0, 10, 0"
+                        Content="{DynamicResource MainWindow:RefreshModsButton}"
+                        IsEnabled="{Binding InstallButtonEnabled}"
+                        Command="{Binding InstallButtonCommand}">
+                </Button>
+            </Grid>
+        </TabControl.Tag>
     </TabControl>
 
 </Window>

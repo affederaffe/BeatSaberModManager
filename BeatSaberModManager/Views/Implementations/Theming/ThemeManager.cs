@@ -10,43 +10,43 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utilities;
-using BeatSaberModManager.Views.Interfaces;
+
+using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Implementations.Theming
 {
-    public class ThemeManager : ReactiveObject, IThemeManager
+    public class ThemeManager : ReactiveObject
     {
-        private readonly ISettings<AppSettings> _appSettings;
+        private readonly IOptions<AppSettings> _appSettings;
         private readonly int _buildInThemesCount;
 
-        public ThemeManager(ISettings<AppSettings> appSettings)
+        public ThemeManager(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings;
-            Themes = new ObservableCollection<ITheme>
+            Themes = new ObservableCollection<Theme>
             {
-                new Theme("Fluent Light", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentLight.axaml") }),
-                new Theme("Fluent Dark", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentDark.axaml") })
+                new("Fluent Light", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentLight.axaml") }),
+                new("Fluent Dark", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentDark.axaml") })
             };
 
             _buildInThemesCount = Themes.Count;
             _selectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.Value.ThemeName) ?? Themes[0];
         }
 
-        public ObservableCollection<ITheme> Themes { get; }
+        public ObservableCollection<Theme> Themes { get; }
 
-        private ITheme _selectedTheme;
-        public ITheme SelectedTheme
+        private Theme _selectedTheme;
+        public Theme SelectedTheme
         {
             get => _selectedTheme;
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
-        public void Initialize(Action<ITheme> applyTheme)
+        public void Initialize(Action<Theme> applyTheme)
         {
             ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
             _appSettings.Value.ThemesDir.Changed.Where(Directory.Exists).ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand!);
@@ -61,13 +61,13 @@ namespace BeatSaberModManager.Views.Implementations.Theming
                 Themes.RemoveAt(i);
             foreach (string file in Directory.EnumerateFiles(path, "*.axaml"))
             {
-                ITheme? theme = await LoadTheme(file);
+                Theme? theme = await LoadTheme(file);
                 if (theme is null) continue;
                 Themes.Add(theme);
             }
         }
 
-        private static async Task<ITheme?> LoadTheme(string filePath)
+        private static async Task<Theme?> LoadTheme(string filePath)
         {
             string name = Path.GetFileNameWithoutExtension(filePath);
             string dir = Path.GetDirectoryName(filePath)!;

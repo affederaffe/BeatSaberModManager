@@ -44,7 +44,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="275" Header="{DynamicResource ModsView:ModNameHeader}">
+                <DataGridTemplateColumn Width="Auto" MinWidth="220" Header="{DynamicResource ModsView:ModNameHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Name}" />
@@ -52,7 +52,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="100" Header="{DynamicResource ModsView:InstalledVersionHeader}">
+                <DataGridTemplateColumn Width="Auto" Header="{DynamicResource ModsView:InstalledVersionHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding InstalledMod.Version}" Foreground="{Binding IsUpToDate, Converter={x:Static p:ModsPage.IsUpToDateColorConverter}}" />
@@ -60,7 +60,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="100" Header="{DynamicResource ModsView:LatestVersionHeader}">
+                <DataGridTemplateColumn Width="Auto" Header="{DynamicResource ModsView:LatestVersionHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center" HorizontalAlignment="Center" Content="{Binding AvailableMod.Version}" />
@@ -68,7 +68,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Header="{DynamicResource ModsView:ModDescriptionHeader}">
+                <DataGridTemplateColumn Width="*" Header="{DynamicResource ModsView:ModDescriptionHeader}">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Description}" />

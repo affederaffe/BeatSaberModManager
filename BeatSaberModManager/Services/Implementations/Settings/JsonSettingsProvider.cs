@@ -2,13 +2,14 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utilities;
+
+using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Services.Implementations.Settings
 {
-    public sealed class JsonSettingsProvider<T> : ISettings<T>, IDisposable where T : new()
+    public sealed class JsonSettingsProvider<T> : IOptions<T>, IDisposable where T : class, new()
     {
         private readonly string _saveDirPath;
         private readonly string _saveFilePath;

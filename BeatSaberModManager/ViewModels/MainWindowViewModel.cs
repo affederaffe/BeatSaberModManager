@@ -1,12 +1,12 @@
-﻿using System;
-using System.Reactive;
+﻿using System.Reactive;
 using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
+
+using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -20,7 +20,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<ProgressInfo> _progressInfo;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
 
-        public MainWindowViewModel(ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator, IStatusProgress progress)
+        public MainWindowViewModel(ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, IOptions<AppSettings> appSettings, IStatusProgress progress)
         {
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;
@@ -31,15 +31,7 @@ namespace BeatSaberModManager.ViewModels
                 .Select(x => x?.AvailableMod.MoreInfoLink is not null)
                 .ToProperty(this, nameof(MoreInfoButtonEnabled), out _moreInfoButtonEnabled);
             modsViewModel.WhenAnyValue(x => x.IsSuccess)
-                .CombineLatest(appSettings.Value.InstallDir.Changed.Select(installDirValidator.ValidateInstallDir))
-                .Select(x => x.First && x.Second)
                 .ToProperty(this, nameof(InstallButtonEnabled), out _installButtonEnabled);
-            ManualInstallDirSelectionRequested = appSettings.Value.InstallDir.Changed.FirstAsync()
-                .Where(x => !installDirValidator.ValidateInstallDir(x))
-                .SelectMany(_ => installDirLocator.LocateInstallDirAsync().AsTask())
-                .Do(x => appSettings.Value.InstallDir.Value = x)
-                .Where(x => !installDirValidator.ValidateInstallDir(x))
-                .Select(_ => Unit.Default);
             StatusProgress statusProgress = (StatusProgress)progress;
             statusProgress.ProgressInfo.ToProperty(this, nameof(ProgressInfo), out _progressInfo);
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
@@ -49,9 +41,7 @@ namespace BeatSaberModManager.ViewModels
 
         public SettingsViewModel SettingsViewModel { get; }
 
-        public ISettings<AppSettings> AppSettings { get; }
-
-        public IObservable<Unit> ManualInstallDirSelectionRequested { get; }
+        public IOptions<AppSettings> AppSettings { get; }
 
         public ReactiveCommand<Unit, Unit> MoreInfoButtonCommand { get; }
 

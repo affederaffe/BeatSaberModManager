@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:l="clr-namespace:BeatSaberModManager.Views.Implementations.Localization"
+             xmlns:t="clr-namespace:BeatSaberModManager.Views.Implementations.Theming"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Implementations.Pages.SettingsPage"
              x:CompileBindings="True"
@@ -111,10 +113,9 @@
                         HorizontalAlignment="Left"
                         Orientation="Horizontal">
                 <Label Content="A 文" FontSize="22" />
-                <ComboBox Items="{Binding LocalizationManager.Languages}"
-                          SelectedItem="{Binding LocalizationManager.SelectedLanguage}">
+                <ComboBox x:Name="LanguagesComboBox">
                     <ComboBox.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate DataType="l:Language">
                             <Label Content="{Binding CultureInfo.DisplayName}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
@@ -169,14 +170,13 @@
                     HorizontalAlignment="Center"
                     Content="{DynamicResource OptionsView:SelectFolderButton}">
             </Button>
-            <ComboBox Grid.Column="1"
+            <ComboBox x:Name="ThemesComboBox"
+                      Grid.Column="1"
                       Grid.Row="11"
                       Margin="10, 2.5"
-                      VerticalAlignment="Center"
-                      Items="{Binding ThemeManager.Themes}"
-                      SelectedItem="{Binding ThemeManager.SelectedTheme}">
+                      VerticalAlignment="Center">
                 <ComboBox.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate DataType="t:Theme">
                         <Label Content="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>

@@ -5,12 +5,12 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utilities;
-using BeatSaberModManager.Views.Interfaces;
+
+using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -19,7 +19,7 @@ namespace BeatSaberModManager.ViewModels
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private readonly ISettings<AppSettings> _appSettings;
+        private readonly IOptions<AppSettings> _appSettings;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
         private readonly PlaylistInstaller _playlistInstaller;
@@ -32,14 +32,12 @@ namespace BeatSaberModManager.ViewModels
         private const string kModelSaberProtocol = "modelsaber";
         private const string kPlaylistProtocol = "bsplaylist";
 
-        public SettingsViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, ILocalizationManager localizationManager, IThemeManager themeManager, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
+        public SettingsViewModel(ModsViewModel modsViewModel, IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings;
             _installDirValidator = installDirValidator;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _playlistInstaller = playlistInstaller;
-            LocalizationManager = localizationManager;
-            ThemeManager = themeManager;
             StatusProgress = (StatusProgress)statusProgress;
             OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(InstallDir!));
             OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(ThemesDir!));
@@ -56,10 +54,6 @@ namespace BeatSaberModManager.ViewModels
             this.WhenAnyValue(x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, kModelSaberProtocol));
             this.WhenAnyValue(x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, kPlaylistProtocol));
         }
-
-        public ILocalizationManager LocalizationManager { get; }
-
-        public IThemeManager ThemeManager { get; }
 
         public StatusProgress StatusProgress { get; }
 

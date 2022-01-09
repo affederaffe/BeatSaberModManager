@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
 
@@ -10,6 +11,12 @@ namespace BeatSaberModManager.Services.Implementations.Http
 {
     public class HttpProgressClient : HttpClient
     {
+        public HttpProgressClient(Version version)
+        {
+            DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(nameof(BeatSaberModManager), version.ToString())));
+            Timeout = TimeSpan.FromSeconds(30);
+        }
+
         public async Task<HttpResponseMessage> GetAsync(string url, IProgress<double>? progress)
         {
             HttpResponseMessage response = await GetAsync(url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);

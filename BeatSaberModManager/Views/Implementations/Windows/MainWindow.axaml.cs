@@ -24,7 +24,7 @@ namespace BeatSaberModManager.Views.Implementations.Windows
             InitializeComponent();
             ViewModel = viewModel;
             this.Bind(viewModel, vm => vm.AppSettings.Value.LastTabIndex, v => v.TabControl.SelectedIndex);
-            this.WhenActivated(disposable => ViewModel.ManualInstallDirSelectionRequested
+            this.WhenActivated(disposable => viewModel.AppSettings.Value.InstallDir.Changed.Where(x => x is null)
                 .SelectMany(_ => new InstallFolderDialogWindow().ShowDialog<string?>(this))
                 .BindTo(ViewModel.SettingsViewModel, x => x.InstallDir)
                 .DisposeWith(disposable));

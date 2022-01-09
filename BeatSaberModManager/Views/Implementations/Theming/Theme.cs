@@ -1,11 +1,9 @@
 ﻿using Avalonia.Styling;
 
-using BeatSaberModManager.Views.Interfaces;
-
 
 namespace BeatSaberModManager.Views.Implementations.Theming
 {
-    public class Theme : ITheme
+    public class Theme
     {
         public Theme(string name, IStyle style)
         {

@@ -7,19 +7,19 @@ using System.Reactive.Linq;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
 using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
-using BeatSaberModManager.Views.Interfaces;
+
+using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Implementations.Localization
 {
-    public class LocalizationManager : ReactiveObject, ILocalizationManager
+    public class LocalizationManager : ReactiveObject
     {
-        private readonly ISettings<AppSettings> _appSettings;
+        private readonly IOptions<AppSettings> _appSettings;
 
-        public LocalizationManager(ISettings<AppSettings> appSettings)
+        public LocalizationManager(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
@@ -28,23 +28,23 @@ namespace BeatSaberModManager.Views.Implementations.Localization
                                Languages[0];
         }
 
-        public IReadOnlyList<ILanguage> Languages { get; }
+        public IReadOnlyList<Language> Languages { get; }
 
-        private ILanguage _selectedLanguage = null!;
-        public ILanguage SelectedLanguage
+        private Language _selectedLanguage = null!;
+        public Language SelectedLanguage
         {
             get => _selectedLanguage;
             set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
         }
 
-        public void Initialize(Action<ILanguage> applyLanguage)
+        public void Initialize(Action<Language> applyLanguage)
         {
             IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).OfType<Language>();
             selectedLanguageObservable.Subscribe(applyLanguage);
             selectedLanguageObservable.Subscribe(l => _appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }
 
-        private static ILanguage LoadLanguage(string languageCode)
+        private static Language LoadLanguage(string languageCode)
         {
             ResourceInclude resourceInclude = new() { Source = new Uri($"avares://{nameof(BeatSaberModManager)}/Resources/Localisation/{languageCode}.axaml") };
             CultureInfo cultureInfo = CultureInfo.GetCultureInfo(languageCode);
