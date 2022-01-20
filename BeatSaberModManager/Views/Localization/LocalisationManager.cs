@@ -24,7 +24,7 @@ namespace BeatSaberModManager.Views.Localization
             _appSettings = appSettings;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
             _selectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _appSettings.Value.LanguageCode) ??
-                                Languages.FirstOrDefault(x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
+                                Languages.FirstOrDefault(static x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
                                 Languages[0];
         }
 
@@ -39,7 +39,7 @@ namespace BeatSaberModManager.Views.Localization
 
         public void Initialize(Action<Language> applyLanguage)
         {
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(x => x.SelectedLanguage).OfType<Language>();
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage).OfType<Language>();
             selectedLanguageObservable.Subscribe(applyLanguage);
             selectedLanguageObservable.Subscribe(l => _appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }

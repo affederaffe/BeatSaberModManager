@@ -29,7 +29,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
-            IEnumerable<string> urls = beatModsMods.Select(x => x.Downloads[0].Url);
+            IEnumerable<string> urls = beatModsMods.Select(static x => x.Downloads[0].Url);
             string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
             IOUtils.TryCreateDirectory(pendingDirPath);
             int i = 0;

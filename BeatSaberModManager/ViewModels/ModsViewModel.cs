@@ -40,9 +40,9 @@ namespace BeatSaberModManager.ViewModels
             ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>> initializeCommand = ReactiveCommand.CreateFromObservable<string, Dictionary<IMod, ModGridItemViewModel>>(InitializeDataGrid);
             initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            initializeCommand.Select(_ => true).ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            this.WhenAnyValue(x => x.IsSuccess, x => x.IsExecuting)
-                .Select(x => !x.Item1 && !x.Item2)
+            initializeCommand.Select(static _ => true).ToProperty(this, nameof(IsSuccess), out _isSuccess);
+            this.WhenAnyValue(static x => x.IsSuccess, static x => x.IsExecuting)
+                .Select(static x => !x.Item1 && !x.Item2)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
             _appSettings.Value.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).InvokeCommand(initializeCommand!);
         }
@@ -79,18 +79,18 @@ namespace BeatSaberModManager.ViewModels
         private IObservable<Dictionary<IMod, ModGridItemViewModel>> InitializeDataGrid(string installDir) =>
             Task.WhenAll(_modProvider.GetAvailableModsForCurrentVersionAsync(installDir), _modProvider.GetInstalledModsAsync(installDir))
                 .ToObservable()
-                .Where(x => x[0] is not null && x[1] is not null)
+                .Where(static x => x[0] is not null && x[1] is not null)
                 .SelectMany(x => x[0]!.ToObservable()
                     .Select(availableMod => new ModGridItemViewModel(availableMod, x[1]!.FirstOrDefault(mod => mod.Name == availableMod.Name), _appSettings, _dependencyResolver, _versionComparer)))
-                .ToDictionary(x => x.AvailableMod, x => x)
+                .ToDictionary(static x => x.AvailableMod, static x => x)
                 .Cast<Dictionary<IMod, ModGridItemViewModel>>()
-                .Do(x => x.Values.ToObservable().Subscribe(y => y.Initialize(x)));
+                .Do(static x => x.Values.ToObservable().Subscribe(y => y.Initialize(x)));
 
         public async Task RefreshModsAsync()
         {
-            IEnumerable<IMod> install = GridItems.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(x => x.AvailableMod);
+            IEnumerable<IMod> install = GridItems.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(static x => x.AvailableMod);
             await InstallMods(_appSettings.Value.InstallDir.Value!, install).ConfigureAwait(false);
-            IEnumerable<IMod> uninstall = GridItems.Values.Where(x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(x => x.AvailableMod);
+            IEnumerable<IMod> uninstall = GridItems.Values.Where(static x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(static x => x.AvailableMod);
             await UninstallMods(_appSettings.Value.InstallDir.Value!, uninstall).ConfigureAwait(false);
         }
 
@@ -103,7 +103,7 @@ namespace BeatSaberModManager.ViewModels
 
         public async Task UninstallAllModsAsync()
         {
-            IEnumerable<IMod> mods = GridItems.Values.Where(x => x.InstalledMod is not null).Select(x => x.AvailableMod);
+            IEnumerable<IMod> mods = GridItems.Values.Where(static x => x.InstalledMod is not null).Select(static x => x.AvailableMod);
             await UninstallMods(_appSettings.Value.InstallDir.Value!, mods).ConfigureAwait(false);
             _modInstaller.RemoveAllMods(_appSettings.Value.InstallDir.Value!);
         }

@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -25,10 +26,10 @@ namespace BeatSaberModManager.Services.Implementations.Updater
 
         private const string kLatestApiEndpoint = "https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest";
 
-        public GitHubUpdater(HttpProgressClient httpClient, Version version)
+        public GitHubUpdater(HttpProgressClient httpClient, AssemblyName assemblyName)
         {
             _httpClient = httpClient;
-            _version = version;
+            _version = assemblyName.Version!;
         }
 
         public async Task<bool> NeedsUpdate()

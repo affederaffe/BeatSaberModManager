@@ -59,7 +59,7 @@ namespace BeatSaberModManager
                 .AddViews(args);
 
         private static IServiceCollection AddSerilog(this IServiceCollection services) =>
-            services.AddLogging(loggerBuilder =>
+            services.AddLogging(static loggerBuilder =>
                 loggerBuilder.AddSerilog(
                     new LoggerConfiguration()
                         .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), nameof(BeatSaberModManager), "log.txt"))
@@ -69,7 +69,7 @@ namespace BeatSaberModManager
             services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>();
 
         private static IServiceCollection AddCoreServices(this IServiceCollection services) =>
-            services.AddSingleton(typeof(Program).Assembly.GetName().Version!)
+            services.AddSingleton(typeof(Program).Assembly.GetName())
                 .AddSingleton<HttpProgressClient>()
                 .AddSingleton<IStatusProgress, StatusProgress>()
                 .AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>()

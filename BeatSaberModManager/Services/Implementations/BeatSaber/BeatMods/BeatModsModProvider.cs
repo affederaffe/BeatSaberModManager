@@ -59,16 +59,16 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             if (bsipa is not null) installedMods.Add(bsipa);
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(installDir, x))
                 .Where(Directory.Exists)
-                .SelectMany(x => Directory.EnumerateFiles(x, string.Empty, SearchOption.AllDirectories))
-                .Where(x => Path.GetExtension(x) is ".dll" or ".manifest" or ".exe");
+                .SelectMany(static x => Directory.EnumerateFiles(x, string.Empty, SearchOption.AllDirectories))
+                .Where(static x => Path.GetExtension(x) is ".dll" or ".manifest" or ".exe");
             string?[] rawHashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFile)).ConfigureAwait(false);
-            string[] hashes = rawHashes.Where(x => x is not null).ToArray()!;
+            string[] hashes = rawHashes.Where(static x => x is not null).ToArray()!;
             foreach (string hash in hashes)
             {
                 if (fileHashModPairs.TryGetValue(hash, out BeatModsMod? mod) &&
                     !installedMods.Contains(mod) &&
                     !IsModLoader(mod) &&
-                    !mod.Downloads[0].Hashes.Where(x => Path.GetExtension(x.File) is ".dll" or ".manifest" or ".exe").Select(x => x.Hash).Except(hashes).Any())
+                    !mod.Downloads[0].Hashes.Where(static x => Path.GetExtension(x.File) is ".dll" or ".manifest" or ".exe").Select(static x => x.Hash).Except(hashes).Any())
                     installedMods.Add(mod);
             }
 
@@ -89,7 +89,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async IAsyncEnumerable<ZipArchive> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null)
         {
-            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(x => kBeatModsBaseUrl + x).ToArray(), progress).ConfigureAwait(false))
+            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls.Select(static x => kBeatModsBaseUrl + x).ToArray(), progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) continue;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
@@ -138,7 +138,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             approved.CopyTo(allMods, 0);
             inactive.CopyTo(allMods, approved.Length);
             Dictionary<string, BeatModsMod> fileHashModPairs = new(allMods.Length);
-            foreach (BeatModsMod mod in allMods.Where(x => x.Downloads.Length == 1))
+            foreach (BeatModsMod mod in allMods.Where(static x => x.Downloads.Length == 1))
             {
                 foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
@@ -152,7 +152,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             string injectorPath = Path.Combine(installDir, "Beat Saber_Data", "Managed", "IPA.Injector.dll");
             string? injectorHash = await _hashProvider.CalculateHashForFile(injectorPath).ConfigureAwait(false);
             if (injectorHash is null || !fileHashModPairs.TryGetValue(injectorHash, out BeatModsMod? bsipa)) return null;
-            foreach (BeatModsHash beatModsHash in bsipa.Downloads[0].Hashes.Where(x => Path.GetExtension(x.File) is ".dll" or ".manifest" or ".exe"))
+            foreach (BeatModsHash beatModsHash in bsipa.Downloads[0].Hashes.Where(static x => Path.GetExtension(x.File) is ".dll" or ".manifest" or ".exe"))
             {
                 string fileName = beatModsHash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null);
                 string path = Path.Combine(installDir, fileName);

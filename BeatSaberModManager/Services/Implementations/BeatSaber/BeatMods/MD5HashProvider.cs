@@ -23,7 +23,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             using MD5 md5 = MD5.Create();
             byte[] hash = await md5.ComputeHashAsync(stream).ConfigureAwait(false);
-            return BitConverter.ToString(hash).Replace("-", string.Empty, StringComparison.Ordinal).ToLowerInvariant();
+            return BitConverter.ToString(hash).Replace("-", null, StringComparison.Ordinal).ToLowerInvariant();
         }
     }
 }

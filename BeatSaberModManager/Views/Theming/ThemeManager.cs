@@ -50,7 +50,7 @@ namespace BeatSaberModManager.Views.Theming
         {
             ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
             _appSettings.Value.ThemesDir.Changed.Where(Directory.Exists).ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand!);
-            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(x => x.SelectedTheme).OfType<Theme>();
+            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme).OfType<Theme>();
             selectedThemeObservable.Subscribe(applyTheme);
             selectedThemeObservable.Subscribe(t => _appSettings.Value.ThemeName = t.Name);
         }

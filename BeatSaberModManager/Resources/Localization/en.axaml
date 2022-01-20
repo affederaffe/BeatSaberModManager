@@ -30,7 +30,6 @@
     <sys:String x:Key="ModsView:ModDescriptionHeader">Description</sys:String>
     <sys:String x:Key="ModsView:NoModsAvailable">No mods available for this version yet</sys:String>
     <sys:String x:Key="ModsView:SearchWatermark">Search...</sys:String>
-    <sys:String x:Key="ModsView:InstalledModsNumber">Installed mods</sys:String>
 
     <sys:String x:Key="OptionsView:InstallationLabel">Installation</sys:String>
     <sys:String x:Key="OptionsView:OpenFolderButton">Open Folder</sys:String>

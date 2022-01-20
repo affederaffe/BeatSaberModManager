@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 using System.Threading.Tasks;
 
 
@@ -11,9 +12,9 @@ namespace BeatSaberModManager.Services.Implementations.Http
 {
     public class HttpProgressClient : HttpClient
     {
-        public HttpProgressClient(Version version)
+        public HttpProgressClient(AssemblyName assemblyName)
         {
-            DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(nameof(BeatSaberModManager), version.ToString())));
+            DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(nameof(BeatSaberModManager), assemblyName.Version!.ToString())));
             Timeout = TimeSpan.FromSeconds(30);
         }
 
