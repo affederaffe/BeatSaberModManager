@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
@@ -17,7 +17,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
     {
         private readonly HttpProgressClient _httpClient;
 
-        private const string kModelSaberFilesEndpoint = "https://modelsaber.com/files/";
+        private const string kModelSaberFilesUrl = "https://modelsaber.com/files/";
 
         public ModelSaberModelInstaller(HttpProgressClient httpClient)
         {
@@ -40,7 +40,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             IOUtils.TryCreateDirectory(folderPath);
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(new ProgressInfo(StatusType.Installing, modelName));
-            using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesEndpoint + uri.Host + uri.AbsolutePath, progress).ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.GetAsync(kModelSaberFilesUrl + uri.Host + uri.AbsolutePath, progress).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             byte[] body = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             string filePath = Path.Combine(folderPath, modelName);

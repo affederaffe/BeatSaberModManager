@@ -8,7 +8,7 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.Options;
 

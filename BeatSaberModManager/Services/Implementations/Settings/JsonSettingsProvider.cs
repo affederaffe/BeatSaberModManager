@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.Options;
 

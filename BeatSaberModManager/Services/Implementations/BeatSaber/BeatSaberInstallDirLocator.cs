@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Utils;
 
 using Microsoft.Win32;
 

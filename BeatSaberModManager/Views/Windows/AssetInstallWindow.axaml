@@ -1,0 +1,60 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+        xmlns:controls="clr-namespace:BeatSaberModManager.Views.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BeatSaberModManager.Views.Windows.AssetInstallWindow"
+        x:CompileBindings="True"
+        x:DataType="vm:AssetInstallWindowViewModel"
+        x:Name="Window"
+        Title="OneClick™ Installer"
+        Icon="/Resources/Icons/Icon.ico"
+        TransparencyLevelHint="Blur"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        MinWidth="200" MinHeight="200"
+        Width="300" Height="500">
+
+    <Panel Margin="{Binding #Window.OffScreenMargin}">
+        <Grid RowDefinitions="2.75*, *">
+            <Rectangle Grid.Row="0"
+                       IsHitTestVisible="False"
+                       Fill="{DynamicResource BackgroundMediumLowBrush}">
+            </Rectangle>
+            <Rectangle Grid.Row="1"
+                       IsHitTestVisible="False"
+                       Fill="{DynamicResource BackgroundMediumBrush}">
+            </Rectangle>
+
+            <Viewbox Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Panel>
+                    <controls:ProgressRing Width="200"
+                                    Height="200"
+                                    Margin="50"
+                                    Value="{Binding ProgressValue}"
+                                    IsVisible="{Binding IsExecuting}">
+                    </controls:ProgressRing>
+                    <Path Stroke="DarkGreen"
+                          StrokeThickness="1"
+                          Fill="Green"
+                          Data="{StaticResource Icons:Checkmark}"
+                          IsVisible="{Binding IsSuccess}">
+                    </Path>
+                    <Path Stroke="DarkRed"
+                          StrokeThickness="1"
+                          Fill="Red"
+                          Data="{StaticResource Icons:Cross}"
+                          IsVisible="{Binding IsFailed}">
+                    </Path>
+                </Panel>
+            </Viewbox>
+
+            <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                <ItemsRepeater Items="{Binding Log}" />
+            </ScrollViewer>
+        </Grid>
+    </Panel>
+
+</Window>

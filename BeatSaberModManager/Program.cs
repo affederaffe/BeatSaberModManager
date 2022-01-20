@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Media;
-using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.BeatSaber;
@@ -21,19 +20,18 @@ using BeatSaberModManager.Services.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.Updater;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
-using BeatSaberModManager.Views.Implementations;
-using BeatSaberModManager.Views.Implementations.Localization;
-using BeatSaberModManager.Views.Implementations.Pages;
-using BeatSaberModManager.Views.Implementations.Theming;
-using BeatSaberModManager.Views.Implementations.Windows;
+using BeatSaberModManager.Views;
+using BeatSaberModManager.Views.Localization;
+using BeatSaberModManager.Views.Pages;
+using BeatSaberModManager.Views.Theming;
+using BeatSaberModManager.Views.Windows;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
-using SkiaSharp;
+using Serilog;
 
 
 namespace BeatSaberModManager
@@ -42,35 +40,30 @@ namespace BeatSaberModManager
     {
         public static async Task<int> Main(string[] args)
         {
-            using IHost host = CreateHostBuilder(args).Build();
-            await host.StartAsync().ConfigureAwait(false);
-            int exitCode = await host.RunAvaloniaApp().ConfigureAwait(false);
-            await host.StopAsync().ConfigureAwait(false);
-            return exitCode;
+            await using ServiceProvider services = CreateServiceCollection(args).BuildServiceProvider();
+            return await services.GetRequiredService<Startup>().RunAsync();
         }
 
-        private static async Task<int> RunAvaloniaApp(this IHost host)
-        {
-            IUpdater updater = host.Services.GetRequiredService<IUpdater>();
-            if (await updater.NeedsUpdate().ConfigureAwait(false)) return await updater.Update().ConfigureAwait(false);
-            X11PlatformOptions x11Options = new() { UseEGL = true };
-            FontManagerOptions fontManagerOptions = new() { DefaultFamilyName = string.IsNullOrEmpty(SKTypeface.Default.FamilyName) ? SKFontManager.Default.GetFamilyName(0) : SKTypeface.Default.FamilyName };
-            return AppBuilder.Configure(host.Services.GetRequiredService<Application>).With(fontManagerOptions).With(x11Options).UsePlatformDetect().UseReactiveUI().StartWithClassicDesktopLifetime(null!);
-        }
+        private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>
+            new ServiceCollection()
+                .AddSingleton<Startup>()
+                .AddSerilog()
+                .AddSettings()
+                .AddUpdater()
+                .AddCoreServices()
+                .AddModServices()
+                .AddAssetProviders()
+                .AddProtocolHandlerRegistrar()
+                .AddApplication()
+                .AddViewModels()
+                .AddViews(args);
 
-        private static IHostBuilder CreateHostBuilder(IReadOnlyList<string> args) =>
-            Host.CreateDefaultBuilder()
-                .ConfigureServices(services =>
-                    services.AddHostedService<Startup>()
-                        .AddSettings()
-                        .AddCoreServices()
-                        .AddModServices()
-                        .AddUpdater()
-                        .AddAssetProviders()
-                        .AddProtocolHandlerRegistrar()
-                        .AddApplication()
-                        .AddViewModels()
-                        .AddViews(args));
+        private static IServiceCollection AddSerilog(this IServiceCollection services) =>
+            services.AddLogging(loggerBuilder =>
+                loggerBuilder.AddSerilog(
+                    new LoggerConfiguration()
+                        .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), nameof(BeatSaberModManager), "log.txt"))
+                        .CreateLogger(), true));
 
         private static IServiceCollection AddSettings(this IServiceCollection services) =>
             services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>();
@@ -90,9 +83,9 @@ namespace BeatSaberModManager
         private static IServiceCollection AddModServices(this IServiceCollection services) =>
             services.AddSingleton<IHashProvider, MD5HashProvider>()
                 .AddSingleton<IDependencyResolver, DependencyResolver>()
+                .AddSingleton<IVersionComparer, SystemVersionComparer>()
                 .AddSingleton<IModProvider, BeatModsModProvider>()
                 .AddSingleton<IModInstaller, BeatModsModInstaller>()
-                .AddSingleton<IModVersionComparer, SystemVersionComparer>()
                 .AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>();
 
         private static IServiceCollection AddUpdater(this IServiceCollection services) =>
@@ -120,7 +113,6 @@ namespace BeatSaberModManager
         private static IServiceCollection AddViews(this IServiceCollection services, IReadOnlyList<string> args) =>
             args.Count is 2 && args[0] == "--install"
                 ? services.AddSingleton(new Uri(args[1]))
-                    .AddSingleton<AssetInstallWindowViewModel>()
                     .AddSingleton<Window, AssetInstallWindow>()
                 : services.AddSingleton<Window, MainWindow>()
                     .AddSingleton<IViewFor<ModsViewModel>, ModsPage>()

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.Playlists;
-using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
+using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
@@ -67,7 +67,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using ZipArchive archive = new(stream);
                 bool success = BeatSaverMapInstaller.ExtractBeatSaverMapToDir(installDir, maps[i], archive);
-                if (!success) return false;
+                if (!success) progress?.Report(new ProgressInfo(StatusType.Failed, maps[i].Name));
                 if (++i >= maps.Length) return true;
                 progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
             }

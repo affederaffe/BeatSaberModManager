@@ -7,11 +7,11 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
-using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
+using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
@@ -20,8 +20,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
     {
         private readonly HttpProgressClient _httpClient;
 
-        private const string kBeatSaverUrlPrefix = "https://api.beatsaver.com";
-        private const string kBeatSaverKeyEndpoint = "/maps/id/";
+        private const string kBeatSaverKeyUrl = "https://api.beatsaver.com/maps/id/";
 
         public BeatSaverMapInstaller(HttpProgressClient httpClient)
         {
@@ -41,7 +40,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             while (retries != 0)
             {
-                using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverUrlPrefix + kBeatSaverKeyEndpoint + key).ConfigureAwait(false);
+                using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverKeyUrl + key).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);

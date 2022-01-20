@@ -8,10 +8,10 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.GitHub;
-using BeatSaberModManager.Models.Implementations.JsonSerializerContexts;
+using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utilities;
+using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.Updater
@@ -37,9 +37,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             _release = JsonSerializer.Deserialize(body, GitHubJsonSerializerContext.Default.Release);
-            if (_release is null) return false;
-            Version latestVersion = Version.Parse(_release.TagName.AsSpan(1, 5));
-            return latestVersion > _version;
+            return _release is not null && Version.TryParse(_release.TagName.AsSpan(1, 5), out Version? version) && version > _version;
         }
 
         public async Task<int> Update()
@@ -50,7 +48,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return -1;
             string processPath = Environment.ProcessPath!;
-            string oldPath = processPath + ".old";
+            string oldPath = processPath.Replace(".exe", ".old.exe");
             IOUtils.TryDeleteFile(oldPath);
             IOUtils.TryMoveFile(processPath, oldPath);
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

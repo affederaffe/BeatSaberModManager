@@ -11,7 +11,7 @@
     <AnalysisMode>recommended</AnalysisMode>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <AssemblyVersion>0.0.0</AssemblyVersion>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
     <ApplicationIcon>Resources/Icons/Icon.ico</ApplicationIcon>
   </PropertyGroup>
 
@@ -36,9 +36,12 @@
     <PackageReference Include="Avalonia" Version="0.10.11" />
     <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.11" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.11" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
     <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="0.10.11" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.1.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
     <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
   </ItemGroup>

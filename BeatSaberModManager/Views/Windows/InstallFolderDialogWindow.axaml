@@ -1,0 +1,43 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BeatSaberModManager.Views.Windows.InstallFolderDialogWindow"
+        Icon="/Resources/Icons/Icon.ico"
+        WindowStartupLocation="CenterOwner"
+        TransparencyLevelHint="Blur"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        MinWidth="320" MinHeight="140"
+        Width="320" Height="140">
+
+        <Panel>
+            <Rectangle IsHitTestVisible="False" Fill="{DynamicResource BackgroundMediumLowBrush}" />
+
+            <TextBlock Margin="20"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Top"
+                       Text="{DynamicResource InstallDirDialogWindow:NoInstallDirText}">
+            </TextBlock>
+
+            <Grid ColumnDefinitions="*, *"
+                  Margin="20"
+                  HorizontalAlignment="Center"
+                  VerticalAlignment="Bottom">
+                <Button x:Name="ContinueButton"
+                        Grid.Column="0"
+                        Margin="10, 0"
+                        HorizontalAlignment="Center"
+                        Content="{DynamicResource InstallDirDialogWindow:ContinueButtonText}">
+                </Button>
+                <Button Grid.Column="1"
+                        Margin="10, 0"
+                        Content="{DynamicResource InstallDirDialogWindow:CancelButtonText}"
+                        Click="OnCancelButtonClicked">
+                </Button>
+            </Grid>
+        </Panel>
+
+</Window>
