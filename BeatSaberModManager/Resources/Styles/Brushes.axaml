@@ -5,8 +5,9 @@
         <SolidColorBrush x:Key="BackgroundMediumLowBrush" Color="{DynamicResource SystemChromeMediumLowColor}" Opacity="0.875" />
         <SolidColorBrush x:Key="BackgroundMediumBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.975" />
         <SolidColorBrush x:Key="InfoIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
-        <SolidColorBrush x:Key="DatabaseIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
-        <SolidColorBrush x:Key="GearIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
+        <SolidColorBrush x:Key="LibraryIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
+        <SolidColorBrush x:Key="SettingsIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
+        <SolidColorBrush x:Key="SearchIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
     </Styles.Resources>
 
 </Styles>

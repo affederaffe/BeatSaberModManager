@@ -83,7 +83,6 @@ namespace BeatSaberModManager
         private static IServiceCollection AddModServices(this IServiceCollection services) =>
             services.AddSingleton<IHashProvider, MD5HashProvider>()
                 .AddSingleton<IDependencyResolver, DependencyResolver>()
-                .AddSingleton<IVersionComparer, SystemVersionComparer>()
                 .AddSingleton<IModProvider, BeatModsModProvider>()
                 .AddSingleton<IModInstaller, BeatModsModInstaller>()
                 .AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>();

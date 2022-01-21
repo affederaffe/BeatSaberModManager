@@ -50,7 +50,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             }
         }
 
-        public async Task<IEnumerable<IMod>?> GetInstalledModsAsync(string installDir)
+        public async Task<IReadOnlyCollection<IMod>?> GetInstalledModsAsync(string installDir)
         {
             Dictionary<string, BeatModsMod>? fileHashModPairs = await GetMappedModHashesAsync().ConfigureAwait(false);
             if (fileHashModPairs is null) return null;
@@ -75,13 +75,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return installedMods;
         }
 
-        public async Task<IEnumerable<IMod>?> GetAvailableModsForCurrentVersionAsync(string installDir)
+        public async Task<IReadOnlyCollection<IMod>?> GetAvailableModsForCurrentVersionAsync(string installDir)
         {
             string? version = await _gameVersionProvider.DetectGameVersion(installDir).ConfigureAwait(false);
             return version is null ? null : await GetAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 
-        public async Task<IEnumerable<IMod>?> GetAvailableModsForVersionAsync(string version)
+        public async Task<IReadOnlyCollection<IMod>?> GetAvailableModsForVersionAsync(string version)
         {
             string? aliasedGameVersion = await GetAliasedGameVersion(version).ConfigureAwait(false);
             return aliasedGameVersion is null ? null : _availableMods = await GetModsAsync($"mod?status=approved&gameVersion={aliasedGameVersion}").ConfigureAwait(false);

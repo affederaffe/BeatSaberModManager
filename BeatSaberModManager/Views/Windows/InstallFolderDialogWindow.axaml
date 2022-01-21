@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.InstallFolderDialogWindow"
+        Name="Window"
         Icon="/Resources/Icons/Icon.ico"
         WindowStartupLocation="CenterOwner"
         TransparencyLevelHint="Blur"
@@ -12,7 +13,7 @@
         MinWidth="320" MinHeight="140"
         Width="320" Height="140">
 
-        <Panel>
+        <Panel Margin="{Binding #Window.OffScreenMargin}">
             <Rectangle IsHitTestVisible="False" Fill="{DynamicResource BackgroundMediumLowBrush}" />
 
             <TextBlock Margin="20"

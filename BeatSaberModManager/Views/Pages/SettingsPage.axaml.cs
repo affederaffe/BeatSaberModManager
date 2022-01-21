@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reactive.Linq;
 
 using Avalonia;
@@ -8,6 +9,7 @@ using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Services.Implementations.Progress;
+using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
@@ -24,7 +26,7 @@ namespace BeatSaberModManager.Views.Pages
         public SettingsPage() { }
 
         [ActivatorUtilitiesConstructor]
-        public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager)
+        public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager, IInstallDirValidator installDirValidator)
         {
             InitializeComponent();
             ViewModel = viewModel;
@@ -36,9 +38,11 @@ namespace BeatSaberModManager.Views.Pages
             ThemesComboBox.GetObservable(SelectingItemsControl.SelectedItemProperty).BindTo(themeManager, static x => x.SelectedTheme);
             SelectInstallFolderButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => new OpenFolderDialog().ShowAsync(window))
+                .Where(installDirValidator.ValidateInstallDir)
                 .BindTo(ViewModel, static x => x.InstallDir);
             SelectThemesFolderButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => new OpenFolderDialog().ShowAsync(window))
+                .Where(Directory.Exists)
                 .BindTo(ViewModel, static x => x.ThemesDir);
             InstallPlaylistButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => new OpenFileDialog { AllowMultiple = false, Filters = { new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" } } }.ShowAsync(window))

@@ -4,12 +4,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
         xmlns:cv="clr-namespace:BeatSaberModManager.Views.Converters"
+        xmlns:c="clr-namespace:BeatSaberModManager.Views.Controls"
         xmlns:p="clr-namespace:BeatSaberModManager.Views.Pages"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.MainWindow"
         x:CompileBindings="True"
         x:DataType="vm:MainWindowViewModel"
-        x:Name="Window"
+        Name="Window"
         Title="{StaticResource MainWindow:Title}"
         Icon="/Resources/Icons/Icon.ico"
         TransparencyLevelHint="Blur"
@@ -22,7 +23,7 @@
         <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
     </Window.Resources>
 
-    <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="SideBar">
+    <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
@@ -35,8 +36,7 @@
         <TabItem Content="{Binding ModsViewModel}">
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Database}"
-                              Foreground="{DynamicResource DatabaseIconBrush}" />
+                    <PathIcon Data="{StaticResource Icons:Library}" Foreground="{DynamicResource DatabaseIconBrush}" />
                     <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:ModsHeader}" />
                 </StackPanel>
             </TabItem.Header>
@@ -44,7 +44,7 @@
         <TabItem Content="{Binding SettingsViewModel}">
             <TabItem.Header>
                 <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Gear}" Foreground="{DynamicResource GearIconBrush}" />
+                    <PathIcon Data="{StaticResource Icons:Settings}" Foreground="{DynamicResource GearIconBrush}" />
                     <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:SettingsHeader}" />
                 </StackPanel>
             </TabItem.Header>
@@ -67,14 +67,15 @@
                              Value="{Binding ProgressValue}">
                 </ProgressBar>
                 <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
-                    <Label Margin="10, 0, 5, 0" Content="{Binding ProgressInfo, Converter={StaticResource LocalizedStatusConverter}}" />
+                    <Label Margin="10, 0, 5, 0"
+                           Content="{Binding ProgressInfo, Converter={StaticResource LocalizedStatusConverter}}" />
                 </Viewbox>
-                <Button Grid.Column="1"
-                        Margin="5, 0, 5, 0"
-                        Content="{DynamicResource MainWindow:MoreInfoButton}"
-                        IsEnabled="{Binding MoreInfoButtonEnabled}"
-                        Command="{Binding MoreInfoButtonCommand}">
-                </Button>
+                <c:HyperlinkButton Grid.Column="1"
+                                   Margin="5, 0, 5, 0"
+                                   Content="{DynamicResource MainWindow:MoreInfoButton}"
+                                   Uri="{Binding ModsViewModel.SelectedGridItem.AvailableMod.MoreInfoLink}"
+                                   IsEnabled="{Binding MoreInfoButtonEnabled}">
+                </c:HyperlinkButton>
                 <Button Grid.Column="2"
                         Margin="5, 0, 10, 0"
                         Content="{DynamicResource MainWindow:RefreshModsButton}"

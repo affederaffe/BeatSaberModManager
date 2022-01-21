@@ -6,9 +6,9 @@
     <Application.Styles>
         <StyleInclude Source="/Resources/Styles/FluentDark.axaml" />
         <StyleInclude Source="/Resources/Styles/DataGrid.axaml" />
+        <StyleInclude Source="/Resources/Styles/HyperlinkButton.axaml" />
         <StyleInclude Source="/Resources/Styles/ProgressRing.axaml" />
         <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
-        <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
     </Application.Styles>
 
     <Application.Resources>

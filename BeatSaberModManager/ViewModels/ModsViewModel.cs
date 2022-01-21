@@ -22,20 +22,18 @@ namespace BeatSaberModManager.ViewModels
         private readonly IDependencyResolver _dependencyResolver;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
-        private readonly IVersionComparer _versionComparer;
         private readonly IStatusProgress _progress;
         private readonly ObservableAsPropertyHelper<Dictionary<IMod, ModGridItemViewModel>> _gridItems;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
 
-        public ModsViewModel(IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IVersionComparer versionComparer, IStatusProgress progress)
+        public ModsViewModel(IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IStatusProgress progress)
         {
             _appSettings = appSettings;
             _dependencyResolver = dependencyResolver;
             _modProvider = modProvider;
             _modInstaller = modInstaller;
-            _versionComparer = versionComparer;
             _progress = progress;
             ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>> initializeCommand = ReactiveCommand.CreateFromObservable<string, Dictionary<IMod, ModGridItemViewModel>>(InitializeDataGrid);
             initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
@@ -81,7 +79,7 @@ namespace BeatSaberModManager.ViewModels
                 .ToObservable()
                 .Where(static x => x[0] is not null && x[1] is not null)
                 .SelectMany(x => x[0]!.ToObservable()
-                    .Select(availableMod => new ModGridItemViewModel(availableMod, x[1]!.FirstOrDefault(mod => mod.Name == availableMod.Name), _appSettings, _dependencyResolver, _versionComparer)))
+                    .Select(availableMod => new ModGridItemViewModel(availableMod, x[1]!.FirstOrDefault(mod => mod.Name == availableMod.Name), _appSettings, _dependencyResolver)))
                 .ToDictionary(static x => x.AvailableMod, static x => x)
                 .Cast<Dictionary<IMod, ModGridItemViewModel>>()
                 .Do(static x => x.Values.ToObservable().Subscribe(y => y.Initialize(x)));

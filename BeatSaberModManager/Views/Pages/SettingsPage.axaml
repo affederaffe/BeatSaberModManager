@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:c="clr-namespace:BeatSaberModManager.Views.Controls"
              xmlns:localization="clr-namespace:BeatSaberModManager.Views.Localization"
              xmlns:theming="clr-namespace:BeatSaberModManager.Views.Theming"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -26,14 +27,14 @@
                      HorizontalAlignment="Stretch"
                      Text="{Binding InstallDir}">
             </TextBox>
-            <Button Grid.Column="2"
-                    Grid.Row="1"
-                    Margin="10, 2.5"
-                    HorizontalAlignment="Center"
-                    Content="{DynamicResource OptionsView:OpenFolderButton}"
-                    IsEnabled="{Binding HasValidatedInstallDir}"
-                    Command="{Binding OpenInstallDirCommand}">
-            </Button>
+            <c:HyperlinkButton Grid.Column="2"
+                               Grid.Row="1"
+                               Margin="10, 2.5"
+                               HorizontalAlignment="Center"
+                               Content="{DynamicResource OptionsView:OpenFolderButton}"
+                               Uri="{Binding InstallDir}"
+                               IsEnabled="{Binding HasValidatedInstallDir}">
+            </c:HyperlinkButton>
             <Button x:Name="SelectInstallFolderButton"
                     Grid.Column="3"
                     Grid.Row="1"
@@ -42,23 +43,25 @@
                     Content="{DynamicResource OptionsView:SelectFolderButton}">
             </Button>
 
-            <StackPanel Grid.Column="1"
-                        Grid.Row="2"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Center">
-                <Button Margin="10, 2.5"
-                        IsEnabled="{Binding HasValidatedInstallDir}"
+            <Grid Grid.Column="1"
+                  Grid.Row="2"
+                  ColumnDefinitions="*, *"
+                  HorizontalAlignment="Center">
+                <Button Grid.Column="0"
+                        Margin="10, 2.5"
+                        IsEnabled="{Binding ModsViewModel.IsSuccess}"
                         Content="{DynamicResource OptionsView:UninstallModLoaderButton}"
                         Command="{Binding UninstallModLoaderCommand}">
                 </Button>
-                <Button Margin="10, 2.5"
+                <Button Grid.Column="1"
+                        Margin="10, 2.5"
                         HorizontalAlignment="Center"
                         Background="#FFBB0000"
-                        IsEnabled="{Binding HasValidatedInstallDir}"
+                        IsEnabled="{Binding ModsViewModel.IsSuccess}"
                         Content="{DynamicResource OptionsView:UninstallAllModsButton}"
                         Command="{Binding UninstallAllModsCommand}">
                 </Button>
-            </StackPanel>
+            </Grid>
 
             <Label Grid.Column="1"
                    Grid.Row="3"
@@ -155,14 +158,14 @@
                      HorizontalAlignment="Stretch"
                      Text="{Binding ThemesDir}">
             </TextBox>
-            <Button Grid.Column="2"
-                    Grid.Row="10"
-                    Margin="10, 2.5"
-                    HorizontalAlignment="Center"
-                    Content="{DynamicResource OptionsView:OpenFolderButton}"
-                    IsEnabled="{Binding HasThemesDir}"
-                    Command="{Binding OpenThemesDirCommand}">
-            </Button>
+            <c:HyperlinkButton Grid.Column="2"
+                               Grid.Row="10"
+                               Margin="10, 2.5"
+                               HorizontalAlignment="Center"
+                               Content="{DynamicResource OptionsView:OpenFolderButton}"
+                               Uri="{Binding ThemesDir}"
+                               IsEnabled="{Binding HasThemesDir}">
+            </c:HyperlinkButton>
             <Button x:Name="SelectThemesFolderButton"
                     Grid.Column="3"
                     Grid.Row="10"

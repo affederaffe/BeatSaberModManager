@@ -4,7 +4,6 @@ using System.Reactive.Linq;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.Options;
 
@@ -25,7 +24,6 @@ namespace BeatSaberModManager.ViewModels
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;
             AppSettings = appSettings;
-            MoreInfoButtonCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink));
             InstallButtonCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync);
             modsViewModel.WhenAnyValue(static x => x.SelectedGridItem)
                 .Select(static x => x?.AvailableMod.MoreInfoLink is not null)
@@ -42,8 +40,6 @@ namespace BeatSaberModManager.ViewModels
         public SettingsViewModel SettingsViewModel { get; }
 
         public IOptions<AppSettings> AppSettings { get; }
-
-        public ReactiveCommand<Unit, Unit> MoreInfoButtonCommand { get; }
 
         public ReactiveCommand<Unit, Unit> InstallButtonCommand { get; }
 

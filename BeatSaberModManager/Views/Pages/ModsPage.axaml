@@ -49,7 +49,7 @@
                           Foreground="Transparent"
                           IsVisible="{Binding IsSuccess}"
                           IsChecked="{Binding IsSearchEnabled}">
-                <PathIcon Data="{StaticResource Icons:Search}" />
+                <PathIcon Data="{StaticResource Icons:Search}" Foreground="{DynamicResource SearchIconBrush}" />
             </ToggleButton>
 
             <DataGrid x:Name="ModsDataGrid"

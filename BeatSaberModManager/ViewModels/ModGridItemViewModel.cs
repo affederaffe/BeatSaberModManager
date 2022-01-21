@@ -19,7 +19,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly IDependencyResolver _dependencyResolver;
         private readonly ObservableAsPropertyHelper<bool> _isUpToDate;
 
-        public ModGridItemViewModel(IMod availableMod, IMod? installedMod, IOptions<AppSettings> appSettings, IDependencyResolver dependencyResolver, IVersionComparer versionComparer)
+        public ModGridItemViewModel(IMod availableMod, IMod? installedMod, IOptions<AppSettings> appSettings, IDependencyResolver dependencyResolver)
         {
             _availableMod = availableMod;
             _installedMod = installedMod;
@@ -27,7 +27,7 @@ namespace BeatSaberModManager.ViewModels
             _dependencyResolver = dependencyResolver;
             _isCheckBoxChecked = installedMod is not null || _appSettings.Value.SelectedMods.Contains(availableMod.Name);
             this.WhenAnyValue(static x => x.AvailableMod, static x => x.InstalledMod)
-                .Select(x => versionComparer.CompareVersions(x.Item1.Version, x.Item2?.Version) >= 0)
+                .Select(static x => x.Item1.Version.CompareTo(x.Item2?.Version) <= 0)
                 .ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
         }
 
@@ -67,7 +67,7 @@ namespace BeatSaberModManager.ViewModels
                 .SelectMany(OnCheckboxUpdated)
                 .Select(gridItems.GetValueOrDefault)
                 .WhereNotNull()
-                .Select(x => (gridItem: x, _dependencyResolver.IsDependency(x.AvailableMod)));
+                .Select(x => (x, _dependencyResolver.IsDependency(x.AvailableMod)));
             affectedGridItemObservable.Subscribe(static x => x.gridItem.IsCheckBoxEnabled = !x.isDependency);
             affectedGridItemObservable.Subscribe(static x => x.gridItem.IsCheckBoxChecked = x.isDependency || x.gridItem.IsCheckBoxChecked && x.gridItem.InstalledMod is not null);
         }

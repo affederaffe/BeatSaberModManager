@@ -22,4 +22,13 @@
         <Setter Property="IsVisible" Value="False" />
     </Style>
 
+    <Style Selector="DataGrid:empty-columns /template/ DataGridColumnHeader#PART_TopLeftCornerHeader">
+        <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="DataGrid:empty-columns /template/ DataGridColumnHeadersPresenter#PART_ColumnHeadersPresenter">
+        <Setter Property="IsVisible" Value="True" />
+    </Style>
+    <Style Selector="DataGrid:empty-columns /template/ Rectangle#PART_ColumnHeadersAndRowsSeparator">
+        <Setter Property="IsVisible" Value="True" />
+    </Style>
 </Styles>

@@ -1,5 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
+using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Models.Interfaces;
 
 
@@ -11,7 +13,8 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public string Name { get; set; } = null!;
 
         [JsonPropertyName("version")]
-        public string Version { get; set; } = null!;
+        [JsonConverter(typeof(VersionConverter))]
+        public Version Version { get; set; } = null!;
 
         [JsonPropertyName("gameVersion")]
         public string GameVersion { get; set; } = null!;

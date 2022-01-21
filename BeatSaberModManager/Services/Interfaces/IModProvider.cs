@@ -12,9 +12,9 @@ namespace BeatSaberModManager.Services.Interfaces
     {
         bool IsModLoader(IMod? modification);
         IEnumerable<IMod> GetDependencies(IMod modification);
-        Task<IEnumerable<IMod>?> GetInstalledModsAsync(string installDir);
-        Task<IEnumerable<IMod>?> GetAvailableModsForCurrentVersionAsync(string installDir);
-        Task<IEnumerable<IMod>?> GetAvailableModsForVersionAsync(string version);
+        Task<IReadOnlyCollection<IMod>?> GetInstalledModsAsync(string installDir);
+        Task<IReadOnlyCollection<IMod>?> GetAvailableModsForCurrentVersionAsync(string installDir);
+        Task<IReadOnlyCollection<IMod>?> GetAvailableModsForVersionAsync(string version);
         IAsyncEnumerable<ZipArchive> DownloadModsAsync(IEnumerable<string> urls, IProgress<double>? progress = null);
     }
 }
