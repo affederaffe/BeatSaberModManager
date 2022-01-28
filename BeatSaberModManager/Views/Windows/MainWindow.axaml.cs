@@ -1,7 +1,6 @@
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
-using Avalonia;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
@@ -28,7 +27,6 @@ namespace BeatSaberModManager.Views.Windows
                 .SelectMany(_ => new InstallFolderDialogWindow().ShowDialog<string?>(this))
                 .BindTo(viewModel.SettingsViewModel, static x => x.AppSettings.Value.InstallDir)
                 .DisposeWith(disposable));
-            this.AttachDevTools();
         }
     }
 }
