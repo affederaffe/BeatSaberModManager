@@ -43,8 +43,8 @@ namespace BeatSaberModManager
 #if DEBUG
             if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir) && _appSettings.Value.PlatformType is not null) return RunAvaloniaApp();
             (string? installDir, string? platform) = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
-            _appSettings.Value.PlatformType = installDir;
-            _appSettings.Value.InstallDir = platform;
+            _appSettings.Value.PlatformType = platform;
+            _appSettings.Value.InstallDir = installDir;
             return RunAvaloniaApp();
 #else
             try
@@ -52,8 +52,8 @@ namespace BeatSaberModManager
                 if (await _updater.NeedsUpdate().ConfigureAwait(false)) return await _updater.Update().ConfigureAwait(false);
                 if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir) && _appSettings.Value.PlatformType is not null) return RunAvaloniaApp();
                 (string? installDir, string? platform) = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
-                _appSettings.Value.PlatformType = installDir;
-                _appSettings.Value.InstallDir = platform;
+                _appSettings.Value.PlatformType = platform;
+                _appSettings.Value.InstallDir = installDir;
                 return RunAvaloniaApp();
             }
             catch (Exception e)
