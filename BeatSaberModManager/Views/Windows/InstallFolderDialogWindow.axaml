@@ -7,7 +7,7 @@
         Name="Window"
         Icon="/Resources/Icons/Icon.ico"
         WindowStartupLocation="CenterOwner"
-        TransparencyLevelHint="Blur"
+        TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         MinWidth="320" MinHeight="140"
@@ -31,11 +31,11 @@
                         Grid.Column="0"
                         Margin="10, 0"
                         HorizontalAlignment="Center"
-                        Content="{DynamicResource InstallDirDialogWindow:ContinueButtonText}">
+                        Content="{DynamicResource InstallDirDialogWindow:ContinueButton}">
                 </Button>
                 <Button Grid.Column="1"
                         Margin="10, 0"
-                        Content="{DynamicResource InstallDirDialogWindow:CancelButtonText}"
+                        Content="{DynamicResource InstallDirDialogWindow:CancelButton}"
                         Click="OnCancelButtonClicked">
                 </Button>
             </Grid>

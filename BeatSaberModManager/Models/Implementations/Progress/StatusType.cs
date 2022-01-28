@@ -1,4 +1,4 @@
-﻿namespace BeatSaberModManager.Services.Implementations.Progress
+﻿namespace BeatSaberModManager.Models.Implementations.Progress
 {
     public enum StatusType
     {

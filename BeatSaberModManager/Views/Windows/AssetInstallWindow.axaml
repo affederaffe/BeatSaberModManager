@@ -11,7 +11,7 @@
         Name="Window"
         Title="OneClick™ Installer"
         Icon="/Resources/Icons/Icon.ico"
-        TransparencyLevelHint="Blur"
+        TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         MinWidth="200" MinHeight="200"

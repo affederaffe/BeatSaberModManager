@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Models.Implementations.Json;
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.Http;
-using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 
@@ -33,11 +33,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         {
             using HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
-            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             string playlistsDirPath = Path.Combine(installDir, "Playlists");
             string fileName = uri.Segments.Last();
             string filePath = Path.Combine(playlistsDirPath, fileName);
-            IOUtils.TryCreateDirectory(playlistsDirPath);
+            if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
+            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
             Playlist? playlist = JsonSerializer.Deserialize(body, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
@@ -45,11 +45,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         public async Task<bool> InstallPlaylistAsync(string installDir, string filePath, IStatusProgress? progress = null)
         {
-            string json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-            string playlistsDirPath = Path.Combine(installDir, "Playlists");
             string fileName = Path.GetFileName(filePath);
+            string playlistsDirPath = Path.Combine(installDir, "Playlists");
             string destFilePath = Path.Combine(playlistsDirPath, fileName);
-            IOUtils.TryCreateDirectory(playlistsDirPath);
+            if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
+            string json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
             await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);
             Playlist? playlist = JsonSerializer.Deserialize(json, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);

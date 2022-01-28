@@ -60,9 +60,9 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<bool> InstallAssetAsync()
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir)) return false;
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
-            return assetProvider is not null && await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir.Value!, _uri, StatusProgress).ConfigureAwait(false);
+            return assetProvider is not null && await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir!, _uri, StatusProgress).ConfigureAwait(false);
         }
     }
 }

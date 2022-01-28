@@ -5,7 +5,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data.Converters;
 
-using BeatSaberModManager.Services.Implementations.Progress;
+using BeatSaberModManager.Models.Implementations.Progress;
 
 
 namespace BeatSaberModManager.Views.Converters

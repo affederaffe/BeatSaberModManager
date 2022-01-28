@@ -73,7 +73,8 @@ namespace BeatSaberModManager
                 .AddSingleton<HttpProgressClient>()
                 .AddSingleton<IStatusProgress, StatusProgress>()
                 .AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>()
-                .AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>();
+                .AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>()
+                .AddSingleton<IGameLauncher, BeatSaberGameLauncher>();
 
         private static IServiceCollection AddProtocolHandlerRegistrar(this IServiceCollection services) =>
             OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>()
@@ -100,6 +101,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddViewModels(this IServiceCollection services) =>
             services.AddSingleton<MainWindowViewModel>()
+                .AddSingleton<DashboardViewModel>()
                 .AddSingleton<ModsViewModel>()
                 .AddSingleton<SettingsViewModel>()
                 .AddSingleton<AssetInstallWindowViewModel>();
@@ -114,6 +116,7 @@ namespace BeatSaberModManager
                 ? services.AddSingleton(new Uri(args[1]))
                     .AddSingleton<Window, AssetInstallWindow>()
                 : services.AddSingleton<Window, MainWindow>()
+                    .AddSingleton<IViewFor<DashboardViewModel>, DashboardPage>()
                     .AddSingleton<IViewFor<ModsViewModel>, ModsPage>()
                     .AddSingleton<IViewFor<SettingsViewModel>, SettingsPage>();
     }

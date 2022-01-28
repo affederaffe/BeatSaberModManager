@@ -4,7 +4,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
         xmlns:cv="clr-namespace:BeatSaberModManager.Views.Converters"
-        xmlns:c="clr-namespace:BeatSaberModManager.Views.Controls"
         xmlns:p="clr-namespace:BeatSaberModManager.Views.Pages"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.MainWindow"
@@ -13,7 +12,7 @@
         Name="Window"
         Title="{StaticResource MainWindow:Title}"
         Icon="/Resources/Icons/Icon.ico"
-        TransparencyLevelHint="Blur"
+        TransparencyLevelHint="AcrylicBlur"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         MinWidth="820" MinHeight="350"
@@ -27,26 +26,34 @@
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
-                <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Info}" Foreground="{DynamicResource InfoIconBrush}" />
-                    <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:IntroHeader}" />
-                </StackPanel>
+                <Grid RowDefinitions="5*, *">
+                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Info}" Foreground="{DynamicResource InfoIconBrush}" />
+                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:IntroHeader}" />
+                </Grid>
+            </TabItem.Header>
+        </TabItem>
+        <TabItem Content="{Binding DashboardViewModel}">
+            <TabItem.Header>
+                <Grid RowDefinitions="5*, *">
+                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Dashboard}" Foreground="{DynamicResource DashboardIconBrush}" />
+                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:DashboardHeader}" />
+                </Grid>
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding ModsViewModel}">
             <TabItem.Header>
-                <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Library}" Foreground="{DynamicResource DatabaseIconBrush}" />
-                    <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:ModsHeader}" />
-                </StackPanel>
+                <Grid RowDefinitions="5*, *">
+                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Library}" Foreground="{DynamicResource DatabaseIconBrush}" />
+                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:ModsHeader}" />
+                </Grid>
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding SettingsViewModel}">
             <TabItem.Header>
-                <StackPanel Orientation="Vertical">
-                    <PathIcon Data="{StaticResource Icons:Settings}" Foreground="{DynamicResource GearIconBrush}" />
-                    <Label HorizontalAlignment="Center" Content="{DynamicResource MainWindow:SettingsHeader}" />
-                </StackPanel>
+                <Grid RowDefinitions="5*, *">
+                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Settings}" Foreground="{DynamicResource GearIconBrush}" />
+                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:SettingsHeader}" />
+                </Grid>
             </TabItem.Header>
         </TabItem>
 
@@ -70,17 +77,16 @@
                     <Label Margin="10, 0, 5, 0"
                            Content="{Binding ProgressInfo, Converter={StaticResource LocalizedStatusConverter}}" />
                 </Viewbox>
-                <c:HyperlinkButton Grid.Column="1"
-                                   Margin="5, 0, 5, 0"
-                                   Content="{DynamicResource MainWindow:MoreInfoButton}"
-                                   Uri="{Binding ModsViewModel.SelectedGridItem.AvailableMod.MoreInfoLink}"
-                                   IsEnabled="{Binding MoreInfoButtonEnabled}">
-                </c:HyperlinkButton>
+                <Button Grid.Column="1"
+                        Margin="5, 0, 5, 0"
+                        Content="{DynamicResource MainWindow:MoreInfoButton}"
+                        Command="{Binding MoreInfoCommand}">
+                </Button>
                 <Button Grid.Column="2"
                         Margin="5, 0, 10, 0"
                         Content="{DynamicResource MainWindow:RefreshModsButton}"
-                        IsEnabled="{Binding InstallButtonEnabled}"
-                        Command="{Binding InstallButtonCommand}">
+                        IsEnabled="{Binding ModsViewModel.IsSuccess}"
+                        Command="{Binding InstallCommand}">
                 </Button>
             </Grid>
         </TabControl.Tag>

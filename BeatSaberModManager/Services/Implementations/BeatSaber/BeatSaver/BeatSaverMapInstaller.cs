@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Models.Implementations.Json;
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.Http;
-using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 

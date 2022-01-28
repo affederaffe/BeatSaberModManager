@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-using BeatSaberModManager.Models.Implementations.Observables;
+using ReactiveUI;
 
 
 namespace BeatSaberModManager.Models.Implementations.Settings
 {
-    public class AppSettings
+    public class AppSettings : ReactiveObject
     {
         public int LastTabIndex { get; set; }
 
@@ -13,20 +13,22 @@ namespace BeatSaberModManager.Models.Implementations.Settings
 
         public string? LanguageCode { get; set; }
 
+        public string? PlatformType { get; set; }
+
         public bool ForceReinstallMods { get; set; }
 
-        private ObservableVariable<string>? _installDir;
-        public ObservableVariable<string> InstallDir
+        private string? _installDir;
+        public string? InstallDir
         {
-            get => _installDir ??= new ObservableVariable<string>();
-            set => _installDir = value;
+            get => _installDir;
+            set => this.RaiseAndSetIfChanged(ref _installDir, value);
         }
 
-        private ObservableVariable<string>? _themesDir;
-        public ObservableVariable<string> ThemesDir
+        private string? _themesDir;
+        public string? ThemesDir
         {
-            get => _themesDir ??= new ObservableVariable<string>();
-            set => _themesDir = value;
+            get => _themesDir;
+            set => this.RaiseAndSetIfChanged(ref _themesDir, value);
         }
 
         private HashSet<string>? _selectedMods;

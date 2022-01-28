@@ -22,8 +22,8 @@ namespace BeatSaberModManager.Views
         public IControl Build(object param)
         {
             Type viewModelType = param.GetType();
-            Type requestedType = typeof(IViewFor<>).MakeGenericType(viewModelType);
-            return _services.GetService(requestedType) as IControl ?? throw new InvalidOperationException();
+            Type viewType = typeof(IViewFor<>).MakeGenericType(viewModelType);
+            return _services.GetService(viewType) as IControl ?? throw new InvalidOperationException();
         }
 
         public bool Match(object data) => data is ViewModelBase;

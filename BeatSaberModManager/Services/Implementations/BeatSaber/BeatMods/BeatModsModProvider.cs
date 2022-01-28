@@ -77,7 +77,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         public async Task<IReadOnlyCollection<IMod>?> GetAvailableModsForCurrentVersionAsync(string installDir)
         {
-            string? version = await _gameVersionProvider.DetectGameVersion(installDir).ConfigureAwait(false);
+            string? version = await _gameVersionProvider.DetectGameVersionAsync(installDir).ConfigureAwait(false);
             return version is null ? null : await GetAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 

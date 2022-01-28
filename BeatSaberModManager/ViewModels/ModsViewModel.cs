@@ -42,7 +42,9 @@ namespace BeatSaberModManager.ViewModels
             this.WhenAnyValue(static x => x.IsSuccess, static x => x.IsExecuting)
                 .Select(static x => !x.Item1 && !x.Item2)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
-            _appSettings.Value.InstallDir.Changed.Where(installDirValidator.ValidateInstallDir).InvokeCommand(initializeCommand!);
+            appSettings.Value.WhenAnyValue(static x => x.InstallDir)
+                .Where(installDirValidator.ValidateInstallDir)
+                .InvokeCommand(initializeCommand!);
         }
 
         public Dictionary<IMod, ModGridItemViewModel> GridItems => _gridItems.Value;
@@ -87,23 +89,23 @@ namespace BeatSaberModManager.ViewModels
         public async Task RefreshModsAsync()
         {
             IEnumerable<IMod> install = GridItems.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(static x => x.AvailableMod);
-            await InstallMods(_appSettings.Value.InstallDir.Value!, install).ConfigureAwait(false);
+            await InstallMods(_appSettings.Value.InstallDir!, install).ConfigureAwait(false);
             IEnumerable<IMod> uninstall = GridItems.Values.Where(static x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(static x => x.AvailableMod);
-            await UninstallMods(_appSettings.Value.InstallDir.Value!, uninstall).ConfigureAwait(false);
+            await UninstallMods(_appSettings.Value.InstallDir!, uninstall).ConfigureAwait(false);
         }
 
         public async Task UninstallModLoaderAsync()
         {
             IMod? modLoader = GridItems.Values.FirstOrDefault(x => _modProvider.IsModLoader(x.InstalledMod))?.AvailableMod;
             if (modLoader is null) return;
-            await UninstallMods(_appSettings.Value.InstallDir.Value!, new[] { modLoader }).ConfigureAwait(false);
+            await UninstallMods(_appSettings.Value.InstallDir!, new[] { modLoader }).ConfigureAwait(false);
         }
 
         public async Task UninstallAllModsAsync()
         {
             IEnumerable<IMod> mods = GridItems.Values.Where(static x => x.InstalledMod is not null).Select(static x => x.AvailableMod);
-            await UninstallMods(_appSettings.Value.InstallDir.Value!, mods).ConfigureAwait(false);
-            _modInstaller.RemoveAllMods(_appSettings.Value.InstallDir.Value!);
+            await UninstallMods(_appSettings.Value.InstallDir!, mods).ConfigureAwait(false);
+            _modInstaller.RemoveAllMods(_appSettings.Value.InstallDir!);
         }
 
         private async Task InstallMods(string installDir, IEnumerable<IMod> mods)

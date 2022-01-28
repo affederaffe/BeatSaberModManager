@@ -22,35 +22,35 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             _installDirValidator = installDirValidator;
         }
 
-        public ValueTask<string?> LocateInstallDirAsync() =>
+        public ValueTask<(string? installDir, string? platform)> LocateInstallDirAsync() =>
             OperatingSystem.IsWindows() ? LocateWindowsInstallDirAsync()
                 : OperatingSystem.IsLinux() ? LocateLinuxSteamInstallDirAsync()
                     : throw new PlatformNotSupportedException();
 
         [SupportedOSPlatform("windows")]
-        private ValueTask<string?> LocateWindowsInstallDirAsync()
+        private ValueTask<(string?, string?)> LocateWindowsInstallDirAsync()
         {
             string? steamInstallDir = LocateWindowsSteamInstallDir();
             return steamInstallDir is null ? LocateOculusBeatSaberInstallDirAsync() : LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
         [SupportedOSPlatform("linux")]
-        private ValueTask<string?> LocateLinuxSteamInstallDirAsync()
+        private ValueTask<(string?, string?)> LocateLinuxSteamInstallDirAsync()
         {
             string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string steamInstallDir = Path.Combine(homeDir, ".steam", "root");
             return LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
-        private async ValueTask<string?> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
+        private async ValueTask<(string?, string?)> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
         {
             await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir).ConfigureAwait(false))
             {
                 string? installDir = await MatchSteamBeatSaberInstallDirAsync(libPath).ConfigureAwait(false);
-                if (installDir is not null) return installDir;
+                if (installDir is not null) return (installDir, "steam");
             }
 
-            return null;
+            return (null, null);
         }
 
         private async Task<string?> MatchSteamBeatSaberInstallDirAsync(string path)
@@ -75,15 +75,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         }
 
         [SupportedOSPlatform("windows")]
-        private ValueTask<string?> LocateOculusBeatSaberInstallDirAsync()
+        private ValueTask<(string?, string?)> LocateOculusBeatSaberInstallDirAsync()
         {
             using RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
             using RegistryKey? oculusInstallDirKey = baseKey.OpenSubKey("SOFTWARE")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
-            if (string.IsNullOrEmpty(oculusInstallDir)) return ValueTask.FromResult<string?>(null);
+            if (string.IsNullOrEmpty(oculusInstallDir)) return ValueTask.FromResult(new ValueTuple<string?, string?>());
             string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
             string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
-            return ValueTask.FromResult(installDir);
+            return ValueTask.FromResult(new ValueTuple<string?, string?>(installDir, "oculus"));
         }
 
         [SupportedOSPlatform("windows")]

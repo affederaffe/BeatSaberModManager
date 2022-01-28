@@ -4,6 +4,7 @@
 
     <sys:String x:Key="MainWindow:Title">BeatSaberModManager</sys:String>
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
+    <sys:String x:Key="MainWindow:DashboardHeader">Übersicht</sys:String>
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
     <sys:String x:Key="MainWindow:SettingsHeader">Einstellungen</sys:String>
     <sys:String x:Key="MainWindow:MoreInfoButton">Weitere Infos</sys:String>
@@ -24,6 +25,15 @@
     <sys:String x:Key="IntroView:IntroText:Line7">Bitte vergib KEINE schlechte Bewertung, weil die Mods nicht funktionieren. Das ist nicht Beat Games' Schuld.</sys:String>
     <sys:String x:Key="IntroView:IntroText:Line8">Sie versuchen nicht, Mods zu unterbinden.</sys:String>
 
+    <sys:String x:Key="DashboardView:AppVersionLabel">Version der Anwendung</sys:String>
+    <sys:String x:Key="DashboardView:GameVersionLabel">Version des Spiels</sys:String>
+    <sys:String x:Key="DashboardView:InstalledModsLabel">Installierte Mods</sys:String>
+    <sys:String x:Key="DashboardView:ToolsLabel">Werkzeuge</sys:String>
+    <sys:String x:Key="DashboardView:InstallPlaylistButton">Playlist installieren</sys:String>
+    <sys:String x:Key="DashboardView:UninstallModLoaderButton">Deinstalliere BSIPA</sys:String>
+    <sys:String x:Key="DashboardView:UninstallAllModsButton">Deinstalliere alle Mods</sys:String>
+    <sys:String x:Key="DashboardView:PlayButton">Spielen</sys:String>
+
     <sys:String x:Key="ModsView:ModNameHeader">Name</sys:String>
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>
     <sys:String x:Key="ModsView:LatestVersionHeader">Neuste</sys:String>
@@ -34,8 +44,6 @@
     <sys:String x:Key="OptionsView:InstallationLabel">Installationsordner</sys:String>
     <sys:String x:Key="OptionsView:OpenFolderButton">Ordner öffnen</sys:String>
     <sys:String x:Key="OptionsView:SelectFolderButton">Ordner auswählen</sys:String>
-    <sys:String x:Key="OptionsView:UninstallModLoaderButton">Deinstalliere BSIPA</sys:String>
-    <sys:String x:Key="OptionsView:UninstallAllModsButton">Deinstalliere alle Mods</sys:String>
     <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Unterstützung</sys:String>
     <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver</sys:String>
     <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber</sys:String>
@@ -44,11 +52,9 @@
     <sys:String x:Key="OptionsView:ForceReinstallModsButton">Installierte Mods neu installieren</sys:String>
     <sys:String x:Key="OptionsView:MiscLabel">Verschiedenes</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themen</sys:String>
-    <sys:String x:Key="OptionsView:ToolsLabel">Werkzeuge</sys:String>
-    <sys:String x:Key="OptionsView:InstallPlaylistButton">Playlist installieren</sys:String>
 
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
-    <sys:String x:Key="InstallDirDialogWindow:ContinueButtonText">Weiter</sys:String>
-    <sys:String x:Key="InstallDirDialogWindow:CancelButtonText">Abbrechen</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:ContinueButton">Weiter</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:CancelButton">Abbrechen</sys:String>
 
 </ResourceDictionary>

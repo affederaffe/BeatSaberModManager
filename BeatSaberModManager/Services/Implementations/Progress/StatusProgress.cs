@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Subjects;
 
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 
 

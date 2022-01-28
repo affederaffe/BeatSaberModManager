@@ -28,15 +28,13 @@ namespace BeatSaberModManager.Services.Implementations.Settings
 
         private void Save()
         {
-            string json = JsonSerializer.Serialize(Value, new JsonSerializerOptions { WriteIndented = true });
-            IOUtils.TryCreateDirectory(_saveDirPath);
-            File.WriteAllText(_saveFilePath, json);
+            string json = JsonSerializer.Serialize(Value, new JsonSerializerOptions { IgnoreReadOnlyProperties = true, WriteIndented = true });
+            if (IOUtils.TryCreateDirectory(_saveDirPath)) File.WriteAllText(_saveFilePath, json);
         }
 
         private T Load()
         {
-            IOUtils.TryCreateDirectory(_saveDirPath);
-            if (!IOUtils.TryReadAllText(_saveFilePath, out string? json)) return new T();
+            if (!IOUtils.TryCreateDirectory(_saveDirPath) || !IOUtils.TryReadAllText(_saveFilePath, out string? json)) return new T();
             T? settings = JsonSerializer.Deserialize<T>(json);
             settings ??= new T();
             return settings;

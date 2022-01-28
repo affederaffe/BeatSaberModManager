@@ -30,15 +30,17 @@ namespace BeatSaberModManager.Utils
             catch (UnauthorizedAccessException) { }
         }
 
-        public static void TryCreateDirectory(string path)
+        public static bool TryCreateDirectory(string path)
         {
             try
             {
                 Directory.CreateDirectory(path);
+                return true;
             }
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
+            return false;
         }
 
         public static void TryDeleteDirectory(string path, bool recursive)

@@ -7,7 +7,6 @@ using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -42,16 +41,19 @@ namespace BeatSaberModManager
         public async Task<int> RunAsync()
         {
 #if DEBUG
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value))
-                _appSettings.Value.InstallDir.Value = await _installDirLocator.LocateInstallDirAsync();
+            if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir) && _appSettings.Value.PlatformType is not null) return RunAvaloniaApp();
+            (string? installDir, string? platform) = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
+            _appSettings.Value.PlatformType = installDir;
+            _appSettings.Value.InstallDir = platform;
             return RunAvaloniaApp();
 #else
             try
             {
-                if (await _updater.NeedsUpdate().ConfigureAwait(false))
-                    return await _updater.Update().ConfigureAwait(false);
-                if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir.Value))
-                    _appSettings.Value.InstallDir.Value = await _installDirLocator.LocateInstallDirAsync();
+                if (await _updater.NeedsUpdate().ConfigureAwait(false)) return await _updater.Update().ConfigureAwait(false);
+                if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir) && _appSettings.Value.PlatformType is not null) return RunAvaloniaApp();
+                (string? installDir, string? platform) = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
+                _appSettings.Value.PlatformType = installDir;
+                _appSettings.Value.InstallDir = platform;
                 return RunAvaloniaApp();
             }
             catch (Exception e)
@@ -64,6 +66,7 @@ namespace BeatSaberModManager
 
         private int RunAvaloniaApp() =>
             AppBuilder.Configure(_services.GetRequiredService<Application>)
+                .With(new Win32PlatformOptions { AllowEglInitialization = true, UseWindowsUIComposition = true })
                 .With(new X11PlatformOptions { UseEGL = true })
                 .With(new FontManagerOptions { DefaultFamilyName = string.IsNullOrEmpty(SKTypeface.Default.FamilyName) ? SKFontManager.Default.GetFamilyName(0) : SKTypeface.Default.FamilyName })
                 .UsePlatformDetect()

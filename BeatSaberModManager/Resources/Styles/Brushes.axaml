@@ -2,9 +2,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Styles.Resources>
-        <SolidColorBrush x:Key="BackgroundMediumLowBrush" Color="{DynamicResource SystemChromeMediumLowColor}" Opacity="0.875" />
-        <SolidColorBrush x:Key="BackgroundMediumBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.975" />
+        <SolidColorBrush x:Key="BackgroundMediumLowBrush" Color="{DynamicResource SystemChromeMediumLowColor}" Opacity="0.75" />
+        <SolidColorBrush x:Key="BackgroundMediumBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.95" />
+        <SolidColorBrush x:Key="BackgroundHighBrush" Color="{DynamicResource SystemChromeBlackMediumLowColor}" />
         <SolidColorBrush x:Key="InfoIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
+        <SolidColorBrush x:Key="DashboardIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
         <SolidColorBrush x:Key="LibraryIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
         <SolidColorBrush x:Key="SettingsIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
         <SolidColorBrush x:Key="SearchIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />

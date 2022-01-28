@@ -23,10 +23,10 @@ namespace BeatSaberModManager.Views.Windows
             InitializeComponent();
             ViewModel = viewModel;
             this.Bind(viewModel, static vm => vm.AppSettings.Value.LastTabIndex, static v => v.TabControl.SelectedIndex);
-            this.WhenActivated(disposable => viewModel.AppSettings.Value.InstallDir.Changed
+            this.WhenActivated(disposable => viewModel.AppSettings.Value.WhenAnyValue(static x => x.InstallDir)
                 .Where(static x => x is null)
                 .SelectMany(_ => new InstallFolderDialogWindow().ShowDialog<string?>(this))
-                .BindTo(ViewModel.SettingsViewModel, static x => x.InstallDir)
+                .BindTo(viewModel.SettingsViewModel, static x => x.AppSettings.Value.InstallDir)
                 .DisposeWith(disposable));
             this.AttachDevTools();
         }

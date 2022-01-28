@@ -8,8 +8,8 @@ using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
-using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 
