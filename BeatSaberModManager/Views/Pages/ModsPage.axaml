@@ -32,7 +32,8 @@
         </Label>
 
         <Grid RowDefinitions="Auto, *" IsVisible="{Binding IsSuccess}">
-            <TextBox Grid.Row="0"
+            <TextBox x:Name="SearchTextBox"
+                     Grid.Row="0"
                      HorizontalAlignment="Stretch"
                      VerticalAlignment="Stretch"
                      Watermark="{DynamicResource ModsView:SearchWatermark}"
@@ -105,7 +106,11 @@
                     <DataGridTemplateColumn Width="*" Header="{DynamicResource ModsView:ModDescriptionHeader}">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="vm:ModGridItemViewModel">
-                                <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Description}" />
+                                <TextBlock VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           Text="{Binding AvailableMod.Description}"
+                                           ToolTip.Tip="{Binding AvailableMod.Description}">
+                                </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

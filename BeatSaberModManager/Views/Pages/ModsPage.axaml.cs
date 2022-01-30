@@ -33,6 +33,9 @@ namespace BeatSaberModManager.Views.Pages
                 .Where(x => x.Item2 is not null && ModsDataGrid.Items is DataGridCollectionView)
                 .Select(static x => new Func<object, bool>(o => Filter(x.Item1, x.Item2, o)))
                 .Subscribe(x => ((DataGridCollectionView)ModsDataGrid.Items).Filter = x);
+            ViewModel.WhenAnyValue(static x => x.IsSearchEnabled)
+                .Where(static x => x)
+                .Subscribe(_ => SearchTextBox.Focus());
         }
 
         private static bool Filter(bool enabled, string? query, object o) =>
