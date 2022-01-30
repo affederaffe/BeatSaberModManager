@@ -14,8 +14,6 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
     {
         private readonly string _localAppDataPath;
 
-        private const string kProviderName = nameof(BeatSaberModManager);
-
         public LinuxProtocolHandlerRegistrar()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -28,7 +26,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         {
             string handlerName = GetHandlerNameForProtocol(protocol);
             string handlerPath = Path.Combine(_localAppDataPath, handlerName);
-            File.WriteAllText(handlerPath, $"[Desktop Entry]\nName={kProviderName}\nComment=URL:{protocol} Protocol\nType=Application\nCategories=Utility\nExec={Environment.ProcessPath} --install %u\nTerminal=false\nNoDisplay=true\nMimeType=x-scheme-handler/{protocol}");
+            File.WriteAllText(handlerPath, $"[Desktop Entry]\nName={ThisAssembly.Info.Product}\nComment=URL:{protocol} Protocol\nType=Application\nCategories=Utility\nExec={Environment.ProcessPath} --install %u\nTerminal=false\nNoDisplay=true\nMimeType=x-scheme-handler/{protocol}");
             Process.Start("xdg-mime", $"\"default\" \"{handlerName}\" \"x-scheme-handler/{protocol}\"");
         }
 
@@ -40,6 +38,6 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
 
         private string GetHandlerPathForProtocol(string protocol) => Path.Combine(_localAppDataPath, GetHandlerNameForProtocol(protocol));
 
-        private static string GetHandlerNameForProtocol(string protocol) => $"{kProviderName}-url-{protocol}.desktop";
+        private static string GetHandlerNameForProtocol(string protocol) => $"{ThisAssembly.Info.Product}-url-{protocol}.desktop";
     }
 }

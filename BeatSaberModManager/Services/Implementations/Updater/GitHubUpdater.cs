@@ -4,7 +4,6 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -24,17 +23,16 @@ namespace BeatSaberModManager.Services.Implementations.Updater
 
         private Release? _release;
 
-        private const string kLatestApiEndpoint = "https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest";
-
-        public GitHubUpdater(HttpProgressClient httpClient, AssemblyName assemblyName)
+        public GitHubUpdater(HttpProgressClient httpClient)
         {
             _httpClient = httpClient;
-            _version = assemblyName.Version!;
+            _version = new Version(ThisAssembly.Info.Version);
         }
 
         public async Task<bool> NeedsUpdate()
         {
-            using HttpResponseMessage response = await _httpClient.GetAsync(kLatestApiEndpoint).ConfigureAwait(false);
+            if (OperatingSystem.IsLinux()) return false;
+            using HttpResponseMessage response = await _httpClient.GetAsync("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest").ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             _release = JsonSerializer.Deserialize(body, GitHubJsonSerializerContext.Default.Release);
@@ -43,13 +41,12 @@ namespace BeatSaberModManager.Services.Implementations.Updater
 
         public async Task<int> Update()
         {
-            string identifier = OperatingSystem.IsWindows() ? "win-x64" : OperatingSystem.IsLinux() ? "linux-x64" : throw new PlatformNotSupportedException();
-            Asset? asset = _release?.Assets.FirstOrDefault(x => x.Name.Contains(identifier, StringComparison.OrdinalIgnoreCase));
+            Asset? asset = _release?.Assets.FirstOrDefault(x => x.Name.Contains("win-x64", StringComparison.OrdinalIgnoreCase));
             if (asset is null) return -1;
             HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return -1;
             string processPath = Environment.ProcessPath!;
-            string oldPath = processPath.Replace(".exe", ".old.exe");
+            string oldPath = processPath.Replace(Constants.ExeExtension, Constants.OldExeExtension);
             IOUtils.TryDeleteFile(oldPath);
             IOUtils.TryMoveFile(processPath, oldPath);
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

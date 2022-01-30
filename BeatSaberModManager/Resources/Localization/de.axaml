@@ -25,8 +25,8 @@
     <sys:String x:Key="IntroView:IntroText:Line7">Bitte vergib KEINE schlechte Bewertung, weil die Mods nicht funktionieren. Das ist nicht Beat Games' Schuld.</sys:String>
     <sys:String x:Key="IntroView:IntroText:Line8">Sie versuchen nicht, Mods zu unterbinden.</sys:String>
 
-    <sys:String x:Key="DashboardView:AppVersionLabel">Version der Anwendung</sys:String>
-    <sys:String x:Key="DashboardView:GameVersionLabel">Version des Spiels</sys:String>
+    <sys:String x:Key="DashboardView:AppVersionLabel">Anwendungsversion</sys:String>
+    <sys:String x:Key="DashboardView:GameVersionLabel">Spielversion</sys:String>
     <sys:String x:Key="DashboardView:InstalledModsLabel">Installierte Mods</sys:String>
     <sys:String x:Key="DashboardView:ToolsLabel">Werkzeuge</sys:String>
     <sys:String x:Key="DashboardView:InstallPlaylistButton">Playlist installieren</sys:String>

@@ -17,7 +17,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 
         private async Task<string?> DetectGameVersionAsyncCore(string installDir)
         {
-            string filePath = Path.Combine(installDir, "Beat Saber_Data", "globalgamemanagers");
+            string filePath = Path.Combine(installDir, Constants.BeatSaberDataDir, "globalgamemanagers");
             await using FileStream? fileStream = IOUtils.TryOpenFile(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
             if (fileStream is null) return null;
             using BinaryReader reader = new(fileStream, Encoding.UTF8);

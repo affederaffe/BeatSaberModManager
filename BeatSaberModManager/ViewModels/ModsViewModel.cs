@@ -76,6 +76,13 @@ namespace BeatSaberModManager.ViewModels
             set => this.RaiseAndSetIfChanged(ref _searchQuery, value);
         }
 
+        private int _installedModsCount;
+        public int InstalledModsCount
+        {
+            get => _installedModsCount;
+            set => this.RaiseAndSetIfChanged(ref _installedModsCount, value);
+        }
+
         private IObservable<Dictionary<IMod, ModGridItemViewModel>> InitializeDataGrid(string installDir) =>
             Task.WhenAll(_modProvider.GetAvailableModsForCurrentVersionAsync(installDir), _modProvider.GetInstalledModsAsync(installDir))
                 .ToObservable()
@@ -84,7 +91,9 @@ namespace BeatSaberModManager.ViewModels
                     .Select(availableMod => new ModGridItemViewModel(availableMod, x[1]!.FirstOrDefault(mod => mod.Name == availableMod.Name), _appSettings, _dependencyResolver)))
                 .ToDictionary(static x => x.AvailableMod, static x => x)
                 .Cast<Dictionary<IMod, ModGridItemViewModel>>()
-                .Do(static x => x.Values.ToObservable().Subscribe(y => y.Initialize(x)));
+                .Do(x => x.Values.ToObservable()
+                    .Do(y => InstalledModsCount += y.InstalledMod is null ? 0 : 1)
+                    .Subscribe(y => y.Initialize(x)));
 
         public async Task RefreshModsAsync()
         {
@@ -112,8 +121,9 @@ namespace BeatSaberModManager.ViewModels
         {
             await foreach (IMod mod in _modInstaller.InstallModsAsync(installDir, mods, _progress).ConfigureAwait(false))
             {
-                if (GridItems.TryGetValue(mod, out ModGridItemViewModel? gridItem))
-                    gridItem.InstalledMod = mod;
+                if (!GridItems.TryGetValue(mod, out ModGridItemViewModel? gridItem)) continue;
+                if (gridItem.InstalledMod is null) InstalledModsCount++;
+                gridItem.InstalledMod = mod;
             }
         }
 
@@ -121,8 +131,9 @@ namespace BeatSaberModManager.ViewModels
         {
             await foreach (IMod mod in _modInstaller.UninstallModsAsync(installDir, mods, _progress).ConfigureAwait(false))
             {
-                if (GridItems.TryGetValue(mod, out ModGridItemViewModel? gridItem))
-                    gridItem.InstalledMod = null;
+                if (!GridItems.TryGetValue(mod, out ModGridItemViewModel? gridItem)) continue;
+                if (gridItem.InstalledMod is not null) InstalledModsCount--;
+                gridItem.InstalledMod = null;
             }
         }
     }

@@ -2,6 +2,7 @@ using System;
 using System.Runtime.Versioning;
 
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utils;
 
 using Microsoft.Win32;
 
@@ -11,32 +12,31 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
     [SupportedOSPlatform("windows")]
     public class WindowsProtocolHandlerRegistrar : IProtocolHandlerRegistrar
     {
-        private const string kProviderName = nameof(BeatSaberModManager);
+        private const string CommandIndicator = @"shell\open\command";
 
         public bool IsProtocolHandlerRegistered(string protocol)
         {
-            using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol);
-            string? protocolHandler = protocolKey?.OpenSubKey(@"shell\open\command")?.GetValue(string.Empty)?.ToString()?.Split(' ')[0];
+            using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey(Constants.Software)?.OpenSubKey(Constants.Classes)?.OpenSubKey(protocol);
+            string? protocolHandler = protocolKey?.OpenSubKey(CommandIndicator)?.GetValue(string.Empty)?.ToString()?.Split(' ')[0];
             return protocolHandler?[1..^1] == Environment.ProcessPath;
         }
 
         public void RegisterProtocolHandler(string protocol)
         {
-            using RegistryKey protocolKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol, true) ??
-                                            Registry.CurrentUser.CreateSubKey(@"software\classes").CreateSubKey(protocol, true);
-            using RegistryKey commandKey = protocolKey.CreateSubKey(@"shell\open\command", true);
+            using RegistryKey protocolKey = Registry.CurrentUser.CreateSubKey(Constants.Software).CreateSubKey(Constants.Classes).CreateSubKey(protocol, true);
+            using RegistryKey commandKey = protocolKey.CreateSubKey(CommandIndicator, true);
             protocolKey.SetValue(string.Empty, $"URL:{protocol} Protocol", RegistryValueKind.String);
             protocolKey.SetValue("URL Protocol", string.Empty, RegistryValueKind.String);
-            protocolKey.SetValue("OneClick-Provider", kProviderName, RegistryValueKind.String);
+            protocolKey.SetValue("OneClick-Provider", ThisAssembly.Info.Product, RegistryValueKind.String);
             commandKey.SetValue(string.Empty, $"\"{Environment.ProcessPath}\" \"--install\" \"%1\"");
         }
 
         public void UnregisterProtocolHandler(string protocol)
         {
-            using RegistryKey? providerKey = Registry.CurrentUser.OpenSubKey(@"software\classes")?.OpenSubKey(protocol);
-            string? registeredProviderName = providerKey?.GetValue("OneClick-Provider")?.ToString();
-            if (registeredProviderName != kProviderName) return;
-            Registry.CurrentUser.DeleteSubKeyTree($@"software\classes\{protocol}", false);
+            using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey(Constants.Software)?.OpenSubKey(Constants.Classes)?.OpenSubKey(protocol);
+            string? registeredProviderName = protocolKey?.GetValue("OneClick-Provider")?.ToString();
+            if (registeredProviderName != ThisAssembly.Info.Product) return;
+            protocolKey?.DeleteSubKeyTree(string.Empty, false);
         }
     }
 }

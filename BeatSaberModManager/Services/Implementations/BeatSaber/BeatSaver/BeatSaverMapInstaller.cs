@@ -20,8 +20,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
     {
         private readonly HttpProgressClient _httpClient;
 
-        private const string kBeatSaverKeyUrl = "https://api.beatsaver.com/maps/id/";
-
         public BeatSaverMapInstaller(HttpProgressClient httpClient)
         {
             _httpClient = httpClient;
@@ -40,11 +38,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             while (retries != 0)
             {
-                using HttpResponseMessage response = await _httpClient.GetAsync(kBeatSaverKeyUrl + key).ConfigureAwait(false);
+                using HttpResponseMessage response = await _httpClient.GetAsync($"https://api.beatsaver.com/maps/id/{key}").ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);
-                    --retries;
+                    retries--;
                     continue;
                 }
 
@@ -63,7 +61,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);
-                    --retries;
+                    retries--;
                     continue;
                 }
 
@@ -76,21 +74,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
         public static bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
         {
-            string customLevelsDirectoryPath = Path.Combine(installDir, "Beat Saber_Data", "CustomLevels");
+            string customLevelsDirectoryPath = Path.Combine(installDir, Constants.BeatSaberDataDir, "CustomLevels");
             IOUtils.TryCreateDirectory(customLevelsDirectoryPath);
-            string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
+            string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(Path.GetInvalidFileNameChars()));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);
             return IOUtils.TryExtractArchive(archive, levelDirectoryPath, true);
         }
 
         private static Task WaitForRateLimitAsync() => Task.Delay(1000);
-
-        private static readonly char[] _illegalCharacters = {
-            '<', '>', ':', '/', '\\', '|', '?', '*', '"',
-            '\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007',
-            '\u0008', '\u0009', '\u000a', '\u000b', '\u000c', '\u000d', '\u000e', '\u000d',
-            '\u000f', '\u0010', '\u0011', '\u0012', '\u0013', '\u0014', '\u0015', '\u0016',
-            '\u0017', '\u0018', '\u0019', '\u001a', '\u001b', '\u001c', '\u001d', '\u001f'
-        };
     }
 }

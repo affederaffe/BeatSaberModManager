@@ -62,15 +62,14 @@ namespace BeatSaberModManager
             services.AddLogging(static loggerBuilder =>
                 loggerBuilder.AddSerilog(
                     new LoggerConfiguration()
-                        .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), nameof(BeatSaberModManager), "log.txt"))
+                        .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"))
                         .CreateLogger(), true));
 
         private static IServiceCollection AddSettings(this IServiceCollection services) =>
             services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>();
 
         private static IServiceCollection AddCoreServices(this IServiceCollection services) =>
-            services.AddSingleton(typeof(Program).Assembly.GetName())
-                .AddSingleton<HttpProgressClient>()
+            services.AddSingleton<HttpProgressClient>()
                 .AddSingleton<IStatusProgress, StatusProgress>()
                 .AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>()
                 .AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>()

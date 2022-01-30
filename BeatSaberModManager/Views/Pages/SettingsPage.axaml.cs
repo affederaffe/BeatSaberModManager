@@ -25,9 +25,9 @@ namespace BeatSaberModManager.Views.Pages
         public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager, IInstallDirValidator installDirValidator)
         {
             InitializeComponent();
-            ViewModel = viewModel;
             LanguagesComboBox.DataContext = localizationManager;
             ThemesComboBox.DataContext = themeManager;
+            ViewModel = viewModel;
             SelectInstallFolderButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => new OpenFolderDialog().ShowAsync(window))
                 .Where(installDirValidator.ValidateInstallDir)

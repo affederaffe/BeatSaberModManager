@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
@@ -10,7 +11,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
     {
         private readonly PlaylistInstaller _playlistInstaller;
 
-        public string Protocol => "bsplaylist";
+        public string Protocol => Constants.PlaylistProtocol;
 
         public PlaylistAssetProvider(PlaylistInstaller playlistInstaller)
         {

@@ -14,7 +14,7 @@ namespace BeatSaberModManager.Views.Windows
         public InstallFolderDialogWindow()
         {
             InitializeComponent();
-            InteractiveExtensions.GetObservable(ContinueButton, Button.ClickEvent)
+            ContinueButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => new OpenFolderDialog().ShowAsync(this))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(Close);

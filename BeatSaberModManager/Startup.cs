@@ -66,7 +66,7 @@ namespace BeatSaberModManager
 
         private int RunAvaloniaApp() =>
             AppBuilder.Configure(_services.GetRequiredService<Application>)
-                .With(new Win32PlatformOptions { AllowEglInitialization = true, UseWindowsUIComposition = true })
+                .With(new Win32PlatformOptions { UseWindowsUIComposition = true })
                 .With(new X11PlatformOptions { UseEGL = true })
                 .With(new FontManagerOptions { DefaultFamilyName = string.IsNullOrEmpty(SKTypeface.Default.FamilyName) ? SKFontManager.Default.GetFamilyName(0) : SKTypeface.Default.FamilyName })
                 .UsePlatformDetect()
