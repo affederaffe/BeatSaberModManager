@@ -33,6 +33,9 @@
     <sys:String x:Key="DashboardView:UninstallModLoaderButton">Uninstall BSIPA</sys:String>
     <sys:String x:Key="DashboardView:UninstallAllModsButton">Uninstall All Mods</sys:String>
     <sys:String x:Key="DashboardView:PlayButton">Play</sys:String>
+    <sys:String x:Key="DashboardView:UsefulLinks">Useful Links</sys:String>
+    <sys:String x:Key="DashboardView:BsmgWiki">BSMG Wiki</sys:String>
+    <sys:String x:Key="DashboardView:BsmgDiscord">BSMG Discord</sys:String>
 
     <sys:String x:Key="ModsView:ModNameHeader">Name</sys:String>
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installed</sys:String>

@@ -60,10 +60,9 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddSerilog(this IServiceCollection services) =>
             services.AddLogging(static loggerBuilder =>
-                loggerBuilder.AddSerilog(
-                    new LoggerConfiguration()
-                        .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"))
-                        .CreateLogger(), true));
+                loggerBuilder.AddSerilog(new LoggerConfiguration()
+                    .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"))
+                    .CreateLogger(), true));
 
         private static IServiceCollection AddSettings(this IServiceCollection services) =>
             services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>();

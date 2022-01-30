@@ -3,12 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
+             xmlns:c="clr-namespace:BeatSaberModManager.Views.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Pages.DashboardPage"
              x:DataType="vm:DashboardViewModel"
              x:CompileBindings="True">
 
-    <Grid RowDefinitions="Auto, Auto" Margin="30">
+    <Grid RowDefinitions="Auto, Auto, Auto" Margin="30">
         <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
             <UniformGrid Rows="1">
                 <Grid RowDefinitions="Auto, Auto">
@@ -42,8 +43,7 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Center"
                             Content="{DynamicResource DashboardView:UninstallModLoaderButton}"
-                            Command="{Binding UninstallModLoaderCommand}"
-                            IsEnabled="{Binding ModsViewModel.IsSuccess}">
+                            Command="{Binding UninstallModLoaderCommand}">
                     </Button>
                     <Button Grid.Column="1"
                             Grid.Row="3"
@@ -61,9 +61,32 @@
                             HorizontalAlignment="Stretch"
                             HorizontalContentAlignment="Center"
                             Content="{DynamicResource DashboardView:UninstallAllModsButton}"
-                            Command="{Binding UninstallAllModsCommand}"
-                            IsEnabled="{Binding ModsViewModel.IsSuccess}">
+                            Command="{Binding UninstallAllModsCommand}">
                     </Button>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
+            <Grid RowDefinitions="Auto, Auto">
+                <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:UsefulLinks}" />
+                <Grid Grid.Row="1" ColumnDefinitions="*, *, *, *, *" Height="75">
+                    <c:HyperlinkButton Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://bsmg.wiki">
+                        <Grid RowDefinitions="*, Auto">
+                            <Viewbox Grid.Row="0">
+                                <Image Source="/Resources/Images/bsmg.jpg" />
+                            </Viewbox>
+                            <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:BsmgWiki}" />
+                        </Grid>
+                    </c:HyperlinkButton>
+                    <c:HyperlinkButton Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://discord.gg/beatsabermods">
+                        <Grid RowDefinitions="*, Auto">
+                            <Viewbox Grid.Row="0">
+                                <PathIcon Data="{StaticResource Icons:Discord}" />
+                            </Viewbox>
+                            <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:BsmgDiscord}" />
+                        </Grid>
+                    </c:HyperlinkButton>
                 </Grid>
             </Grid>
         </Border>

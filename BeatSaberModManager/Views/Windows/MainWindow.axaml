@@ -85,7 +85,6 @@
                 <Button Grid.Column="2"
                         Margin="5, 0, 10, 0"
                         Content="{DynamicResource MainWindow:RefreshModsButton}"
-                        IsEnabled="{Binding ModsViewModel.IsSuccess}"
                         Command="{Binding InstallCommand}">
                 </Button>
             </Grid>

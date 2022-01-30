@@ -20,19 +20,17 @@ namespace BeatSaberModManager.ViewModels
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<string?> _gameVersion;
 
-        public DashboardViewModel(ModsViewModel modsViewModel, IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
+        public DashboardViewModel(ModsViewModel modsViewModel, IOptions<AppSettings> appSettings, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings;
             _playlistInstaller = playlistInstaller;
             AppVersion = ThisAssembly.Info.Version;
             ModsViewModel = modsViewModel;
             StatusProgress = (StatusProgress)statusProgress;
-            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync);
-            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync);
-            LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!, appSettings.Value.PlatformType!), appSettings.Value.WhenAnyValue(static x => x.InstallDir).Select(installDirValidator.ValidateInstallDir));
-            appSettings.Value.WhenAnyValue(static x => x.InstallDir)
-                .Where(installDirValidator.ValidateInstallDir)
-                .SelectMany(gameVersionProvider.DetectGameVersionAsync!)
+            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, modsViewModel.IsSuccessObservable);
+            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, modsViewModel.IsSuccessObservable);
+            LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!, appSettings.Value.PlatformType!), modsViewModel.IsInstallDirValidObservable);
+            modsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync!)
                 .ToProperty(this, nameof(GameVersion), out _gameVersion);
         }
 

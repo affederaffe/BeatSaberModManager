@@ -18,14 +18,14 @@ namespace BeatSaberModManager.ViewModels
     {
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
 
-        public SettingsViewModel(IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar)
+        public SettingsViewModel(IOptions<AppSettings> appSettings, IProtocolHandlerRegistrar protocolHandlerRegistrar)
         {
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _beatSaverOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(Constants.BeatSaverProtocol);
             _modelSaberOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(Constants.ModelSaberProtocol);
             _playlistOneClickCheckBoxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(Constants.PlaylistProtocol);
             AppSettings = appSettings;
-            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(appSettings.Value.InstallDir!), appSettings.Value.WhenAnyValue(static x => x.InstallDir).Select(installDirValidator.ValidateInstallDir));
+            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(appSettings.Value.InstallDir!), appSettings.Value.WhenAnyValue(static x => x.InstallDir).Select(Directory.Exists));
             OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(appSettings.Value.ThemesDir!), appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Select(Directory.Exists));
             this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, Constants.BeatSaverProtocol));
             this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, Constants.ModelSaberProtocol));

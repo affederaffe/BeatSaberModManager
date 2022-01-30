@@ -8,7 +8,7 @@
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
     <sys:String x:Key="MainWindow:SettingsHeader">Einstellungen</sys:String>
     <sys:String x:Key="MainWindow:MoreInfoButton">Weitere Infos</sys:String>
-    <sys:String x:Key="MainWindow:RefreshModsButton">Mods Aktualisieren</sys:String>
+    <sys:String x:Key="MainWindow:RefreshModsButton">Mods erneuern</sys:String>
 
     <sys:String x:Key="Status:Installing">Installiere:</sys:String>
     <sys:String x:Key="Status:Uninstalling">Deinstalliere:</sys:String>
@@ -33,6 +33,9 @@
     <sys:String x:Key="DashboardView:UninstallModLoaderButton">Deinstalliere BSIPA</sys:String>
     <sys:String x:Key="DashboardView:UninstallAllModsButton">Deinstalliere alle Mods</sys:String>
     <sys:String x:Key="DashboardView:PlayButton">Spielen</sys:String>
+    <sys:String x:Key="DashboardView:UsefulLinks">Nützliche Links</sys:String>
+    <sys:String x:Key="DashboardView:BsmgWiki">BSMG Wiki</sys:String>
+    <sys:String x:Key="DashboardView:BsmgDiscord">BSMG Discord</sys:String>
 
     <sys:String x:Key="ModsView:ModNameHeader">Name</sys:String>
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>

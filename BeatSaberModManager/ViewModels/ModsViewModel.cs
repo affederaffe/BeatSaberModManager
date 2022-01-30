@@ -38,14 +38,22 @@ namespace BeatSaberModManager.ViewModels
             ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>> initializeCommand = ReactiveCommand.CreateFromObservable<string, Dictionary<IMod, ModGridItemViewModel>>(InitializeDataGrid);
             initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            initializeCommand.Select(static _ => true).ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            this.WhenAnyValue(static x => x.IsSuccess, static x => x.IsExecuting)
-                .Select(static x => !x.Item1 && !x.Item2)
+            IsSuccessObservable = initializeCommand.Select(static _ => true);
+            IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
+            IsSuccessObservable.CombineLatest(initializeCommand.IsExecuting)
+                .Select(static x => !x.First && !x.Second)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
-            appSettings.Value.WhenAnyValue(static x => x.InstallDir)
-                .Where(installDirValidator.ValidateInstallDir)
-                .InvokeCommand(initializeCommand!);
+            IObservable<string?> whenAnyInstallDir = appSettings.Value.WhenAnyValue(static x => x.InstallDir);
+            IsInstallDirValidObservable = whenAnyInstallDir.Select(installDirValidator.ValidateInstallDir);
+            ValidatedInstallDirObservable = whenAnyInstallDir.Where(installDirValidator.ValidateInstallDir);
+            ValidatedInstallDirObservable.InvokeCommand(initializeCommand!);
         }
+
+        public IObservable<bool> IsInstallDirValidObservable { get; }
+
+        public IObservable<string?> ValidatedInstallDirObservable { get; }
+
+        public IObservable<bool> IsSuccessObservable { get; }
 
         public Dictionary<IMod, ModGridItemViewModel> GridItems => _gridItems.Value;
 
