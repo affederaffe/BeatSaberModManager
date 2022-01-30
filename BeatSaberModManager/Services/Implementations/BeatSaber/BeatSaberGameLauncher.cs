@@ -13,7 +13,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             switch (platform)
             {
                 case Constants.Steam:
-                    Process.Start(new ProcessStartInfo($"steam://rungameid/{Constants.BeatSaberSteamId}") { UseShellExecute = true });
+                    PlatformUtils.OpenUri($"steam://rungameid/{Constants.BeatSaberSteamId}");
                     break;
                 case Constants.Oculus:
                     Process.Start(new ProcessStartInfo(Constants.BeatSaberExe) { WorkingDirectory = installDir });

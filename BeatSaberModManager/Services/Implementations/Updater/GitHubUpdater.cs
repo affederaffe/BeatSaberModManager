@@ -41,7 +41,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
 
         public async Task<int> Update()
         {
-            Asset? asset = _release?.Assets.FirstOrDefault(x => x.Name.Contains("win-x64", StringComparison.OrdinalIgnoreCase));
+            Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.OrdinalIgnoreCase));
             if (asset is null) return -1;
             HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return -1;
