@@ -29,7 +29,7 @@ namespace BeatSaberModManager.ViewModels
             StatusProgress = (StatusProgress)statusProgress;
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, modsViewModel.IsSuccessObservable);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, modsViewModel.IsSuccessObservable);
-            LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!, appSettings.Value.PlatformType!), modsViewModel.IsInstallDirValidObservable);
+            LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!, appSettings.Value.PlatformType), modsViewModel.IsInstallDirValidObservable);
             modsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync!)
                 .ToProperty(this, nameof(GameVersion), out _gameVersion);
         }
