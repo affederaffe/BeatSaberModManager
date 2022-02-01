@@ -5,7 +5,6 @@ using Avalonia;
 using Avalonia.Media;
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Models.Implementations;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Interfaces;
 
@@ -42,19 +41,15 @@ namespace BeatSaberModManager
         public async Task<int> RunAsync()
         {
 #if DEBUG
-            if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir) && _appSettings.Value.PlatformType != PlatformType.Unknown) return RunAvaloniaApp();
-            InstallDirLocatorResult result = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
-            _appSettings.Value.PlatformType = result.PlatformType;
-            _appSettings.Value.InstallDir = result.InstallDir;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
+                _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
             return RunAvaloniaApp();
 #else
             try
             {
                 if (await _updater.NeedsUpdate().ConfigureAwait(false)) return await _updater.Update().ConfigureAwait(false);
-                if (_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir) && _appSettings.Value.PlatformType != PlatformType.Unknown) return RunAvaloniaApp();
-                (string? installDir, string? platform) = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
-                _appSettings.Value.PlatformType = platform;
-                _appSettings.Value.InstallDir = installDir;
+                if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
+                    _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
                 return RunAvaloniaApp();
             }
             catch (Exception e)

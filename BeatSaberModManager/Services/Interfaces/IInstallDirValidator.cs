@@ -1,7 +1,10 @@
-﻿namespace BeatSaberModManager.Services.Interfaces
+﻿using System.Diagnostics.CodeAnalysis;
+
+
+namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IInstallDirValidator
     {
-        bool ValidateInstallDir(string? path);
+        bool ValidateInstallDir([NotNullWhen(true)] string? path);
     }
 }

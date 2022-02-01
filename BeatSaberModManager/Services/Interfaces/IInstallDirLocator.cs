@@ -7,6 +7,8 @@ namespace BeatSaberModManager.Services.Interfaces
 {
     public interface IInstallDirLocator
     {
-        ValueTask<InstallDirLocatorResult> LocateInstallDirAsync();
+        ValueTask<string?> LocateInstallDirAsync();
+
+        PlatformType DetectPlatform(string installDir);
     }
 }

@@ -46,6 +46,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>
             new ServiceCollection()
+                .AddSingleton(args)
                 .AddSingleton<Startup>()
                 .AddSerilog()
                 .AddSettings()

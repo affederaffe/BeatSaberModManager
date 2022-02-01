@@ -15,8 +15,6 @@ namespace BeatSaberModManager.Models.Implementations.Settings
 
         public bool ForceReinstallMods { get; set; }
 
-        public PlatformType PlatformType { get; set; }
-
         private string? _installDir;
         public string? InstallDir
         {

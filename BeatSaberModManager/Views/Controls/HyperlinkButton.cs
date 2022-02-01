@@ -20,7 +20,7 @@ namespace BeatSaberModManager.Views.Controls
         protected override void OnClick()
         {
             if (!IsEffectivelyEnabled || Uri is null) return;
-            PlatformUtils.OpenUri(Uri);
+            PlatformUtils.TryOpenUri(Uri);
         }
     }
 }

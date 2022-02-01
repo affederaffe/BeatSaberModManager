@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -18,13 +19,15 @@ namespace BeatSaberModManager.Services.Implementations.Updater
 {
     public class GitHubUpdater : IUpdater
     {
+        private readonly IReadOnlyList<string> _args;
         private readonly HttpProgressClient _httpClient;
         private readonly Version _version;
 
         private Release? _release;
 
-        public GitHubUpdater(HttpProgressClient httpClient)
+        public GitHubUpdater(IReadOnlyList<string> args, HttpProgressClient httpClient)
         {
+            _args = args;
             _httpClient = httpClient;
             _version = new Version(ThisAssembly.Info.Version);
         }
@@ -46,14 +49,16 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return -1;
             string processPath = Environment.ProcessPath!;
-            string oldPath = processPath.Replace(Constants.ExeExtension, Constants.OldExeExtension);
+            string oldPath = processPath.Replace(".exe", ".old.exe");
             IOUtils.TryDeleteFile(oldPath);
             IOUtils.TryMoveFile(processPath, oldPath);
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             ZipArchive archive = new(stream);
             if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true)) return -1;
-            Process.Start(processPath, Environment.GetCommandLineArgs());
-            return 0;
+            ProcessStartInfo processStartInfo = new(processPath);
+            foreach (string arg in _args)
+                processStartInfo.ArgumentList.Add(arg);
+            return PlatformUtils.TryStartProcess(processStartInfo, out _) ? 0 : -1;
         }
     }
 }

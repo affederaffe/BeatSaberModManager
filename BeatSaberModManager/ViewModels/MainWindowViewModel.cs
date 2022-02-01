@@ -26,7 +26,7 @@ namespace BeatSaberModManager.ViewModels
             SettingsViewModel = settingsViewModel;
             AppSettings = appSettings;
             InstallCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync, modsViewModel.IsSuccessObservable);
-            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.OpenUri(modsViewModel.SelectedGridItem?.AvailableMod.MoreInfoLink!), modsViewModel.WhenAnyValue(static x => x.SelectedGridItem).Select(static x => x?.AvailableMod.MoreInfoLink is not null));
+            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(modsViewModel.SelectedGridItem?.AvailableMod.MoreInfoLink!), modsViewModel.WhenAnyValue(static x => x.SelectedGridItem).Select(static x => x?.AvailableMod.MoreInfoLink is not null));
             StatusProgress statusProgress = (StatusProgress)progress;
             statusProgress.ProgressInfo.ToProperty(this, nameof(ProgressInfo), out _progressInfo);
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
@@ -42,7 +42,7 @@ namespace BeatSaberModManager.ViewModels
 
         public ReactiveCommand<Unit, Unit> InstallCommand { get; }
 
-        public ReactiveCommand<Unit, Unit> MoreInfoCommand { get; }
+        public ReactiveCommand<Unit, bool> MoreInfoCommand { get; }
 
         public ProgressInfo ProgressInfo => _progressInfo.Value;
 

@@ -74,7 +74,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
         public static bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
         {
-            string customLevelsDirectoryPath = Path.Combine(installDir, Constants.BeatSaberDataDir, "CustomLevels");
+            string customLevelsDirectoryPath = Path.Combine(installDir, "Beat Saber_Data", "CustomLevels");
             IOUtils.TryCreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(Path.GetInvalidFileNameChars()));
             string levelDirectoryPath = Path.Combine(customLevelsDirectoryPath, mapName);

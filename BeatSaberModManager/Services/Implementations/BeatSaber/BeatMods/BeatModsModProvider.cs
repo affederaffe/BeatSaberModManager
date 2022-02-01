@@ -13,7 +13,6 @@ using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
@@ -56,7 +55,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(installDir, x))
                 .Where(Directory.Exists)
                 .SelectMany(static x => Directory.EnumerateFiles(x, string.Empty, SearchOption.AllDirectories))
-                .Where(static x => Path.GetExtension(x) is Constants.DllExtension or Constants.ManifestExtension or Constants.ExeExtension);
+                .Where(static x => Path.GetExtension(x) is ".dll" or ".manifest" or ".exe");
             string?[] rawHashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFile)).ConfigureAwait(false);
             string[] hashes = rawHashes.Where(static x => x is not null).ToArray()!;
             foreach (string hash in hashes)
@@ -64,7 +63,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 if (fileHashModPairs.TryGetValue(hash, out BeatModsMod? mod) &&
                     !installedMods.Contains(mod) &&
                     !IsModLoader(mod) &&
-                    !mod.Downloads[0].Hashes.Where(static x => Path.GetExtension(x.File) is Constants.DllExtension or Constants.ManifestExtension or Constants.ExeExtension).Select(static x => x.Hash).Except(hashes).Any())
+                    !mod.Downloads[0].Hashes.Where(static x => Path.GetExtension(x.File) is ".dll" or ".manifest" or ".exe").Select(static x => x.Hash).Except(hashes).Any())
                     installedMods.Add(mod);
             }
 
@@ -145,12 +144,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private async Task<IMod?> GetInstalledModLoader(string installDir, IReadOnlyDictionary<string, BeatModsMod> fileHashModPairs)
         {
-            string injectorPath = Path.Combine(installDir, Constants.BeatSaberDataDir, "Managed", "IPA.Injector.dll");
+            string injectorPath = Path.Combine(installDir, "Beat Saber_Data", "Managed", "IPA.Injector.dll");
             string? injectorHash = await _hashProvider.CalculateHashForFile(injectorPath).ConfigureAwait(false);
             if (injectorHash is null || !fileHashModPairs.TryGetValue(injectorHash, out BeatModsMod? bsipa)) return null;
-            foreach (BeatModsHash beatModsHash in bsipa.Downloads[0].Hashes.Where(static x => Path.GetExtension(x.File) is Constants.DllExtension or Constants.ManifestExtension or Constants.ExeExtension))
+            foreach (BeatModsHash beatModsHash in bsipa.Downloads[0].Hashes.Where(static x => Path.GetExtension(x.File) is ".dll" or ".manifest" or ".exe"))
             {
-                string fileName = beatModsHash.File.Replace("IPA/Data", Constants.BeatSaberDataDir, StringComparison.Ordinal).Replace("IPA/", null);
+                string fileName = beatModsHash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null);
                 string path = Path.Combine(installDir, fileName);
                 string? hash = await _hashProvider.CalculateHashForFile(path);
                 if (beatModsHash.Hash != hash) return null;
@@ -159,6 +158,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return bsipa;
         }
 
-        private static readonly string[] _installedModsLocations = { Path.Combine(Constants.IpaDir, Constants.PendingDir), Constants.PluginsDir, Constants.LibsDir };
+        private static readonly string[] _installedModsLocations = { Path.Combine("IPA", "Pending"), "Plugins", "Libs" };
     }
 }

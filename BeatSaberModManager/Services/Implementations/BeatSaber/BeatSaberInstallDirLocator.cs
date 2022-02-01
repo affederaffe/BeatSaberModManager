@@ -23,40 +23,47 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             _installDirValidator = installDirValidator;
         }
 
-        public ValueTask<InstallDirLocatorResult> LocateInstallDirAsync() =>
+        public ValueTask<string?> LocateInstallDirAsync() =>
             OperatingSystem.IsWindows() ? LocateWindowsInstallDirAsync()
                 : OperatingSystem.IsLinux() ? LocateLinuxSteamInstallDirAsync()
                     : throw new PlatformNotSupportedException();
 
+        public PlatformType DetectPlatform(string installDir)
+        {
+            const string steamApiDll = "steam_api64.dll";
+            string pluginsDir = Path.Combine(installDir, "Beat Saber_Data", "Plugins");
+            return File.Exists(Path.Combine(pluginsDir, steamApiDll)) || File.Exists(Path.Combine(pluginsDir, "x86_64", steamApiDll)) ? PlatformType.Steam : PlatformType.Oculus;
+        }
+
         [SupportedOSPlatform("windows")]
-        private ValueTask<InstallDirLocatorResult> LocateWindowsInstallDirAsync()
+        private ValueTask<string?> LocateWindowsInstallDirAsync()
         {
             string? steamInstallDir = LocateWindowsSteamInstallDir();
             return steamInstallDir is null ? LocateOculusBeatSaberInstallDirAsync() : LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
         [SupportedOSPlatform("linux")]
-        private ValueTask<InstallDirLocatorResult> LocateLinuxSteamInstallDirAsync()
+        private ValueTask<string?> LocateLinuxSteamInstallDirAsync()
         {
             string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             string steamInstallDir = Path.Combine(homeDir, ".steam", "root");
             return LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
-        private async ValueTask<InstallDirLocatorResult> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
+        private async ValueTask<string?> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
         {
             await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir).ConfigureAwait(false))
             {
                 string? installDir = await MatchSteamBeatSaberInstallDirAsync(libPath).ConfigureAwait(false);
-                if (installDir is not null) return new InstallDirLocatorResult(installDir, PlatformType.Steam);
+                if (installDir is not null) return installDir;
             }
 
-            return InstallDirLocatorResult.Empty;
+            return null;
         }
 
         private async Task<string?> MatchSteamBeatSaberInstallDirAsync(string path)
         {
-            string acf = Path.Combine(path, $"appmanifest_{Constants.BeatSaberSteamId}.acf");
+            string acf = Path.Combine(path, "appmanifest_620980.acf");
             await using FileStream? fileStream = IOUtils.TryOpenFile(acf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
             if (fileStream is null) return null;
             Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
@@ -75,27 +82,27 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         }
 
         [SupportedOSPlatform("windows")]
-        private ValueTask<InstallDirLocatorResult> LocateOculusBeatSaberInstallDirAsync()
+        private ValueTask<string?> LocateOculusBeatSaberInstallDirAsync()
         {
-            using RegistryKey? oculusInstallDirKey = Registry.LocalMachine.OpenSubKey(Constants.Software)?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey(Constants.Oculus)?.OpenSubKey("Config");
+            using RegistryKey? oculusInstallDirKey = Registry.LocalMachine.OpenSubKey("Software")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
-            if (string.IsNullOrEmpty(oculusInstallDir)) return ValueTask.FromResult(InstallDirLocatorResult.Empty);
-            string finalPath = Path.Combine(oculusInstallDir, Constants.Software, "hyperbolic-magnetism-beat-saber");
+            if (string.IsNullOrEmpty(oculusInstallDir)) return ValueTask.FromResult(null as string);
+            string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
             string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
-            return ValueTask.FromResult(new InstallDirLocatorResult(installDir, PlatformType.Oculus));
+            return ValueTask.FromResult(installDir);
         }
 
         [SupportedOSPlatform("windows")]
         private string? LocateInOculusLibrary()
         {
-            using RegistryKey? librariesKey = Registry.CurrentUser.OpenSubKey(Constants.Software)?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey(Constants.Oculus)?.OpenSubKey("Libraries");
+            using RegistryKey? librariesKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Libraries");
             if (librariesKey is null) return null;
             foreach (string libraryKeyName in librariesKey.GetSubKeyNames())
             {
                 using RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
                 string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
                 if (libraryPath is null) continue;
-                string finalPath = Path.Combine(libraryPath, Constants.Software, "hyperbolic-magnetism-beat-saber");
+                string finalPath = Path.Combine(libraryPath, "Software", "hyperbolic-magnetism-beat-saber");
                 if (_installDirValidator.ValidateInstallDir(finalPath))
                     return finalPath;
             }
@@ -106,7 +113,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         [SupportedOSPlatform("windows")]
         private static string? LocateWindowsSteamInstallDir()
         {
-            using RegistryKey? steamInstallDirKey = Registry.LocalMachine.OpenSubKey(Constants.Software)?.OpenSubKey("Wow6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
+            using RegistryKey? steamInstallDirKey = Registry.LocalMachine.OpenSubKey("Software")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Valve")?.OpenSubKey("Steam");
             return steamInstallDirKey?.GetValue("InstallPath")?.ToString();
         }
 

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Services.Interfaces;
-using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
@@ -16,7 +15,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             _modelSaberModelInstaller = modelSaberModelInstaller;
         }
 
-        public string Protocol => Constants.ModelSaberProtocol;
+        public string Protocol => "modelsaber";
 
         public Task<bool> InstallAssetAsync(string installDir, Uri uri, IStatusProgress? progress = null)
             => _modelSaberModelInstaller.InstallModelAsync(installDir, uri, progress);

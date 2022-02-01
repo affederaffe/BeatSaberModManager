@@ -27,7 +27,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
             string handlerName = GetHandlerNameForProtocol(protocol);
             string handlerPath = Path.Combine(_localAppDataPath, handlerName);
             File.WriteAllText(handlerPath, $"[Desktop Entry]\nName={ThisAssembly.Info.Product}\nComment=URL:{protocol} Protocol\nType=Application\nCategories=Utility\nExec={Environment.ProcessPath} --install %u\nTerminal=false\nNoDisplay=true\nMimeType=x-scheme-handler/{protocol}");
-            Process.Start("xdg-mime", $"\"default\" \"{handlerName}\" \"x-scheme-handler/{protocol}\"");
+            PlatformUtils.TryStartProcess(new ProcessStartInfo("xdg-mime", $"\"default\" \"{handlerName}\" \"x-scheme-handler/{protocol}\""), out _);
         }
 
         public void UnregisterProtocolHandler(string protocol)

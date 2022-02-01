@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 using BeatSaberModManager.Models.Implementations;
 using BeatSaberModManager.Services.Interfaces;
@@ -10,21 +9,19 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     public class BeatSaberGameLauncher : IGameLauncher
     {
-        public void LaunchGame(string installDir, PlatformType platformType)
+        private readonly IInstallDirLocator _installDirLocator;
+
+        public BeatSaberGameLauncher(IInstallDirLocator installDirLocator)
         {
-            switch (platformType)
-            {
-                case PlatformType.Unknown:
-                    break;
-                case PlatformType.Steam:
-                    PlatformUtils.OpenUri($"steam://rungameid/{Constants.BeatSaberSteamId}");
-                    break;
-                case PlatformType.Oculus:
-                    Process.Start(new ProcessStartInfo(Constants.BeatSaberExe) { WorkingDirectory = installDir });
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(platformType), platformType, null);
-            }
+            _installDirLocator = installDirLocator;
+        }
+
+        public void LaunchGame(string installDir)
+        {
+            if (_installDirLocator.DetectPlatform(installDir) == PlatformType.Steam)
+                PlatformUtils.TryOpenUri("steam://rungameid/620980");
+            else if (_installDirLocator.DetectPlatform(installDir) == PlatformType.Oculus)
+                PlatformUtils.TryStartProcess(new ProcessStartInfo("Beat Saber.exe") { WorkingDirectory = installDir }, out _);
         }
     }
 }

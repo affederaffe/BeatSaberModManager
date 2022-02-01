@@ -43,10 +43,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         [JsonPropertyName("dependencies")]
         public BeatModsDependency[] Dependencies { get; set; } = null!;
 
-        public bool Equals(IMod? other) => other is BeatModsMod beatModsMod && (ReferenceEquals(this, other) || Id == beatModsMod.Id);
+        public bool Equals(IMod? other) => other is BeatModsMod beatModsMod && (ReferenceEquals(this, other) || Id == beatModsMod.Id && Version == beatModsMod.Version);
 
         public override bool Equals(object? obj) => obj is BeatModsMod beatModsMod && (ReferenceEquals(this, beatModsMod) || Equals(beatModsMod));
 
-        public override int GetHashCode() => Id.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Version, Id);
     }
 }
