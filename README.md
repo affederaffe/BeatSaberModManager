@@ -4,13 +4,17 @@
 BeatSaberModManager is yet another mod installer for Beat Saber, heavily inspired by [ModAssistant](https://github.com/Assistant/ModAssistant). \
 It strives to look more visually appealing and support both Windows and Linux, while still being as feature-rich as ModAssistant.
 
+### Installation
+- Install the [.NET 6 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/6.0/runtime)
+- Download the latest version for you platform from [Releases](https://github.com/affederaffe/BeatSaberModManager/releases)
+- Run the executable
+
 ### Features
-Since this project is rather young, it is **not** as feature-complete as ModAssistant at the moment. \
-Currently, implemented ones include:
 - Windows and Linux support
 - Dependency resolution
 - Installed mod detection
 - Mod uninstallation
+- Theming support
 - OneClick™ support for [BeatSaver](https://beatsaver.com), [ModelSaber](https://modelsaber.com) and [Playlists](https://bsaber.com/category/playlists)
 
 ### Usage

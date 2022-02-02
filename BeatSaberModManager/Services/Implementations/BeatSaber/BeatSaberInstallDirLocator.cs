@@ -30,16 +30,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 
         public PlatformType DetectPlatform(string installDir)
         {
-            const string steamApiDll = "steam_api64.dll";
             string pluginsDir = Path.Combine(installDir, "Beat Saber_Data", "Plugins");
-            return File.Exists(Path.Combine(pluginsDir, steamApiDll)) || File.Exists(Path.Combine(pluginsDir, "x86_64", steamApiDll)) ? PlatformType.Steam : PlatformType.Oculus;
+            return File.Exists(Path.Combine(pluginsDir, "steam_api64.dll")) || File.Exists(Path.Combine(pluginsDir, "x86_64", "steam_api64.dll")) ? PlatformType.Steam : PlatformType.Oculus;
         }
 
         [SupportedOSPlatform("windows")]
         private ValueTask<string?> LocateWindowsInstallDirAsync()
         {
             string? steamInstallDir = LocateWindowsSteamInstallDir();
-            return steamInstallDir is null ? LocateOculusBeatSaberInstallDirAsync() : LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
+            return steamInstallDir is null ? ValueTask.FromResult(LocateOculusBeatSaberInstallDir()) : LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
         [SupportedOSPlatform("linux")]
@@ -55,7 +54,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir).ConfigureAwait(false))
             {
                 string? installDir = await MatchSteamBeatSaberInstallDirAsync(libPath).ConfigureAwait(false);
-                if (installDir is not null) return installDir;
+                if (installDir is not null) return Path.GetFullPath(installDir);
             }
 
             return null;
@@ -82,14 +81,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         }
 
         [SupportedOSPlatform("windows")]
-        private ValueTask<string?> LocateOculusBeatSaberInstallDirAsync()
+        private string? LocateOculusBeatSaberInstallDir()
         {
             using RegistryKey? oculusInstallDirKey = Registry.LocalMachine.OpenSubKey("Software")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
-            if (string.IsNullOrEmpty(oculusInstallDir)) return ValueTask.FromResult(null as string);
+            if (string.IsNullOrEmpty(oculusInstallDir)) return null;
             string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
             string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
-            return ValueTask.FromResult(installDir);
+            return installDir is null ? null : Path.GetFullPath(installDir);
         }
 
         [SupportedOSPlatform("windows")]

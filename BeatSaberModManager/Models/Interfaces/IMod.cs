@@ -3,7 +3,7 @@
 
 namespace BeatSaberModManager.Models.Interfaces
 {
-    public interface IMod : IEquatable<IMod>
+    public interface IMod
     {
         string Name { get; set; }
         Version Version { get; set; }
