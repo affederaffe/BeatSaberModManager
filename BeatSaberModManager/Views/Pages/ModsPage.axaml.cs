@@ -15,10 +15,19 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Pages
 {
+    /// <summary>
+    /// View for installing and uninstalling mods.
+    /// </summary>
     public partial class ModsPage : ReactiveUserControl<ModsViewModel>
     {
+        /// <summary>
+        /// [Required by Avalonia]
+        /// </summary>
         public ModsPage() { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModsPage"/> class.
+        /// </summary>
         [ActivatorUtilitiesConstructor]
         public ModsPage(ModsViewModel viewModel)
         {

@@ -19,11 +19,17 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Theming
 {
+    /// <summary>
+    /// Load and apply internal and external <see cref="Theme"/>s.
+    /// </summary>
     public class ThemeManager : ReactiveObject
     {
         private readonly IOptions<AppSettings> _appSettings;
         private readonly int _buildInThemesCount;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ThemeManager"/> class.
+        /// </summary>
         public ThemeManager(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings;
@@ -37,20 +43,31 @@ namespace BeatSaberModManager.Views.Theming
             _selectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.Value.ThemeName) ?? Themes[0];
         }
 
+        /// <summary>
+        /// A collection of all available <see cref="Theme"/>s.
+        /// </summary>
         public ObservableCollection<Theme> Themes { get; }
 
-        private Theme _selectedTheme;
+        /// <summary>
+        /// The currently selected <see cref="Theme"/>.
+        /// </summary>
         public Theme SelectedTheme
         {
             get => _selectedTheme;
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
+        private Theme _selectedTheme;
+
+        /// <summary>
+        /// Initializes the <see cref="ThemeManager"/>.
+        /// </summary>
+        /// <param name="applyTheme">The <see cref="Action{T}"/> invoked when the <see cref="SelectedTheme"/> changes.</param>
         public void Initialize(Action<Theme> applyTheme)
         {
             ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
             _appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Where(Directory.Exists).ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand!);
-            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme).OfType<Theme>();
+            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme);
             selectedThemeObservable.Subscribe(applyTheme);
             selectedThemeObservable.Subscribe(t => _appSettings.Value.ThemeName = t.Name);
         }

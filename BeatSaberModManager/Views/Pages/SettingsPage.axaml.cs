@@ -17,10 +17,19 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Pages
 {
+    /// <summary>
+    /// View for user settings.
+    /// </summary>
     public partial class SettingsPage : ReactiveUserControl<SettingsViewModel>
     {
+        /// <summary>
+        /// [Required by Avalonia]
+        /// </summary>
         public SettingsPage() { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingsPage"/> class.
+        /// </summary>
         [ActivatorUtilitiesConstructor]
         public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager, IInstallDirValidator installDirValidator)
         {

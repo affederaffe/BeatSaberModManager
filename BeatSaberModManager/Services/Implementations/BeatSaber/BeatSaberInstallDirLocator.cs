@@ -14,20 +14,26 @@ using Microsoft.Win32;
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
+    /// <inheritdoc />
     public class BeatSaberInstallDirLocator : IInstallDirLocator
     {
         private readonly IInstallDirValidator _installDirValidator;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BeatSaberInstallDirLocator"/> class.
+        /// </summary>
         public BeatSaberInstallDirLocator(IInstallDirValidator installDirValidator)
         {
             _installDirValidator = installDirValidator;
         }
 
+        /// <inheritdoc />
         public ValueTask<string?> LocateInstallDirAsync() =>
             OperatingSystem.IsWindows() ? LocateWindowsInstallDirAsync()
                 : OperatingSystem.IsLinux() ? LocateLinuxSteamInstallDirAsync()
                     : throw new PlatformNotSupportedException();
 
+        /// <inheritdoc />
         public PlatformType DetectPlatform(string installDir)
         {
             string pluginsDir = Path.Combine(installDir, "Beat Saber_Data", "Plugins");
@@ -63,7 +69,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         private async Task<string?> MatchSteamBeatSaberInstallDirAsync(string path)
         {
             string acf = Path.Combine(path, "appmanifest_620980.acf");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(acf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
+            await using FileStream? fileStream = IOUtils.TryOpenFile(acf, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) return null;
             Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
             string? line;
@@ -120,7 +126,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             yield return path;
             string vdf = Path.Combine(path, "steamapps", "libraryfolders.vdf");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, FileMode.Open, FileAccess.Read, FileShare.Read, FileOptions.Asynchronous);
+            await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) yield break;
             Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
             string? line;

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <AssemblyVersion>0.0.1</AssemblyVersion>
     <PublishSingleFile>true</PublishSingleFile>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
@@ -11,7 +12,7 @@
     <AnalysisMode>recommended</AnalysisMode>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <AssemblyVersion>0.0.1</AssemblyVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <ApplicationIcon>Resources/Icons/Icon.ico</ApplicationIcon>
   </PropertyGroup>
 

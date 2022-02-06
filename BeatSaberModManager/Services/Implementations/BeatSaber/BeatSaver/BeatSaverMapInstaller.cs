@@ -16,24 +16,43 @@ using BeatSaberModManager.Utils;
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 {
+    /// <summary>
+    /// Download and install <see cref="BeatSaverMap"/>s from https://beatsaver.com.
+    /// </summary>
     public class BeatSaverMapInstaller
     {
         private readonly HttpProgressClient _httpClient;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BeatSaverMapInstaller"/> class.
+        /// </summary>
         public BeatSaverMapInstaller(HttpProgressClient httpClient)
         {
             _httpClient = httpClient;
         }
 
+        /// <summary>
+        /// Asynchronously downloads and installs a beatmap from https://beatsaver.com by key.
+        /// </summary>
+        /// <param name="installDir">The game's installation directory.</param>
+        /// <param name="key">The unique key for the map.</param>
+        /// <param name="progress">Optionally track the progress of the operation.</param>
+        /// <returns>true if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallBeatSaverMapAsync(string installDir, string key, IStatusProgress? progress = null)
         {
             BeatSaverMap? map = await GetBeatSaverMapAsync(key).ConfigureAwait(false);
             if (map is null || map.Versions.Length <= 0) return false;
             progress?.Report(new ProgressInfo(StatusType.Installing, map.Name));
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
-            return archive is not null && ExtractBeatSaverMapToDir(installDir, map, archive);
+            return archive is not null && TryExtractBeatSaverMapToDir(installDir, map, archive);
         }
 
+        /// <summary>
+        /// Asynchronously downloads a <see cref="BeatSaverMap"/> from https://beatsaver.com by key.
+        /// </summary>
+        /// <param name="key">The unique key for the map.</param>
+        /// <param name="retries">How many times the operation should be re-run before failing.</param>
+        /// <returns>The <see cref="BeatSaverMap"/> if the operation succeeds, null otherwise.</returns>
         public async Task<BeatSaverMap?> GetBeatSaverMapAsync(string key, int retries = 2)
         {
             while (retries != 0)
@@ -72,7 +91,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             return null;
         }
 
-        public static bool ExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
+        /// <summary>
+        /// Attempts to install a beatmap into the game's installation directory.
+        /// </summary>
+        /// <param name="installDir">The game's installation directory.</param>
+        /// <param name="map">The map to install.</param>
+        /// <param name="archive">The content of the <see cref="BeatSaverMap"/>.</param>
+        /// <returns>true when the operation succeeds, false otherwise.</returns>
+        public static bool TryExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
         {
             string customLevelsDirectoryPath = Path.Combine(installDir, "Beat Saber_Data", "CustomLevels");
             IOUtils.TryCreateDirectory(customLevelsDirectoryPath);

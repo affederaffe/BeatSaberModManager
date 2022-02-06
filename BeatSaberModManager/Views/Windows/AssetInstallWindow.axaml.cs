@@ -13,10 +13,19 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Windows
 {
+    /// <summary>
+    /// Top-level view to display progress information when using the '--install' flag.
+    /// </summary>
     public partial class AssetInstallWindow : ReactiveWindow<AssetInstallWindowViewModel>
     {
+        /// <summary>
+        /// [Required by Avalonia]
+        /// </summary>
         public AssetInstallWindow() { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssetInstallWindow"/> class.
+        /// </summary>
         [ActivatorUtilitiesConstructor]
         public AssetInstallWindow(AssetInstallWindowViewModel viewModel)
         {

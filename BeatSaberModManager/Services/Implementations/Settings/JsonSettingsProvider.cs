@@ -9,11 +9,18 @@ using Microsoft.Extensions.Options;
 
 namespace BeatSaberModManager.Services.Implementations.Settings
 {
+    /// <summary>
+    /// Automatically loads and saves <typeparamref name="T"/> as a json file.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public sealed class JsonSettingsProvider<T> : IOptions<T>, IDisposable where T : class, new()
     {
         private readonly string _saveDirPath;
         private readonly string _saveFilePath;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonSettingsProvider{T}"/> class.
+        /// </summary>
         public JsonSettingsProvider()
         {
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -21,9 +28,13 @@ namespace BeatSaberModManager.Services.Implementations.Settings
             _saveFilePath = Path.Combine(_saveDirPath, $"{typeof(T).Name}.json");
         }
 
-        private T? _value;
+        /// <summary>
+        /// The instance of the loaded setting <typeparamref name="T"/>.
+        /// </summary>
         public T Value => _value ??= Load();
+        private T? _value;
 
+        /// <inheritdoc />
         public void Dispose() => Save();
 
         private void Save()

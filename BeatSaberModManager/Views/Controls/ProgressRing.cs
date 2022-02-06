@@ -8,11 +8,21 @@ using Avalonia.Controls.Shapes;
 
 namespace BeatSaberModManager.Views.Controls
 {
+    /// <summary>
+    /// A control used to indicate the progress of an operation.
+    /// </summary>
     public class ProgressRing : RangeBase
     {
+        /// <inheritdoc cref="ProgressBar.IsIndeterminateProperty"/>
         public static readonly StyledProperty<bool> IsIndeterminateProperty = ProgressBar.IsIndeterminateProperty.AddOwner<ProgressRing>();
+
+        /// <inheritdoc cref="Shape.StrokeThicknessProperty"/>
         public static readonly StyledProperty<double> StrokeThicknessProperty = Shape.StrokeThicknessProperty.AddOwner<ProgressRing>();
+
+        /// <inheritdoc cref="Arc.StartAngleProperty"/>
         public static readonly StyledProperty<double> StartAngleProperty = Arc.StartAngleProperty.AddOwner<ProgressRing>();
+
+        /// <inheritdoc cref="Arc.SweepAngleProperty"/>
         public static readonly StyledProperty<double> SweepAngleProperty = Arc.SweepAngleProperty.AddOwner<ProgressRing>();
 
         static ProgressRing()
@@ -24,24 +34,28 @@ namespace BeatSaberModManager.Views.Controls
             AffectsRender<ProgressRing>(StartAngleProperty, SweepAngleProperty);
         }
 
+        /// <inheritdoc cref="ProgressBar.IsIndeterminate"/>
         public bool IsIndeterminate
         {
             get => GetValue(IsIndeterminateProperty);
             set => SetValue(IsIndeterminateProperty, value);
         }
 
+        /// <inheritdoc cref="Shape.StrokeThickness"/>
         public double StrokeThickness
         {
             get => GetValue(StrokeThicknessProperty);
             set => SetValue(StrokeThicknessProperty, value);
         }
 
+        /// <inheritdoc cref="Arc.StartAngle"/>
         public double StartAngle
         {
             get => GetValue(StartAngleProperty);
             set => SetValue(StartAngleProperty, value);
         }
 
+        /// <inheritdoc cref="Arc.SweepAngle"/>
         public double SweepAngle
         {
             get => GetValue(SweepAngleProperty);

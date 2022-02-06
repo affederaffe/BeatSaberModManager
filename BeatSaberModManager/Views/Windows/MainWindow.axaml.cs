@@ -12,10 +12,19 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Windows
 {
+    /// <summary>
+    /// Standard top-level view of the application.
+    /// </summary>
     public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
+        /// <summary>
+        /// [Required by Avalonia]
+        /// </summary>
         public MainWindow() { }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// </summary>
         [ActivatorUtilitiesConstructor]
         public MainWindow(MainWindowViewModel viewModel)
         {

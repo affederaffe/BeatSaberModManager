@@ -36,8 +36,14 @@ using Serilog;
 
 namespace BeatSaberModManager
 {
+    /// <summary>
+    /// Main application class.
+    /// </summary>
     public static class Program
     {
+        /// <summary>
+        /// Application entry point.
+        /// </summary>
         public static async Task<int> Main(string[] args)
         {
             await using ServiceProvider services = CreateServiceCollection(args).BuildServiceProvider();
@@ -62,7 +68,7 @@ namespace BeatSaberModManager
         private static IServiceCollection AddSerilog(this IServiceCollection services) =>
             services.AddLogging(static loggerBuilder =>
                 loggerBuilder.AddSerilog(new LoggerConfiguration()
-                    .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"))
+                    .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Day)
                     .CreateLogger(), true));
 
         private static IServiceCollection AddSettings(this IServiceCollection services) =>
@@ -82,7 +88,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddModServices(this IServiceCollection services) =>
             services.AddSingleton<IHashProvider, MD5HashProvider>()
-                .AddSingleton<IDependencyResolver, DependencyResolver>()
+                .AddSingleton<IDependencyResolver, SimpleDependencyResolver>()
                 .AddSingleton<IModProvider, BeatModsModProvider>()
                 .AddSingleton<IModInstaller, BeatModsModInstaller>()
                 .AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>();

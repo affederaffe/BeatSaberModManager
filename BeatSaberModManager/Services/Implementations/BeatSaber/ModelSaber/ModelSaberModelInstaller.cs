@@ -13,15 +13,28 @@ using BeatSaberModManager.Utils;
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 {
+    /// <summary>
+    /// Download and install models from https://modelsaber.com.
+    /// </summary>
     public class ModelSaberModelInstaller
     {
         private readonly HttpProgressClient _httpClient;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModelSaberModelInstaller"/> class.
+        /// </summary>
         public ModelSaberModelInstaller(HttpProgressClient httpClient)
         {
             _httpClient = httpClient;
         }
 
+        /// <summary>
+        /// Asynchronously downloads and installs a model from https://modelsaber.com.
+        /// </summary>
+        /// <param name="installDir">The game's installation directory.</param>
+        /// <param name="uri">The <see cref="Uri"/> to download the model from.</param>
+        /// <param name="progress">Optionally track the progress of the operation.</param>
+        /// <returns></returns>
         public async Task<bool> InstallModelAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
             string? folderName = GetFolderName(uri);
@@ -38,6 +51,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             return true;
         }
 
+        /// <summary>
+        /// Maps the type of the model to it's respective directory name.
+        /// </summary>
+        /// <param name="uri">The <see cref="Uri"/> to download the model from.</param>
+        /// <returns>The name of the model types directory.</returns>
         private static string? GetFolderName(Uri uri) => uri.Host switch
         {
             "avatar" => "CustomAvatars",

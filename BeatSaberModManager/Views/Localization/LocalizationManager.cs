@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reactive.Linq;
 
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
@@ -15,10 +14,16 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.Views.Localization
 {
+    /// <summary>
+    /// Load and apply localization settings.
+    /// </summary>
     public class LocalizationManager : ReactiveObject
     {
         private readonly IOptions<AppSettings> _appSettings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LocalizationManager"/> class.
+        /// </summary>
         public LocalizationManager(IOptions<AppSettings> appSettings)
         {
             _appSettings = appSettings;
@@ -28,18 +33,29 @@ namespace BeatSaberModManager.Views.Localization
                                 Languages[0];
         }
 
+        /// <summary>
+        /// A collection of all available <see cref="Language"/>s.
+        /// </summary>
         public IReadOnlyList<Language> Languages { get; }
 
-        private Language _selectedLanguage;
+        /// <summary>
+        /// The currently selected <see cref="Language"/>.
+        /// </summary>
         public Language SelectedLanguage
         {
             get => _selectedLanguage;
             set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
         }
 
+        private Language _selectedLanguage;
+
+        /// <summary>
+        /// Initializes the <see cref="LocalizationManager"/>.
+        /// </summary>
+        /// <param name="applyLanguage">The <see cref="Action{T}"/> invoked when the <see cref="SelectedLanguage"/> changes.</param>
         public void Initialize(Action<Language> applyLanguage)
         {
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage).OfType<Language>();
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage);
             selectedLanguageObservable.Subscribe(applyLanguage);
             selectedLanguageObservable.Subscribe(l => _appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }

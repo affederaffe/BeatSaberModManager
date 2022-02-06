@@ -17,6 +17,9 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.ViewModels
 {
+    /// <summary>
+    /// ViewModel for <see cref="BeatSaberModManager.Views.Windows.AssetInstallWindow"/>.
+    /// </summary>
     public class AssetInstallWindowViewModel : ViewModelBase
     {
         private readonly Uri _uri;
@@ -28,6 +31,9 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AssetInstallWindowViewModel"/> class.
+        /// </summary>
         public AssetInstallWindowViewModel(Uri uri, IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
         {
             _uri = uri;
@@ -35,6 +41,7 @@ namespace BeatSaberModManager.ViewModels
             _installDirValidator = installDirValidator;
             _assetProviders = assetProviders;
             StatusProgress = (StatusProgress)progress;
+            Log = new ObservableCollection<string>();
             InstallCommand = ReactiveCommand.CreateFromTask(InstallAssetAsync);
             InstallCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
             InstallCommand.ToProperty(this, nameof(IsSuccess), out _isSuccess);
@@ -44,18 +51,39 @@ namespace BeatSaberModManager.ViewModels
             StatusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
         }
 
+        /// <summary>
+        /// Downloads and installs an asset.
+        /// </summary>
         public ReactiveCommand<Unit, bool> InstallCommand { get; }
 
-        public ObservableCollection<string> Log { get; } = new();
+        /// <summary>
+        /// Collection of log messages.
+        /// </summary>
+        public ObservableCollection<string> Log { get; }
 
+        /// <summary>
+        /// Exposed for the view.
+        /// </summary>
         public StatusProgress StatusProgress { get; }
 
+        /// <summary>
+        /// True if the operation is currently executing, false otherwise.
+        /// </summary>
         public bool IsExecuting => _isExecuting.Value;
 
+        /// <summary>
+        /// True if the operation successfully ran to completion, false otherwise.
+        /// </summary>
         public bool IsSuccess => _isSuccess.Value;
 
+        /// <summary>
+        /// True if the operation faulted, false otherwise.
+        /// </summary>
         public bool IsFailed => _isFailed.Value;
 
+        /// <summary>
+        /// The current progress of the operation.
+        /// </summary>
         public double ProgressValue => _progressValue.Value;
 
         private async Task<bool> InstallAssetAsync()

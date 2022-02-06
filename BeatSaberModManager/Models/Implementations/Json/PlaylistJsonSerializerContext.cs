@@ -5,6 +5,7 @@ using BeatSaberModManager.Models.Implementations.BeatSaber.Playlists;
 
 namespace BeatSaberModManager.Models.Implementations.Json
 {
+    /// <inheritdoc />
     [JsonSerializable(typeof(Playlist))]
-    public partial class PlaylistJsonSerializerContext : JsonSerializerContext { }
+    internal partial class PlaylistJsonSerializerContext : JsonSerializerContext { }
 }

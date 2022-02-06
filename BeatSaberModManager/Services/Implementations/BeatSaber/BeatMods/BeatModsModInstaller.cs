@@ -16,25 +16,29 @@ using BeatSaberModManager.Utils;
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 {
+    /// <inheritdoc />
     public class BeatModsModInstaller : IModInstaller
     {
         private readonly IModProvider _modProvider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BeatModsModInstaller"/> class.
+        /// </summary>
         public BeatModsModInstaller(IModProvider modProvider)
         {
             _modProvider = modProvider;
         }
 
+        /// <inheritdoc />
         public async IAsyncEnumerable<IMod> InstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null)
         {
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
-            IEnumerable<string> urls = beatModsMods.Select(static x => x.Downloads[0].Url);
             string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
             IOUtils.TryCreateDirectory(pendingDirPath);
             int i = 0;
             progress?.Report(new ProgressInfo(StatusType.Installing, beatModsMods[i].Name));
-            await foreach (ZipArchive archive in _modProvider.DownloadModsAsync(urls, progress).ConfigureAwait(false))
+            await foreach (ZipArchive archive in _modProvider.DownloadModsAsync(beatModsMods, progress).ConfigureAwait(false))
             {
                 bool isModLoader = _modProvider.IsModLoader(beatModsMods[i]);
                 string extractDir = isModLoader ? installDir : pendingDirPath;
@@ -48,6 +52,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             progress?.Report(new ProgressInfo(StatusType.Completed, null));
         }
 
+        /// <inheritdoc />
         public async IAsyncEnumerable<IMod> UninstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null)
         {
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
@@ -65,6 +70,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             progress?.Report(new ProgressInfo(StatusType.Completed, null));
         }
 
+        /// <inheritdoc />
         public void RemoveAllMods(string installDir)
         {
             string pluginsDirPath = Path.Combine(installDir, "Plugins");
@@ -114,7 +120,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
             string protonRegPath = Path.Combine($"{installDir}/../..", "compatdata/620980/pfx/user.reg");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, FileMode.Open, FileAccess.ReadWrite, FileShare.Read, FileOptions.Asynchronous);
+            await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) return;
             using StreamReader reader = new(fileStream);
             string content = await reader.ReadToEndAsync().ConfigureAwait(false);

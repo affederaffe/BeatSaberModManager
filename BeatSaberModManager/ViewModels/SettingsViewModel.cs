@@ -14,10 +14,16 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.ViewModels
 {
+    /// <summary>
+    /// ViewModel for <see cref="BeatSaberModManager.Views.Pages.SettingsPage"/>.
+    /// </summary>
     public class SettingsViewModel : ViewModelBase
     {
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SettingsViewModel"/> class.
+        /// </summary>
         public SettingsViewModel(IOptions<AppSettings> appSettings, IProtocolHandlerRegistrar protocolHandlerRegistrar)
         {
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
@@ -32,32 +38,53 @@ namespace BeatSaberModManager.ViewModels
             this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, "bsplaylist"));
         }
 
+        /// <summary>
+        /// Opens the <see cref="BeatSaberModManager.Models.Implementations.Settings.AppSettings.InstallDir"/> in the file explorer.
+        /// </summary>
         public ReactiveCommand<Unit, bool> OpenInstallDirCommand { get; }
 
+        /// <summary>
+        /// Opens the <see cref="BeatSaberModManager.Models.Implementations.Settings.AppSettings.ThemesDir"/> in the file explorer.
+        /// </summary>
         public ReactiveCommand<Unit, bool> OpenThemesDirCommand { get; }
 
+        /// <summary>
+        /// Exposed for the view.
+        /// </summary>
         public IOptions<AppSettings> AppSettings { get; }
 
-        private bool _beatSaverOneClickCheckboxChecked;
+        /// <summary>
+        /// Checks or unchecks the checkbox control.
+        /// </summary>
         public bool BeatSaverOneClickCheckboxChecked
         {
             get => _beatSaverOneClickCheckboxChecked;
             set => this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
         }
 
-        private bool _modelSaberOneClickCheckboxChecked;
+        private bool _beatSaverOneClickCheckboxChecked;
+
+        /// <summary>
+        /// Checks or unchecks the checkbox control.
+        /// </summary>
         public bool ModelSaberOneClickCheckboxChecked
         {
             get => _modelSaberOneClickCheckboxChecked;
             set => this.RaiseAndSetIfChanged(ref _modelSaberOneClickCheckboxChecked, value);
         }
 
-        private bool _playlistOneClickCheckBoxChecked;
+        private bool _modelSaberOneClickCheckboxChecked;
+
+        /// <summary>
+        /// Checks or unchecks the checkbox control.
+        /// </summary>
         public bool PlaylistOneClickCheckBoxChecked
         {
             get => _playlistOneClickCheckBoxChecked;
             set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
         }
+
+        private bool _playlistOneClickCheckBoxChecked;
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {

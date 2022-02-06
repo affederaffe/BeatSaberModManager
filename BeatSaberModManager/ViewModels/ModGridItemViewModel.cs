@@ -13,12 +13,18 @@ using ReactiveUI;
 
 namespace BeatSaberModManager.ViewModels
 {
+    /// <summary>
+    /// ViewModel that represents an <see cref="IMod"/> which can be selected an deselected.
+    /// </summary>
     public class ModGridItemViewModel : ViewModelBase
     {
         private readonly IOptions<AppSettings> _appSettings;
         private readonly IDependencyResolver _dependencyResolver;
         private readonly ObservableAsPropertyHelper<bool> _isUpToDate;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ModGridItemViewModel"/> class.
+        /// </summary>
         public ModGridItemViewModel(IMod availableMod, IMod? installedMod, IOptions<AppSettings> appSettings, IDependencyResolver dependencyResolver)
         {
             _availableMod = availableMod;
@@ -31,36 +37,59 @@ namespace BeatSaberModManager.ViewModels
                 .ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
         }
 
+        /// <summary>
+        /// Compares the available version to the installed one.
+        /// </summary>
         public bool IsUpToDate => _isUpToDate.Value;
 
-        private IMod _availableMod;
+        /// <summary>
+        /// The <see cref="IMod"/> available in the repository.
+        /// </summary>
         public IMod AvailableMod
         {
             get => _availableMod;
             set => this.RaiseAndSetIfChanged(ref _availableMod, value);
         }
 
-        private IMod? _installedMod;
+        private IMod _availableMod;
+
+        /// <summary>
+        /// The currently installed version of the mod.
+        /// </summary>
         public IMod? InstalledMod
         {
             get => _installedMod;
             set => this.RaiseAndSetIfChanged(ref _installedMod, value);
         }
 
-        private bool _isCheckBoxEnabled = true;
+        private IMod? _installedMod;
+
+        /// <summary>
+        /// Enables or disables the checkbox control.
+        /// </summary>
         public bool IsCheckBoxEnabled
         {
             get => _isCheckBoxEnabled;
             set => this.RaiseAndSetIfChanged(ref _isCheckBoxEnabled, value);
         }
 
-        private bool _isCheckBoxChecked;
+        private bool _isCheckBoxEnabled = true;
+
+        /// <summary>
+        /// Checks or unchecks the checkbox control.
+        /// </summary>
         public bool IsCheckBoxChecked
         {
             get => _isCheckBoxChecked;
             set => this.RaiseAndSetIfChanged(ref _isCheckBoxChecked, value);
         }
 
+        private bool _isCheckBoxChecked;
+
+        /// <summary>
+        /// Starts observing changes on <see cref="IsCheckBoxChecked"/>, resolves dependencies, checks, unchecks or disables their checkboxes.
+        /// </summary>
+        /// <param name="gridItems"></param>
         public void Initialize(Dictionary<IMod, ModGridItemViewModel> gridItems)
         {
             IObservable<(ModGridItemViewModel gridItem, bool isDependency)> affectedGridItemObservable = this.WhenAnyValue(static x => x.IsCheckBoxChecked)

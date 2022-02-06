@@ -6,20 +6,26 @@ using BeatSaberModManager.Services.Interfaces;
 
 namespace BeatSaberModManager.Services.Implementations.DependencyManagement
 {
-    public class DependencyResolver : IDependencyResolver
+    /// <inheritdoc />
+    public class SimpleDependencyResolver : IDependencyResolver
     {
         private readonly IModProvider _modProvider;
         private readonly Dictionary<IMod, HashSet<IMod>> _dependencyRegistry;
 
-        public DependencyResolver(IModProvider modProvider)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SimpleDependencyResolver"/> class.
+        /// </summary>
+        public SimpleDependencyResolver(IModProvider modProvider)
         {
             _modProvider = modProvider;
             _dependencyRegistry = new Dictionary<IMod, HashSet<IMod>>();
         }
 
+        /// <inheritdoc />
         public bool IsDependency(IMod modification) =>
             _dependencyRegistry.TryGetValue(modification, out HashSet<IMod>? dependents) && dependents.Count != 0;
 
+        /// <inheritdoc />
         public IEnumerable<IMod> ResolveDependencies(IMod modification)
         {
             foreach (IMod dependency in _modProvider.GetDependencies(modification))
@@ -30,6 +36,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
             }
         }
 
+        /// <inheritdoc />
         public IEnumerable<IMod> UnresolveDependencies(IMod modification)
         {
             foreach (IMod dependency in _modProvider.GetDependencies(modification))

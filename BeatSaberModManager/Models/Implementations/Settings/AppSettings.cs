@@ -1,21 +1,43 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
+
+using BeatSaberModManager.Views.Theming;
 
 using ReactiveUI;
 
 
 namespace BeatSaberModManager.Models.Implementations.Settings
 {
+    /// <summary>
+    /// Application-wide settings
+    /// </summary>
     public class AppSettings : ReactiveObject
     {
+        /// <summary>
+        /// The index of the tab that was last open
+        /// </summary>
         public int LastTabIndex { get; set; }
 
+        /// <summary>
+        /// The name of the theme used
+        /// </summary>
         public string? ThemeName { get; set; }
 
+        /// <summary>
+        /// The <see cref="CultureInfo.Name"/> of the language used
+        /// </summary>
         public string? LanguageCode { get; set; }
 
+        /// <summary>
+        /// true if already installed mods should be reinstalled, false otherwise
+        /// </summary>
         public bool ForceReinstallMods { get; set; }
 
         private string? _installDir;
+
+        /// <summary>
+        /// The game's installation directory
+        /// </summary>
         public string? InstallDir
         {
             get => _installDir;
@@ -23,6 +45,10 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         }
 
         private string? _themesDir;
+
+        /// <summary>
+        /// The directory containing additional <see cref="Theme"/>s
+        /// </summary>
         public string? ThemesDir
         {
             get => _themesDir;
@@ -30,6 +56,10 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         }
 
         private HashSet<string>? _selectedMods;
+
+        /// <summary>
+        /// A collection of all selected mods
+        /// </summary>
         public HashSet<string> SelectedMods
         {
             get => _selectedMods ??= new HashSet<string>();

@@ -17,6 +17,7 @@ using BeatSaberModManager.Utils;
 
 namespace BeatSaberModManager.Services.Implementations.Updater
 {
+    /// <inheritdoc />
     public class GitHubUpdater : IUpdater
     {
         private readonly IReadOnlyList<string> _args;
@@ -25,6 +26,9 @@ namespace BeatSaberModManager.Services.Implementations.Updater
 
         private Release? _release;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GitHubUpdater"/> class.
+        /// </summary>
         public GitHubUpdater(IReadOnlyList<string> args, HttpProgressClient httpClient)
         {
             _args = args;
@@ -32,6 +36,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             _version = new Version(ThisAssembly.Info.Version);
         }
 
+        /// <inheritdoc />
         public async Task<bool> NeedsUpdate()
         {
             if (OperatingSystem.IsLinux()) return false;
@@ -42,6 +47,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             return _release is not null && Version.TryParse(_release.TagName.AsSpan(1, 5), out Version? version) && version > _version;
         }
 
+        /// <inheritdoc />
         public async Task<int> Update()
         {
             Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.OrdinalIgnoreCase));

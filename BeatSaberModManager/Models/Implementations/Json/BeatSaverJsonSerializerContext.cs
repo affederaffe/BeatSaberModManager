@@ -5,6 +5,7 @@ using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
 
 namespace BeatSaberModManager.Models.Implementations.Json
 {
+    /// <inheritdoc />
     [JsonSerializable(typeof(BeatSaverMap))]
-    public partial class BeatSaverJsonSerializerContext : JsonSerializerContext { }
+    internal partial class BeatSaverJsonSerializerContext : JsonSerializerContext { }
 }

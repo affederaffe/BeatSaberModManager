@@ -9,19 +9,25 @@ using BeatSaberModManager.Utils;
 
 namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
 {
+    /// <inheritdoc />
     [SupportedOSPlatform("linux")]
     public class LinuxProtocolHandlerRegistrar : IProtocolHandlerRegistrar
     {
         private readonly string _localAppDataPath;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LinuxProtocolHandlerRegistrar"/> class.
+        /// </summary>
         public LinuxProtocolHandlerRegistrar()
         {
             string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             _localAppDataPath = Path.Combine(appDataPath, "applications");
         }
 
+        /// <inheritdoc />
         public bool IsProtocolHandlerRegistered(string protocol) => File.Exists(GetHandlerPathForProtocol(protocol));
 
+        /// <inheritdoc />
         public void RegisterProtocolHandler(string protocol)
         {
             string handlerName = GetHandlerNameForProtocol(protocol);
@@ -30,6 +36,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
             PlatformUtils.TryStartProcess(new ProcessStartInfo("xdg-mime", $"\"default\" \"{handlerName}\" \"x-scheme-handler/{protocol}\""), out _);
         }
 
+        /// <inheritdoc />
         public void UnregisterProtocolHandler(string protocol)
         {
             string handlerPath = GetHandlerPathForProtocol(protocol);

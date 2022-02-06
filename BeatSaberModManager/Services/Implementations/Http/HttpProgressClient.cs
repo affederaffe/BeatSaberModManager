@@ -9,14 +9,26 @@ using System.Threading.Tasks;
 
 namespace BeatSaberModManager.Services.Implementations.Http
 {
+    /// <summary>
+    /// A custom <see cref="HttpClient"/> that provides additional overloads that track the progress.
+    /// </summary>
     public class HttpProgressClient : HttpClient
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HttpProgressClient"/> class with a UserAgent and 30s timeout.
+        /// </summary>
         public HttpProgressClient()
         {
             DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(ThisAssembly.Info.Product, ThisAssembly.Info.Version)));
             Timeout = TimeSpan.FromSeconds(30);
         }
 
+        /// <summary>
+        /// Send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.
+        /// </summary>
+        /// <param name="url">The url the request is sent to.</param>
+        /// <param name="progress">Optionally track the progress of the operation.</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
         public async Task<HttpResponseMessage> GetAsync(string url, IProgress<double>? progress)
         {
             HttpResponseMessage response = await GetAsync(url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
@@ -40,6 +52,13 @@ namespace BeatSaberModManager.Services.Implementations.Http
             return response;
         }
 
+        /// <summary>
+        /// Send multiple GET requests to the specified Uris with an HTTP completion option as an asynchronous operation
+        /// </summary>
+        /// <param name="urls">The urls the requests are sent to.</param>
+        /// <param name="progress">Optionally track the progress of the operation.</param>
+        /// <param name="length">The sum of all the content's length</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
         public async IAsyncEnumerable<HttpResponseMessage> GetAsync(IEnumerable<string> urls, IProgress<double>? progress, double length)
         {
             long total = 0;
@@ -65,6 +84,12 @@ namespace BeatSaberModManager.Services.Implementations.Http
             ArrayPool<byte>.Shared.Return(buffer);
         }
 
+        /// <summary>
+        /// Send multiple GET requests to the specified Uris with an HTTP completion option as an asynchronous operation
+        /// </summary>
+        /// <param name="urls">The urls the requests are sent to.</param>
+        /// <param name="progress">Optionally track the progress of the operation.</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
         public async IAsyncEnumerable<HttpResponseMessage> GetAsync(IReadOnlyList<string> urls, IProgress<double>? progress)
         {
             progress?.Report(0);

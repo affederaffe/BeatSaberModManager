@@ -7,39 +7,39 @@ using BeatSaberModManager.Models.Interfaces;
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
+    /// <inheritdoc />
     public class BeatModsMod : IMod
     {
+        /// <inheritdoc />
         [JsonPropertyName("name")]
         public string Name { get; set; } = null!;
 
+        /// <inheritdoc />
         [JsonPropertyName("version")]
         [JsonConverter(typeof(VersionConverter))]
         public Version Version { get; set; } = null!;
 
-        [JsonPropertyName("gameVersion")]
-        public string GameVersion { get; set; } = null!;
-
-        [JsonPropertyName("_id")]
-        public string Id { get; set; } = null!;
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; } = null!;
-
+        /// <inheritdoc />
         [JsonPropertyName("description")]
         public string Description { get; set; } = null!;
 
+        /// <inheritdoc />
         [JsonPropertyName("category")]
         public string Category { get; set; } = null!;
 
+        /// <inheritdoc />
         [JsonPropertyName("link")]
         public string MoreInfoLink { get; set; } = null!;
 
-        [JsonPropertyName("author")]
-        public BeatModsAuthor Author { get; set; } = null!;
-
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonPropertyName("downloads")]
         public BeatModsDownload[] Downloads { get; set; } = null!;
 
+        /// <summary>
+        /// 
+        /// </summary>
         [JsonPropertyName("dependencies")]
         public BeatModsDependency[] Dependencies { get; set; } = null!;
     }

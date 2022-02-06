@@ -5,7 +5,8 @@ using BeatSaberModManager.Models.Implementations.GitHub;
 
 namespace BeatSaberModManager.Models.Implementations.Json
 {
+    /// <inheritdoc />
     [JsonSerializable(typeof(Asset))]
     [JsonSerializable(typeof(Release))]
-    public partial class GitHubJsonSerializerContext : JsonSerializerContext { }
+    internal partial class GitHubJsonSerializerContext : JsonSerializerContext { }
 }

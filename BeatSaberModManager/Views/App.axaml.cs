@@ -13,14 +13,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace BeatSaberModManager.Views
 {
+    /// <inheritdoc />
     public class App : Application
     {
         private readonly IServiceProvider _services = null!;
         private readonly LocalizationManager _localizationManager = null!;
         private readonly ThemeManager _themeManager = null!;
 
+        /// <inheritdoc />
         public App() { }
 
+        /// <inheritdoc />
         [ActivatorUtilitiesConstructor]
         public App(IServiceProvider services, LocalizationManager localizationManager, ThemeManager themeManager)
         {
@@ -30,6 +33,7 @@ namespace BeatSaberModManager.Views
             DataTemplates.Add(new ViewLocator(services));
         }
 
+        /// <inheritdoc />
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
@@ -37,6 +41,7 @@ namespace BeatSaberModManager.Views
             _themeManager.Initialize(t => Styles[0] = t.Style);
         }
 
+        /// <inheritdoc />
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
