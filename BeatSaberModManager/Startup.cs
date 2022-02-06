@@ -68,7 +68,7 @@ namespace BeatSaberModManager
             catch (Exception e)
             {
                 _crash(_logger, e);
-                return -1;
+                throw;
             }
 #endif
         }
