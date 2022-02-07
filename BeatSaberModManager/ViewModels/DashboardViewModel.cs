@@ -1,4 +1,6 @@
-﻿using System.Reactive;
+﻿using System;
+using System.IO;
+using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -6,6 +8,7 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
+using BeatSaberModManager.Utils;
 
 using Microsoft.Extensions.Options;
 
@@ -37,6 +40,9 @@ namespace BeatSaberModManager.ViewModels
             appSettings.Value.WhenAnyValue(static x => x.InstallDir)
                 .Select(installDirValidator.ValidateInstallDir)
                 .ToProperty(this, nameof(IsInstallDirValid), out _isInstallDirValid);
+            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "Hyperbolic Magnetism");
+            OpenAppDataCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appDataPath));
+            OpenLogsCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(Path.Combine(appSettings.Value.InstallDir!, "Logs")), this.WhenAnyValue(static x => x.IsInstallDirValid));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, modsViewModel.WhenAnyValue(static x => x.IsSuccess));
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, modsViewModel.WhenAnyValue(static x => x.IsSuccess));
             LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!), this.WhenAnyValue(static x => x.IsInstallDirValid));
@@ -60,6 +66,16 @@ namespace BeatSaberModManager.ViewModels
         /// Exposed for the view.
         /// </summary>
         public StatusProgress StatusProgress { get; }
+
+        /// <summary>
+        /// Opens the game's AppData directory in the file explorer.
+        /// </summary>
+        public ReactiveCommand<Unit, bool> OpenAppDataCommand { get; }
+
+        /// <summary>
+        /// Opens the game's Logs directory in the file explorer.
+        /// </summary>
+        public ReactiveCommand<Unit, bool> OpenLogsCommand { get; }
 
         /// <summary>
         /// Uninstalls the mod loader.

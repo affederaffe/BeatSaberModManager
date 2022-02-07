@@ -33,8 +33,6 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         /// </summary>
         public bool ForceReinstallMods { get; set; }
 
-        private string? _installDir;
-
         /// <summary>
         /// The game's installation directory
         /// </summary>
@@ -44,7 +42,7 @@ namespace BeatSaberModManager.Models.Implementations.Settings
             set => this.RaiseAndSetIfChanged(ref _installDir, value);
         }
 
-        private string? _themesDir;
+        private string? _installDir;
 
         /// <summary>
         /// The directory containing additional <see cref="Theme"/>s
@@ -55,7 +53,7 @@ namespace BeatSaberModManager.Models.Implementations.Settings
             set => this.RaiseAndSetIfChanged(ref _themesDir, value);
         }
 
-        private HashSet<string>? _selectedMods;
+        private string? _themesDir;
 
         /// <summary>
         /// A collection of all selected mods
@@ -65,5 +63,7 @@ namespace BeatSaberModManager.Models.Implementations.Settings
             get => _selectedMods ??= new HashSet<string>();
             set => _selectedMods = value;
         }
+
+        private HashSet<string>? _selectedMods;
     }
 }

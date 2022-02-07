@@ -2,8 +2,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-        xmlns:controls="clr-namespace:BeatSaberModManager.Views.Controls"
+        xmlns:vm="using:BeatSaberModManager.ViewModels"
+        xmlns:c="using:BeatSaberModManager.Views.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.AssetInstallWindow"
         x:CompileBindings="True"
@@ -30,12 +30,12 @@
 
             <Viewbox Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Panel>
-                    <controls:ProgressRing Width="200"
+                    <c:ProgressRing Width="200"
                                     Height="200"
                                     Margin="50"
                                     Value="{Binding ProgressValue}"
                                     IsVisible="{Binding IsExecuting}">
-                    </controls:ProgressRing>
+                    </c:ProgressRing>
                     <Path Stroke="DarkGreen"
                           StrokeThickness="1"
                           Fill="Green"

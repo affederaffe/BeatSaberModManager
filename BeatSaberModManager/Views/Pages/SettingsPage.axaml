@@ -2,15 +2,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-             xmlns:l="clr-namespace:BeatSaberModManager.Views.Localization"
-             xmlns:t="clr-namespace:BeatSaberModManager.Views.Theming"
+             xmlns:vm="using:BeatSaberModManager.ViewModels"
+             xmlns:l="using:BeatSaberModManager.Views.Localization"
+             xmlns:t="using:BeatSaberModManager.Views.Theming"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Pages.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Margin="0, 30, 0, 0">
+    <ScrollViewer Margin="0, 31, 0, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid ColumnDefinitions="*, 4*, Auto, Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
             <Label Grid.Column="1"
                    Grid.Row="0"

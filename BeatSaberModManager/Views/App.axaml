@@ -1,12 +1,11 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="BeatSaberModManager.Views.App"
-             x:CompileBindings="True">
+             x:Class="BeatSaberModManager.Views.App">
 
     <Application.Styles>
         <StyleInclude Source="/Resources/Styles/FluentDark.axaml" />
-        <StyleInclude Source="/Resources/Styles/HyperlinkButton.axaml" />
         <StyleInclude Source="/Resources/Styles/DataGrid.axaml" />
+        <StyleInclude Source="/Resources/Styles/HyperlinkButton.axaml" />
         <StyleInclude Source="/Resources/Styles/ProgressRing.axaml" />
         <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
     </Application.Styles>

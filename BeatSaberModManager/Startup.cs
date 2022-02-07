@@ -47,30 +47,25 @@ namespace BeatSaberModManager
         /// <summary>
         /// Asynchronously starts the application.
         /// </summary>
-        /// <returns>1 when the application gracefully exits<br/>
-        /// -1 when an <see cref="Exception"/> occurs</returns>
         /// <exception cref="InvalidOperationException">The app was started in the game's installation directory</exception>
         public async Task<int> RunAsync()
         {
-#if DEBUG
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir)) _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
-            return Environment.CurrentDirectory == _appSettings.Value.InstallDir
-                    ? throw new InvalidOperationException("Application cannot be executed in the game's installation directory")
-                    : RunAvaloniaApp();
-#else
             try
             {
                 if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir)) _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
                 return Environment.CurrentDirectory == _appSettings.Value.InstallDir
                     ? throw new InvalidOperationException("Application cannot be executed in the game's installation directory")
-                    : await _updater.NeedsUpdate().ConfigureAwait(false) ? await _updater.Update().ConfigureAwait(false) : RunAvaloniaApp();
+#if !DEBUG
+                    : await _updater.NeedsUpdate().ConfigureAwait(false)
+                        ? await _updater.Update().ConfigureAwait(false)
+#endif
+                        : RunAvaloniaApp();
             }
             catch (Exception e)
             {
                 _crash(_logger, e);
                 throw;
             }
-#endif
         }
 
         private int RunAvaloniaApp() =>

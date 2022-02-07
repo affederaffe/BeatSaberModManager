@@ -1,5 +1,5 @@
 <Styles xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:c="clr-namespace:BeatSaberModManager.Views.Controls">
+        xmlns:c="using:BeatSaberModManager.Views.Controls">
     <Styles.Resources>
         <Thickness x:Key="ButtonPadding">8,5,8,6</Thickness>
     </Styles.Resources>

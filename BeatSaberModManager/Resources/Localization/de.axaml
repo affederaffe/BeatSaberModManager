@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=System.Runtime">
+                    xmlns:sys="using:System">
 
     <sys:String x:Key="MainWindow:Title">BeatSaberModManager</sys:String>
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
@@ -30,9 +30,11 @@
     <sys:String x:Key="DashboardView:InstalledModsLabel">Installierte Mods</sys:String>
     <sys:String x:Key="DashboardView:ToolsLabel">Werkzeuge</sys:String>
     <sys:String x:Key="DashboardView:InstallPlaylistButton">Playlist installieren</sys:String>
+    <sys:String x:Key="DashboardView:PlayButton">Spielen</sys:String>
+    <sys:String x:Key="DashboardView:OpenAppData">AppData öffnen</sys:String>
+    <sys:String x:Key="DashboardView:OpenLogs">Logs öffnen</sys:String>
     <sys:String x:Key="DashboardView:UninstallModLoaderButton">Deinstalliere BSIPA</sys:String>
     <sys:String x:Key="DashboardView:UninstallAllModsButton">Deinstalliere alle Mods</sys:String>
-    <sys:String x:Key="DashboardView:PlayButton">Spielen</sys:String>
     <sys:String x:Key="DashboardView:UsefulLinks">Nützliche Links</sys:String>
     <sys:String x:Key="DashboardView:BsmgWiki">BSMG Wiki</sys:String>
     <sys:String x:Key="DashboardView:BsmgDiscord">BSMG Discord</sys:String>

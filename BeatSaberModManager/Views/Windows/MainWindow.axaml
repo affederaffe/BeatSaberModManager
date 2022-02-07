@@ -2,9 +2,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:vm="clr-namespace:BeatSaberModManager.ViewModels"
-        xmlns:cv="clr-namespace:BeatSaberModManager.Views.Converters"
-        xmlns:p="clr-namespace:BeatSaberModManager.Views.Pages"
+        xmlns:vm="using:BeatSaberModManager.ViewModels"
+        xmlns:cv="using:BeatSaberModManager.Views.Converters"
+        xmlns:p="using:BeatSaberModManager.Views.Pages"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.MainWindow"
         x:CompileBindings="True"
@@ -22,7 +22,7 @@
         <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
     </Window.Resources>
 
-    <TabControl x:Name="TabControl" TabStripPlacement="Left" Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}">
+    <TabControl TabStripPlacement="Left" Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding AppSettings.Value.LastTabIndex}">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
@@ -59,7 +59,7 @@
 
         <TabControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <StackPanel Orientation="Vertical" Margin="0, 30, 0, 0" />
+                <StackPanel Orientation="Vertical" Margin="0, 31, 0, 0" />
             </ItemsPanelTemplate>
         </TabControl.ItemsPanel>
 
