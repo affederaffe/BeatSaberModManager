@@ -14,6 +14,16 @@ namespace BeatSaberModManager.Services.Interfaces
     public interface IModProvider
     {
         /// <summary>
+        /// The result of <see cref="LoadInstalledModsAsync"/>.
+        /// </summary>
+        IReadOnlyCollection<IMod>? InstalledMods { get; }
+
+        /// <summary>
+        /// The result of <see cref="LoadAvailableModsForVersionAsync"/>.
+        /// </summary>
+        IReadOnlyCollection<IMod>? AvailableMods { get; }
+
+        /// <summary>
         /// Checks if the provided <see cref="IMod"/> is the mod loader.
         /// </summary>
         /// <param name="modification">The <see cref="IMod"/> to check.</param>
@@ -28,25 +38,22 @@ namespace BeatSaberModManager.Services.Interfaces
         IEnumerable<IMod> GetDependencies(IMod modification);
 
         /// <summary>
-        /// Asynchronously gets all currently installed mods.
+        /// Asynchronously loads all currently installed mods.
         /// </summary>
         /// <param name="installDir">The game's installation directory.</param>
-        /// <returns>All currently installed mods.</returns>
-        Task<IReadOnlyCollection<IMod>?> GetInstalledModsAsync(string installDir);
+        Task LoadInstalledModsAsync(string installDir);
 
         /// <summary>
-        /// Asynchronously gets all available mods for the current version of the game.
+        /// Asynchronously loads all available mods for the current version of the game.
         /// </summary>
         /// <param name="installDir">The game's installation directory</param>
-        /// <returns>All available mods for the current version of the game</returns>
-        Task<IReadOnlyCollection<IMod>?> GetAvailableModsForCurrentVersionAsync(string installDir);
+        Task LoadAvailableModsForCurrentVersionAsync(string installDir);
 
         /// <summary>
-        /// Asynchronously gets all available mods for the specified version of the game
+        /// Asynchronously loads all available mods for the specified version of the game
         /// </summary>
         /// <param name="version">The version of the game</param>
-        /// <returns>All available mods for the specified version of the game</returns>
-        Task<IReadOnlyCollection<IMod>?> GetAvailableModsForVersionAsync(string version);
+        Task LoadAvailableModsForVersionAsync(string version);
 
         /// <summary>
         /// Asynchronously downloads multiple mods.

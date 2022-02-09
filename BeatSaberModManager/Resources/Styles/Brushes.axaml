@@ -3,7 +3,7 @@
 
     <Styles.Resources>
         <SolidColorBrush x:Key="BackgroundMediumLowBrush" Color="{DynamicResource SystemChromeMediumLowColor}" Opacity="0.75" />
-        <SolidColorBrush x:Key="BackgroundMediumBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.95" />
+        <SolidColorBrush x:Key="BackgroundMediumBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.9675" />
         <SolidColorBrush x:Key="BackgroundHighBrush" Color="{DynamicResource SystemChromeBlackMediumLowColor}" />
         <SolidColorBrush x:Key="InfoIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />
         <SolidColorBrush x:Key="DashboardIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />

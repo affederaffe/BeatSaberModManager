@@ -24,8 +24,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         private readonly IHashProvider _hashProvider;
         private readonly IGameVersionProvider _gameVersionProvider;
 
-        private BeatModsMod[]? _availableMods;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="BeatModsModProvider"/> class.
         /// </summary>
@@ -37,6 +35,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         }
 
         /// <inheritdoc />
+        public IReadOnlyCollection<IMod>? InstalledMods { get; private set; }
+
+        /// <inheritdoc />
+        public IReadOnlyCollection<IMod>? AvailableMods { get; private set; }
+
+        /// <inheritdoc />
         public bool IsModLoader(IMod? modification) => modification?.Name.ToUpperInvariant() == "BSIPA";
 
         /// <inheritdoc />
@@ -45,24 +49,24 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             if (modification is not BeatModsMod beatModsMod) yield break;
             foreach (BeatModsDependency dependency in beatModsMod.Dependencies)
             {
-                dependency.DependingMod ??= _availableMods?.FirstOrDefault(x => x.Name == dependency.Name);
+                dependency.DependingMod ??= AvailableMods?.FirstOrDefault(x => x.Name == dependency.Name);
                 if (dependency.DependingMod is null) continue;
                 yield return dependency.DependingMod;
             }
         }
 
         /// <summary>
-        /// Asynchronously gets all currently installed mods by<br/>
+        /// Asynchronously loads all currently installed mods by<br/>
         /// 1. Getting all mods and mapping their hashes to them,<br/>
         /// 2. Hashing relevant files in <see cref="_installedModsLocations"/>,<br/>
         /// 3. Adding all <see cref="IMod"/>s where all hashes of 2. are present.
         /// </summary>
         /// <param name="installDir">The game's installation directory.</param>
         /// <returns>All currently installed mods.</returns>
-        public async Task<IReadOnlyCollection<IMod>?> GetInstalledModsAsync(string installDir)
+        public async Task LoadInstalledModsAsync(string installDir)
         {
             Dictionary<string, BeatModsMod>? fileHashModPairs = await GetMappedModHashesAsync().ConfigureAwait(false);
-            if (fileHashModPairs is null) return null;
+            if (fileHashModPairs is null) return;
             HashSet<IMod> installedMods = new();
             IMod? bsipa = await GetInstalledModLoader(installDir, fileHashModPairs);
             if (bsipa is not null) installedMods.Add(bsipa);
@@ -81,21 +85,23 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                     installedMods.Add(mod);
             }
 
-            return installedMods;
+            InstalledMods = installedMods;
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<IMod>?> GetAvailableModsForCurrentVersionAsync(string installDir)
+        public async Task LoadAvailableModsForCurrentVersionAsync(string installDir)
         {
             string? version = await _gameVersionProvider.DetectGameVersionAsync(installDir).ConfigureAwait(false);
-            return version is null ? null : await GetAvailableModsForVersionAsync(version).ConfigureAwait(false);
+            if (version is null) return;
+            await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyCollection<IMod>?> GetAvailableModsForVersionAsync(string version)
+        public async Task LoadAvailableModsForVersionAsync(string version)
         {
             string? aliasedGameVersion = await GetAliasedGameVersion(version).ConfigureAwait(false);
-            return aliasedGameVersion is null ? null : _availableMods = await GetModsAsync($"mod?status=approved&gameVersion={aliasedGameVersion}").ConfigureAwait(false);
+            if (aliasedGameVersion is null) return;
+            AvailableMods = await GetModsAsync($"mod?status=approved&gameVersion={aliasedGameVersion}").ConfigureAwait(false);
         }
 
         /// <inheritdoc />

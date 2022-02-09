@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -42,14 +43,31 @@ namespace BeatSaberModManager.ViewModels
             ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> initializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
             initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            initializeCommand.Select(static _ => true).ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            this.WhenAnyValue(static x => x.IsExecuting, static x => x.IsSuccess)
-                .Select(static x => !x.Item1 && !x.Item2)
+            IsSuccessObservable = initializeCommand.Select(static _ => true);
+            IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
+            IsSuccessObservable.CombineLatest(initializeCommand.IsExecuting)
+                .Select(static x => !x.First && !x.Second)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
-            appSettings.Value.WhenAnyValue(static x => x.InstallDir)
-                .Where(installDirValidator.ValidateInstallDir)
-                .InvokeCommand(initializeCommand!);
+            IObservable<string?> whenAnyInstallDir = appSettings.Value.WhenAnyValue(static x => x.InstallDir);
+            IsInstallDirValidObservable = whenAnyInstallDir.Select(installDirValidator.ValidateInstallDir);
+            ValidatedInstallDirObservable = whenAnyInstallDir.Where(installDirValidator.ValidateInstallDir)!;
+            ValidatedInstallDirObservable.InvokeCommand(initializeCommand);
         }
+
+        /// <summary>
+        /// Signals if the game's installation directory is valid.
+        /// </summary>
+        public IObservable<bool> IsInstallDirValidObservable { get; }
+
+        /// <summary>
+        /// Signals when the game's installation directory becomes valid.
+        /// </summary>
+        public IObservable<string> ValidatedInstallDirObservable { get; }
+
+        /// <summary>
+        /// Signals when mod loading completes.
+        /// </summary>
+        public IObservable<bool> IsSuccessObservable { get; }
 
         /// <summary>
         /// A <see cref="Dictionary{TKey,TValue}"/> of all available <see cref="IMod"/>s and their respective <see cref="ModGridItemViewModel"/>.
@@ -122,9 +140,9 @@ namespace BeatSaberModManager.ViewModels
         /// <returns>A <see cref="Dictionary{TKey,TValue}"/> of all available <see cref="IMod"/>s and their respective <see cref="ModGridItemViewModel"/>.</returns>
         private async Task<Dictionary<IMod, ModGridItemViewModel>?> GetModGridItemsAsync(string installDir)
         {
-            IReadOnlyCollection<IMod>?[] mods = await Task.WhenAll(_modProvider.GetAvailableModsForCurrentVersionAsync(installDir), _modProvider.GetInstalledModsAsync(installDir)).ConfigureAwait(false);
-            if (mods[0] is null || mods[1] is null) return null;
-            Dictionary<IMod, ModGridItemViewModel> gridItems = mods[0]!.ToDictionary(static x => x, x => new ModGridItemViewModel(x, mods[1]!.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
+            await Task.WhenAll(_modProvider.LoadAvailableModsForCurrentVersionAsync(installDir), _modProvider.LoadInstalledModsAsync(installDir)).ConfigureAwait(false);
+            if (_modProvider.AvailableMods is null || _modProvider.InstalledMods is null) return null;
+            Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods.ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
             foreach (ModGridItemViewModel gridItem in gridItems.Values)
             {
                 if (gridItem.InstalledMod is not null) InstalledModsCount++;

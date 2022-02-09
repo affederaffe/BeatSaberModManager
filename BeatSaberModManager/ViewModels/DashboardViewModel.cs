@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -24,28 +23,24 @@ namespace BeatSaberModManager.ViewModels
     {
         private readonly IOptions<AppSettings> _appSettings;
         private readonly PlaylistInstaller _playlistInstaller;
-        private readonly ObservableAsPropertyHelper<bool> _isInstallDirValid;
         private readonly ObservableAsPropertyHelper<string?> _gameVersion;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DashboardViewModel"/> class.
         /// </summary>
-        public DashboardViewModel(ModsViewModel modsViewModel, IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IAppDataPathProvider appDataPathProvider, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
+        public DashboardViewModel(ModsViewModel modsViewModel, IOptions<AppSettings> appSettings, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IAppDataPathProvider appDataPathProvider, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings;
             _playlistInstaller = playlistInstaller;
             AppVersion = ThisAssembly.Info.Version;
             ModsViewModel = modsViewModel;
             StatusProgress = (StatusProgress)statusProgress;
-            appSettings.Value.WhenAnyValue(static x => x.InstallDir).Select(installDirValidator.ValidateInstallDir).ToProperty(this, nameof(IsInstallDirValid), out _isInstallDirValid);
-            IObservable<string> validatedInstallDirObservable = appSettings.Value.WhenAnyValue(static x => x.InstallDir).Where(installDirValidator.ValidateInstallDir)!;
-            validatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
-            IObservable<string> appDataPathObservable = validatedInstallDirObservable.Select(appDataPathProvider.GetAppDataPath);
-            OpenAppDataCommand = ReactiveCommand.CreateFromObservable(() => appDataPathObservable.Select(PlatformUtils.TryOpenUri), appDataPathObservable.Select(Directory.Exists));
-            OpenLogsCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(Path.Combine(appSettings.Value.InstallDir!, "Logs")), this.WhenAnyValue(static x => x.IsInstallDirValid));
-            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, modsViewModel.WhenAnyValue(static x => x.IsSuccess));
-            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, modsViewModel.WhenAnyValue(static x => x.IsSuccess));
-            LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!), this.WhenAnyValue(static x => x.IsInstallDirValid));
+            modsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
+            OpenAppDataCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appDataPathProvider.GetAppDataPath(appSettings.Value.InstallDir!)), modsViewModel.ValidatedInstallDirObservable.Select(appDataPathProvider.GetAppDataPath).Select(Directory.Exists));
+            OpenLogsCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(Path.Combine(appSettings.Value.InstallDir!, "Logs")), modsViewModel.IsInstallDirValidObservable);
+            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, modsViewModel.IsSuccessObservable);
+            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, modsViewModel.IsSuccessObservable);
+            LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!), modsViewModel.IsInstallDirValidObservable);
         }
 
         /// <summary>
@@ -87,11 +82,6 @@ namespace BeatSaberModManager.ViewModels
         /// Launches the game.
         /// </summary>
         public ReactiveCommand<Unit, Unit> LaunchGameCommand { get; }
-
-        /// <summary>
-        /// True when the game's installation is valid, false otherwise.
-        /// </summary>
-        public bool IsInstallDirValid => _isInstallDirValid.Value;
 
         /// <summary>
         /// The version of the game.
