@@ -100,7 +100,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         {
             BeatSaverMap?[] maps = new BeatSaverMap?[playlist.Songs.Length];
             for (int i = 0; i < maps.Length; i++)
-                maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapAsync(playlist.Songs[i].Id).ConfigureAwait(false);
+            {
+                if (!string.IsNullOrEmpty(playlist.Songs[i].Id))
+                    maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByKeyAsync(playlist.Songs[i].Id!).ConfigureAwait(false);
+                else if (!string.IsNullOrEmpty(playlist.Songs[i].Hash))
+                    maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByHashAsync(playlist.Songs[i].Hash!).ConfigureAwait(false);
+
+            }
+
             return maps.Where(static x => x?.Versions.Length is > 0).ToArray()!;
         }
     }

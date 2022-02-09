@@ -12,6 +12,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlists
         /// The map's unique identifier on https://beatsaver.com
         /// </summary>
         [JsonPropertyName("key")]
-        public string Id { get; set; } = null!;
+        public string? Id { get; set; }
+
+        /// <summary>
+        /// The map's hash.
+        /// </summary>
+        [JsonPropertyName("hash")]
+        public string? Hash { get; set; }
     }
 }
