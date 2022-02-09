@@ -120,7 +120,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
             string protonRegPath = Path.Combine(installDir, "../../compatdata/620980/pfx/user.reg");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Options = FileOptions.Asynchronous });
+            await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Access = FileAccess.ReadWrite, Options = FileOptions.Asynchronous });
             if (fileStream is null) return;
             using StreamReader reader = new(fileStream);
             string content = await reader.ReadToEndAsync().ConfigureAwait(false);
