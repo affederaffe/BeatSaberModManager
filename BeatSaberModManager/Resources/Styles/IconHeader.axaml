@@ -1,0 +1,24 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="using:BeatSaberModManager.Views.Controls">
+
+    <Style Selector="c|IconHeader">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border Name="PART_LayoutRoot"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Padding="{TemplateBinding Padding}">
+                    <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <PathIcon DockPanel.Dock="{TemplateBinding IconPlacement}" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{TemplateBinding IconData}" Foreground="{TemplateBinding Foreground}" />
+                        <TextBlock Text="{TemplateBinding Content}" TextAlignment="{TemplateBinding TextAlignment}" />
+                    </DockPanel>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+    </Style>
+
+</Styles>

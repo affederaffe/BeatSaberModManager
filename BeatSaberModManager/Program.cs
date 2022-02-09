@@ -56,8 +56,9 @@ namespace BeatSaberModManager
                 .AddSingleton<Startup>()
                 .AddSerilog()
                 .AddSettings()
+                .AddHttpClient()
                 .AddUpdater()
-                .AddCoreServices()
+                .AddGameServices()
                 .AddModServices()
                 .AddAssetProviders()
                 .AddProtocolHandlerRegistrar()
@@ -74,12 +75,15 @@ namespace BeatSaberModManager
         private static IServiceCollection AddSettings(this IServiceCollection services) =>
             services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>();
 
-        private static IServiceCollection AddCoreServices(this IServiceCollection services) =>
-            services.AddSingleton<HttpProgressClient>()
-                .AddSingleton<IStatusProgress, StatusProgress>()
+        private static IServiceCollection AddHttpClient(this IServiceCollection services) =>
+            services.AddSingleton<HttpProgressClient>();
+
+        private static IServiceCollection AddGameServices(this IServiceCollection services) =>
+            services.AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>()
+                .AddSingleton<IGameLauncher, BeatSaberGameLauncher>()
                 .AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>()
                 .AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>()
-                .AddSingleton<IGameLauncher, BeatSaberGameLauncher>();
+                .AddSingleton<IAppDataPathProvider, BeatSaberAppDataPathProvider>();
 
         private static IServiceCollection AddProtocolHandlerRegistrar(this IServiceCollection services) =>
             OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>()
@@ -90,8 +94,7 @@ namespace BeatSaberModManager
             services.AddSingleton<IHashProvider, MD5HashProvider>()
                 .AddSingleton<IDependencyResolver, SimpleDependencyResolver>()
                 .AddSingleton<IModProvider, BeatModsModProvider>()
-                .AddSingleton<IModInstaller, BeatModsModInstaller>()
-                .AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>();
+                .AddSingleton<IModInstaller, BeatModsModInstaller>();
 
         private static IServiceCollection AddUpdater(this IServiceCollection services) =>
             services.AddSingleton<IUpdater, GitHubUpdater>();
@@ -113,6 +116,7 @@ namespace BeatSaberModManager
 
         private static IServiceCollection AddApplication(this IServiceCollection services) =>
             services.AddSingleton<Application, App>()
+                .AddSingleton<IStatusProgress, StatusProgress>()
                 .AddSingleton<LocalizationManager>()
                 .AddSingleton<ThemeManager>();
 

@@ -30,7 +30,7 @@
         <Border Grid.Row="1" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
             <Grid RowDefinitions="Auto, Auto">
                 <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:ToolsLabel}" />
-                <Grid Grid.Row="1" ColumnDefinitions="*, *, *, *, *, *, *" RowDefinitions="*, *, *, *, *">
+                <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" RowDefinitions="*, *, *, *, *">
                     <Button x:Name="InstallPlaylistButton"
                             Grid.Column="1"
                             Grid.Row="1"

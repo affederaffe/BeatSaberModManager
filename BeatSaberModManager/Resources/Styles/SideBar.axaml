@@ -56,9 +56,11 @@
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Stretch" />
     </Style>
+
     <Style Selector="TabControl.SideBar > TabItem:selected /template/ Border#PART_SelectedPipe">
         <Setter Property="IsVisible" Value="False" />
     </Style>
+
     <Style Selector="TabControl.SideBar > TabItem:selected">
         <Setter Property="Background" Value="#1fffffff" />
     </Style>

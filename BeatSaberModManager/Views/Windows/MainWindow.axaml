@@ -5,6 +5,7 @@
         xmlns:vm="using:BeatSaberModManager.ViewModels"
         xmlns:cv="using:BeatSaberModManager.Views.Converters"
         xmlns:p="using:BeatSaberModManager.Views.Pages"
+        xmlns:c="using:BeatSaberModManager.Views.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.MainWindow"
         x:CompileBindings="True"
@@ -22,44 +23,32 @@
         <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
     </Window.Resources>
 
-    <TabControl TabStripPlacement="Left" Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding AppSettings.Value.LastTabIndex}">
+    <TabControl Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding AppSettings.Value.LastTabIndex}">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
-                <Grid RowDefinitions="5*, *">
-                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Info}" Foreground="{DynamicResource InfoIconBrush}" />
-                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:IntroHeader}" />
-                </Grid>
+                <c:IconHeader Content="{DynamicResource MainWindow:IntroHeader}" IconData="{StaticResource Icons:Info}" Foreground="{DynamicResource InfoIconBrush}" />
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding DashboardViewModel}">
             <TabItem.Header>
-                <Grid RowDefinitions="5*, *">
-                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Dashboard}" Foreground="{DynamicResource DashboardIconBrush}" />
-                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:DashboardHeader}" />
-                </Grid>
+                <c:IconHeader Content="{DynamicResource MainWindow:DashboardHeader}" IconData="{StaticResource Icons:Dashboard}" Foreground="{DynamicResource DashboardIconBrush}" />
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding ModsViewModel}">
             <TabItem.Header>
-                <Grid RowDefinitions="5*, *">
-                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Library}" Foreground="{DynamicResource DatabaseIconBrush}" />
-                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:ModsHeader}" />
-                </Grid>
+                <c:IconHeader Content="{DynamicResource MainWindow:ModsHeader}" IconData="{StaticResource Icons:Library}" Foreground="{DynamicResource LibraryIconBrush}" />
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding SettingsViewModel}">
             <TabItem.Header>
-                <Grid RowDefinitions="5*, *">
-                    <PathIcon Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{StaticResource Icons:Settings}" Foreground="{DynamicResource GearIconBrush}" />
-                    <Label Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{DynamicResource MainWindow:SettingsHeader}" />
-                </Grid>
+                <c:IconHeader Content="{DynamicResource MainWindow:SettingsHeader}" IconData="{StaticResource Icons:Settings}" Foreground="{DynamicResource SettingsIconBrush}" />
             </TabItem.Header>
         </TabItem>
 
         <TabControl.ItemsPanel>
             <ItemsPanelTemplate>
-                <StackPanel Orientation="Vertical" Margin="0, 31, 0, 0" />
+                <StackPanel Margin="0, 31, 0, 0" Orientation="Vertical" />
             </ItemsPanelTemplate>
         </TabControl.ItemsPanel>
 
@@ -74,8 +63,7 @@
                              Value="{Binding ProgressValue}">
                 </ProgressBar>
                 <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
-                    <Label Margin="10, 0, 5, 0"
-                           Content="{Binding ProgressInfo, Converter={StaticResource LocalizedStatusConverter}}" />
+                    <Label Margin="10, 0, 5, 0" Content="{Binding ProgressInfo, Converter={StaticResource LocalizedStatusConverter}}" />
                 </Viewbox>
                 <Button Grid.Column="1"
                         Margin="5, 0, 5, 0"

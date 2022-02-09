@@ -6,6 +6,7 @@
         <StyleInclude Source="/Resources/Styles/FluentDark.axaml" />
         <StyleInclude Source="/Resources/Styles/DataGrid.axaml" />
         <StyleInclude Source="/Resources/Styles/HyperlinkButton.axaml" />
+        <StyleInclude Source="/Resources/Styles/IconHeader.axaml" />
         <StyleInclude Source="/Resources/Styles/ProgressRing.axaml" />
         <StyleInclude Source="/Resources/Styles/SideBar.axaml" />
     </Application.Styles>
