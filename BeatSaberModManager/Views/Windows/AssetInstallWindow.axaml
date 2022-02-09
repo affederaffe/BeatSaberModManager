@@ -28,26 +28,21 @@
                        Fill="{DynamicResource BackgroundMediumBrush}">
             </Rectangle>
 
-            <Viewbox Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Viewbox Grid.Row="0" Stretch="Uniform" Margin="50">
                 <Panel>
-                    <c:ProgressRing Width="200"
-                                    Height="200"
-                                    Margin="50"
+                    <c:ProgressRing Width="300"
+                                    Height="300"
                                     Value="{Binding ProgressValue}"
                                     IsVisible="{Binding IsExecuting}">
                     </c:ProgressRing>
-                    <Path Stroke="DarkGreen"
-                          StrokeThickness="1"
-                          Fill="Green"
-                          Data="{StaticResource Icons:Checkmark}"
-                          IsVisible="{Binding IsSuccess}">
-                    </Path>
-                    <Path Stroke="DarkRed"
-                          StrokeThickness="1"
-                          Fill="Red"
-                          Data="{StaticResource Icons:Cross}"
-                          IsVisible="{Binding IsFailed}">
-                    </Path>
+                    <PathIcon Foreground="Green"
+                              Data="{StaticResource Icons:Checkmark}"
+                              IsVisible="{Binding IsSuccess}">
+                    </PathIcon>
+                    <PathIcon Foreground="Red"
+                              Data="{StaticResource Icons:Cross}"
+                              IsVisible="{Binding IsFailed}">
+                    </PathIcon>
                 </Panel>
             </Viewbox>
 

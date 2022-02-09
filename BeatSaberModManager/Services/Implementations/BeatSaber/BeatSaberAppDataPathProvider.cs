@@ -13,8 +13,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         /// <inheritdoc />
         public string GetAppDataPath(string installDir) =>
             OperatingSystem.IsWindows() ? GetWindowsAppDataPath()
-            : OperatingSystem.IsLinux() ? GetLinuxAppDataPath(installDir)
-                : throw new PlatformNotSupportedException();
+                : OperatingSystem.IsLinux() ? GetLinuxAppDataPath(installDir)
+                    : throw new PlatformNotSupportedException();
 
         [SupportedOSPlatform("windows")]
         private static string GetWindowsAppDataPath() => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "Hyperbolic Magnetism");
