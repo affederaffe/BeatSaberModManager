@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reactive;
 
 using Avalonia;
@@ -68,10 +69,11 @@ namespace BeatSaberModManager.Views
                 RxApp.DefaultExceptionHandler.OnNext(new InvalidOperationException("Application cannot be executed in the game's installation directory"));
         }
 
+        [SuppressMessage("ReSharper", "AsyncVoidMethod")]
         private async void HandleException(Exception e)
         {
             _logCrash(_logger, e);
-            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime || lifetime.MainWindow is null) return;
+            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
             lifetime.MainWindow.Show();
             await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow);
             lifetime.Shutdown(-1);

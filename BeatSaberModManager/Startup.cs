@@ -54,7 +54,7 @@ namespace BeatSaberModManager
                     :
 #endif
                 RunAvaloniaApp();
-            }
+        }
 
         private int RunAvaloniaApp() =>
             AppBuilder.Configure(_services.GetRequiredService<Application>)
