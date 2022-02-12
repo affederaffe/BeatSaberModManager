@@ -9,7 +9,6 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Interfaces;
 
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 using SkiaSharp;
@@ -24,24 +23,20 @@ namespace BeatSaberModManager
     {
         private readonly IServiceProvider _services;
         private readonly IOptions<AppSettings> _appSettings;
-        private readonly ILogger<Startup> _logger;
         private readonly IUpdater _updater;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IInstallDirLocator _installDirLocator;
-        private readonly Action<ILogger, Exception> _crash;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
-        public Startup(IServiceProvider services, IOptions<AppSettings> appSettings, ILogger<Startup> logger, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        public Startup(IServiceProvider services, IOptions<AppSettings> appSettings, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
             _services = services;
             _appSettings = appSettings;
-            _logger = logger;
             _updater = updater;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
-            _crash = LoggerMessage.Define(LogLevel.Critical, new EventId(-1, "Crash"), string.Empty);
         }
 
         /// <summary>
@@ -50,23 +45,16 @@ namespace BeatSaberModManager
         /// <exception cref="InvalidOperationException">The app was started in the game's installation directory</exception>
         public async Task<int> RunAsync()
         {
-            try
-            {
-                if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir)) _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
-                return Environment.CurrentDirectory == _appSettings.Value.InstallDir
-                    ? throw new InvalidOperationException("Application cannot be executed in the game's installation directory")
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
+                _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
+            return
 #if !DEBUG
-                    : await _updater.NeedsUpdate().ConfigureAwait(false)
-                        ? await _updater.Update().ConfigureAwait(false)
+                await _updater.NeedsUpdate().ConfigureAwait(false)
+                    ? await _updater.Update().ConfigureAwait(false)
+                    :
 #endif
-                        : RunAvaloniaApp();
+                RunAvaloniaApp();
             }
-            catch (Exception e)
-            {
-                _crash(_logger, e);
-                throw;
-            }
-        }
 
         private int RunAvaloniaApp() =>
             AppBuilder.Configure(_services.GetRequiredService<Application>)
@@ -75,6 +63,7 @@ namespace BeatSaberModManager
                 .With(new FontManagerOptions { DefaultFamilyName = string.IsNullOrEmpty(SKTypeface.Default.FamilyName) ? SKFontManager.Default.GetFamilyName(0) : SKTypeface.Default.FamilyName })
                 .UsePlatformDetect()
                 .UseReactiveUI()
+                .LogToTrace()
                 .StartWithClassicDesktopLifetime(null!);
     }
 }

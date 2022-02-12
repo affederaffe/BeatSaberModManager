@@ -2,7 +2,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Styles.Resources>
-        <SolidColorBrush x:Key="BackgroundMediumLowBrush" Color="{DynamicResource SystemChromeMediumLowColor}" Opacity="0.75" />
+        <SolidColorBrush x:Key="BackgroundMediumLowBrush" Color="{DynamicResource SystemChromeMediumLowColor}" Opacity="0.8" />
         <SolidColorBrush x:Key="BackgroundMediumBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.9675" />
         <SolidColorBrush x:Key="BackgroundHighBrush" Color="{DynamicResource SystemChromeBlackMediumLowColor}" />
         <SolidColorBrush x:Key="InfoIconBrush" Color="{DynamicResource SystemChromeAltLowColor}" />

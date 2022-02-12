@@ -4,6 +4,8 @@ using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
+using JetBrains.Annotations;
+
 using ReactiveUI;
 
 
@@ -26,10 +28,7 @@ namespace BeatSaberModManager.Views.Windows
                 .Subscribe(Close);
         }
 
-        /// <summary>
-        /// Called when the cancel button is clicked.
-        /// Closes the dialog without a valid result.
-        /// </summary>
-        public void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);
+        [UsedImplicitly]
+        private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);
     }
 }

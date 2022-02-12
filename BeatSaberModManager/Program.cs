@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
 
+using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.BeatSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods;
@@ -69,11 +70,11 @@ namespace BeatSaberModManager
         private static IServiceCollection AddSerilog(this IServiceCollection services) =>
             services.AddLogging(static loggerBuilder =>
                 loggerBuilder.AddSerilog(new LoggerConfiguration()
-                    .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Day)
+                    .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Minute)
                     .CreateLogger(), true));
 
         private static IServiceCollection AddSettings(this IServiceCollection services) =>
-            services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>();
+            services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>(_ => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings));
 
         private static IServiceCollection AddHttpClient(this IServiceCollection services) =>
             services.AddSingleton<HttpProgressClient>();

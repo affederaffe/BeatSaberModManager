@@ -62,4 +62,7 @@
     <sys:String x:Key="InstallDirDialogWindow:ContinueButton">Continue</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:CancelButton">Cancel</sys:String>
 
+    <sys:String x:Key="ExceptionWindow:Title">Application crashed</sys:String>
+    <sys:String x:Key="ExceptionWindow:Ok">Ok</sys:String>
+
 </ResourceDictionary>
