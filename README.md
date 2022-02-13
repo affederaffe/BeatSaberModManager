@@ -23,7 +23,7 @@ It strives to look more visually appealing and support both Windows and Linux, w
 3. Mods are installed to `IPA/Pending` until the game is run. Boot the game to complete mod installation.
 
 ### Common issues
-**I hit install but I don't see anything in game!** \
+**I hit install, but I don't see anything in game!** \
 Double check that you followed the [Usage](#usage) instructions correctly.
 Make sure you're looking in the right place. Sometimes mod menus move as  modding libraries/practices change.
 
