@@ -54,7 +54,6 @@ namespace BeatSaberModManager
         private static Container CreateContainer(IReadOnlyList<string> args)
         {
             Container container = new(Rules.Default.With(FactoryMethod.ConstructorWithResolvableArguments).WithDefaultReuse(Reuse.Singleton));
-            container.RegisterInstance(container);
             container.Register<Startup>();
             container.AddSerilog();
             container.AddSettings();

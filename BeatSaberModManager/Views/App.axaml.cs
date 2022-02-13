@@ -25,7 +25,7 @@ namespace BeatSaberModManager.Views
     /// <inheritdoc />
     public class App : Application
     {
-        private readonly Container _container = null!;
+        private readonly IResolver _resolver = null!;
         private readonly ILogger _logger = null!;
         private readonly ISettings<AppSettings> _appSettings = null!;
         private readonly LocalizationManager _localizationManager = null!;
@@ -37,14 +37,14 @@ namespace BeatSaberModManager.Views
         public App() { }
 
         /// <inheritdoc />
-        public App(Container container, ILogger logger, ISettings<AppSettings> appSettings, LocalizationManager localizationManager, ThemeManager themeManager)
+        public App(IResolver resolver, ILogger logger, ISettings<AppSettings> appSettings, LocalizationManager localizationManager, ThemeManager themeManager)
         {
-            _container = container;
+            _resolver = resolver;
             _logger = logger;
             _appSettings = appSettings;
             _localizationManager = localizationManager;
             _themeManager = themeManager;
-            DataTemplates.Add(new ViewLocator(container));
+            DataTemplates.Add(new ViewLocator(resolver));
 #if !DEBUG
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(HandleException);
 #endif
@@ -62,7 +62,7 @@ namespace BeatSaberModManager.Views
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
-            lifetime.MainWindow = _container.Resolve<Window>();
+            lifetime.MainWindow = _resolver.Resolve<Window>();
             if (Environment.CurrentDirectory == _appSettings.Value.InstallDir)
                 RxApp.DefaultExceptionHandler.OnNext(new InvalidOperationException("Application cannot be executed in the game's installation directory"));
         }
