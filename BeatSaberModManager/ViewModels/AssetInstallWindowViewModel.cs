@@ -7,10 +7,9 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -23,7 +22,7 @@ namespace BeatSaberModManager.ViewModels
     public class AssetInstallWindowViewModel : ViewModelBase
     {
         private readonly Uri _uri;
-        private readonly IOptions<AppSettings> _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
@@ -34,7 +33,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetInstallWindowViewModel"/> class.
         /// </summary>
-        public AssetInstallWindowViewModel(Uri uri, IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
+        public AssetInstallWindowViewModel(Uri uri, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
         {
             _uri = uri;
             _appSettings = appSettings;

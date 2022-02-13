@@ -9,8 +9,6 @@ using Avalonia.ReactiveUI;
 using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.ViewModels;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using ReactiveUI;
 
 
@@ -31,7 +29,6 @@ namespace BeatSaberModManager.Views.Pages
         /// <summary>
         /// Initializes a new instance of the <see cref="DashboardPage"/> class.
         /// </summary>
-        [ActivatorUtilitiesConstructor]
         public DashboardPage(DashboardViewModel viewModel, Window window)
         {
             InitializeComponent();

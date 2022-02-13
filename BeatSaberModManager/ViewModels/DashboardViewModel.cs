@@ -4,12 +4,11 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -21,14 +20,14 @@ namespace BeatSaberModManager.ViewModels
     /// </summary>
     public class DashboardViewModel : ViewModelBase
     {
-        private readonly IOptions<AppSettings> _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<string?> _gameVersion;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DashboardViewModel"/> class.
         /// </summary>
-        public DashboardViewModel(ModsViewModel modsViewModel, IOptions<AppSettings> appSettings, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IAppDataPathProvider appDataPathProvider, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
+        public DashboardViewModel(ModsViewModel modsViewModel, ISettings<AppSettings> appSettings, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IAppDataPathProvider appDataPathProvider, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
         {
             _appSettings = appSettings;
             _playlistInstaller = playlistInstaller;

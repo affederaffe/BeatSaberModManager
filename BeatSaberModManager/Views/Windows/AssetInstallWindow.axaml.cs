@@ -6,8 +6,6 @@ using Avalonia.ReactiveUI;
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Converters;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using ReactiveUI;
 
 
@@ -26,7 +24,6 @@ namespace BeatSaberModManager.Views.Windows
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetInstallWindow"/> class.
         /// </summary>
-        [ActivatorUtilitiesConstructor]
         public AssetInstallWindow(AssetInstallWindowViewModel viewModel)
         {
             InitializeComponent();

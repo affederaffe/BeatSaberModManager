@@ -8,8 +8,6 @@ using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using ReactiveUI;
 
 
@@ -28,7 +26,6 @@ namespace BeatSaberModManager.Views.Pages
         /// <summary>
         /// Initializes a new instance of the <see cref="ModsPage"/> class.
         /// </summary>
-        [ActivatorUtilitiesConstructor]
         public ModsPage(ModsViewModel viewModel)
         {
             InitializeComponent();

@@ -6,8 +6,6 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 
-using Microsoft.Extensions.Options;
-
 using ReactiveUI;
 
 
@@ -18,14 +16,14 @@ namespace BeatSaberModManager.ViewModels
     /// </summary>
     public class ModGridItemViewModel : ViewModelBase
     {
-        private readonly IOptions<AppSettings> _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IDependencyResolver _dependencyResolver;
         private readonly ObservableAsPropertyHelper<bool> _isUpToDate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModGridItemViewModel"/> class.
         /// </summary>
-        public ModGridItemViewModel(IMod availableMod, IMod? installedMod, IOptions<AppSettings> appSettings, IDependencyResolver dependencyResolver)
+        public ModGridItemViewModel(IMod availableMod, IMod? installedMod, ISettings<AppSettings> appSettings, IDependencyResolver dependencyResolver)
         {
             _availableMod = availableMod;
             _installedMod = installedMod;

@@ -3,9 +3,8 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
-
-using Microsoft.Extensions.Options;
 
 
 namespace BeatSaberModManager.Services.Implementations.Settings
@@ -14,7 +13,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
     /// Automatically loads and saves <typeparamref name="T"/> as a json file.
     /// </summary>
     /// <typeparam name="T">The type of the settings class.</typeparam>
-    public sealed class JsonSettingsProvider<T> : IOptions<T>, IDisposable where T : class, new()
+    public sealed class JsonSettingsProvider<T> : ISettings<T>, IDisposable where T : class, new()
     {
         private readonly JsonTypeInfo<T> _jsonTypeInfo;
         private readonly string _saveDirPath;

@@ -10,9 +10,8 @@ using Avalonia.Markup.Xaml.Styling;
 using Avalonia.Styling;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -24,13 +23,13 @@ namespace BeatSaberModManager.Views.Theming
     /// </summary>
     public class ThemeManager : ReactiveObject
     {
-        private readonly IOptions<AppSettings> _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly int _buildInThemesCount;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeManager"/> class.
         /// </summary>
-        public ThemeManager(IOptions<AppSettings> appSettings)
+        public ThemeManager(ISettings<AppSettings> appSettings)
         {
             _appSettings = appSettings;
             Themes = new ObservableCollection<Theme>

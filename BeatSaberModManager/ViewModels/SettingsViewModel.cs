@@ -4,10 +4,9 @@ using System.Reactive;
 using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -24,7 +23,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsViewModel"/> class.
         /// </summary>
-        public SettingsViewModel(IOptions<AppSettings> appSettings, IProtocolHandlerRegistrar protocolHandlerRegistrar)
+        public SettingsViewModel(ISettings<AppSettings> appSettings, IProtocolHandlerRegistrar protocolHandlerRegistrar)
         {
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _beatSaverOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered("beatsaver");
@@ -51,7 +50,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Exposed for the view.
         /// </summary>
-        public IOptions<AppSettings> AppSettings { get; }
+        public ISettings<AppSettings> AppSettings { get; }
 
         /// <summary>
         /// Checks or unchecks the checkbox control.

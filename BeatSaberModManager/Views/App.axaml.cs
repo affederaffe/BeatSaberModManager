@@ -8,15 +8,16 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
 using BeatSaberModManager.Views.Windows;
 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using DryIoc;
 
 using ReactiveUI;
+
+using Serilog;
 
 
 namespace BeatSaberModManager.Views
@@ -24,12 +25,11 @@ namespace BeatSaberModManager.Views
     /// <inheritdoc />
     public class App : Application
     {
-        private readonly IServiceProvider _services = null!;
-        private readonly ILogger<App> _logger = null!;
-        private readonly IOptions<AppSettings> _appSettings = null!;
+        private readonly Container _container = null!;
+        private readonly ILogger _logger = null!;
+        private readonly ISettings<AppSettings> _appSettings = null!;
         private readonly LocalizationManager _localizationManager = null!;
         private readonly ThemeManager _themeManager = null!;
-        private readonly Action<ILogger<App>, Exception> _logCrash = null!;
 
         /// <summary>
         /// [Required by Avalonia]
@@ -37,16 +37,14 @@ namespace BeatSaberModManager.Views
         public App() { }
 
         /// <inheritdoc />
-        [ActivatorUtilitiesConstructor]
-        public App(IServiceProvider services, ILogger<App> logger, IOptions<AppSettings> appSettings, LocalizationManager localizationManager, ThemeManager themeManager)
+        public App(Container container, ILogger logger, ISettings<AppSettings> appSettings, LocalizationManager localizationManager, ThemeManager themeManager)
         {
-            _services = services;
+            _container = container;
             _logger = logger;
             _appSettings = appSettings;
             _localizationManager = localizationManager;
             _themeManager = themeManager;
-            _logCrash = LoggerMessage.Define(LogLevel.Critical, new EventId(-1), string.Empty);
-            DataTemplates.Add(new ViewLocator(services));
+            DataTemplates.Add(new ViewLocator(container));
 #if !DEBUG
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(HandleException);
 #endif
@@ -64,7 +62,7 @@ namespace BeatSaberModManager.Views
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
-            lifetime.MainWindow = _services.GetRequiredService<Window>();
+            lifetime.MainWindow = _container.Resolve<Window>();
             if (Environment.CurrentDirectory == _appSettings.Value.InstallDir)
                 RxApp.DefaultExceptionHandler.OnNext(new InvalidOperationException("Application cannot be executed in the game's installation directory"));
         }
@@ -72,7 +70,7 @@ namespace BeatSaberModManager.Views
         [SuppressMessage("ReSharper", "AsyncVoidMethod")]
         private async void HandleException(Exception e)
         {
-            _logCrash(_logger, e);
+            _logger.Fatal(e, "Application crashed");
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
             lifetime.MainWindow.Show();
             await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow);

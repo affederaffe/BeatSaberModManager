@@ -6,10 +6,10 @@ using Avalonia.Media;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using DryIoc;
 
 using SkiaSharp;
 
@@ -21,8 +21,8 @@ namespace BeatSaberModManager
     /// </summary>
     public class Startup
     {
-        private readonly IServiceProvider _services;
-        private readonly IOptions<AppSettings> _appSettings;
+        private readonly Container _container;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IUpdater _updater;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IInstallDirLocator _installDirLocator;
@@ -30,9 +30,9 @@ namespace BeatSaberModManager
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
-        public Startup(IServiceProvider services, IOptions<AppSettings> appSettings, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        public Startup(Container container, ISettings<AppSettings> appSettings, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
-            _services = services;
+            _container = container;
             _appSettings = appSettings;
             _updater = updater;
             _installDirValidator = installDirValidator;
@@ -57,7 +57,7 @@ namespace BeatSaberModManager
         }
 
         private int RunAvaloniaApp() =>
-            AppBuilder.Configure(_services.GetRequiredService<Application>)
+            AppBuilder.Configure(() => _container.Resolve<Application>())
                 .With(new Win32PlatformOptions { UseWindowsUIComposition = true })
                 .With(new X11PlatformOptions { UseEGL = true })
                 .With(new FontManagerOptions { DefaultFamilyName = string.IsNullOrEmpty(SKTypeface.Default.FamilyName) ? SKFontManager.Default.GetFamilyName(0) : SKTypeface.Default.FamilyName })

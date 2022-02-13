@@ -6,8 +6,7 @@ using System.Linq;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
 using BeatSaberModManager.Models.Implementations.Settings;
-
-using Microsoft.Extensions.Options;
+using BeatSaberModManager.Models.Interfaces;
 
 using ReactiveUI;
 
@@ -19,12 +18,12 @@ namespace BeatSaberModManager.Views.Localization
     /// </summary>
     public class LocalizationManager : ReactiveObject
     {
-        private readonly IOptions<AppSettings> _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizationManager"/> class.
         /// </summary>
-        public LocalizationManager(IOptions<AppSettings> appSettings)
+        public LocalizationManager(ISettings<AppSettings> appSettings)
         {
             _appSettings = appSettings;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();

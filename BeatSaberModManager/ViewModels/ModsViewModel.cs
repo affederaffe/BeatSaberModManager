@@ -8,8 +8,6 @@ using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 
-using Microsoft.Extensions.Options;
-
 using ReactiveUI;
 
 
@@ -20,7 +18,7 @@ namespace BeatSaberModManager.ViewModels
     /// </summary>
     public class ModsViewModel : ViewModelBase
     {
-        private readonly IOptions<AppSettings> _appSettings;
+        private readonly ISettings<AppSettings> _appSettings;
         private readonly IDependencyResolver _dependencyResolver;
         private readonly IModProvider _modProvider;
         private readonly IModInstaller _modInstaller;
@@ -33,7 +31,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="ModsViewModel"/> class.
         /// </summary>
-        public ModsViewModel(IOptions<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IStatusProgress progress)
+        public ModsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IDependencyResolver dependencyResolver, IModProvider modProvider, IModInstaller modInstaller, IStatusProgress progress)
         {
             _appSettings = appSettings;
             _dependencyResolver = dependencyResolver;

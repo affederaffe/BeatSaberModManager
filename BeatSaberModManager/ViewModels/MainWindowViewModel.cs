@@ -3,11 +3,10 @@ using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
-
-using Microsoft.Extensions.Options;
 
 using ReactiveUI;
 
@@ -25,7 +24,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public MainWindowViewModel(DashboardViewModel dashboardViewModel, ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, IOptions<AppSettings> appSettings, IStatusProgress progress)
+        public MainWindowViewModel(DashboardViewModel dashboardViewModel, ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, ISettings<AppSettings> appSettings, IStatusProgress progress)
         {
             DashboardViewModel = dashboardViewModel;
             ModsViewModel = modsViewModel;
@@ -56,7 +55,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Exposed for the view.
         /// </summary>
-        public IOptions<AppSettings> AppSettings { get; }
+        public ISettings<AppSettings> AppSettings { get; }
 
         /// <summary>
         /// Invokes <see cref="BeatSaberModManager.ViewModels.ModsViewModel.RefreshModsAsync"/>

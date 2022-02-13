@@ -8,6 +8,7 @@ using Avalonia.Controls;
 
 using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Models.Implementations.Settings;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.BeatSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods;
 using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
@@ -27,8 +28,7 @@ using BeatSaberModManager.Views.Pages;
 using BeatSaberModManager.Views.Theming;
 using BeatSaberModManager.Views.Windows;
 
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+using DryIoc;
 
 using ReactiveUI;
 
@@ -47,87 +47,117 @@ namespace BeatSaberModManager
         /// </summary>
         public static async Task<int> Main(string[] args)
         {
-            await using ServiceProvider services = CreateServiceCollection(args).BuildServiceProvider();
-            return await services.GetRequiredService<Startup>().RunAsync();
+            using Container container = CreateContainer(args);
+            return await container.Resolve<Startup>().RunAsync();
         }
 
-        private static IServiceCollection CreateServiceCollection(IReadOnlyList<string> args) =>
-            new ServiceCollection()
-                .AddSingleton(args)
-                .AddSingleton<Startup>()
-                .AddSerilog()
-                .AddSettings()
-                .AddHttpClient()
-                .AddUpdater()
-                .AddGameServices()
-                .AddModServices()
-                .AddAssetProviders()
-                .AddProtocolHandlerRegistrar()
-                .AddApplication()
-                .AddViewModels()
-                .AddViews(args);
+        private static Container CreateContainer(IReadOnlyList<string> args)
+        {
+            Container container = new(Rules.Default.With(FactoryMethod.ConstructorWithResolvableArguments).WithDefaultReuse(Reuse.Singleton));
+            container.RegisterInstance(container);
+            container.Register<Startup>();
+            container.AddSerilog();
+            container.AddSettings();
+            container.AddHttpClient();
+            container.AddUpdater();
+            container.AddGameServices();
+            container.AddModServices();
+            container.AddAssetProviders();
+            container.AddProtocolHandlerRegistrar();
+            container.AddApplication();
+            container.AddViewModels();
+            container.AddViews(args);
+            return container;
+        }
 
-        private static IServiceCollection AddSerilog(this IServiceCollection services) =>
-            services.AddLogging(static loggerBuilder =>
-                loggerBuilder.AddSerilog(new LoggerConfiguration()
-                    .WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Minute)
-                    .CreateLogger(), true));
+        private static void AddSerilog(this IRegistrator container)
+        {
+            Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Minute).CreateLogger();
+            container.Register(Made.Of(static () => Log.Logger), setup: Setup.With(condition: static r => r.Parent.ImplementationType is null));
+            container.Register(Made.Of(static () => Log.ForContext(Arg.Index<Type>(0)), static r => r.Parent.ImplementationType), setup: Setup.With(condition: static r => r.Parent.ImplementationType is not null));
+        }
 
-        private static IServiceCollection AddSettings(this IServiceCollection services) =>
-            services.AddSingleton<IOptions<AppSettings>, JsonSettingsProvider<AppSettings>>(_ => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings));
+        private static void AddSettings(this IRegistrator container) =>
+            container.RegisterDelegate<ISettings<AppSettings>>(() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings));
 
-        private static IServiceCollection AddHttpClient(this IServiceCollection services) =>
-            services.AddSingleton<HttpProgressClient>();
+        private static void AddHttpClient(this IRegistrator container)
+        {
+            container.Register<HttpProgressClient>();
+        }
 
-        private static IServiceCollection AddGameServices(this IServiceCollection services) =>
-            services.AddSingleton<IGameVersionProvider, BeatSaberGameVersionProvider>()
-                .AddSingleton<IGameLauncher, BeatSaberGameLauncher>()
-                .AddSingleton<IInstallDirLocator, BeatSaberInstallDirLocator>()
-                .AddSingleton<IInstallDirValidator, BeatSaberInstallDirValidator>()
-                .AddSingleton<IAppDataPathProvider, BeatSaberAppDataPathProvider>();
+        private static void AddGameServices(this IRegistrator container)
+        {
+            container.Register<IGameVersionProvider, BeatSaberGameVersionProvider>();
+            container.Register<IGameLauncher, BeatSaberGameLauncher>();
+            container.Register<IInstallDirLocator, BeatSaberInstallDirLocator>();
+            container.Register<IInstallDirValidator, BeatSaberInstallDirValidator>();
+            container.Register<IAppDataPathProvider, BeatSaberAppDataPathProvider>();
+        }
 
-        private static IServiceCollection AddProtocolHandlerRegistrar(this IServiceCollection services) =>
-            OperatingSystem.IsWindows() ? services.AddSingleton<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>()
-                : OperatingSystem.IsLinux() ? services.AddSingleton<IProtocolHandlerRegistrar, LinuxProtocolHandlerRegistrar>()
-                    : throw new PlatformNotSupportedException();
+        private static void AddProtocolHandlerRegistrar(this IRegistrator container)
+        {
+            if (OperatingSystem.IsWindows())
+                container.Register<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>();
+            else if (OperatingSystem.IsLinux())
+                container.Register<IProtocolHandlerRegistrar, LinuxProtocolHandlerRegistrar>();
+            else
+                throw new PlatformNotSupportedException();
+        }
 
-        private static IServiceCollection AddModServices(this IServiceCollection services) =>
-            services.AddSingleton<IHashProvider, MD5HashProvider>()
-                .AddSingleton<IDependencyResolver, SimpleDependencyResolver>()
-                .AddSingleton<IModProvider, BeatModsModProvider>()
-                .AddSingleton<IModInstaller, BeatModsModInstaller>();
+        private static void AddModServices(this IRegistrator container)
+        {
+            container.Register<IHashProvider, MD5HashProvider>();
+            container.Register<IDependencyResolver, SimpleDependencyResolver>();
+            container.Register<IModProvider, BeatModsModProvider>();
+            container.Register<IModInstaller, BeatModsModInstaller>();
+        }
 
-        private static IServiceCollection AddUpdater(this IServiceCollection services) =>
-            services.AddSingleton<IUpdater, GitHubUpdater>();
+        private static void AddUpdater(this IRegistrator container)
+        {
+            container.Register<IUpdater, GitHubUpdater>();
+        }
 
-        private static IServiceCollection AddAssetProviders(this IServiceCollection services) =>
-            services.AddSingleton<BeatSaverMapInstaller>()
-                .AddSingleton<IAssetProvider, BeatSaverAssetProvider>()
-                .AddSingleton<ModelSaberModelInstaller>()
-                .AddSingleton<IAssetProvider, ModelSaberAssetProvider>()
-                .AddSingleton<PlaylistInstaller>()
-                .AddSingleton<IAssetProvider, PlaylistAssetProvider>();
+        private static void AddAssetProviders(this IRegistrator container)
+        {
+            container.Register<BeatSaverMapInstaller>();
+            container.Register<IAssetProvider, BeatSaverAssetProvider>();
+            container.Register<ModelSaberModelInstaller>();
+            container.Register<IAssetProvider, ModelSaberAssetProvider>();
+            container.Register<PlaylistInstaller>();
+            container.Register<IAssetProvider, PlaylistAssetProvider>();
+        }
 
-        private static IServiceCollection AddViewModels(this IServiceCollection services) =>
-            services.AddSingleton<MainWindowViewModel>()
-                .AddSingleton<DashboardViewModel>()
-                .AddSingleton<ModsViewModel>()
-                .AddSingleton<SettingsViewModel>()
-                .AddSingleton<AssetInstallWindowViewModel>();
+        private static void AddViewModels(this IRegistrator container)
+        {
+            container.Register<MainWindowViewModel>();
+            container.Register<DashboardViewModel>();
+            container.Register<ModsViewModel>();
+            container.Register<SettingsViewModel>();
+            container.Register<AssetInstallWindowViewModel>();
+        }
 
-        private static IServiceCollection AddApplication(this IServiceCollection services) =>
-            services.AddSingleton<Application, App>()
-                .AddSingleton<IStatusProgress, StatusProgress>()
-                .AddSingleton<LocalizationManager>()
-                .AddSingleton<ThemeManager>();
+        private static void AddApplication(this IRegistrator container)
+        {
+            container.Register<Application, App>();
+            container.Register<IStatusProgress, StatusProgress>();
+            container.Register<LocalizationManager>();
+            container.Register<ThemeManager>();
+        }
 
-        private static IServiceCollection AddViews(this IServiceCollection services, IReadOnlyList<string> args) =>
-            args.Count is 2 && args[0] == "--install"
-                ? services.AddSingleton(new Uri(args[1]))
-                    .AddSingleton<Window, AssetInstallWindow>()
-                : services.AddSingleton<Window, MainWindow>()
-                    .AddSingleton<IViewFor<DashboardViewModel>, DashboardPage>()
-                    .AddSingleton<IViewFor<ModsViewModel>, ModsPage>()
-                    .AddSingleton<IViewFor<SettingsViewModel>, SettingsPage>();
+        private static void AddViews(this IRegistrator container, IReadOnlyList<string> args)
+        {
+            if (args.Count is 2 && args[0] == "--install")
+            {
+                container.RegisterInstance(new Uri(args[1]));
+                container.Register<Window, AssetInstallWindow>();
+            }
+            else
+            {
+                container.Register<Window, MainWindow>();
+                container.Register<IViewFor<DashboardViewModel>, DashboardPage>();
+                container.Register<IViewFor<ModsViewModel>, ModsPage>();
+                container.Register<IViewFor<SettingsViewModel>, SettingsPage>();
+            }
+        }
     }
 }

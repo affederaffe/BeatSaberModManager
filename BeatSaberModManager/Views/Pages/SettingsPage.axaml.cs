@@ -10,8 +10,6 @@ using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
 
-using Microsoft.Extensions.DependencyInjection;
-
 using ReactiveUI;
 
 
@@ -30,7 +28,6 @@ namespace BeatSaberModManager.Views.Pages
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsPage"/> class.
         /// </summary>
-        [ActivatorUtilitiesConstructor]
         public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager, IInstallDirValidator installDirValidator)
         {
             InitializeComponent();
