@@ -13,18 +13,20 @@
         Width="250" Height="450"
         Title="{DynamicResource ExceptionWindow:Title}">
 
-    <ScrollViewer Margin="{Binding #Window.OffScreenMargin}" Background="{DynamicResource BackgroundMediumLowBrush}">
-        <StackPanel Orientation="Vertical" Margin="5">
-            <TextBlock x:Name="ExceptionTextBlock"
-                       TextWrapping="WrapWithOverflow"
-                       HorizontalAlignment="Center">
-            </TextBlock>
-            <Button Margin="0, 10, 0, 0"
-                    HorizontalAlignment="Center"
-                    Content="{DynamicResource ExceptionWindow:Ok}"
-                    Click="OkButtonClicked">
-            </Button>
-        </StackPanel>
-    </ScrollViewer>
+    <Panel Margin="{Binding #Window.OffScreenMargin}" Background="{DynamicResource BackgroundMediumLowBrush}">
+        <ScrollViewer Margin="10, 31, 10, 10" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Name="ExceptionTextBlock"
+                           TextWrapping="WrapWithOverflow"
+                           HorizontalAlignment="Center">
+                </TextBlock>
+                <Button Margin="0, 10, 0, 0"
+                        HorizontalAlignment="Center"
+                        Content="{DynamicResource ExceptionWindow:Ok}"
+                        Click="OkButtonClicked">
+                </Button>
+            </StackPanel>
+        </ScrollViewer>
+    </Panel>
 
 </Window>
