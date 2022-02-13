@@ -9,7 +9,7 @@ namespace BeatSaberModManager.Services.Interfaces
         /// Checks if the application is already registered as a protocol handler for the specified protocol.
         /// </summary>
         /// <param name="protocol">The protocol to check for.</param>
-        /// <returns>true if the application is registered as a protocol handler, false otherwise.</returns>
+        /// <returns>True if the application is registered as a protocol handler, false otherwise.</returns>
         bool IsProtocolHandlerRegistered(string protocol);
 
         /// <summary>

@@ -12,7 +12,7 @@ namespace BeatSaberModManager.Services.Interfaces
         /// Validates the game's installation.
         /// </summary>
         /// <param name="path">The path of the directory.</param>
-        /// <returns>true if the installation is valid, false otherwise.</returns>
+        /// <returns>True if the installation is valid, false otherwise.</returns>
         bool ValidateInstallDir([NotNullWhen(true)] string? path);
     }
 }

@@ -27,7 +27,7 @@ namespace BeatSaberModManager.Services.Interfaces
         /// Checks if the provided <see cref="IMod"/> is the mod loader.
         /// </summary>
         /// <param name="modification">The <see cref="IMod"/> to check.</param>
-        /// <returns>true if the provided <see cref="IMod"/> is the mod loader, false otherwise.</returns>
+        /// <returns>True if the provided <see cref="IMod"/> is the mod loader, false otherwise.</returns>
         bool IsModLoader(IMod? modification);
 
         /// <summary>

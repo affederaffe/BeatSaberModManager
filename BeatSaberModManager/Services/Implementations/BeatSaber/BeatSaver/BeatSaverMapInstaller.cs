@@ -37,7 +37,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="key">The unique key for the map.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallBeatSaverMapByKeyAsync(string installDir, string key, IStatusProgress? progress = null)
         {
             BeatSaverMap? map = await GetBeatSaverMapByKeyAsync(key).ConfigureAwait(false);
@@ -50,7 +50,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="hash">The hash of the map.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallBeatSaberMapByHashAsync(string installDir, string hash, IStatusProgress? progress = null)
         {
             BeatSaverMap? map = await GetBeatSaverMapByHashAsync(hash).ConfigureAwait(false);
@@ -79,7 +79,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="map">The map to install.</param>
         /// <param name="archive">The content of the <see cref="BeatSaverMap"/>.</param>
-        /// <returns>true when the operation succeeds, false otherwise.</returns>
+        /// <returns>True when the operation succeeds, false otherwise.</returns>
         public static bool TryExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
         {
             string customLevelsDirectoryPath = Path.Combine(installDir, "Beat Saber_Data", "CustomLevels");

@@ -1,7 +1,7 @@
 ﻿namespace BeatSaberModManager.Models.Implementations.Progress
 {
     /// <summary>
-    /// Represents information about the current operation
+    /// Represents information about the current operation.
     /// </summary>
     public readonly struct ProgressInfo
     {
@@ -15,12 +15,12 @@
         }
 
         /// <summary>
-        /// The status of the current operation
+        /// The status of the current operation.
         /// </summary>
         public StatusType StatusType { get; }
 
         /// <summary>
-        /// The message to display
+        /// The message to display.
         /// </summary>
         public string? Text { get; }
     }

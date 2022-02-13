@@ -32,13 +32,13 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public string MoreInfoLink { get; set; } = null!;
 
         /// <summary>
-        /// 
+        /// The downloads for the mod.
         /// </summary>
         [JsonPropertyName("downloads")]
         public BeatModsDownload[] Downloads { get; set; } = null!;
 
         /// <summary>
-        /// 
+        /// The dependencies of the mod.
         /// </summary>
         [JsonPropertyName("dependencies")]
         public BeatModsDependency[] Dependencies { get; set; } = null!;

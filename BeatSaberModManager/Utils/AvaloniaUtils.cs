@@ -20,7 +20,7 @@ namespace BeatSaberModManager.Utils
         /// <param name="dir">The directory of the file.</param>
         /// <param name="style">The parsed <see cref="IStyle"/> if the operation succeeds, null otherwise.</param>
         /// <typeparam name="T">The type of the <see cref="IStyle"/>.</typeparam>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public static bool TryParse<T>(string xaml, string dir, [MaybeNullWhen(false)] out T style) where T : class, IStyle
         {
             try

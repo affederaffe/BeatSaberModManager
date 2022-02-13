@@ -91,7 +91,7 @@ namespace BeatSaberModManager.ViewModels
         /// Asynchronously installs a <see cref="BeatSaberModManager.Models.Implementations.BeatSaber.Playlists.Playlist"/>.
         /// </summary>
         /// <param name="path">The path of the <see cref="BeatSaberModManager.Models.Implementations.BeatSaber.Playlists.Playlist"/>'s file.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public Task<bool> InstallPlaylistAsync(string path) =>
             _playlistInstaller.InstallPlaylistAsync(_appSettings.Value.InstallDir!, path, StatusProgress);
     }

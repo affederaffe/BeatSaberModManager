@@ -6,18 +6,18 @@ using BeatSaberModManager.Models.Interfaces;
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
     /// <summary>
-    /// Defines a dependency for a <see cref="BeatModsMod"/>
+    /// Defines a dependency for a <see cref="BeatModsMod"/>.
     /// </summary>
     public class BeatModsDependency
     {
         /// <summary>
-        /// The name of the dependency
+        /// The name of the dependency.
         /// </summary>
         [JsonPropertyName("name")]
         public string Name { get; set; } = null!;
 
         /// <summary>
-        /// Cached <see cref="IMod"/> to avoid finding it again by <see cref="Name"/>
+        /// Cached <see cref="IMod"/> to avoid finding it again by <see cref="Name"/>.
         /// </summary>
         [JsonIgnore]
         public IMod? DependingMod { get; set; }

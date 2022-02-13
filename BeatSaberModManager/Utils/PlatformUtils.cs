@@ -14,7 +14,7 @@ namespace BeatSaberModManager.Utils
         /// Attempts to use the standard program to open the <paramref name="uri"/>.
         /// </summary>
         /// <param name="uri">The uri to open.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public static bool TryOpenUri(string uri) =>
             OperatingSystem.IsWindows()
                 ? TryStartProcess(new ProcessStartInfo(uri) { UseShellExecute = true }, out _)
@@ -25,7 +25,7 @@ namespace BeatSaberModManager.Utils
         /// </summary>
         /// <param name="startInfo">The information used to start the process.</param>
         /// <param name="process">The <see cref="Process"/> when the operation succeeds.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public static bool TryStartProcess(ProcessStartInfo startInfo, [MaybeNullWhen(false)] out Process process)
         {
             try

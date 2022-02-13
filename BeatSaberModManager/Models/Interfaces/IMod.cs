@@ -4,32 +4,32 @@
 namespace BeatSaberModManager.Models.Interfaces
 {
     /// <summary>
-    /// A
+    /// Defines a mod.
     /// </summary>
     public interface IMod
     {
         /// <summary>
-        /// The mod's display name
+        /// The mod's display name.
         /// </summary>
         string Name { get; set; }
 
         /// <summary>
-        /// The mod's version
+        /// The mod's version.
         /// </summary>
         Version Version { get; set; }
 
         /// <summary>
-        /// A description or summary of the mod
+        /// The description or summary of the mod.
         /// </summary>
         string Description { get; set; }
 
         /// <summary>
-        /// 
+        /// The category of the mod.
         /// </summary>
         string Category { get; set; }
 
         /// <summary>
-        /// 
+        /// A link which provides more resources about the mod.
         /// </summary>
         string MoreInfoLink { get; set; }
     }

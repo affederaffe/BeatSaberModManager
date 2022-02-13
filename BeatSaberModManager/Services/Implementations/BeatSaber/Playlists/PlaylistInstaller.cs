@@ -42,7 +42,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="uri">The <see cref="Uri"/> to download the playlist from.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallPlaylistAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
             using HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
@@ -63,7 +63,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="filePath">The path of the <see cref="Playlist"/>'s file.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallPlaylistAsync(string installDir, string filePath, IStatusProgress? progress = null)
         {
             string fileName = Path.GetFileName(filePath);

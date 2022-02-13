@@ -14,7 +14,7 @@ namespace BeatSaberModManager.Services.Interfaces
         /// Checks if other <see cref="IMod"/>s depend on <paramref name="modification"/>.
         /// </summary>
         /// <param name="modification">The <see cref="IMod"/> to check.</param>
-        /// <returns>true if <paramref name="modification"/> is a dependency, false otherwise.</returns>
+        /// <returns>True if <paramref name="modification"/> is a dependency, false otherwise.</returns>
         bool IsDependency(IMod modification);
 
         /// <summary>

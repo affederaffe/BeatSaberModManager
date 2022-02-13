@@ -21,7 +21,7 @@ namespace BeatSaberModManager.Services.Interfaces
         /// <param name="uri">The <see cref="Uri"/> to download the asset from.<br/>
         /// The <see cref="Uri.Scheme"/> has to match <see cref="Protocol"/>.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>true when the installation succeeded, false otherwise.</returns>
+        /// <returns>True when the installation succeeded, false otherwise.</returns>
         Task<bool> InstallAssetAsync(string installDir, Uri uri, IStatusProgress? progress = null);
     }
 }

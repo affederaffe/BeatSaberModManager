@@ -46,7 +46,7 @@ namespace BeatSaberModManager.Utils
         /// Attempts to create all directories and subdirectories in the specified path unless they already exist.
         /// </summary>
         /// <param name="path">The directory to create.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public static bool TryCreateDirectory(string path)
         {
             try
@@ -64,7 +64,7 @@ namespace BeatSaberModManager.Utils
         /// Attempts to delete the specified directory and, if indicated, any subdirectories and files in the directory.
         /// </summary>
         /// <param name="path">The name of the directory to remove.</param>
-        /// <param name="recursive">true to remove directories, subdirectories, and files in path, false otherwise.</param>
+        /// <param name="recursive">True to remove directories, subdirectories, and files in path, false otherwise.</param>
         public static void TryDeleteDirectory(string path, bool recursive)
         {
             try
@@ -81,8 +81,8 @@ namespace BeatSaberModManager.Utils
         /// </summary>
         /// <param name="archive">The archive to extract.</param>
         /// <param name="path">The path to the destination directory on the file system.</param>
-        /// <param name="overrideFiles">true to overwrite existing files, false otherwise.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <param name="overrideFiles">True to overwrite existing files, false otherwise.</param>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public static bool TryExtractArchive(ZipArchive archive, string path, bool overrideFiles)
         {
             try
@@ -119,7 +119,7 @@ namespace BeatSaberModManager.Utils
         /// </summary>
         /// <param name="path">The file to open for reading.</param>
         /// <param name="text">The file's content if the operation succeeds, null otherwise.</param>
-        /// <returns>true if the operation succeeds, false otherwise.</returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public static bool TryReadAllText(string path, [MaybeNullWhen(false)] out string text)
         {
             try
