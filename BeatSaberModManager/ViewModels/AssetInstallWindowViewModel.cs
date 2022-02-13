@@ -22,7 +22,6 @@ namespace BeatSaberModManager.ViewModels
     public class AssetInstallWindowViewModel : ViewModelBase
     {
         private readonly Uri _uri;
-        private readonly ISettings<AppSettings> _appSettings;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
@@ -36,9 +35,9 @@ namespace BeatSaberModManager.ViewModels
         public AssetInstallWindowViewModel(Uri uri, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
         {
             _uri = uri;
-            _appSettings = appSettings;
             _installDirValidator = installDirValidator;
             _assetProviders = assetProviders;
+            AppSettings = appSettings;
             StatusProgress = (StatusProgress)progress;
             Log = new ObservableCollection<string>();
             InstallCommand = ReactiveCommand.CreateFromTask(InstallAssetAsync);
@@ -59,6 +58,11 @@ namespace BeatSaberModManager.ViewModels
         /// Collection of log messages.
         /// </summary>
         public ObservableCollection<string> Log { get; }
+
+        /// <summary>
+        /// Exposed for the view.
+        /// </summary>
+        public ISettings<AppSettings> AppSettings { get; }
 
         /// <summary>
         /// Exposed for the view.
@@ -87,9 +91,9 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<bool> InstallAssetAsync()
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir)) return false;
+            if (!_installDirValidator.ValidateInstallDir(AppSettings.Value.InstallDir)) return false;
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
-            return assetProvider is not null && await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir, _uri, StatusProgress).ConfigureAwait(false);
+            return assetProvider is not null && await assetProvider.InstallAssetAsync(AppSettings.Value.InstallDir, _uri, StatusProgress).ConfigureAwait(false);
         }
     }
 }

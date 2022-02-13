@@ -34,6 +34,11 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         public bool ForceReinstallMods { get; set; }
 
         /// <summary>
+        /// True if the OneClick installation window should automatically close, false otherwise.
+        /// </summary>
+        public bool CloseOneClickWindow { get; set; } = true;
+
+        /// <summary>
         /// The game's installation directory.
         /// </summary>
         public string? InstallDir

@@ -33,10 +33,11 @@ namespace BeatSaberModManager.Views.Windows
                 .Select(converter.Convert)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
-            ViewModel.InstallCommand.Execute()
-                .Delay(TimeSpan.FromMilliseconds(2000))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .Subscribe(_ => Close());
+            IObservable<bool> executeObservable = ViewModel.InstallCommand.Execute();
+            if (viewModel.AppSettings.Value.CloseOneClickWindow)
+                executeObservable.Delay(TimeSpan.FromMilliseconds(2000)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => Close());
+            else
+                executeObservable.Subscribe();
         }
     }
 }

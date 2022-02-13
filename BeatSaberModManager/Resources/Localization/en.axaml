@@ -55,6 +55,7 @@
     <sys:String x:Key="OptionsView:PlaylistLabel">Playlist</sys:String>
     <sys:String x:Key="OptionsView:LanguageLabel">Language</sys:String>
     <sys:String x:Key="OptionsView:ForceReinstallModsButton">Reinstall installed mods</sys:String>
+    <sys:String x:Key="OptionsView:CloseOneClickWindow">Automatically close OneClick™ window</sys:String>
     <sys:String x:Key="OptionsView:MiscLabel">Miscellaneous</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themes</sys:String>
 

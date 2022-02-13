@@ -109,7 +109,7 @@
             </Label>
             <Grid Grid.Column="1"
                   Grid.Row="7"
-                  RowDefinitions="*"
+                  RowDefinitions="*, *"
                   ColumnDefinitions="Auto, 20"
                   VerticalAlignment="Center">
                 <Label Grid.Column="0"
@@ -117,7 +117,20 @@
                        VerticalAlignment="Center"
                        Content="{DynamicResource OptionsView:ForceReinstallModsButton}">
                 </Label>
-                <CheckBox Grid.Column="1" Grid.Row="0" IsChecked="{Binding AppSettings.Value.ForceReinstallMods}" />
+                <CheckBox Grid.Column="1"
+                          Grid.Row="0"
+                          IsChecked="{Binding AppSettings.Value.ForceReinstallMods}">
+                </CheckBox>
+
+                <Label Grid.Column="0"
+                       Grid.Row="1"
+                       VerticalAlignment="Center"
+                       Content="{DynamicResource OptionsView:CloseOneClickWindow}">
+                </Label>
+                <CheckBox Grid.Column="1"
+                          Grid.Row="1"
+                          IsChecked="{Binding AppSettings.Value.CloseOneClickWindow}">
+                </CheckBox>
             </Grid>
 
             <Label Grid.Column="1"
