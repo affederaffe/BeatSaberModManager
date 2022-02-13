@@ -2,6 +2,7 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -14,6 +15,14 @@ namespace BeatSaberModManager.Services.Implementations.Http
     /// </summary>
     public class HttpProgressClient : HttpClient
     {
+        /// <summary>
+        /// Set the default proxy to an empty one to avoid loading UnityDoorstep's winhttp.
+        /// </summary>
+        static HttpProgressClient()
+        {
+            DefaultProxy = new WebProxy();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpProgressClient"/> class with a UserAgent and 30s timeout.
         /// </summary>

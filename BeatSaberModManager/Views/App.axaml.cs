@@ -7,8 +7,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 
-using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
 using BeatSaberModManager.Views.Windows;
@@ -27,7 +25,6 @@ namespace BeatSaberModManager.Views
     {
         private readonly IResolver _resolver = null!;
         private readonly ILogger _logger = null!;
-        private readonly ISettings<AppSettings> _appSettings = null!;
         private readonly LocalizationManager _localizationManager = null!;
         private readonly ThemeManager _themeManager = null!;
 
@@ -37,11 +34,10 @@ namespace BeatSaberModManager.Views
         public App() { }
 
         /// <inheritdoc />
-        public App(IResolver resolver, ILogger logger, ISettings<AppSettings> appSettings, LocalizationManager localizationManager, ThemeManager themeManager)
+        public App(IResolver resolver, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager)
         {
             _resolver = resolver;
             _logger = logger;
-            _appSettings = appSettings;
             _localizationManager = localizationManager;
             _themeManager = themeManager;
             DataTemplates.Add(new ViewLocator(resolver));
@@ -63,8 +59,6 @@ namespace BeatSaberModManager.Views
         {
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
             lifetime.MainWindow = _resolver.Resolve<Window>();
-            if (Environment.CurrentDirectory == _appSettings.Value.InstallDir)
-                RxApp.DefaultExceptionHandler.OnNext(new InvalidOperationException("Application cannot be executed in the game's installation directory"));
         }
 
         [SuppressMessage("ReSharper", "AsyncVoidMethod")]
