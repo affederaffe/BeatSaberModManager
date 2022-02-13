@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Media;
@@ -17,7 +16,7 @@ using SkiaSharp;
 namespace BeatSaberModManager
 {
     /// <summary>
-    /// Handles the applications start, e.g. updating, logging or UI.
+    /// Handles the applications start, e.g. updating and configuring Avalonia.
     /// </summary>
     public class Startup
     {
@@ -42,18 +41,15 @@ namespace BeatSaberModManager
         /// <summary>
         /// Asynchronously starts the application.
         /// </summary>
-        /// <exception cref="InvalidOperationException">The app was started in the game's installation directory</exception>
         public async Task<int> RunAsync()
         {
             if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
                 _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
-            return
 #if !DEBUG
-                await _updater.NeedsUpdate().ConfigureAwait(false)
-                    ? await _updater.Update().ConfigureAwait(false)
-                    :
+            if (await _updater.NeedsUpdate().ConfigureAwait(false))
+                return await _updater.Update().ConfigureAwait(false);
 #endif
-                RunAvaloniaApp();
+            return RunAvaloniaApp();
         }
 
         private int RunAvaloniaApp() =>

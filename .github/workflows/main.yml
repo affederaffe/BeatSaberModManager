@@ -1,53 +1,71 @@
 name: Build
-
 on:
-  push:
-    branches: ["**"]
-    paths:
-      - "BeatSaberModManager/**"
-      - "BSIPA-Linux/**"
-      - ".github/workflows/main.yml"
-  pull_request:
-    branches: ["**"]
-    paths:
-      - "BeatSaberModManager/**"
-      - "BSIPA-Linux/**"
-      - ".github/workflows/main.yml"
+    push:
+        branches: [ "**" ]
+        paths:
+            - "BeatSaberModManager/**"
+            - "BSIPA-Linux/**"
+            - ".github/workflows/main.yml"
+    pull_request:
+        branches: [ "**" ]
+        paths:
+            - "BeatSaberModManager/**"
+            - "BSIPA-Linux/**"
+            - ".github/workflows/main.yml"
 
 jobs:
-  build_linux:
-    name: Build Linux
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v1.8.1
-        with: 
-          dotnet-version: "6.0.x"
-      - name: Build Self Contained
-        run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishTrimmed=true
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: BeatSaberModManager-linux-x64-framework-dependent
-          path: BeatSaberModManager/bin/Release/linux-x64/publish/BeatSaberModManager
-  build_windows:
-    name: Build Windows
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          submodules: recursive
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v1.8.1
-        with:
-          dotnet-version: "6.0.x"
-      - name: Build Self Contained
-        run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishTrimmed=true
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: BeatSaberModManager-win-x64-framework-dependent
-          path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe
+    build_linux:
+        name: Build Linux
+        runs-on: ubuntu-latest
+        steps:
+            -   uses: actions/checkout@v2
+                with:
+                    submodules: recursive
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v1.8.1
+                with:
+                    dotnet-version: "6.0.x"
+
+            -   name: Build Self Contained
+                run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishTrimmed=true
+            -   name: Upload Artifact
+                uses: actions/upload-artifact@v2
+                with:
+                    name: BeatSaberModManager-linux-x64-self-contained
+                    path: BeatSaberModManager/bin/Release/linux-x64/publish/BeatSaberModManager
+
+            -   name: Build Framework Dependent
+                run: dotnet publish -c Release -r linux-x64 --no-self-contained
+            -   name: Upload Artifact
+                uses: actions/upload-artifact@v2
+                with:
+                    name: BeatSaberModManager-linux-x64-framework-dependent
+                    path: BeatSaberModManager/bin/Release/linux-x64/publish/BeatSaberModManager
+    
+    build_windows:
+        name: Build Windows
+        runs-on: windows-latest
+        steps:
+            -   uses: actions/checkout@v2
+                with:
+                    submodules: recursive
+            -   name: Setup .NET SDK
+                uses: actions/setup-dotnet@v1.8.1
+                with:
+                    dotnet-version: "6.0.x"
+
+            -   name: Build Self Contained
+                run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishTrimmed=true
+            -   name: Upload Artifact
+                uses: actions/upload-artifact@v2
+                with:
+                    name: BeatSaberModManager-win-x64-self-contained
+                    path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe
+
+            -   name: Build Framework Dependent
+                run: dotnet publish -c Release -r win-x64 --no-self-contained
+            -   name: Upload Artifact
+                uses: actions/upload-artifact@v2
+                with:
+                    name: BeatSaberModManager-win-x64-framework-dependent
+                    path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe

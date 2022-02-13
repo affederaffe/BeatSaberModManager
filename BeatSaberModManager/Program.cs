@@ -55,36 +55,38 @@ namespace BeatSaberModManager
         {
             Container container = new(Rules.Default.With(FactoryMethod.ConstructorWithResolvableArguments).WithDefaultReuse(Reuse.Singleton));
             container.Register<Startup>();
-            container.AddSerilog();
-            container.AddSettings();
-            container.AddHttpClient();
-            container.AddUpdater();
-            container.AddGameServices();
-            container.AddModServices();
-            container.AddAssetProviders();
-            container.AddProtocolHandlerRegistrar();
-            container.AddApplication();
-            container.AddViewModels();
-            container.AddViews(args);
+            container.RegisterSerilog();
+            container.RegisterSettings();
+            container.RegisterHttpClient();
+            container.RegisterUpdater();
+            container.RegisterGameServices();
+            container.RegisterModServices();
+            container.RegisterAssetProviders();
+            container.RegisterProtocolHandlerRegistrar();
+            container.RegisterApplication();
+            container.RegisterViewModels();
+            container.RegisterViews(args);
             return container;
         }
 
-        private static void AddSerilog(this IRegistrator container)
+        private static void RegisterSerilog(this IRegistrator container)
         {
             Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Minute).CreateLogger();
             container.Register(Made.Of(static () => Log.Logger), setup: Setup.With(condition: static r => r.Parent.ImplementationType is null));
             container.Register(Made.Of(static () => Log.ForContext(Arg.Index<Type>(0)), static r => r.Parent.ImplementationType), setup: Setup.With(condition: static r => r.Parent.ImplementationType is not null));
         }
 
-        private static void AddSettings(this IRegistrator container) =>
+        private static void RegisterSettings(this IRegistrator container)
+        {
             container.RegisterDelegate<ISettings<AppSettings>>(() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings));
+        }
 
-        private static void AddHttpClient(this IRegistrator container)
+        private static void RegisterHttpClient(this IRegistrator container)
         {
             container.Register<HttpProgressClient>();
         }
 
-        private static void AddGameServices(this IRegistrator container)
+        private static void RegisterGameServices(this IRegistrator container)
         {
             container.Register<IGameVersionProvider, BeatSaberGameVersionProvider>();
             container.Register<IGameLauncher, BeatSaberGameLauncher>();
@@ -93,7 +95,7 @@ namespace BeatSaberModManager
             container.Register<IAppDataPathProvider, BeatSaberAppDataPathProvider>();
         }
 
-        private static void AddProtocolHandlerRegistrar(this IRegistrator container)
+        private static void RegisterProtocolHandlerRegistrar(this IRegistrator container)
         {
             if (OperatingSystem.IsWindows())
                 container.Register<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>();
@@ -103,7 +105,7 @@ namespace BeatSaberModManager
                 throw new PlatformNotSupportedException();
         }
 
-        private static void AddModServices(this IRegistrator container)
+        private static void RegisterModServices(this IRegistrator container)
         {
             container.Register<IHashProvider, MD5HashProvider>();
             container.Register<IDependencyResolver, SimpleDependencyResolver>();
@@ -111,12 +113,12 @@ namespace BeatSaberModManager
             container.Register<IModInstaller, BeatModsModInstaller>();
         }
 
-        private static void AddUpdater(this IRegistrator container)
+        private static void RegisterUpdater(this IRegistrator container)
         {
             container.Register<IUpdater, GitHubUpdater>();
         }
 
-        private static void AddAssetProviders(this IRegistrator container)
+        private static void RegisterAssetProviders(this IRegistrator container)
         {
             container.Register<BeatSaverMapInstaller>();
             container.Register<IAssetProvider, BeatSaverAssetProvider>();
@@ -126,7 +128,7 @@ namespace BeatSaberModManager
             container.Register<IAssetProvider, PlaylistAssetProvider>();
         }
 
-        private static void AddViewModels(this IRegistrator container)
+        private static void RegisterViewModels(this IRegistrator container)
         {
             container.Register<MainWindowViewModel>();
             container.Register<DashboardViewModel>();
@@ -135,7 +137,7 @@ namespace BeatSaberModManager
             container.Register<AssetInstallWindowViewModel>();
         }
 
-        private static void AddApplication(this IRegistrator container)
+        private static void RegisterApplication(this IRegistrator container)
         {
             container.Register<Application, App>();
             container.Register<IStatusProgress, StatusProgress>();
@@ -143,11 +145,11 @@ namespace BeatSaberModManager
             container.Register<ThemeManager>();
         }
 
-        private static void AddViews(this IRegistrator container, IReadOnlyList<string> args)
+        private static void RegisterViews(this IRegistrator container, IReadOnlyList<string> args)
         {
             if (args.Count is 2 && args[0] == "--install")
             {
-                container.RegisterInstance(new Uri(args[1]));
+                container.Use(new Uri(args[1]));
                 container.Register<Window, AssetInstallWindow>();
             }
             else
