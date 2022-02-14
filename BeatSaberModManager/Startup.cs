@@ -43,12 +43,12 @@ namespace BeatSaberModManager
         /// </summary>
         public async Task<int> RunAsync()
         {
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
-                _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
 #if !DEBUG
             if (await _updater.NeedsUpdate().ConfigureAwait(false))
                 return await _updater.Update().ConfigureAwait(false);
 #endif
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
+                _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
             return RunAvaloniaApp();
         }
 
