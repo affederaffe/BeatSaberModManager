@@ -29,7 +29,7 @@ namespace BeatSaberModManager.ViewModels
             _installedMod = installedMod;
             _appSettings = appSettings;
             _dependencyResolver = dependencyResolver;
-            _isCheckBoxChecked = installedMod is not null || _appSettings.Value.SelectedMods.Contains(availableMod.Name);
+            _isCheckBoxChecked = installedMod is not null || appSettings.Value.SaveSelectedMods && _appSettings.Value.SelectedMods.Contains(availableMod.Name);
             this.WhenAnyValue(static x => x.AvailableMod, static x => x.InstalledMod)
                 .Select(static x => x.Item1.Version.CompareTo(x.Item2?.Version) <= 0)
                 .ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
@@ -87,7 +87,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Starts observing changes on <see cref="IsCheckBoxChecked"/>, resolves dependencies, checks, unchecks or disables their checkboxes.
         /// </summary>
-        /// <param name="gridItems"></param>
+        /// <param name="gridItems">The <see cref="Dictionary{TKey,TValue}"/> of all available <see cref="IMod"/>s and their respective <see cref="ModGridItemViewModel"/>.</param>
         public void Initialize(Dictionary<IMod, ModGridItemViewModel> gridItems)
         {
             IObservable<(ModGridItemViewModel gridItem, bool isDependency)> affectedGridItemObservable = this.WhenAnyValue(static x => x.IsCheckBoxChecked)

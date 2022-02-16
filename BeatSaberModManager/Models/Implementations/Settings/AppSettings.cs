@@ -39,6 +39,11 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         public bool CloseOneClickWindow { get; set; } = true;
 
         /// <summary>
+        /// True if selected mods should be saved and restored on restart, false otherwise.
+        /// </summary>
+        public bool SaveSelectedMods { get; set; } = true;
+
+        /// <summary>
         /// The game's installation directory.
         /// </summary>
         public string? InstallDir

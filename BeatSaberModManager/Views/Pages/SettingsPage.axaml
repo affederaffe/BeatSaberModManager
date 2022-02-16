@@ -41,7 +41,7 @@
 
             <Label Grid.Column="1"
                    Grid.Row="2"
-                   Margin="0, 20, 0, 0"
+                   Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
                    Content="{DynamicResource OptionsView:OneClickHandlerLabel}">
             </Label>
@@ -84,7 +84,7 @@
 
             <Label Grid.Column="1"
                    Grid.Row="4"
-                   Margin="0, 20, 0, 0"
+                   Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
                    Content="{DynamicResource OptionsView:LanguageLabel}">
             </Label>
@@ -103,13 +103,13 @@
 
             <Label Grid.Column="1"
                    Grid.Row="6"
-                   Margin="0, 20, 0, 0"
+                   Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
                    Content="{DynamicResource OptionsView:MiscLabel}">
             </Label>
             <Grid Grid.Column="1"
                   Grid.Row="7"
-                  RowDefinitions="*, *"
+                  RowDefinitions="*, *, *"
                   ColumnDefinitions="Auto, 20"
                   VerticalAlignment="Center">
                 <Label Grid.Column="0"
@@ -131,11 +131,21 @@
                           Grid.Row="1"
                           IsChecked="{Binding AppSettings.Value.CloseOneClickWindow}">
                 </CheckBox>
+                
+                <Label Grid.Column="0"
+                       Grid.Row="2"
+                       VerticalAlignment="Center"
+                       Content="{DynamicResource OptionsView:SaveSelectedMods}">
+                </Label>
+                <CheckBox Grid.Column="1"
+                          Grid.Row="2"
+                          IsChecked="{Binding AppSettings.Value.SaveSelectedMods}">
+                </CheckBox>
             </Grid>
 
             <Label Grid.Column="1"
                    Grid.Row="8"
-                   Margin="0, 20, 0, 0"
+                   Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
                    Content="{DynamicResource OptionsView:ThemesLabel}">
             </Label>

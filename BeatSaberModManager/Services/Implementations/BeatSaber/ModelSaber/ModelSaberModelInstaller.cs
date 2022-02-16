@@ -34,7 +34,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="uri">The <see cref="Uri"/> to download the model from.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns></returns>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallModelAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
             string? folderName = GetFolderName(uri);

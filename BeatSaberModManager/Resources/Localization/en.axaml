@@ -54,9 +54,10 @@
     <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber</sys:String>
     <sys:String x:Key="OptionsView:PlaylistLabel">Playlist</sys:String>
     <sys:String x:Key="OptionsView:LanguageLabel">Language</sys:String>
+    <sys:String x:Key="OptionsView:MiscLabel">Miscellaneous</sys:String>
     <sys:String x:Key="OptionsView:ForceReinstallModsButton">Reinstall installed mods</sys:String>
     <sys:String x:Key="OptionsView:CloseOneClickWindow">Automatically close OneClick™ window</sys:String>
-    <sys:String x:Key="OptionsView:MiscLabel">Miscellaneous</sys:String>
+    <sys:String x:Key="OptionsView:SaveSelectedMods">Save selected mods</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themes</sys:String>
 
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">It looks like you haven't set your installation directory yet, would you like to do so?</sys:String>

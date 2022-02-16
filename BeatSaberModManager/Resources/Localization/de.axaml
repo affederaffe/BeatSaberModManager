@@ -54,9 +54,10 @@
     <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber</sys:String>
     <sys:String x:Key="OptionsView:PlaylistLabel">Playlist</sys:String>
     <sys:String x:Key="OptionsView:LanguageLabel">Sprache</sys:String>
+    <sys:String x:Key="OptionsView:MiscLabel">Verschiedenes</sys:String>
     <sys:String x:Key="OptionsView:ForceReinstallModsButton">Installierte Mods neu installieren</sys:String>
     <sys:String x:Key="OptionsView:CloseOneClickWindow">OneClick™ Fenster automatisch schließen</sys:String>
-    <sys:String x:Key="OptionsView:MiscLabel">Verschiedenes</sys:String>
+    <sys:String x:Key="OptionsView:SaveSelectedMods">Ausgewählte mods speichern</sys:String>
     <sys:String x:Key="OptionsView:ThemesLabel">Themen</sys:String>
 
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
