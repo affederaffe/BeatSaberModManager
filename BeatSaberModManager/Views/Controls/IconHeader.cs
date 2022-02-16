@@ -14,9 +14,6 @@ namespace BeatSaberModManager.Views.Controls
         /// <inheritdoc cref="ContentControl.ContentProperty"/>
         public static readonly StyledProperty<object?> ContentProperty = ContentControl.ContentProperty.AddOwner<IconHeader>();
 
-        /// <inheritdoc cref="TextBlock.TextAlignmentProperty"/>
-        public static readonly StyledProperty<TextAlignment> TextAlignmentProperty = TextBlock.TextAlignmentProperty.AddOwner<IconHeader>();
-
         /// <summary>
         /// Defines the IconDataProperty.
         /// </summary>
@@ -27,23 +24,11 @@ namespace BeatSaberModManager.Views.Controls
         /// </summary>
         public static readonly StyledProperty<Dock> IconPlacementProperty = AvaloniaProperty.Register<IconHeader, Dock>(nameof(IconPlacement), Dock.Top);
 
-        static IconHeader()
-        {
-            TextAlignmentProperty.OverrideDefaultValue<IconHeader>(TextAlignment.Center);
-        }
-
         /// <inheritdoc cref="ContentControl.Content"/>
         public object? Content
         {
             get => GetValue(ContentProperty);
             set => SetValue(ContentProperty, value);
-        }
-
-        /// <inheritdoc cref="TextBlock.TextAlignment"/>
-        public TextAlignment TextAlignment
-        {
-            get => GetValue(TextAlignmentProperty);
-            set => SetValue(TextAlignmentProperty, value);
         }
 
         /// <summary>

@@ -53,7 +53,7 @@
         </TabControl.ItemsPanel>
 
         <TabControl.Tag>
-            <Grid Height="30"
+            <Grid Height="33"
                   ColumnDefinitions="*, Auto, Auto"
                   Margin="0, 5">
                 <ProgressBar Grid.Column="0"
@@ -65,16 +65,16 @@
                 <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
                     <Label Margin="10, 0, 5, 0" Content="{Binding ProgressInfo, Converter={StaticResource LocalizedStatusConverter}}" />
                 </Viewbox>
-                <Button Grid.Column="1"
-                        Margin="5, 0, 5, 0"
-                        Content="{DynamicResource MainWindow:MoreInfoButton}"
-                        Command="{Binding MoreInfoCommand}">
-                </Button>
-                <Button Grid.Column="2"
-                        Margin="5, 0, 10, 0"
-                        Content="{DynamicResource MainWindow:RefreshModsButton}"
-                        Command="{Binding InstallCommand}">
-                </Button>
+                <Viewbox Grid.Column="1">
+                    <Button Margin="5, 0, 5, 0" Command="{Binding MoreInfoCommand}">
+                        <c:IconHeader Padding="4, 0, 0, 0" IconPlacement="Left" Content="{DynamicResource MainWindow:MoreInfoButton}" IconData="{StaticResource Icons:Info}" />
+                    </Button>
+                </Viewbox>
+                <Viewbox Grid.Column="2">
+                    <Button Margin="5, 0, 10, 0" Command="{Binding InstallCommand}">
+                        <c:IconHeader IconPlacement="Left" Content="{DynamicResource MainWindow:RefreshModsButton}" IconData="{StaticResource Icons:Download}" />
+                    </Button>
+                </Viewbox>
             </Grid>
         </TabControl.Tag>
     </TabControl>
