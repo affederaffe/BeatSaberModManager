@@ -35,7 +35,7 @@ jobs:
                     path: BeatSaberModManager/bin/Release/linux-x64/publish/BeatSaberModManager
 
             -   name: Build Framework Dependent
-                run: dotnet publish -c Release -r linux-x64 --no-self-contained
+                run: dotnet publish -c Release -r linux-x64 --no-self-contained -p:EnableSingleFileAnalyzer=false
             -   name: Upload Artifact
                 uses: actions/upload-artifact@v2
                 with:
@@ -63,7 +63,7 @@ jobs:
                     path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe
 
             -   name: Build Framework Dependent
-                run: dotnet publish -c Release -r win-x64 --no-self-contained
+                run: dotnet publish -c Release -r win-x64 --no-self-contained -p:EnableSingleFileAnalyzer=false
             -   name: Upload Artifact
                 uses: actions/upload-artifact@v2
                 with:
