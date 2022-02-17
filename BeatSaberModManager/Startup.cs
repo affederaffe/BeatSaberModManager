@@ -59,7 +59,6 @@ namespace BeatSaberModManager
                 .With(new FontManagerOptions { DefaultFamilyName = string.IsNullOrEmpty(SKTypeface.Default.FamilyName) ? SKFontManager.Default.GetFamilyName(0) : SKTypeface.Default.FamilyName })
                 .UsePlatformDetect()
                 .UseReactiveUI()
-                .LogToTrace()
                 .StartWithClassicDesktopLifetime(null!);
     }
 }
