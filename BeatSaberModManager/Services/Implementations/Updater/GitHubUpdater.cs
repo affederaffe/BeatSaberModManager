@@ -52,14 +52,14 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         {
             Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.OrdinalIgnoreCase));
             if (asset is null) return -1;
-            HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return -1;
             string processPath = Environment.ProcessPath!;
-            string oldPath = processPath.Replace(".exe", ".old.exe");
+            string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.OrdinalIgnoreCase);
             IOUtils.TryDeleteFile(oldPath);
             IOUtils.TryMoveFile(processPath, oldPath);
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            ZipArchive archive = new(stream);
+            using ZipArchive archive = new(stream);
             if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true)) return -1;
             ProcessStartInfo processStartInfo = new(processPath);
             foreach (string arg in _args)

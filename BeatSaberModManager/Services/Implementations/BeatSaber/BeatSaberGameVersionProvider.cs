@@ -15,7 +15,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 
         /// <inheritdoc />
         public async Task<string?> DetectGameVersionAsync(string installDir) =>
-            _gameVersion ?? await DetectGameVersionAsyncCore(installDir);
+            _gameVersion ?? await DetectGameVersionAsyncCore(installDir).ConfigureAwait(false);
 
         private async Task<string?> DetectGameVersionAsyncCore(string installDir)
         {

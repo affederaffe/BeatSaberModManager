@@ -48,7 +48,7 @@ namespace BeatSaberModManager
         public static async Task<int> Main(string[] args)
         {
             using Container container = CreateContainer(args);
-            return await container.Resolve<Startup>().RunAsync();
+            return await container.Resolve<Startup>().RunAsync().ConfigureAwait(false);
         }
 
         private static Container CreateContainer(IReadOnlyList<string> args)
