@@ -8,6 +8,7 @@
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <Nullable>enable</Nullable>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
+        <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
         <EnableSingleFileAnalyzer>false</EnableSingleFileAnalyzer>
         <AnalysisLevel>latest</AnalysisLevel>
         <AnalysisMode>recommended</AnalysisMode>
