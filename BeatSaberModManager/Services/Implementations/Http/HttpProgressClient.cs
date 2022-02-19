@@ -29,7 +29,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
         public HttpProgressClient() : base(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All })
         {
             DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(ThisAssembly.Info.Product, ThisAssembly.Info.Version)));
-            Timeout = TimeSpan.FromSeconds(30);
+            Timeout = TimeSpan.FromMinutes(3);
         }
 
         /// <summary>
