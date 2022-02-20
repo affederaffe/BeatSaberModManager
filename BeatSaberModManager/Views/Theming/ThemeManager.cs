@@ -6,7 +6,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
-using Avalonia.Markup.Xaml.Styling;
+using Avalonia;
 using Avalonia.Styling;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -23,23 +23,28 @@ namespace BeatSaberModManager.Views.Theming
     /// </summary>
     public class ThemeManager : ReactiveObject
     {
-        private readonly ISettings<AppSettings> _appSettings;
         private readonly int _buildInThemesCount;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeManager"/> class.
         /// </summary>
-        public ThemeManager(ISettings<AppSettings> appSettings)
+        public ThemeManager(ISettings<AppSettings> appSettings, Application application)
         {
-            _appSettings = appSettings;
+            FluentTheme fluentTheme = new((null as Uri)!);
+            application.Styles.Insert(0, fluentTheme);
             Themes = new ObservableCollection<Theme>
             {
-                new("Fluent Light", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentLight.axaml") }),
-                new("Fluent Dark", new StyleInclude((null as Uri)!) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/FluentDark.axaml") })
+                new("Fluent Light", fluentTheme.FluentLight),
+                new("Fluent Dark", fluentTheme.FluentDark)
             };
 
             _buildInThemesCount = Themes.Count;
-            _selectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.Value.ThemeName) ?? Themes[0];
+            _selectedTheme = Themes.FirstOrDefault(x => x.Name == appSettings.Value.ThemeName) ?? Themes[0];
+            ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
+            appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Where(Directory.Exists).ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand!);
+            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme);
+            selectedThemeObservable.Subscribe(t => fluentTheme.Style = t.Style);
+            selectedThemeObservable.Subscribe(t => appSettings.Value.ThemeName = t.Name);
         }
 
         /// <summary>
@@ -57,19 +62,6 @@ namespace BeatSaberModManager.Views.Theming
         }
 
         private Theme _selectedTheme;
-
-        /// <summary>
-        /// Initializes the <see cref="ThemeManager"/>.
-        /// </summary>
-        /// <param name="applyTheme">The <see cref="Action{T}"/> invoked when the <see cref="SelectedTheme"/> changes.</param>
-        public void Initialize(Action<Theme> applyTheme)
-        {
-            ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
-            _appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Where(Directory.Exists).ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand!);
-            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme);
-            selectedThemeObservable.Subscribe(applyTheme);
-            selectedThemeObservable.Subscribe(t => _appSettings.Value.ThemeName = t.Name);
-        }
 
         private async Task ReloadExternalThemes(string path)
         {

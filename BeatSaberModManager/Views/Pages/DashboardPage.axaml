@@ -12,15 +12,15 @@
     <Grid RowDefinitions="Auto, Auto, Auto" Margin="31">
         <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
             <UniformGrid Rows="1">
-                <Grid RowDefinitions="Auto, Auto">
+                <Grid RowDefinitions="3*, *">
                     <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding AppVersion}" />
                     <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:AppVersionLabel}" />
                 </Grid>
-                <Grid RowDefinitions="Auto, Auto">
+                <Grid RowDefinitions="3*, *">
                     <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding GameVersion}" />
                     <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:GameVersionLabel}" />
                 </Grid>
-                <Grid RowDefinitions="Auto, Auto">
+                <Grid RowDefinitions="3*, *">
                     <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding ModsViewModel.InstalledModsCount}" />
                     <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:InstalledModsLabel}" />
                 </Grid>

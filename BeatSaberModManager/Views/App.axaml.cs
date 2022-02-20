@@ -23,10 +23,10 @@ namespace BeatSaberModManager.Views
     /// <inheritdoc />
     public class App : Application
     {
-        private readonly IResolver _resolver = null!;
         private readonly ILogger _logger = null!;
-        private readonly LocalizationManager _localizationManager = null!;
-        private readonly ThemeManager _themeManager = null!;
+        private readonly Lazy<Window> _mainWindow = null!;
+        private readonly Lazy<LocalizationManager> _localizationManager = null!;
+        private readonly Lazy<ThemeManager> _themeManager = null!;
 
         /// <summary>
         /// [Required by Avalonia]
@@ -34,15 +34,15 @@ namespace BeatSaberModManager.Views
         public App() { }
 
         /// <inheritdoc />
-        public App(IResolver resolver, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager)
+        public App(IResolver resolver, ILogger logger, Lazy<Window> mainWindow, Lazy<LocalizationManager> localizationManager, Lazy<ThemeManager> themeManager)
         {
-            _resolver = resolver;
             _logger = logger;
+            _mainWindow = mainWindow;
             _localizationManager = localizationManager;
             _themeManager = themeManager;
             DataTemplates.Add(new ViewLocator(resolver));
 #if !DEBUG
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(HandleException);
+            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
 #endif
         }
 
@@ -50,19 +50,19 @@ namespace BeatSaberModManager.Views
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-            _localizationManager.Initialize(l => Resources.MergedDictionaries[0] = l.ResourceProvider);
-            _themeManager.Initialize(t => Styles[0] = t.Style);
+            _ = _localizationManager.Value;
+            _ = _themeManager.Value;
         }
 
         /// <inheritdoc />
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
-            lifetime.MainWindow = _resolver.Resolve<Window>();
+            lifetime.MainWindow = _mainWindow.Value;
         }
 
         [SuppressMessage("ReSharper", "AsyncVoidMethod")]
-        private async void HandleException(Exception e)
+        private async void ShowException(Exception e)
         {
             _logger.Fatal(e, "Application crashed");
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;

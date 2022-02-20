@@ -10,11 +10,6 @@
     <sys:String x:Key="MainWindow:MoreInfoButton">More Info</sys:String>
     <sys:String x:Key="MainWindow:RefreshModsButton">Refresh Mods</sys:String>
 
-    <sys:String x:Key="Status:Installing">Installing:</sys:String>
-    <sys:String x:Key="Status:Uninstalling">Uninstalling:</sys:String>
-    <sys:String x:Key="Status:Completed">Installation completed</sys:String>
-    <sys:String x:Key="Status:Failed">Installation failed</sys:String>
-
     <sys:String x:Key="IntroView:Name">Beat Saber Mod Manager</sys:String>
     <sys:String x:Key="IntroView:IntroText:Line1">Please read this page entirely and carefully</sys:String>
     <sys:String x:Key="IntroView:IntroText:Line2">By using this program attest to have read and agree to the following terms:</sys:String>
@@ -66,5 +61,13 @@
 
     <sys:String x:Key="ExceptionWindow:Title">Application crashed</sys:String>
     <sys:String x:Key="ExceptionWindow:Ok">Ok</sys:String>
+
+    <sys:String x:Key="Status:Installing">Installing:</sys:String>
+    <sys:String x:Key="Status:Uninstalling">Uninstalling:</sys:String>
+    <sys:String x:Key="Status:Completed">Installation completed</sys:String>
+    <sys:String x:Key="Status:Failed">Installation failed</sys:String>
+
+    <sys:String x:Key="Theme:Dark">Dark</sys:String>
+    <sys:String x:Key="Theme:Light">Light</sys:String>
 
 </ResourceDictionary>

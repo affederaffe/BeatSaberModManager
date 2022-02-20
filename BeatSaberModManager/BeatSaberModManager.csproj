@@ -31,21 +31,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Resources/**"/>
-        <None Include="Resources/Icons/Icon.ico" CopyToOutputDirectory="PreserveNewest"/>
+        <AvaloniaResource Include="Resources/**" />
+        <None Include="Resources/Icons/Icon.ico" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="0.10.12"/>
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.12"/>
-        <PackageReference Include="Avalonia.Desktop" Version="0.10.12"/>
-        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="0.10.12"/>
-        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12"/>
-        <PackageReference Include="DryIoc.dll" Version="5.0.0-preview-01"/>
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0"/>
-        <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.9"/>
-        <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4"/>
-        <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj"/>
+        <PackageReference Include="Avalonia" Version="0.10.12" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="0.10.12" />
+        <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
+        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="0.10.12" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12" />
+        <PackageReference Include="DryIoc.dll" Version="5.0.0-preview-01" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.9" />
+        <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
+        <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
     </ItemGroup>
 
 </Project>

@@ -3,7 +3,6 @@
              x:Class="BeatSaberModManager.Views.App">
 
     <Application.Styles>
-        <StyleInclude Source="/Resources/Styles/FluentDark.axaml" />
         <StyleInclude Source="/Resources/Styles/DataGrid.axaml" />
         <StyleInclude Source="/Resources/Styles/HyperlinkButton.axaml" />
         <StyleInclude Source="/Resources/Styles/IconHeader.axaml" />
@@ -14,7 +13,6 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Resources/Localization/en.axaml" />
                 <ResourceInclude Source="/Resources/Icons/Icons.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

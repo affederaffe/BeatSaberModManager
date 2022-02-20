@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reactive.Linq;
 
+using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -18,18 +20,19 @@ namespace BeatSaberModManager.Views.Localization
     /// </summary>
     public class LocalizationManager : ReactiveObject
     {
-        private readonly ISettings<AppSettings> _appSettings;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizationManager"/> class.
         /// </summary>
-        public LocalizationManager(ISettings<AppSettings> appSettings)
+        public LocalizationManager(ISettings<AppSettings> appSettings, Application application)
         {
-            _appSettings = appSettings;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
-            _selectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == _appSettings.Value.LanguageCode) ??
+            _selectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == appSettings.Value.LanguageCode) ??
                                 Languages.FirstOrDefault(static x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
                                 Languages[0];
+            application.Resources.MergedDictionaries.Insert(0, _selectedLanguage.ResourceProvider);
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage).Skip(1);
+            selectedLanguageObservable.Subscribe(l => application.Resources.MergedDictionaries[0] = l.ResourceProvider);
+            selectedLanguageObservable.Subscribe(l => appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }
 
         /// <summary>
@@ -48,20 +51,9 @@ namespace BeatSaberModManager.Views.Localization
 
         private Language _selectedLanguage;
 
-        /// <summary>
-        /// Initializes the <see cref="LocalizationManager"/>.
-        /// </summary>
-        /// <param name="applyLanguage">The <see cref="Action{T}"/> invoked when the <see cref="SelectedLanguage"/> changes.</param>
-        public void Initialize(Action<Language> applyLanguage)
-        {
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage);
-            selectedLanguageObservable.Subscribe(applyLanguage);
-            selectedLanguageObservable.Subscribe(l => _appSettings.Value.LanguageCode = l.CultureInfo.Name);
-        }
-
         private static Language LoadLanguage(string languageCode)
         {
-            ResourceInclude resourceInclude = new() { Source = new Uri($"avares://{nameof(BeatSaberModManager)}/Resources/Localization/{languageCode}.axaml") };
+            ResourceInclude resourceInclude = new() { Source = new Uri($"avares://BeatSaberModManager/Resources/Localization/{languageCode}.axaml") };
             CultureInfo cultureInfo = CultureInfo.GetCultureInfo(languageCode);
             return new Language(cultureInfo, resourceInclude);
         }
