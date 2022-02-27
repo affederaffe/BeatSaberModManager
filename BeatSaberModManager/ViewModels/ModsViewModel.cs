@@ -41,7 +41,9 @@ namespace BeatSaberModManager.ViewModels
             ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> initializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
             initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            IsSuccessObservable = initializeCommand.Select(static _ => true);
+            IsSuccessObservable = initializeCommand.Select(static x => x is not null)
+                .CombineLatest(initializeCommand.IsExecuting)
+                .Select(static x => x.First && !x.Second);
             IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
             IsSuccessObservable.CombineLatest(initializeCommand.IsExecuting)
                 .Select(static x => !x.First && !x.Second)
@@ -140,6 +142,7 @@ namespace BeatSaberModManager.ViewModels
         {
             await Task.WhenAll(_modProvider.LoadAvailableModsForCurrentVersionAsync(installDir), _modProvider.LoadInstalledModsAsync(installDir)).ConfigureAwait(false);
             if (_modProvider.AvailableMods is null || _modProvider.InstalledMods is null) return null;
+            InstalledModsCount = 0;
             Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods.ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
             foreach (ModGridItemViewModel gridItem in gridItems.Values)
             {
