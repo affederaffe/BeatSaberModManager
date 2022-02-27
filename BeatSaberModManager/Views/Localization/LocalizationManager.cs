@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reactive.Linq;
 
 using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -29,8 +28,7 @@ namespace BeatSaberModManager.Views.Localization
             _selectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == appSettings.Value.LanguageCode) ??
                                 Languages.FirstOrDefault(static x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
                                 Languages[0];
-            application.Resources.MergedDictionaries.Insert(0, _selectedLanguage.ResourceProvider);
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage).Skip(1);
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage);
             selectedLanguageObservable.Subscribe(l => application.Resources.MergedDictionaries[0] = l.ResourceProvider);
             selectedLanguageObservable.Subscribe(l => appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }
