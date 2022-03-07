@@ -11,15 +11,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
     /// <inheritdoc />
     public class BeatSaberGameVersionProvider : IGameVersionProvider
     {
-        private string? _gameVersion;
-
         /// <inheritdoc />
-        public async Task<string?> DetectGameVersionAsync(string installDir) =>
-            _gameVersion ?? await DetectGameVersionAsyncCore(installDir).ConfigureAwait(false);
-
-        private async Task<string?> DetectGameVersionAsyncCore(string installDir)
+        public async Task<string?> DetectGameVersionAsync(string installDir)
         {
-            string filePath = Path.Combine(installDir, "Beat Saber_Data", "globalgamemanagers");
+            string filePath = Path.Join(installDir, "Beat Saber_Data", "globalgamemanagers");
             await using FileStream? fileStream = IOUtils.TryOpenFile(filePath, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) return null;
             using BinaryReader reader = new(fileStream, Encoding.UTF8);
@@ -34,8 +29,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 
             int len = reader.ReadInt32();
             byte[] bytes = reader.ReadBytes(len);
-            _gameVersion = Encoding.UTF8.GetString(bytes);
-            return _gameVersion;
+            return Encoding.UTF8.GetString(bytes);
         }
 
         private static void SearchForKey(BinaryReader reader, string key)

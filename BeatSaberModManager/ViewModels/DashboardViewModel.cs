@@ -36,7 +36,7 @@ namespace BeatSaberModManager.ViewModels
             StatusProgress = (StatusProgress)statusProgress;
             modsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
             OpenAppDataCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appDataPathProvider.GetAppDataPath(appSettings.Value.InstallDir!)), modsViewModel.ValidatedInstallDirObservable.Select(appDataPathProvider.GetAppDataPath).Select(Directory.Exists));
-            OpenLogsCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(Path.Combine(appSettings.Value.InstallDir!, "Logs")), modsViewModel.IsInstallDirValidObservable);
+            OpenLogsCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(Path.Join(appSettings.Value.InstallDir!, "Logs")), modsViewModel.IsInstallDirValidObservable);
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, modsViewModel.IsSuccessObservable);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, modsViewModel.IsSuccessObservable);
             LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!), modsViewModel.IsInstallDirValidObservable);

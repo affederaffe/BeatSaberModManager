@@ -34,7 +34,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
             if (beatModsMods.Length <= 0) yield break;
-            string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
+            string pendingDirPath = Path.Join(installDir, "IPA", "Pending");
             IOUtils.TryCreateDirectory(pendingDirPath);
             int i = 0;
             progress?.Report(new ProgressInfo(StatusType.Installing, beatModsMods[i].Name));
@@ -73,10 +73,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <inheritdoc />
         public void RemoveAllMods(string installDir)
         {
-            string pluginsDirPath = Path.Combine(installDir, "Plugins");
-            string libsDirPath = Path.Combine(installDir, "Libs");
-            string ipaDirPath = Path.Combine(installDir, "IPA");
-            string winhttpPath = Path.Combine(installDir, "winhttp.dll");
+            string pluginsDirPath = Path.Join(installDir, "Plugins");
+            string libsDirPath = Path.Join(installDir, "Libs");
+            string ipaDirPath = Path.Join(installDir, "IPA");
+            string winhttpPath = Path.Join(installDir, "winhttp.dll");
             IOUtils.TryDeleteDirectory(pluginsDirPath, true);
             IOUtils.TryDeleteDirectory(libsDirPath, true);
             IOUtils.TryDeleteDirectory(ipaDirPath, true);
@@ -100,10 +100,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         [SupportedOSPlatform("windows")]
         private static async Task InstallBsipaWindowsAsync(string installDir)
         {
-            string bsipaPath = Path.Combine(installDir, "IPA.exe");
             ProcessStartInfo processStartInfo = new()
             {
-                FileName = bsipaPath,
+                FileName = Path.Join(installDir, "IPA.exe"),
                 WorkingDirectory = installDir,
                 Arguments = "-n"
             };
@@ -119,7 +118,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             Directory.SetCurrentDirectory(installDir);
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
-            string protonRegPath = Path.Combine(installDir, "../../compatdata/620980/pfx/user.reg");
+            string protonRegPath = Path.Join(installDir, "../../compatdata/620980/pfx/user.reg");
             await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Access = FileAccess.ReadWrite, Options = FileOptions.Asynchronous });
             if (fileStream is null) return;
             using StreamReader reader = new(fileStream);
@@ -132,10 +131,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         [SupportedOSPlatform("windows")]
         private static async ValueTask UninstallBsipaWindowsAsync(string installDir, BeatModsMod bsipa)
         {
-            string bsipaPath = Path.Combine(installDir, "IPA.exe");
             ProcessStartInfo processStartInfo = new()
             {
-                FileName = bsipaPath,
+                FileName = Path.Join(installDir, "IPA.exe"),
                 WorkingDirectory = installDir,
                 Arguments = "--revert -n"
             };
@@ -160,19 +158,19 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             foreach (BeatModsHash hash in bsipa.Downloads[0].Hashes)
             {
-                string fileName = hash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null);
-                string path = Path.Combine(installDir, fileName);
+                string fileName = hash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null, StringComparison.Ordinal);
+                string path = Path.Join(installDir, fileName);
                 IOUtils.TryDeleteFile(path);
             }
         }
 
         private static void RemoveModFiles(string installDir, BeatModsMod mod)
         {
-            string pendingDirPath = Path.Combine(installDir, "IPA", "Pending");
+            string pendingDirPath = Path.Join(installDir, "IPA", "Pending");
             foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
             {
-                string pendingPath = Path.Combine(pendingDirPath, hash.File);
-                string normalPath = Path.Combine(installDir, hash.File);
+                string pendingPath = Path.Join(pendingDirPath, hash.File);
+                string normalPath = Path.Join(installDir, hash.File);
                 IOUtils.TryDeleteFile(pendingPath);
                 IOUtils.TryDeleteFile(normalPath);
             }

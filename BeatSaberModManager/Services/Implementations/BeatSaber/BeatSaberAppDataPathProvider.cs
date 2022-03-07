@@ -17,9 +17,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                     : throw new PlatformNotSupportedException();
 
         [SupportedOSPlatform("windows")]
-        private static string GetWindowsAppDataPath() => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "Hyperbolic Magnetism");
+        private static string GetWindowsAppDataPath() => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "Hyperbolic Magnetism");
 
         [SupportedOSPlatform("linux")]
-        private static string GetLinuxAppDataPath(string installDir) => Path.Combine(installDir, "../../compatdata/620980/pfx/drive_c/users/steamuser/AppData/LocalLow/Hyperbolic Magnetism");
+        private static string GetLinuxAppDataPath(string installDir) => Path.Join(installDir, "../../compatdata/620980/pfx/drive_c/users/steamuser/AppData/LocalLow/Hyperbolic Magnetism");
     }
 }

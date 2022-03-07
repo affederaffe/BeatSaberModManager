@@ -36,8 +36,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         /// <inheritdoc />
         public PlatformType DetectPlatform(string installDir)
         {
-            string pluginsDir = Path.Combine(installDir, "Beat Saber_Data", "Plugins");
-            return File.Exists(Path.Combine(pluginsDir, "steam_api64.dll")) || File.Exists(Path.Combine(pluginsDir, "x86_64", "steam_api64.dll")) ? PlatformType.Steam : PlatformType.Oculus;
+            string pluginsDir = Path.Join(installDir, "Beat Saber_Data", "Plugins");
+            return File.Exists(Path.Join(pluginsDir, "steam_api64.dll")) || File.Exists(Path.Join(pluginsDir, "x86_64", "steam_api64.dll")) ? PlatformType.Steam : PlatformType.Oculus;
         }
 
         [SupportedOSPlatform("windows")]
@@ -51,7 +51,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         private ValueTask<string?> LocateLinuxSteamInstallDirAsync()
         {
             string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string steamInstallDir = Path.Combine(homeDir, ".steam", "root");
+            string steamInstallDir = Path.Join(homeDir, ".steam", "root");
             return LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
@@ -68,7 +68,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 
         private async Task<string?> MatchSteamBeatSaberInstallDirAsync(string path)
         {
-            string acf = Path.Combine(path, "appmanifest_620980.acf");
+            string acf = Path.Join(path, "appmanifest_620980.acf");
             await using FileStream? fileStream = IOUtils.TryOpenFile(acf, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) return null;
             Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
@@ -78,7 +78,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             {
                 Match match = regex.Match(line);
                 if (!match.Success) continue;
-                string installDir = Path.Combine(path, "common", match.Groups[1].Value);
+                string installDir = Path.Join(path, "common", match.Groups[1].Value);
                 if (_installDirValidator.ValidateInstallDir(installDir))
                     return installDir;
             }
@@ -92,7 +92,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             using RegistryKey? oculusInstallDirKey = Registry.LocalMachine.OpenSubKey("Software")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
             if (string.IsNullOrEmpty(oculusInstallDir)) return null;
-            string finalPath = Path.Combine(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
+            string finalPath = Path.Join(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
             string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
             return installDir is null ? null : Path.GetFullPath(installDir);
         }
@@ -107,7 +107,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                 using RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
                 string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
                 if (libraryPath is null) continue;
-                string finalPath = Path.Combine(libraryPath, "Software", "hyperbolic-magnetism-beat-saber");
+                string finalPath = Path.Join(libraryPath, "Software", "hyperbolic-magnetism-beat-saber");
                 if (_installDirValidator.ValidateInstallDir(finalPath))
                     return finalPath;
             }
@@ -125,7 +125,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         private static async IAsyncEnumerable<string> EnumerateSteamLibraryPathsAsync(string path)
         {
             yield return path;
-            string vdf = Path.Combine(path, "steamapps", "libraryfolders.vdf");
+            string vdf = Path.Join(path, "steamapps", "libraryfolders.vdf");
             await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) yield break;
             Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
@@ -135,7 +135,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             {
                 Match match = regex.Match(line);
                 if (match.Success)
-                    yield return Path.Combine(match.Groups[1].Value.Replace(@"\\", "/", StringComparison.Ordinal), "steamapps");
+                    yield return Path.Join(match.Groups[1].Value.Replace(@"\\", "/", StringComparison.Ordinal), "steamapps");
             }
         }
     }

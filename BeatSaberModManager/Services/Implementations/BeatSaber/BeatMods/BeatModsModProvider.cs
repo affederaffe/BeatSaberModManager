@@ -70,7 +70,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             HashSet<IMod> installedMods = new();
             IMod? bsipa = await GetInstalledModLoader(installDir, fileHashModPairs);
             if (bsipa is not null) installedMods.Add(bsipa);
-            IEnumerable<string> files = _installedModsLocations.Select(x => Path.Combine(installDir, x))
+            IEnumerable<string> files = _installedModsLocations.Select(x => Path.Join(installDir, x))
                 .Where(Directory.Exists)
                 .SelectMany(static x => Directory.EnumerateFiles(x, string.Empty, SearchOption.AllDirectories))
                 .Where(static x => Path.GetExtension(x) is ".dll" or ".manifest" or ".exe");
@@ -177,13 +177,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <returns>The <see cref="IMod"/> of BSIPA if found, null otherwise.</returns>
         private async Task<IMod?> GetInstalledModLoader(string installDir, IReadOnlyDictionary<string, BeatModsMod> fileHashModPairs)
         {
-            string injectorPath = Path.Combine(installDir, "Beat Saber_Data", "Managed", "IPA.Injector.dll");
+            string injectorPath = Path.Join(installDir, "Beat Saber_Data", "Managed", "IPA.Injector.dll");
             string? injectorHash = await _hashProvider.CalculateHashForFile(injectorPath).ConfigureAwait(false);
             if (injectorHash is null || !fileHashModPairs.TryGetValue(injectorHash, out BeatModsMod? bsipa)) return null;
             foreach (BeatModsHash beatModsHash in bsipa.Downloads[0].Hashes.Where(static x => Path.GetExtension(x.File) is ".dll" or ".manifest" or ".exe"))
             {
-                string fileName = beatModsHash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null);
-                string path = Path.Combine(installDir, fileName);
+                string fileName = beatModsHash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null, StringComparison.Ordinal);
+                string path = Path.Join(installDir, fileName);
                 string? hash = await _hashProvider.CalculateHashForFile(path);
                 if (beatModsHash.Hash != hash) return null;
             }
@@ -191,6 +191,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return bsipa;
         }
 
-        private static readonly string[] _installedModsLocations = { Path.Combine("IPA", "Pending"), "Plugins", "Libs" };
+        private static readonly string[] _installedModsLocations = { Path.Join("IPA", "Pending"), "Plugins", "Libs" };
     }
 }

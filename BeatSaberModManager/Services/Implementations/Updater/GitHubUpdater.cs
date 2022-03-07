@@ -50,12 +50,12 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         /// <inheritdoc />
         public async Task<int> Update()
         {
-            Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.OrdinalIgnoreCase));
+            Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.Ordinal));
             if (asset is null) return -1;
             using HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return -1;
             string processPath = Environment.ProcessPath!;
-            string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.OrdinalIgnoreCase);
+            string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.Ordinal);
             IOUtils.TryDeleteFile(oldPath);
             IOUtils.TryMoveFile(processPath, oldPath);
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

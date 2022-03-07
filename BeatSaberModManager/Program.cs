@@ -71,7 +71,7 @@ namespace BeatSaberModManager
 
         private static void RegisterSerilog(this IRegistrator container)
         {
-            Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Minute).CreateLogger();
+            Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Minute).CreateLogger();
             container.Register(Made.Of(static () => Log.Logger), setup: Setup.With(condition: static r => r.Parent.ImplementationType is null));
             container.Register(Made.Of(static () => Log.ForContext(Arg.Index<Type>(0)), static r => r.Parent.ImplementationType), setup: Setup.With(condition: static r => r.Parent.ImplementationType is not null));
         }

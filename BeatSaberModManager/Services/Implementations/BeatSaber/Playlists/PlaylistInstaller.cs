@@ -47,9 +47,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         {
             using HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
-            string playlistsDirPath = Path.Combine(installDir, "Playlists");
+            string playlistsDirPath = Path.Join(installDir, "Playlists");
             string fileName = WebUtility.UrlDecode(uri.Segments.Last());
-            string filePath = Path.Combine(playlistsDirPath, fileName);
+            string filePath = Path.Join(playlistsDirPath, fileName);
             if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
@@ -67,8 +67,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         public async Task<bool> InstallPlaylistAsync(string installDir, string filePath, IStatusProgress? progress = null)
         {
             string fileName = Path.GetFileName(filePath);
-            string playlistsDirPath = Path.Combine(installDir, "Playlists");
-            string destFilePath = Path.Combine(playlistsDirPath, fileName);
+            string playlistsDirPath = Path.Join(installDir, "Playlists");
+            string destFilePath = Path.Join(playlistsDirPath, fileName);
             if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
             string json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
             await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);

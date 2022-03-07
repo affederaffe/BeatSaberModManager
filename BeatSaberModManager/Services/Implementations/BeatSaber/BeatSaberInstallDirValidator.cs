@@ -11,6 +11,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
     {
         /// <inheritdoc />
         public bool ValidateInstallDir([NotNullWhen(true)] string? path) =>
-            !string.IsNullOrEmpty(path) && File.Exists(Path.Combine(path, "Beat Saber.exe"));
+            !string.IsNullOrEmpty(path) && File.Exists(Path.Join(path, "Beat Saber.exe"));
     }
 }

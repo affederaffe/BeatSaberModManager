@@ -26,8 +26,8 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         {
             _jsonTypeInfo = jsonTypeInfo;
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            _saveDirPath = Path.Combine(appDataFolderPath, nameof(BeatSaberModManager));
-            _saveFilePath = Path.Combine(_saveDirPath, $"{typeof(T).Name}.json");
+            _saveDirPath = Path.Join(appDataFolderPath, nameof(BeatSaberModManager));
+            _saveFilePath = Path.Join(_saveDirPath, $"{typeof(T).Name}.json");
         }
 
         /// <summary>
