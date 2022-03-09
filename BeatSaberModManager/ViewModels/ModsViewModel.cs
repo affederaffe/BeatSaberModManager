@@ -41,7 +41,7 @@ namespace BeatSaberModManager.ViewModels
             ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> initializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
             initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            IsSuccessObservable = initializeCommand.Select(static x => x is not null)
+            IsSuccessObservable = initializeCommand.Select(static x => x?.Count is > 0)
                 .CombineLatest(initializeCommand.IsExecuting)
                 .Select(static x => x.First && !x.Second);
             IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
