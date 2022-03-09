@@ -42,7 +42,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 bool isModLoader = _modProvider.IsModLoader(beatModsMods[i]);
                 string extractDir = isModLoader ? installDir : pendingDirPath;
-                IOUtils.TryExtractArchive(archive, extractDir, true);
+                if (!IOUtils.TryExtractArchive(archive, extractDir, true)) continue;
                 if (isModLoader) await InstallBsipaAsync(installDir).ConfigureAwait(false);
                 yield return beatModsMods[i++];
                 if (i >= beatModsMods.Length) break;
