@@ -11,8 +11,6 @@ using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
 using BeatSaberModManager.Views.Windows;
 
-using DryIoc;
-
 using ReactiveUI;
 
 using Serilog;
@@ -24,9 +22,9 @@ namespace BeatSaberModManager.Views
     public class App : Application
     {
         private readonly ILogger _logger = null!;
+        private readonly LocalizationManager _localizationManager = null!;
+        private readonly ThemeManager _themeManager = null!;
         private readonly Lazy<Window> _mainWindow = null!;
-        private readonly Lazy<LocalizationManager> _localizationManager = null!;
-        private readonly Lazy<ThemeManager> _themeManager = null!;
 
         /// <summary>
         /// [Required by Avalonia]
@@ -34,13 +32,13 @@ namespace BeatSaberModManager.Views
         public App() { }
 
         /// <inheritdoc />
-        public App(IResolver resolver, ILogger logger, Lazy<Window> mainWindow, Lazy<LocalizationManager> localizationManager, Lazy<ThemeManager> themeManager)
+        public App(IServiceProvider services, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
         {
             _logger = logger;
-            _mainWindow = mainWindow;
             _localizationManager = localizationManager;
             _themeManager = themeManager;
-            DataTemplates.Add(new ViewLocator(resolver));
+            _mainWindow = mainWindow;
+            DataTemplates.Add(new ViewLocator(services));
 #if !DEBUG
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
 #endif
@@ -50,8 +48,8 @@ namespace BeatSaberModManager.Views
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-            _ = _localizationManager.Value;
-            _ = _themeManager.Value;
+            _localizationManager.Initialize(this);
+            _themeManager.Initialize(this);
         }
 
         /// <inheritdoc />

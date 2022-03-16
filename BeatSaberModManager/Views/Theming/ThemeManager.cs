@@ -24,18 +24,18 @@ namespace BeatSaberModManager.Views.Theming
     public class ThemeManager : ReactiveObject
     {
         private readonly int _buildInThemesCount;
+        private readonly FluentThemeBase _fluentThemeBase;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeManager"/> class.
         /// </summary>
-        public ThemeManager(ISettings<AppSettings> appSettings, Application application)
+        public ThemeManager(ISettings<AppSettings> appSettings)
         {
-            FluentTheme fluentTheme = new((null as Uri)!);
-            application.Styles.Insert(0, fluentTheme);
+            _fluentThemeBase = new FluentThemeBase((null as Uri)!);
             Themes = new ObservableCollection<Theme>
             {
-                new("Fluent Light", fluentTheme.FluentLight),
-                new("Fluent Dark", fluentTheme.FluentDark)
+                new("Fluent Light", _fluentThemeBase.FluentLight),
+                new("Fluent Dark", _fluentThemeBase.FluentDark)
             };
 
             _buildInThemesCount = Themes.Count;
@@ -43,7 +43,7 @@ namespace BeatSaberModManager.Views.Theming
             ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
             appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Where(Directory.Exists).ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand!);
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme);
-            selectedThemeObservable.Subscribe(t => fluentTheme.Style = t.Style);
+            selectedThemeObservable.Subscribe(t => _fluentThemeBase.Style = t.Style);
             selectedThemeObservable.Subscribe(t => appSettings.Value.ThemeName = t.Name);
         }
 
@@ -62,6 +62,15 @@ namespace BeatSaberModManager.Views.Theming
         }
 
         private Theme _selectedTheme;
+
+        /// <summary>
+        /// Inserts the <see cref="FluentThemeBase"/> into the <see cref="Application"/>'s <see cref="Application.Styles"/>.
+        /// </summary>
+        /// <param name="application">The <see cref="Application"/> to style.</param>
+        public void Initialize(Application application)
+        {
+            application.Styles.Insert(0, _fluentThemeBase);
+        }
 
         private async Task ReloadExternalThemes(string path)
         {

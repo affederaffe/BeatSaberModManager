@@ -100,6 +100,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         [SupportedOSPlatform("windows")]
         private static async Task InstallBsipaWindowsAsync(string installDir)
         {
+            string winhttpPath = Path.Join(installDir, "winhttp.dll");
+            if (File.Exists(winhttpPath)) return;
+
             ProcessStartInfo processStartInfo = new()
             {
                 FileName = Path.Join(installDir, "IPA.exe"),
@@ -114,10 +117,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         [SupportedOSPlatform("linux")]
         private static async Task InstallBsipaLinux(string installDir)
         {
+            string winhttpPath = Path.Join(installDir, "winhttp.dll");
+            if (File.Exists(winhttpPath)) return;
+
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(installDir);
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
+
             string protonRegPath = Path.Join(installDir, "../../compatdata/620980/pfx/user.reg");
             await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Access = FileAccess.ReadWrite, Options = FileOptions.Asynchronous });
             if (fileStream is null) return;

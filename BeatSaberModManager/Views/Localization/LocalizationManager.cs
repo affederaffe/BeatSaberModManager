@@ -19,18 +19,18 @@ namespace BeatSaberModManager.Views.Localization
     /// </summary>
     public class LocalizationManager : ReactiveObject
     {
+        private readonly ISettings<AppSettings> _appSettings;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizationManager"/> class.
         /// </summary>
-        public LocalizationManager(ISettings<AppSettings> appSettings, Application application)
+        public LocalizationManager(ISettings<AppSettings> appSettings)
         {
+            _appSettings = appSettings;
             Languages = _supportedLanguageCodes.Select(LoadLanguage).ToArray();
             _selectedLanguage = Languages.FirstOrDefault(x => x.CultureInfo.Name == appSettings.Value.LanguageCode) ??
                                 Languages.FirstOrDefault(static x => x.CultureInfo.Name == CultureInfo.CurrentCulture.Name) ??
                                 Languages[0];
-            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage);
-            selectedLanguageObservable.Subscribe(l => application.Resources.MergedDictionaries[0] = l.ResourceProvider);
-            selectedLanguageObservable.Subscribe(l => appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }
 
         /// <summary>
@@ -48,6 +48,17 @@ namespace BeatSaberModManager.Views.Localization
         }
 
         private Language _selectedLanguage;
+
+        /// <summary>
+        /// Start listening to changes of <see cref="SelectedLanguage"/> and apply it to the given <see cref="Application"/>'s <see cref="Application.Resources"/>.
+        /// </summary>
+        /// <param name="application">The application to apply the <see cref="Language"/> to.</param>
+        public void Initialize(Application application)
+        {
+            IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage);
+            selectedLanguageObservable.Subscribe(l => application.Resources.MergedDictionaries[0] = l.ResourceProvider);
+            selectedLanguageObservable.Subscribe(l => _appSettings.Value.LanguageCode = l.CultureInfo.Name);
+        }
 
         private static Language LoadLanguage(string languageCode)
         {

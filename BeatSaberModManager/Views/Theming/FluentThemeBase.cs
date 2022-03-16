@@ -12,20 +12,20 @@ namespace BeatSaberModManager.Views.Theming
     /// <summary>
     /// Includes the fluent theme in an application.
     /// </summary>
-    public class FluentTheme : AvaloniaObject, IStyle, IResourceProvider
+    public class FluentThemeBase : AvaloniaObject, IStyle, IResourceProvider
     {
         private readonly Styles _styles;
 
         /// <summary>
         /// Defines the <see cref="Style"/> property.
         /// </summary>
-        public static readonly StyledProperty<IStyle?> StyleProperty = AvaloniaProperty.Register<FluentTheme, IStyle?>(nameof(Style));
+        public static readonly StyledProperty<IStyle?> StyleProperty = AvaloniaProperty.Register<FluentThemeBase, IStyle?>(nameof(Style));
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FluentTheme"/> class.
+        /// Initializes a new instance of the <see cref="FluentThemeBase"/> class.
         /// </summary>
         /// <param name="baseUri">The base URL for the XAML context.</param>
-        public FluentTheme(Uri baseUri)
+        public FluentThemeBase(Uri baseUri)
         {
             Styles sharedStyles = new()
             {
@@ -102,7 +102,6 @@ namespace BeatSaberModManager.Views.Theming
         /// <inheritdoc />
         protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
         {
-            base.OnPropertyChanged(change);
             if (change.Property != StyleProperty) return;
             _styles[1] = change.NewValue.GetValueOrDefault<IStyle>()!;
         }
