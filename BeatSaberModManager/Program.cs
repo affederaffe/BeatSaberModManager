@@ -139,6 +139,7 @@ namespace BeatSaberModManager
 
         private static void RegisterApplication(this IRegistrator container)
         {
+            container.Register<Views.ViewLocator>();
             container.Register<Application, App>();
             container.Register<IStatusProgress, StatusProgress>();
             container.Register<LocalizationManager>();

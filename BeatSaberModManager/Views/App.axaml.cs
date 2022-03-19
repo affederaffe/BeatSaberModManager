@@ -32,13 +32,13 @@ namespace BeatSaberModManager.Views
         public App() { }
 
         /// <inheritdoc />
-        public App(IServiceProvider services, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
+        public App(ViewLocator viewLocator, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
         {
             _logger = logger;
             _localizationManager = localizationManager;
             _themeManager = themeManager;
             _mainWindow = mainWindow;
-            DataTemplates.Add(new ViewLocator(services));
+            DataTemplates.Add(viewLocator);
 #if !DEBUG
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
 #endif
