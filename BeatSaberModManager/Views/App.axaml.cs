@@ -39,7 +39,7 @@ namespace BeatSaberModManager.Views
             _themeManager = themeManager;
             _mainWindow = mainWindow;
             DataTemplates.Add(viewLocator);
-#if !DEBUG
+#if RELEASE
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
 #endif
         }
@@ -59,6 +59,7 @@ namespace BeatSaberModManager.Views
             lifetime.MainWindow = _mainWindow.Value;
         }
 
+#if RELEASE
         [SuppressMessage("ReSharper", "AsyncVoidMethod")]
         private async void ShowException(Exception e)
         {
@@ -68,5 +69,6 @@ namespace BeatSaberModManager.Views
             await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow);
             lifetime.Shutdown(-1);
         }
+#endif
     }
 }

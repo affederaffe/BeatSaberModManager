@@ -15,8 +15,8 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         /// <inheritdoc />
         public bool IsProtocolHandlerRegistered(string protocol)
         {
-            using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Classes")?.OpenSubKey(protocol);
-            string? protocolHandler = protocolKey?.OpenSubKey("shell")?.OpenSubKey("open")?.OpenSubKey("command")?.GetValue(string.Empty)?.ToString()?.Split(' ')[0];
+            RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Classes")?.OpenSubKey(protocol);
+            string? protocolHandler = protocolKey?.OpenSubKey("shell")?.OpenSubKey("open")?.OpenSubKey("command")?.GetValue(string.Empty)?.ToString();
             return protocolHandler?[1..^1] == Environment.ProcessPath;
         }
 

@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 
 using Avalonia;
-using Avalonia.Media;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -9,8 +8,6 @@ using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 
 using DryIoc;
-
-using SkiaSharp;
 
 
 namespace BeatSaberModManager
@@ -22,13 +19,16 @@ namespace BeatSaberModManager
     {
         private readonly IResolver _resolver;
         private readonly ISettings<AppSettings> _appSettings;
-        private readonly IUpdater _updater;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IInstallDirLocator _installDirLocator;
+#if RELEASE
+        private readonly IUpdater _updater;
+#endif
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
+#if RELEASE
         public Startup(IResolver resolver, ISettings<AppSettings> appSettings, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
             _resolver = resolver;
@@ -37,13 +37,22 @@ namespace BeatSaberModManager
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
         }
+#else
+        public Startup(IResolver resolver, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        {
+            _resolver = resolver;
+            _appSettings = appSettings;
+            _installDirValidator = installDirValidator;
+            _installDirLocator = installDirLocator;
+        }
+#endif
 
         /// <summary>
         /// Asynchronously starts the application.
         /// </summary>
         public async Task<int> RunAsync()
         {
-#if !DEBUG
+#if RELEASE
             if (await _updater.NeedsUpdate().ConfigureAwait(false))
                 return await _updater.Update().ConfigureAwait(false);
 #endif
