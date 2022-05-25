@@ -53,8 +53,8 @@ namespace BeatSaberModManager
         public async Task<int> RunAsync()
         {
 #if RELEASE
-            if (await _updater.NeedsUpdate().ConfigureAwait(false))
-                return await _updater.Update().ConfigureAwait(false);
+            if (await _updater.NeedsUpdateAsync().ConfigureAwait(false))
+                return await _updater.UpdateAsync().ConfigureAwait(false);
 #endif
             if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
                 _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
