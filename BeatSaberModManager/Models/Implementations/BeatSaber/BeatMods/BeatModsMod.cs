@@ -7,8 +7,8 @@ using BeatSaberModManager.Models.Interfaces;
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
-    /// <inheritdoc />
-    public class BeatModsMod : IMod
+    /// <inheritdoc cref="BeatSaberModManager.Models.Interfaces.IMod" />
+    public class BeatModsMod : IMod, IEquatable<BeatModsMod>
     {
         /// <inheritdoc />
         [JsonPropertyName("name")]
@@ -42,5 +42,24 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         /// </summary>
         [JsonPropertyName("dependencies")]
         public BeatModsDependency[] Dependencies { get; set; } = null!;
+
+        /// <inheritdoc />
+        public bool Equals(BeatModsMod? other)
+        {
+            if (other is null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name && Version.Equals(other.Version);
+        }
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((BeatModsMod) obj);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode() => HashCode.Combine(Name, Version);
     }
 }

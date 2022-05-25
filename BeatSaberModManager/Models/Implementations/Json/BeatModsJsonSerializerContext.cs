@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
@@ -5,6 +6,6 @@ using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
 
 namespace BeatSaberModManager.Models.Implementations.Json
 {
-    [JsonSerializable(typeof(BeatModsMod[]))]
+    [JsonSerializable(typeof(HashSet<BeatModsMod>))]
     internal partial class BeatModsModJsonSerializerContext : JsonSerializerContext { }
 }

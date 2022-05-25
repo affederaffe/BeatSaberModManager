@@ -80,6 +80,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 if (fileHashModPairs.TryGetValue(hash, out BeatModsMod? mod) &&
                     !installedMods.Contains(mod) &&
+                    AvailableMods!.Contains(mod) &&
                     !IsModLoader(mod) &&
                     !mod.Downloads[0].Hashes.Where(IsMod).Select(static x => x.Hash).Except(hashes).Any())
                     installedMods.Add(mod);
@@ -116,12 +117,12 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             }
         }
 
-        private async Task<BeatModsMod[]?> GetModsAsync(string? args)
+        private async Task<HashSet<BeatModsMod>?> GetModsAsync(string? args)
         {
             using HttpResponseMessage response = await _httpClient.GetAsync($"https://beatmods.com/api/v1/{args}").ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonSerializer.Deserialize(body, BeatModsModJsonSerializerContext.Default.BeatModsModArray);
+            return JsonSerializer.Deserialize(body, BeatModsModJsonSerializerContext.Default.HashSetBeatModsMod);
         }
 
         /// <summary>
@@ -150,16 +151,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <returns>A map of all hashes and their corresponding <see cref="BeatModsMod"/>.</returns>
         private async Task<Dictionary<string, BeatModsMod>?> GetMappedModHashesAsync()
         {
-            ConfiguredTaskAwaitable<BeatModsMod[]?> approvedTask = GetModsAsync("mod?status=approved").ConfigureAwait(false);
-            ConfiguredTaskAwaitable<BeatModsMod[]?> inactiveTask = GetModsAsync("mod?status=inactive").ConfigureAwait(false);
-            BeatModsMod[]? approved = await approvedTask;
-            BeatModsMod[]? inactive = await inactiveTask;
+            ConfiguredTaskAwaitable<HashSet<BeatModsMod>?> approvedTask = GetModsAsync("mod?status=approved").ConfigureAwait(false);
+            ConfiguredTaskAwaitable<HashSet<BeatModsMod>?> inactiveTask = GetModsAsync("mod?status=inactive").ConfigureAwait(false);
+            HashSet<BeatModsMod>? approved = await approvedTask;
+            HashSet<BeatModsMod>? inactive = await inactiveTask;
             if (approved is null || inactive is null) return null;
-            BeatModsMod[] allMods = new BeatModsMod[approved.Length + inactive.Length];
-            approved.CopyTo(allMods, 0);
-            inactive.CopyTo(allMods, approved.Length);
-            Dictionary<string, BeatModsMod> fileHashModPairs = new(allMods.Length);
-            foreach (BeatModsMod mod in allMods.Where(static x => x.Downloads.Length == 1))
+            approved.UnionWith(inactive);
+            Dictionary<string, BeatModsMod> fileHashModPairs = new(approved.Count);
+            foreach (BeatModsMod mod in approved.Where(static x => x.Downloads.Length == 1))
             {
                 foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
@@ -191,9 +190,19 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return bsipa;
         }
 
+        /// <summary>
+        /// Checks if the <paramref name="beatModsHash"/> is a mod and not e.g. a config file.
+        /// </summary>
+        /// <param name="beatModsHash">The <see cref="BeatModsHash"/> of the mod.</param>
+        /// <returns>true if the <paramref name="beatModsHash"/> is a mod, false otherwise.</returns>
         private static bool IsMod(BeatModsHash beatModsHash) =>
             IsMod(beatModsHash.File);
 
+        /// <summary>
+        /// Checks if the <paramref name="file"/> is a mod and not e.g. a config file.
+        /// </summary>
+        /// <param name="file">The path of the mod's file.</param>
+        /// <returns>true if the file is a mod, false otherwise.</returns>
         private static bool IsMod(string file) =>
             Path.GetExtension(file) is ".dll" or ".manifest" or ".exe";
 
