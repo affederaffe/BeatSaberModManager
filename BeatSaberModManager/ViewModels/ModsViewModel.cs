@@ -159,9 +159,9 @@ namespace BeatSaberModManager.ViewModels
         public async Task RefreshModsAsync()
         {
             IEnumerable<IMod> install = GridItems!.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(static x => x.AvailableMod);
-            await InstallMods(_appSettings.Value.InstallDir!, install).ConfigureAwait(false);
+            await InstallModsAsync(_appSettings.Value.InstallDir!, install).ConfigureAwait(false);
             IEnumerable<IMod> uninstall = GridItems.Values.Where(static x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(static x => x.AvailableMod);
-            await UninstallMods(_appSettings.Value.InstallDir!, uninstall).ConfigureAwait(false);
+            await UninstallModsAsync(_appSettings.Value.InstallDir!, uninstall).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace BeatSaberModManager.ViewModels
         {
             IMod? modLoader = GridItems!.Values.FirstOrDefault(x => _modProvider.IsModLoader(x.InstalledMod))?.AvailableMod;
             if (modLoader is null) return;
-            await UninstallMods(_appSettings.Value.InstallDir!, new[] { modLoader }).ConfigureAwait(false);
+            await UninstallModsAsync(_appSettings.Value.InstallDir!, new[] { modLoader }).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace BeatSaberModManager.ViewModels
         public async Task UninstallAllModsAsync()
         {
             IEnumerable<IMod> mods = GridItems!.Values.Where(static x => x.InstalledMod is not null).Select(static x => x.AvailableMod);
-            await UninstallMods(_appSettings.Value.InstallDir!, mods).ConfigureAwait(false);
+            await UninstallModsAsync(_appSettings.Value.InstallDir!, mods).ConfigureAwait(false);
             _modInstaller.RemoveAllMods(_appSettings.Value.InstallDir!);
         }
 
@@ -189,7 +189,7 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="mods">The mods to install.</param>
-        private async Task InstallMods(string installDir, IEnumerable<IMod> mods)
+        private async Task InstallModsAsync(string installDir, IEnumerable<IMod> mods)
         {
             await foreach (IMod mod in _modInstaller.InstallModsAsync(installDir, mods, _progress).ConfigureAwait(false))
             {
@@ -204,7 +204,7 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="mods">The mods to uninstall.</param>
-        private async Task UninstallMods(string installDir, IEnumerable<IMod> mods)
+        private async Task UninstallModsAsync(string installDir, IEnumerable<IMod> mods)
         {
             await foreach (IMod mod in _modInstaller.UninstallModsAsync(installDir, mods, _progress).ConfigureAwait(false))
             {

@@ -31,7 +31,7 @@ namespace BeatSaberModManager.Views.Theming
         /// </summary>
         public ThemeManager(ISettings<AppSettings> appSettings)
         {
-            _fluentThemeBase = new FluentThemeBase((null as Uri)!);
+            _fluentThemeBase = new FluentThemeBase(null!);
             Themes = new ObservableCollection<Theme>
             {
                 new("Fluent Light", _fluentThemeBase.FluentLight),
@@ -40,7 +40,7 @@ namespace BeatSaberModManager.Views.Theming
 
             _buildInThemesCount = Themes.Count;
             _selectedTheme = Themes.FirstOrDefault(x => x.Name == appSettings.Value.ThemeName) ?? Themes[0];
-            ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemes);
+            ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemesAsync);
             appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Where(Directory.Exists).ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand!);
             IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme);
             selectedThemeObservable.Subscribe(t => _fluentThemeBase.Style = t.Style);
@@ -72,19 +72,19 @@ namespace BeatSaberModManager.Views.Theming
             application.Styles.Insert(0, _fluentThemeBase);
         }
 
-        private async Task ReloadExternalThemes(string path)
+        private async Task ReloadExternalThemesAsync(string path)
         {
             for (int i = _buildInThemesCount; i < Themes.Count; i++)
                 Themes.RemoveAt(i);
             foreach (string file in Directory.EnumerateFiles(path, "*.axaml"))
             {
-                Theme? theme = await LoadTheme(file);
+                Theme? theme = await LoadThemeAsync(file);
                 if (theme is null) continue;
                 Themes.Add(theme);
             }
         }
 
-        private static async Task<Theme?> LoadTheme(string filePath)
+        private static async Task<Theme?> LoadThemeAsync(string filePath)
         {
             string name = Path.GetFileNameWithoutExtension(filePath);
             string dir = Path.GetDirectoryName(filePath)!;

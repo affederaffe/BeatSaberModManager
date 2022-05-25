@@ -37,7 +37,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         }
 
         /// <inheritdoc />
-        public async Task<bool> NeedsUpdate()
+        public async Task<bool> NeedsUpdateAsync()
         {
             if (OperatingSystem.IsLinux()) return false;
             using HttpResponseMessage response = await _httpClient.GetAsync("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest").ConfigureAwait(false);
@@ -48,7 +48,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         }
 
         /// <inheritdoc />
-        public async Task<int> Update()
+        public async Task<int> UpdateAsync()
         {
             Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.Ordinal));
             if (asset is null) return -1;

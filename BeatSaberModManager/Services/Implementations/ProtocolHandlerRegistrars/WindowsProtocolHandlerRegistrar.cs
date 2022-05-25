@@ -19,8 +19,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
             string? commandValue = protocolKey?.OpenSubKey("shell")?.OpenSubKey("open")?.OpenSubKey("command")?.GetValue(string.Empty)?.ToString();
             if (commandValue is null || Environment.ProcessPath is null) return false;
             int end = Environment.ProcessPath.Length + 1;
-            if (commandValue.Length < end) return false;
-            return commandValue[1..end] == Environment.ProcessPath;
+            return commandValue.Length >= end && commandValue[1..end] == Environment.ProcessPath;
         }
 
         /// <inheritdoc />

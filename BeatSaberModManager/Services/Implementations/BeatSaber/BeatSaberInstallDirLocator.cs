@@ -129,9 +129,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) yield break;
             Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
-            string? line;
             using StreamReader vdfReader = new(fileStream);
-            while ((line = await vdfReader.ReadLineAsync().ConfigureAwait(false)) is not null)
+            while (await vdfReader.ReadLineAsync().ConfigureAwait(false) is { } line)
             {
                 Match match = regex.Match(line);
                 if (match.Success)

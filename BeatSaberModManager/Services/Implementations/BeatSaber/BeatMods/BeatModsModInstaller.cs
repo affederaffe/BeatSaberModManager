@@ -87,7 +87,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             OperatingSystem.IsWindows()
                 ? InstallBsipaWindowsAsync(installDir)
                 : OperatingSystem.IsLinux()
-                    ? InstallBsipaLinux(installDir)
+                    ? InstallBsipaLinuxAsync(installDir)
                     : throw new PlatformNotSupportedException();
 
         private static ValueTask UninstallBsipaAsync(string installDir, BeatModsMod bsipa) =>
@@ -115,7 +115,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         }
 
         [SupportedOSPlatform("linux")]
-        private static async Task InstallBsipaLinux(string installDir)
+        private static async Task InstallBsipaLinuxAsync(string installDir)
         {
             string winhttpPath = Path.Join(installDir, "winhttp.dll");
             if (File.Exists(winhttpPath)) return;
