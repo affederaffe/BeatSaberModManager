@@ -17,27 +17,29 @@ jobs:
     build_linux:
         name: Build Linux
         runs-on: ubuntu-latest
+        env:
+            DOTNET_CLI_TELEMETRY_OPTOUT: true
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
                 with:
                     submodules: recursive
             -   name: Setup .NET SDK
-                uses: actions/setup-dotnet@v1.8.1
+                uses: actions/setup-dotnet@v2
                 with:
                     dotnet-version: "6.0.x"
 
             -   name: Build Self Contained
-                run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishTrimmed=true -p:EnableSingleFileAnalyzer=false
+                run: dotnet publish -c Release -r linux-x64 --self-contained -p:PublishTrimmed=true
             -   name: Upload Artifact
-                uses: actions/upload-artifact@v2
+                uses: actions/upload-artifact@v3
                 with:
                     name: BeatSaberModManager-linux-x64-self-contained
                     path: BeatSaberModManager/bin/Release/linux-x64/publish/BeatSaberModManager
 
             -   name: Build Framework Dependent
-                run: dotnet publish -c Release -r linux-x64 --no-self-contained -p:EnableSingleFileAnalyzer=false
+                run: dotnet publish -c Release -r linux-x64 --no-self-contained
             -   name: Upload Artifact
-                uses: actions/upload-artifact@v2
+                uses: actions/upload-artifact@v3
                 with:
                     name: BeatSaberModManager-linux-x64-framework-dependent
                     path: BeatSaberModManager/bin/Release/linux-x64/publish/BeatSaberModManager
@@ -45,27 +47,29 @@ jobs:
     build_windows:
         name: Build Windows
         runs-on: windows-latest
+        env:
+            DOTNET_CLI_TELEMETRY_OPTOUT: true
         steps:
-            -   uses: actions/checkout@v2
+            -   uses: actions/checkout@v3
                 with:
                     submodules: recursive
             -   name: Setup .NET SDK
-                uses: actions/setup-dotnet@v1.8.1
+                uses: actions/setup-dotnet@v2
                 with:
                     dotnet-version: "6.0.x"
 
             -   name: Build Self Contained
-                run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishTrimmed=true -p:EnableSingleFileAnalyzer=false
+                run: dotnet publish -c Release -r win-x64 --self-contained -p:PublishTrimmed=true
             -   name: Upload Artifact
-                uses: actions/upload-artifact@v2
+                uses: actions/upload-artifact@v3
                 with:
                     name: BeatSaberModManager-win-x64-self-contained
                     path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe
 
             -   name: Build Framework Dependent
-                run: dotnet publish -c Release -r win-x64 --no-self-contained -p:EnableSingleFileAnalyzer=false
+                run: dotnet publish -c Release -r win-x64 --no-self-contained
             -   name: Upload Artifact
-                uses: actions/upload-artifact@v2
+                uses: actions/upload-artifact@v3
                 with:
                     name: BeatSaberModManager-win-x64-framework-dependent
                     path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe

@@ -9,9 +9,7 @@
         <Nullable>enable</Nullable>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
-        <EnableSingleFileAnalyzer>false</EnableSingleFileAnalyzer>
-        <AnalysisLevel>latest</AnalysisLevel>
-        <AnalysisMode>recommended</AnalysisMode>
+        <AnalysisLevel>preview-recommended</AnalysisLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
