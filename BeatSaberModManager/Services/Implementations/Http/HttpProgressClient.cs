@@ -57,6 +57,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
             }
 
             ArrayPool<byte>.Shared.Return(buffer);
+            ms.Position = 0;
             response.Content = new StreamContent(ms);
             return response;
         }
