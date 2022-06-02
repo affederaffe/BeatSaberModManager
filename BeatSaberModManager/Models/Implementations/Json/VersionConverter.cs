@@ -14,6 +14,6 @@ namespace BeatSaberModManager.Models.Implementations.Json
 
         /// <inheritdoc />
         public override void Write(Utf8JsonWriter writer, Version value, JsonSerializerOptions options) =>
-            writer.WriteString("Version", value.ToString());
+            writer.WriteStringValue(value.ToString());
     }
 }
