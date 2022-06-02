@@ -32,5 +32,10 @@ namespace BeatSaberModManager.Models.Interfaces
         /// A link which provides more resources about the mod.
         /// </summary>
         string MoreInfoLink { get; set; }
+
+        /// <summary>
+        /// Indicates if the mod must be installed.
+        /// </summary>
+        bool IsRequired { get; set; }
     }
 }

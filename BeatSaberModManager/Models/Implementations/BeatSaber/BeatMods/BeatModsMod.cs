@@ -31,6 +31,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         [JsonPropertyName("link")]
         public string MoreInfoLink { get; set; } = null!;
 
+        /// <inheritdoc />
+        [JsonPropertyName("required")]
+        public bool IsRequired { get; set; }
+
         /// <summary>
         /// The downloads for the mod.
         /// </summary>

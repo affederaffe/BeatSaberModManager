@@ -29,7 +29,7 @@ namespace BeatSaberModManager.ViewModels
             _installedMod = installedMod;
             _appSettings = appSettings;
             _dependencyResolver = dependencyResolver;
-            _isCheckBoxChecked = installedMod is not null || appSettings.Value.SaveSelectedMods && _appSettings.Value.SelectedMods.Contains(availableMod.Name);
+            _isCheckBoxChecked = installedMod is not null || availableMod.IsRequired || appSettings.Value.SaveSelectedMods && _appSettings.Value.SelectedMods.Contains(availableMod.Name);
             this.WhenAnyValue(static x => x.AvailableMod, static x => x.InstalledMod)
                 .Select(static x => x.Item1.Version.CompareTo(x.Item2?.Version) <= 0)
                 .ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
