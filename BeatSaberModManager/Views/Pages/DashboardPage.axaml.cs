@@ -43,7 +43,11 @@ namespace BeatSaberModManager.Views.Pages
             InstallPlaylistButton.Command = showFileDialogCommand;
         }
 
-        private Task<string[]?> ShowOpenFileDialog() =>
-            new OpenFileDialog { Filters = { new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" } } }.ShowAsync(_window);
+        private Task<string[]?> ShowOpenFileDialog()
+        {
+            OpenFileDialog dialog = new();
+            dialog.Filters!.Add(new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" });
+            return dialog.ShowAsync(_window);
+        }
     }
 }
