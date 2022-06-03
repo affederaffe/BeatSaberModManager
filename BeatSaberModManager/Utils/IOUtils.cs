@@ -133,5 +133,25 @@ namespace BeatSaberModManager.Utils
             text = null;
             return false;
         }
+
+        /// <summary>
+        /// Attempts to open a text file, read all the text in the file, and then close the file.
+        /// </summary>
+        /// <param name="path">The file to open for reading.</param>
+        /// <param name="text">The file's content if the operation succeeds, null otherwise.</param>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
+        public static bool TryReadAllLines(string path, [MaybeNullWhen(false)] out string[] text)
+        {
+            try
+            {
+                text = File.ReadAllLines(path);
+                return true;
+            }
+            catch (ArgumentException) { }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+            text = null;
+            return false;
+        }
     }
 }
