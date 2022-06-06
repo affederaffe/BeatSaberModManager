@@ -7,7 +7,7 @@
         Name="Window"
         Icon="/Resources/Icons/Icon.ico"
         WindowStartupLocation="CenterOwner"
-        TransparencyLevelHint="AcrylicBlur"
+        TransparencyLevelHint="Mica"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         MinWidth="320" MinHeight="140"

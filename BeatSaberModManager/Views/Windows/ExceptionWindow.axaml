@@ -6,7 +6,7 @@
         x:Class="BeatSaberModManager.Views.Windows.ExceptionWindow"
         Name="Window"
         WindowStartupLocation="CenterOwner"
-        TransparencyLevelHint="AcrylicBlur"
+        TransparencyLevelHint="Mica"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         MinWidth="320" MinHeight="140"

@@ -13,7 +13,7 @@
         Name="Window"
         Title="{StaticResource MainWindow:Title}"
         Icon="/Resources/Icons/Icon.ico"
-        TransparencyLevelHint="AcrylicBlur"
+        TransparencyLevelHint="Mica"
         Background="Transparent"
         ExtendClientAreaToDecorationsHint="True"
         MinWidth="820" MinHeight="350"
