@@ -63,7 +63,6 @@ namespace BeatSaberModManager
 
         private int RunAvaloniaApp() =>
             AppBuilder.Configure(() => _resolver.Resolve<Application>())
-                .With(new Win32PlatformOptions { UseWindowsUIComposition = true })
                 .With(new X11PlatformOptions { UseEGL = true })
                 .UsePlatformDetect()
                 .UseReactiveUI()
