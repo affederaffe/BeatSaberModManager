@@ -14,9 +14,7 @@ namespace BeatSaberModManager.Views.Converters
     {
         /// <inheritdoc />
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
-            value is bool b ?
-                b ? Brushes.Green : Brushes.Red
-                : null;
+            value is bool b ? b ? Brushes.Green : Brushes.Red : null;
 
         /// <inheritdoc />
         public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

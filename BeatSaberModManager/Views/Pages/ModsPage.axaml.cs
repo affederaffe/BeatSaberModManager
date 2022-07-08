@@ -32,7 +32,14 @@ namespace BeatSaberModManager.Views.Pages
             ViewModel = viewModel;
             ViewModel.WhenAnyValue(static x => x.GridItems)
                 .WhereNotNull()
-                .Select(static x => new DataGridCollectionView(x.Values) { GroupDescriptions = { new DataGridPathGroupDescription($"{nameof(ModGridItemViewModel.AvailableMod)}.{nameof(ModGridItemViewModel.AvailableMod.Category)}") } })
+                .Select(static x => new DataGridCollectionView(x.Values)
+                {
+                    GroupDescriptions =
+                    {
+                        new DataGridPathGroupDescription(
+                            $"{nameof(ModGridItemViewModel.AvailableMod)}.{nameof(ModGridItemViewModel.AvailableMod.Category)}")
+                    }
+                })
                 .Do(static x => x.MoveCurrentTo(null))
                 .BindTo<DataGridCollectionView, DataGrid, IEnumerable>(ModsDataGrid, static x => x.Items);
             ViewModel.WhenAnyValue(static x => x.IsSearchEnabled, static x => x.SearchQuery)
@@ -45,6 +52,7 @@ namespace BeatSaberModManager.Views.Pages
         }
 
         private static bool Filter(bool enabled, string? query, object o) =>
-            !enabled || o is not ModGridItemViewModel gridItem || string.IsNullOrWhiteSpace(query) || gridItem.AvailableMod.Name.Contains(query, StringComparison.OrdinalIgnoreCase);
+            !enabled || o is not ModGridItemViewModel gridItem || string.IsNullOrWhiteSpace(query) ||
+            gridItem.AvailableMod.Name.Contains(query, StringComparison.OrdinalIgnoreCase);
     }
 }

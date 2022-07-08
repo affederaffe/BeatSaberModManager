@@ -12,8 +12,18 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
                     <DockPanel HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                        <PathIcon DockPanel.Dock="{TemplateBinding IconPlacement}" HorizontalAlignment="Center" VerticalAlignment="Center" Data="{TemplateBinding IconData}" Foreground="{TemplateBinding Foreground}" />
-                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Padding}" Text="{TemplateBinding Content}" FontSize="{TemplateBinding FontSize}" />
+                        <PathIcon DockPanel.Dock="{TemplateBinding IconPlacement}"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"
+                                  Data="{TemplateBinding IconData}"
+                                  Foreground="{TemplateBinding Foreground}">
+                        </PathIcon>
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Margin="{TemplateBinding Padding}"
+                                   Text="{TemplateBinding Content}"
+                                   FontSize="{TemplateBinding FontSize}">
+                        </TextBlock>
                     </DockPanel>
                 </Border>
             </ControlTemplate>

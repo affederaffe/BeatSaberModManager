@@ -28,7 +28,8 @@ namespace BeatSaberModManager.Views.Pages
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsPage"/> class.
         /// </summary>
-        public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager, IInstallDirValidator installDirValidator)
+        public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager,
+            IInstallDirValidator installDirValidator)
         {
             InitializeComponent();
             LanguagesComboBox.DataContext = localizationManager;

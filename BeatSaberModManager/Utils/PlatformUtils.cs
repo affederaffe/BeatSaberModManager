@@ -35,6 +35,7 @@ namespace BeatSaberModManager.Utils
             }
             catch (InvalidOperationException) { }
             catch (PlatformNotSupportedException) { }
+
             process = null;
             return false;
         }

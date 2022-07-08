@@ -82,7 +82,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                     !installedMods.Contains(mod) &&
                     AvailableMods!.Contains(mod) &&
                     !IsModLoader(mod) &&
-                    !mod.Downloads[0].Hashes.Where(IsMod).Select(static x => x.Hash).Except(hashes).Any())
+                    !mod.Downloads[0].Hashes.Where(IsMod).Select(static x => x.Hash).Except(hashes, StringComparer.OrdinalIgnoreCase).Any())
                     installedMods.Add(mod);
             }
 
@@ -157,7 +157,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             HashSet<BeatModsMod>? inactive = await inactiveTask;
             if (approved is null || inactive is null) return null;
             approved.UnionWith(inactive);
-            Dictionary<string, BeatModsMod> fileHashModPairs = new(approved.Count);
+            Dictionary<string, BeatModsMod> fileHashModPairs = new(approved.Count, StringComparer.OrdinalIgnoreCase);
             foreach (BeatModsMod mod in approved.Where(static x => x.Downloads.Length == 1))
             {
                 foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
@@ -195,16 +195,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// </summary>
         /// <param name="beatModsHash">The <see cref="BeatModsHash"/> of the mod.</param>
         /// <returns>true if the <paramref name="beatModsHash"/> is a mod, false otherwise.</returns>
-        private static bool IsMod(BeatModsHash beatModsHash) =>
-            IsMod(beatModsHash.File);
+        private static bool IsMod(BeatModsHash beatModsHash) => IsMod(beatModsHash.File);
 
         /// <summary>
         /// Checks if the <paramref name="file"/> is a mod and not e.g. a config file.
         /// </summary>
         /// <param name="file">The path of the mod's file.</param>
         /// <returns>true if the file is a mod, false otherwise.</returns>
-        private static bool IsMod(string file) =>
-            Path.GetExtension(file) is ".dll" or ".manifest" or ".exe";
+        private static bool IsMod(string file) => Path.GetExtension(file) is ".dll" or ".manifest" or ".exe";
 
         private static readonly string[] _installedModsLocations = { Path.Join("IPA", "Pending"), "Plugins", "Libs" };
     }

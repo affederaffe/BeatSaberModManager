@@ -77,14 +77,9 @@ namespace BeatSaberModManager
         }
 
         private static void RegisterSettings(this IRegistrator container)
-        {
-            container.RegisterDelegate<ISettings<AppSettings>>(() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings));
-        }
+            => container.RegisterDelegate<ISettings<AppSettings>>(() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings));
 
-        private static void RegisterHttpClient(this IRegistrator container)
-        {
-            container.Register<HttpProgressClient>();
-        }
+        private static void RegisterHttpClient(this IRegistrator container) => container.Register<HttpProgressClient>();
 
         private static void RegisterGameServices(this IRegistrator container)
         {

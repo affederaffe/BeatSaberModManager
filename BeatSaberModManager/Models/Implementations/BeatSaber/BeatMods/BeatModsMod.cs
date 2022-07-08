@@ -48,10 +48,10 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         public BeatModsDependency[] Dependencies { get; set; } = null!;
 
         /// <inheritdoc />
-        public bool Equals(BeatModsMod? other) => other is not null && (ReferenceEquals(this, other) || Name == other.Name && Version.Equals(other.Version));
+        public bool Equals(BeatModsMod? other) => other is not null && (ReferenceEquals(this, other) || (Name == other.Name && Version.Equals(other.Version)));
 
         /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is not null && (ReferenceEquals(this, obj) || obj.GetType() == GetType() && Equals(obj as BeatModsMod));
+        public override bool Equals(object? obj) => obj is not null && (ReferenceEquals(this, obj) || (obj.GetType() == GetType() && Equals(obj as BeatModsMod)));
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Name, Version);

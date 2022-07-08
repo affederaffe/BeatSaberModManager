@@ -105,7 +105,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
                     maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByKeyAsync(playlist.Songs[i].Id!).ConfigureAwait(false);
                 else if (!string.IsNullOrEmpty(playlist.Songs[i].Hash))
                     maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByHashAsync(playlist.Songs[i].Hash!).ConfigureAwait(false);
-
             }
 
             return maps.Where(static x => x?.Versions.Length is > 0).ToArray()!;

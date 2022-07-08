@@ -63,7 +63,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         /// <param name="key">The unique key for the map.</param>
         /// <param name="retries">How many times the operation should be re-run before failing.</param>
         /// <returns>The <see cref="BeatSaverMap"/> if the operation succeeds, null otherwise.</returns>
-        public Task<BeatSaverMap?> GetBeatSaverMapByKeyAsync(string key, int retries = 2) => GetBeatSaverMapAsync($"https://api.beatsaver.com/maps/id/{key}", retries);
+        public Task<BeatSaverMap?> GetBeatSaverMapByKeyAsync(string key, int retries = 2) =>
+            GetBeatSaverMapAsync($"https://api.beatsaver.com/maps/id/{key}", retries);
 
         /// <summary>
         /// Asynchronously downloads a <see cref="BeatSaverMap"/> from https://beatsaver.com by hash.
@@ -71,7 +72,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         /// <param name="hash">The hash of the map.</param>
         /// <param name="retries">How many times the operation should be re-run before failing.</param>
         /// <returns>The <see cref="BeatSaverMap"/> if the operation succeeds, null otherwise.</returns>
-        public Task<BeatSaverMap?> GetBeatSaverMapByHashAsync(string hash, int retries = 2) => GetBeatSaverMapAsync($"https://api.beatsaver.com/maps/hash/{hash}", retries);
+        public Task<BeatSaverMap?> GetBeatSaverMapByHashAsync(string hash, int retries = 2) =>
+            GetBeatSaverMapAsync($"https://api.beatsaver.com/maps/hash/{hash}", retries);
 
         /// <summary>
         /// Attempts to install a beatmap into the game's installation directory.

@@ -34,7 +34,8 @@ namespace BeatSaberModManager.Views.Pages
             InitializeComponent();
             _window = window;
             ViewModel = viewModel;
-            ReactiveCommand<Unit, string[]?> showFileDialogCommand = ReactiveCommand.CreateFromTask(ShowOpenFileDialog, viewModel.ModsViewModel.IsInstallDirValidObservable);
+            ReactiveCommand<Unit, string[]?> showFileDialogCommand =
+                ReactiveCommand.CreateFromTask(ShowOpenFileDialog, viewModel.ModsViewModel.IsInstallDirValidObservable);
             showFileDialogCommand.Where(static x => x?.Length == 1)
                 .Select(static x => x![0])
                 .SelectMany(ViewModel.InstallPlaylistAsync)

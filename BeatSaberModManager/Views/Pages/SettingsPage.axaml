@@ -156,11 +156,11 @@
                      Text="{Binding AppSettings.Value.ThemesDir}">
             </TextBox>
             <Button Grid.Column="2"
-                               Grid.Row="9"
-                               Margin="10, 0, 0, 0"
-                               HorizontalAlignment="Center"
-                               Content="{DynamicResource OptionsView:OpenFolderButton}"
-                               Command="{Binding OpenThemesDirCommand}">
+                    Grid.Row="9"
+                    Margin="10, 0, 0, 0"
+                    HorizontalAlignment="Center"
+                    Content="{DynamicResource OptionsView:OpenFolderButton}"
+                    Command="{Binding OpenThemesDirCommand}">
             </Button>
             <Button x:Name="SelectThemesFolderButton"
                     Grid.Column="3"

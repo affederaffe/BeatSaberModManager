@@ -38,7 +38,8 @@ namespace BeatSaberModManager
             _installDirLocator = installDirLocator;
         }
 #else
-        public Startup(IResolver resolver, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        public Startup(IResolver resolver, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator,
+            IInstallDirLocator installDirLocator)
         {
             _resolver = resolver;
             _appSettings = appSettings;

@@ -144,7 +144,8 @@ namespace BeatSaberModManager.ViewModels
             await _modProvider.LoadInstalledModsAsync(installDir).ConfigureAwait(false);
             if (_modProvider.AvailableMods is null || _modProvider.InstalledMods is null) return null;
             InstalledModsCount = 0;
-            Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods.ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
+            Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods
+                .ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
             foreach (ModGridItemViewModel gridItem in gridItems.Values)
             {
                 if (gridItem.InstalledMod is not null) InstalledModsCount++;
@@ -159,9 +160,11 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public async Task RefreshModsAsync()
         {
-            IEnumerable<IMod> install = GridItems!.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods)).Select(static x => x.AvailableMod);
+            IEnumerable<IMod> install = GridItems!.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods))
+                .Select(static x => x.AvailableMod);
             await InstallModsAsync(_appSettings.Value.InstallDir!, install).ConfigureAwait(false);
-            IEnumerable<IMod> uninstall = GridItems.Values.Where(static x => !x.IsCheckBoxChecked && x.InstalledMod is not null).Select(static x => x.AvailableMod);
+            IEnumerable<IMod> uninstall = GridItems.Values.Where(static x => !x.IsCheckBoxChecked && x.InstalledMod is not null)
+                .Select(static x => x.AvailableMod);
             await UninstallModsAsync(_appSettings.Value.InstallDir!, uninstall).ConfigureAwait(false);
         }
 

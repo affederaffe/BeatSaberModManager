@@ -117,14 +117,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         [SupportedOSPlatform("linux")]
         private static async Task InstallBsipaLinuxAsync(string installDir)
         {
-            string winhttpPath = Path.Join(installDir, "winhttp.dll");
-            if (File.Exists(winhttpPath)) return;
-
-            string oldDir = Directory.GetCurrentDirectory();
-            Directory.SetCurrentDirectory(installDir);
-            IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
-            Directory.SetCurrentDirectory(oldDir);
-
             string protonRegPath = Path.Join(installDir, "../../compatdata/620980/pfx/user.reg");
             await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Access = FileAccess.ReadWrite, Options = FileOptions.Asynchronous });
             if (fileStream is null) return;
@@ -133,6 +125,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             await using StreamWriter streamWriter = new(fileStream);
             if (!content.Contains("[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\""))
                 await streamWriter.WriteLineAsync("\n[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
+
+            string winhttpPath = Path.Join(installDir, "winhttp.dll");
+            if (File.Exists(winhttpPath)) return;
+
+            string oldDir = Directory.GetCurrentDirectory();
+            Directory.SetCurrentDirectory(installDir);
+            IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
+            Directory.SetCurrentDirectory(oldDir);
         }
 
         [SupportedOSPlatform("windows")]

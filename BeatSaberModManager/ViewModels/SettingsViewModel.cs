@@ -30,8 +30,10 @@ namespace BeatSaberModManager.ViewModels
             _modelSaberOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered("modelsaber");
             _playlistOneClickCheckBoxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered("bsplaylist");
             AppSettings = appSettings;
-            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appSettings.Value.InstallDir!), appSettings.Value.WhenAnyValue(static x => x.InstallDir).Select(Directory.Exists));
-            OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appSettings.Value.ThemesDir!), appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Select(Directory.Exists));
+            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appSettings.Value.InstallDir!),
+                appSettings.Value.WhenAnyValue(static x => x.InstallDir).Select(Directory.Exists));
+            OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appSettings.Value.ThemesDir!),
+                appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Select(Directory.Exists));
             this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, "beatsaver"));
             this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, "modelsaber"));
             this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, "bsplaylist"));

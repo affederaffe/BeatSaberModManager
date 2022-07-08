@@ -29,7 +29,7 @@ namespace BeatSaberModManager.ViewModels
             _installedMod = installedMod;
             _appSettings = appSettings;
             _dependencyResolver = dependencyResolver;
-            _isCheckBoxChecked = installedMod is not null || availableMod.IsRequired || appSettings.Value.SaveSelectedMods && _appSettings.Value.SelectedMods.Contains(availableMod.Name);
+            _isCheckBoxChecked = installedMod is not null || availableMod.IsRequired || (appSettings.Value.SaveSelectedMods && _appSettings.Value.SelectedMods.Contains(availableMod.Name));
             this.WhenAnyValue(static x => x.AvailableMod, static x => x.InstalledMod)
                 .Select(static x => x.Item1.Version.CompareTo(x.Item2?.Version) <= 0)
                 .ToProperty(this, nameof(IsUpToDate), out _isUpToDate);
@@ -90,13 +90,14 @@ namespace BeatSaberModManager.ViewModels
         /// <param name="gridItems">The <see cref="Dictionary{TKey,TValue}"/> of all available <see cref="IMod"/>s and their respective <see cref="ModGridItemViewModel"/>.</param>
         public void Initialize(Dictionary<IMod, ModGridItemViewModel> gridItems)
         {
-            IObservable<(ModGridItemViewModel gridItem, bool isDependency)> affectedGridItemObservable = this.WhenAnyValue(static x => x.IsCheckBoxChecked)
+            IObservable<(ModGridItemViewModel gridItem, bool isDependency)> affectedGridItemObservable = this
+                .WhenAnyValue(static x => x.IsCheckBoxChecked)
                 .SelectMany(OnCheckboxUpdated)
                 .Select(gridItems.GetValueOrDefault)
                 .WhereNotNull()
                 .Select(x => (x, _dependencyResolver.IsDependency(x.AvailableMod)));
             affectedGridItemObservable.Subscribe(static x => x.gridItem.IsCheckBoxEnabled = !x.isDependency);
-            affectedGridItemObservable.Subscribe(static x => x.gridItem.IsCheckBoxChecked = x.isDependency || x.gridItem.IsCheckBoxChecked && x.gridItem.InstalledMod is not null);
+            affectedGridItemObservable.Subscribe(static x => x.gridItem.IsCheckBoxChecked = x.isDependency || (x.gridItem.IsCheckBoxChecked && x.gridItem.InstalledMod is not null));
         }
 
         private IEnumerable<IMod> OnCheckboxUpdated(bool checkBoxChecked)
