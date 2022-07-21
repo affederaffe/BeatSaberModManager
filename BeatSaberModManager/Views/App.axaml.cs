@@ -21,7 +21,9 @@ namespace BeatSaberModManager.Views
     /// <inheritdoc />
     public class App : Application
     {
+#if RELEASE
         private readonly ILogger _logger = null!;
+#endif
         private readonly LocalizationManager _localizationManager = null!;
         private readonly ThemeManager _themeManager = null!;
         private readonly Lazy<Window> _mainWindow = null!;
@@ -31,6 +33,7 @@ namespace BeatSaberModManager.Views
         /// </summary>
         public App() { }
 
+#if RELEASE
         /// <inheritdoc />
         public App(ViewLocator viewLocator, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
         {
@@ -39,10 +42,19 @@ namespace BeatSaberModManager.Views
             _themeManager = themeManager;
             _mainWindow = mainWindow;
             DataTemplates.Add(viewLocator);
-#if RELEASE
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
-#endif
         }
+
+#else
+        /// <inheritdoc />
+        public App(ViewLocator viewLocator, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
+        {
+            _localizationManager = localizationManager;
+            _themeManager = themeManager;
+            _mainWindow = mainWindow;
+            DataTemplates.Add(viewLocator);
+        }
+#endif
 
         /// <inheritdoc />
         public override void Initialize()

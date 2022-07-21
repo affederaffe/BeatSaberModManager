@@ -37,11 +37,9 @@ namespace BeatSaberModManager.ViewModels
             StatusProgress = (StatusProgress)statusProgress;
             modsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
             IObservable<string> validatedAppDataObservable = modsViewModel.ValidatedInstallDirObservable.Select(appDataPathProvider.GetAppDataPath);
-            OpenAppDataCommand = ReactiveCommand.CreateFromObservable<Unit, bool>(_ => validatedAppDataObservable.Select(static x =>  PlatformUtils.TryOpenUri(x)), validatedAppDataObservable.Select(Directory.Exists));
-            //OpenAppDataCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(appDataPathProvider.GetAppDataPath(appSettings.Value.InstallDir!)), validatedAppDataObservable.Select(Directory.Exists));
+            OpenAppDataCommand = ReactiveCommand.CreateFromObservable<Unit, bool>(_ => validatedAppDataObservable.Select(static x => PlatformUtils.TryOpenUri(x)), validatedAppDataObservable.Select(Directory.Exists));
             IObservable<string> validatedLogsDirObservable = modsViewModel.ValidatedInstallDirObservable.Select(static x => Path.Join(x, "Logs"));
             OpenLogsCommand = ReactiveCommand.CreateFromObservable<Unit, bool>(_ => validatedLogsDirObservable.Select(static x => PlatformUtils.TryOpenUri(x)), validatedLogsDirObservable.Select(Directory.Exists));
-            //OpenLogsCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(Path.Join(appSettings.Value.InstallDir!, "Logs")), validatedLogsDirObservable.Select(Directory.Exists));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallModLoaderAsync, modsViewModel.IsSuccessObservable);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(modsViewModel.UninstallAllModsAsync, modsViewModel.IsSuccessObservable);
             LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(appSettings.Value.InstallDir!), modsViewModel.IsInstallDirValidObservable);
