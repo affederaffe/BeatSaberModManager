@@ -39,7 +39,7 @@
         <PackageReference Include="Avalonia.Desktop" Version="0.10.17" />
         <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="0.10.17" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.17" />
-        <PackageReference Include="DryIoc.dll" Version="5.1.0" />
+        <PackageReference Include="DryIoc.dll" Version="5.2.0" />
         <PackageReference Include="ReactiveUI" Version="18.3.1" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
         <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.9" />
