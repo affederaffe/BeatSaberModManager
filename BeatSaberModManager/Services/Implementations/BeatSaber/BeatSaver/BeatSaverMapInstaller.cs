@@ -86,7 +86,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             string customLevelsDirectoryPath = Path.Join(installDir, "Beat Saber_Data", "CustomLevels");
             IOUtils.TryCreateDirectory(customLevelsDirectoryPath);
-            string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(Path.GetInvalidFileNameChars()));
+            string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
             string levelDirectoryPath = Path.Join(customLevelsDirectoryPath, mapName);
             return IOUtils.TryExtractArchive(archive, levelDirectoryPath, true);
         }
@@ -136,6 +136,22 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
             return archive is not null && TryExtractBeatSaverMapToDir(installDir, map, archive);
         }
+
+        /// <summary>
+        /// Illegal file path characters of NTFS.
+        /// <remarks>
+        /// <see cref="Path.GetInvalidPathChars"/> cannot be used here because it is runtime specific, e.g. on Linux it only contains '\0'.
+        /// Beat Saber (and therefore Mono) runs through Wine, SongCore fails to load songs with NTFS illegal characters.
+        /// </remarks>
+        /// </summary>
+        private static readonly char[] _illegalCharacters =
+        {
+            '<', '>', ':', '/', '\\', '|', '?', '*', '"',
+            '\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007',
+            '\u0008', '\u0009', '\u000a', '\u000b', '\u000c', '\u000d', '\u000e', '\u000d',
+            '\u000f', '\u0010', '\u0011', '\u0012', '\u0013', '\u0014', '\u0015', '\u0016',
+            '\u0017', '\u0018', '\u0019', '\u001a', '\u001b', '\u001c', '\u001d', '\u001f'
+        };
 
         private static Task WaitForRateLimitAsync() => Task.Delay(1000);
     }
