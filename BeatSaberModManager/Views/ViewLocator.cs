@@ -29,14 +29,15 @@ namespace BeatSaberModManager.Views
 
         /// <inheritdoc />
         [UnconditionalSuppressMessage("Trimming", "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code", Justification = "Types are known to be preserved")]
-        public IControl Build(object param)
+        public IControl Build(object? param)
         {
+            _ = param ?? throw new ArgumentNullException(nameof(param));
             Type viewModelType = param.GetType();
             Type viewType = typeof(IViewFor<>).MakeGenericType(viewModelType);
             return _services.GetService(viewType) as IControl ?? throw new InvalidOperationException();
         }
 
         /// <inheritdoc />
-        public bool Match(object data) => data is ViewModelBase;
+        public bool Match(object? data) => data is ViewModelBase;
     }
 }

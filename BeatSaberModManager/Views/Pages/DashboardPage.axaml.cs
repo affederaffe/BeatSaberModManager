@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading.Tasks;
 
 using Avalonia.Controls;
+using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Progress;
@@ -19,7 +20,17 @@ namespace BeatSaberModManager.Views.Pages
     /// </summary>
     public partial class DashboardPage : ReactiveUserControl<DashboardViewModel>
     {
-        private readonly Window _window = null!;
+        private FilePickerOpenOptions? _filePickerOpenOptions;
+        private FilePickerOpenOptions FilePickerOpenOptions => _filePickerOpenOptions ??= new FilePickerOpenOptions
+        {
+            FileTypeFilter = new[]
+            {
+                new FilePickerFileType("BeatSaber Playlist")
+                {
+                    Patterns = new [] { "*.bpllist" }
+                }
+            }
+        };
 
         /// <summary>
         /// [Required by Avalonia]
@@ -32,23 +43,16 @@ namespace BeatSaberModManager.Views.Pages
         public DashboardPage(DashboardViewModel viewModel, Window window)
         {
             InitializeComponent();
-            _window = window;
             ViewModel = viewModel;
-            ReactiveCommand<Unit, string[]?> showFileDialogCommand =
-                ReactiveCommand.CreateFromTask(ShowOpenFileDialog, viewModel.ModsViewModel.IsInstallDirValidObservable);
-            showFileDialogCommand.Where(static x => x?.Length == 1)
-                .Select(static x => x![0])
+            ReactiveCommand<Unit, IReadOnlyList<IStorageFile>> showFileDialogCommand = ReactiveCommand.CreateFromTask(() => window.StorageProvider.OpenFilePickerAsync(FilePickerOpenOptions), viewModel.ModsViewModel.IsInstallDirValidObservable);
+            showFileDialogCommand.Where(static x => x.Count == 1)
+                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
+                .WhereNotNull()
+                .Select(static x => x.AbsolutePath)
                 .SelectMany(ViewModel.InstallPlaylistAsync)
                 .Select(static x => new ProgressInfo(x ? StatusType.Completed : StatusType.Failed, null))
                 .Subscribe(ViewModel.StatusProgress.Report);
             InstallPlaylistButton.Command = showFileDialogCommand;
-        }
-
-        private Task<string[]?> ShowOpenFileDialog()
-        {
-            OpenFileDialog dialog = new();
-            dialog.Filters!.Add(new FileDialogFilter { Extensions = { "bplist" }, Name = "BeatSaber Playlist" });
-            return dialog.ShowAsync(_window);
         }
     }
 }

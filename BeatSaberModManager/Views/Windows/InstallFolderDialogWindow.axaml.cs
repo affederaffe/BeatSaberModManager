@@ -3,6 +3,7 @@ using System.Reactive.Linq;
 
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Platform.Storage;
 
 using JetBrains.Annotations;
 
@@ -23,12 +24,16 @@ namespace BeatSaberModManager.Views.Windows
         {
             InitializeComponent();
             ContinueButton.GetObservable(Button.ClickEvent)
-                .SelectMany(_ => new OpenFolderDialog().ShowAsync(this))
+                .SelectMany(_ => StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
+                .Where(static x => x.Count > 0)
+                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
+                .WhereNotNull()
+                .Select(static x => x.AbsolutePath)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(Close);
         }
 
         [UsedImplicitly]
-        private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);
+        private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null!);
     }
 }

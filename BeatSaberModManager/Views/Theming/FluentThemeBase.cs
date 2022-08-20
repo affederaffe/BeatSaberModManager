@@ -68,6 +68,9 @@ namespace BeatSaberModManager.Views.Theming
         public IResourceHost? Owner => (_styles as IResourceProvider).Owner;
 
         /// <inheritdoc />
+        public SelectorMatchResult TryAttach(IStyleable target, object? host) => _styles.TryAttach(target, host);
+
+        /// <inheritdoc />
         public IReadOnlyList<IStyle> Children => (_styles as IStyle).Children;
 
         /// <summary>
@@ -81,7 +84,7 @@ namespace BeatSaberModManager.Views.Theming
         public Styles FluentLight { get; }
 
         /// <inheritdoc />
-        public event EventHandler OwnerChanged
+        public event EventHandler? OwnerChanged
         {
             add => (_styles as IResourceProvider).OwnerChanged += value;
             remove => (_styles as IResourceProvider).OwnerChanged -= value;
@@ -94,16 +97,13 @@ namespace BeatSaberModManager.Views.Theming
         public void RemoveOwner(IResourceHost owner) => (_styles as IResourceProvider).RemoveOwner(owner);
 
         /// <inheritdoc />
-        public SelectorMatchResult TryAttach(IStyleable target, IStyleHost? host) => _styles.TryAttach(target, host);
-
-        /// <inheritdoc />
         public bool TryGetResource(object key, out object? value) => (_styles as IResourceProvider).TryGetResource(key, out value);
 
         /// <inheritdoc />
-        protected override void OnPropertyChanged<T>(AvaloniaPropertyChangedEventArgs<T> change)
+        protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             if (change.Property != StyleProperty) return;
-            _styles[1] = change.NewValue.GetValueOrDefault<IStyle>()!;
+            _styles[1] = (change.NewValue as IStyle)!;
         }
     }
 }
