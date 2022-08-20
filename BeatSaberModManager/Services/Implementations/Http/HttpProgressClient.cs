@@ -24,7 +24,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="HttpProgressClient"/> class with a UserAgent and 30s timeout.
+        /// Initializes a new instance of the <see cref="HttpProgressClient"/> class with a UserAgent and a default timeout.
         /// </summary>
         public HttpProgressClient() : base(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All })
         {
