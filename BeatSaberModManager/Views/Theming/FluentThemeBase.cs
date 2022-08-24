@@ -32,7 +32,8 @@ namespace BeatSaberModManager.Views.Theming
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml") },
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/Base.xaml") },
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Controls/FluentControls.xaml") },
-                new StyleInclude(baseUri) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/Brushes.axaml") }
+                new StyleInclude(baseUri) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/Brushes.axaml") },
+                new StyleInclude(baseUri) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/Controls.axaml") }
             };
 
             FluentLight = new Styles
@@ -103,7 +104,7 @@ namespace BeatSaberModManager.Views.Theming
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             if (change.Property != StyleProperty) return;
-            _styles[1] = (change.NewValue as IStyle)!;
+            _styles[1] = change.GetNewValue<IStyle>();
         }
     }
 }

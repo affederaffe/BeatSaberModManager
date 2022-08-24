@@ -46,8 +46,8 @@ namespace BeatSaberModManager.Views.Pages
                 .BindTo(viewModel, static x => x.AppSettings.Value.InstallDir);
             SelectThemesFolderButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
-                .Where(static x => x?.Count is > 0)
-                .Select(static x => x![0].TryGetUri(out Uri? uri) ? uri : null)
+                .Where(static x => x.Count > 0)
+                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
                 .WhereNotNull()
                 .Select(static x => x.AbsolutePath)
                 .Where(Directory.Exists)
