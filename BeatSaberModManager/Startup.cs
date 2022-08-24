@@ -64,7 +64,6 @@ namespace BeatSaberModManager
 
         private int RunAvaloniaApp() =>
             AppBuilder.Configure(() => _resolver.Resolve<Application>())
-                .With(new X11PlatformOptions { UseEGL = true })
                 .UsePlatformDetect()
                 .UseReactiveUI()
                 .StartWithClassicDesktopLifetime(null!);
