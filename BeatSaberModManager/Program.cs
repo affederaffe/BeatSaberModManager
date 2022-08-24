@@ -87,7 +87,7 @@ namespace BeatSaberModManager
             container.Register<IGameLauncher, BeatSaberGameLauncher>();
             container.Register<IInstallDirLocator, BeatSaberInstallDirLocator>();
             container.Register<IInstallDirValidator, BeatSaberInstallDirValidator>();
-            container.Register<IAppDataPathProvider, BeatSaberAppDataPathProvider>();
+            container.Register<IGamePathsProvider, BeatSaberGamePathsProvider>();
         }
 
         private static void RegisterProtocolHandlerRegistrar(this IRegistrator container)

@@ -8,13 +8,16 @@ using BeatSaberModManager.Services.Interfaces;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     /// <inheritdoc />
-    public class BeatSaberAppDataPathProvider : IAppDataPathProvider
+    public class BeatSaberGamePathsProvider : IGamePathsProvider
     {
         /// <inheritdoc />
         public string GetAppDataPath(string installDir) =>
             OperatingSystem.IsWindows() ? GetWindowsAppDataPath()
                 : OperatingSystem.IsLinux() ? GetLinuxAppDataPath(installDir)
                     : throw new PlatformNotSupportedException();
+
+        /// <inheritdoc />
+        public string GetLogsPath(string installDir) => Path.Join(installDir, "Logs");
 
         [SupportedOSPlatform("windows")]
         private static string GetWindowsAppDataPath() => Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "AppData", "LocalLow", "Hyperbolic Magnetism");
