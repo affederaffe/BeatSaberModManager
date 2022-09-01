@@ -184,7 +184,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 string fileName = beatModsHash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null, StringComparison.Ordinal);
                 string path = Path.Join(installDir, fileName);
                 string? hash = await _hashProvider.CalculateHashForFileAsync(path);
-                if (beatModsHash.Hash != hash) return null;
+                if (!beatModsHash.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase)) return null;
             }
 
             return bsipa;
