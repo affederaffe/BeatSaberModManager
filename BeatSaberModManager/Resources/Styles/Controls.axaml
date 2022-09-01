@@ -4,8 +4,16 @@
     <Styles.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="/Resources/Styles/SearchableDataGrid.axaml" />
                 <ResourceInclude Source="/Resources/Styles/HyperlinkButton.axaml" />
+                <ResourceInclude Source="/Resources/Styles/HamburgerMenu.axaml" />
+                <ResourceInclude Source="/Resources/Styles/IconHeader.axaml" />
+                <ResourceInclude Source="/Resources/Styles/ProgressRing.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>
+
+    <StyleInclude Source="/Resources/Styles/SplitViewOverrides.axaml" />
+    <StyleInclude Source="/Resources/Styles/DataGridOverrides.axaml" />
+
 </Styles>

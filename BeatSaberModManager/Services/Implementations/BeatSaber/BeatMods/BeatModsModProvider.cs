@@ -82,7 +82,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                     !installedMods.Contains(mod) &&
                     AvailableMods!.Contains(mod) &&
                     !IsModLoader(mod) &&
-                    !mod.Downloads[0].Hashes.Where(IsMod).Select(static x => x.Hash).Except(hashes, StringComparer.OrdinalIgnoreCase).Any())
+                    !mod.Downloads[0].Hashes.Where(IsMod).Select(static x => x.Hash).Except(hashes, StringComparer.OrdinalIgnoreCase).Any()) // Test if all mod-relevant files (e.g. .dll, .exe, .manifest) of the IMod exist on disk
                     installedMods.Add(mod);
             }
 
@@ -109,7 +109,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         public async IAsyncEnumerable<ZipArchive> DownloadModsAsync(IEnumerable<IMod> mods, IProgress<double>? progress = null)
         {
             string[] urls = mods.OfType<BeatModsMod>().Select(static x => $"https://beatmods.com{x.Downloads[0].Url}").ToArray();
-            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls, progress).ConfigureAwait(false))
+            await foreach (HttpResponseMessage response in _httpClient.TryGetAsync(urls, progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) continue;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
@@ -119,7 +119,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 
         private async Task<HashSet<BeatModsMod>?> GetModsAsync(string? args)
         {
-            using HttpResponseMessage response = await _httpClient.GetAsync($"https://beatmods.com/api/v1/{args}").ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri($"https://beatmods.com/api/v1/{args}")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonSerializer.Deserialize(body, BeatModsModJsonSerializerContext.Default.HashSetBeatModsMod);
@@ -132,13 +132,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <returns>The aliased version for <paramref name="gameVersion"/>.</returns>
         private async Task<string?> GetAliasedGameVersionAsync(string gameVersion)
         {
-            using HttpResponseMessage versionsResponse = await _httpClient.GetAsync("https://versions.beatmods.com/versions.json").ConfigureAwait(false);
+            using HttpResponseMessage versionsResponse = await _httpClient.TryGetAsync(new Uri("https://versions.beatmods.com/versions.json")).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode) return null;
             string versionsBody = await versionsResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             string[]? versions = JsonSerializer.Deserialize(versionsBody, CommonJsonSerializerContext.Default.StringArray);
             if (versions is null) return null;
             if (versions.Contains(gameVersion)) return gameVersion;
-            using HttpResponseMessage aliasResponse = await _httpClient.GetAsync("https://alias.beatmods.com/aliases.json").ConfigureAwait(false);
+            using HttpResponseMessage aliasResponse = await _httpClient.TryGetAsync(new Uri("https://alias.beatmods.com/aliases.json")).ConfigureAwait(false);
             if (!aliasResponse.IsSuccessStatusCode) return null;
             string aliasBody = await aliasResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize(aliasBody, CommonJsonSerializerContext.Default.DictionaryStringStringArray);

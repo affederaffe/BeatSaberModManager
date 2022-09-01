@@ -26,6 +26,7 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<Dictionary<IMod, ModGridItemViewModel>?> _gridItems;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
+        private readonly ObservableAsPropertyHelper<bool> _isEmpty;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
 
         /// <summary>
@@ -41,13 +42,18 @@ namespace BeatSaberModManager.ViewModels
             ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> initializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
             initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
             initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            IsSuccessObservable = initializeCommand.Select(static x => x?.Count is > 0)
+            initializeCommand.Select(static x => x is null)
+                .CombineLatest(initializeCommand.IsExecuting)
+                .Select(static x => x.First && !x.Second)
+                .ToProperty(this, nameof(IsFailed), out _isFailed);
+            initializeCommand.Select(static x => x?.Count == 0)
+                .CombineLatest(initializeCommand.IsExecuting)
+                .Select(static x => x.First && !x.Second)
+                .ToProperty(this, nameof(IsEmpty), out _isEmpty);
+            IsSuccessObservable = initializeCommand.Select(static x => x?.Count > 0)
                 .CombineLatest(initializeCommand.IsExecuting)
                 .Select(static x => x.First && !x.Second);
             IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            IsSuccessObservable.CombineLatest(initializeCommand.IsExecuting)
-                .Select(static x => !x.First && !x.Second)
-                .ToProperty(this, nameof(IsFailed), out _isFailed);
             IObservable<string?> whenAnyInstallDir = appSettings.Value.WhenAnyValue(static x => x.InstallDir);
             IsInstallDirValidObservable = whenAnyInstallDir.Select(installDirValidator.ValidateInstallDir);
             ValidatedInstallDirObservable = whenAnyInstallDir.Where(installDirValidator.ValidateInstallDir)!;
@@ -80,9 +86,14 @@ namespace BeatSaberModManager.ViewModels
         public bool IsExecuting => _isExecuting.Value;
 
         /// <summary>
-        /// True if the operation successfully ran to completion, false otherwise.
+        /// True if the operation successfully ran to completion and returned a non-empty result, false otherwise.
         /// </summary>
         public bool IsSuccess => _isSuccess.Value;
+
+        /// <summary>
+        /// True if the operation successfully ran to completion and returned an empty result, false otherwise.
+        /// </summary>
+        public bool IsEmpty => _isEmpty.Value;
 
         /// <summary>
         /// True if the operation faulted, false otherwise.
@@ -99,28 +110,6 @@ namespace BeatSaberModManager.ViewModels
         }
 
         private ModGridItemViewModel? _selectedGridItem;
-
-        /// <summary>
-        /// Activates or deactivates the search.
-        /// </summary>
-        public bool IsSearchEnabled
-        {
-            get => _isSearchEnabled;
-            set => this.RaiseAndSetIfChanged(ref _isSearchEnabled, value);
-        }
-
-        private bool _isSearchEnabled;
-
-        /// <summary>
-        /// The entered search query.
-        /// </summary>
-        public string? SearchQuery
-        {
-            get => _searchQuery;
-            set => this.RaiseAndSetIfChanged(ref _searchQuery, value);
-        }
-
-        private string? _searchQuery;
 
         /// <summary>
         /// The count of all currently installed mods.
@@ -144,8 +133,7 @@ namespace BeatSaberModManager.ViewModels
             await _modProvider.LoadInstalledModsAsync(installDir).ConfigureAwait(false);
             if (_modProvider.AvailableMods is null || _modProvider.InstalledMods is null) return null;
             InstalledModsCount = 0;
-            Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods
-                .ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
+            Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods.ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
             foreach (ModGridItemViewModel gridItem in gridItems.Values)
             {
                 if (gridItem.InstalledMod is not null) InstalledModsCount++;

@@ -43,7 +43,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             if (!IOUtils.TryCreateDirectory(folderPath)) return false;
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(new ProgressInfo(StatusType.Installing, modelName));
-            using HttpResponseMessage response = await _httpClient.GetAsync($"https://modelsaber.com/files/{uri.Host}{uri.AbsolutePath}", progress).ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.TryGetAsync($"https://modelsaber.com/files/{uri.Host}{uri.AbsolutePath}", progress).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             byte[] body = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             string filePath = Path.Join(folderPath, modelName);

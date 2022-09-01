@@ -40,7 +40,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         public async Task<bool> NeedsUpdateAsync()
         {
             if (OperatingSystem.IsLinux()) return false;
-            using HttpResponseMessage response = await _httpClient.GetAsync("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest").ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             _release = JsonSerializer.Deserialize(body, GitHubJsonSerializerContext.Default.Release);
@@ -52,7 +52,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         {
             Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.Ordinal));
             if (asset is null) return -1;
-            using HttpResponseMessage response = await _httpClient.GetAsync(asset.DownloadUrl).ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(asset.DownloadUrl)).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return -1;
             string processPath = Environment.ProcessPath!;
             string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.Ordinal);

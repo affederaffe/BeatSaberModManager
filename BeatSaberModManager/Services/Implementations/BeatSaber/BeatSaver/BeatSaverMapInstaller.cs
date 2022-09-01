@@ -95,7 +95,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             while (retries != 0)
             {
-                using HttpResponseMessage response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+                using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(url)).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);
@@ -114,7 +114,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             while (retries != 0)
             {
-                HttpResponseMessage response = await _httpClient.GetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
+                HttpResponseMessage response = await _httpClient.TryGetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);

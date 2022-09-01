@@ -38,6 +38,7 @@
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>
     <sys:String x:Key="ModsView:LatestVersionHeader">Neuste</sys:String>
     <sys:String x:Key="ModsView:ModDescriptionHeader">Beschreibung</sys:String>
+    <sys:String x:Key="ModsView:FailedToLoad">Laden der Mods fehlgeschlagen</sys:String>
     <sys:String x:Key="ModsView:NoModsAvailable">Noch keine Mods für diese Version verfügbar</sys:String>
     <sys:String x:Key="ModsView:SearchWatermark">Suche...</sys:String>
 

@@ -33,6 +33,10 @@
         <None Include="Resources/Icons/Icon.ico" CopyToOutputDirectory="PreserveNewest" />
     </ItemGroup>
 
+    <ItemGroup Condition="'$(Configuration)'=='Debug'">
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-preview1" />
+    </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.0.0-preview1" />
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview1" />

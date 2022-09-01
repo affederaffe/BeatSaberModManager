@@ -45,7 +45,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallPlaylistAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
-            using HttpResponseMessage response = await _httpClient.GetAsync(uri).ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.TryGetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
             string playlistsDirPath = Path.Join(installDir, "Playlists");
             string fileName = WebUtility.UrlDecode(uri.Segments.Last());
@@ -82,7 +82,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string[] urls = maps.Select(static x => x.Versions.Last().DownloadUrl).ToArray();
             int i = 0;
             progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
-            await foreach (HttpResponseMessage response in _httpClient.GetAsync(urls, progress).ConfigureAwait(false))
+            await foreach (HttpResponseMessage response in _httpClient.TryGetAsync(urls, progress).ConfigureAwait(false))
             {
                 if (!response.IsSuccessStatusCode) return false;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);

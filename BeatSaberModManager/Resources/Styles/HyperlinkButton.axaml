@@ -3,4 +3,5 @@
                     xmlns:c="using:BeatSaberModManager.Views.Controls">
 
     <ControlTheme x:Key="{x:Type c:HyperlinkButton}" TargetType="c:HyperlinkButton" BasedOn="{StaticResource {x:Type Button}}" />
+
 </ResourceDictionary>

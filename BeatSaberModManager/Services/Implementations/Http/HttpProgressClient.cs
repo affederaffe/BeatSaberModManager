@@ -7,6 +7,8 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
+using Serilog;
+
 
 namespace BeatSaberModManager.Services.Implementations.Http
 {
@@ -15,6 +17,8 @@ namespace BeatSaberModManager.Services.Implementations.Http
     /// </summary>
     public class HttpProgressClient : HttpClient
     {
+        private readonly ILogger _logger;
+
         /// <summary>
         /// Set the default proxy to an empty one to avoid loading UnityDoorstep's winhttp.
         /// </summary>
@@ -26,21 +30,23 @@ namespace BeatSaberModManager.Services.Implementations.Http
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpProgressClient"/> class with a UserAgent and a default timeout.
         /// </summary>
-        public HttpProgressClient() : base(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All })
+        public HttpProgressClient(ILogger logger) : base(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All })
         {
+            _logger = logger;
             DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(ThisAssembly.Info.Product, ThisAssembly.Info.Version)));
             Timeout = TimeSpan.FromMinutes(3);
         }
 
         /// <summary>
-        /// Send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.
+        /// Try to send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.
         /// </summary>
         /// <param name="url">The url the request is sent to.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        public async Task<HttpResponseMessage> GetAsync(string url, IProgress<double>? progress)
+        public async Task<HttpResponseMessage> TryGetAsync(string url, IProgress<double>? progress)
         {
-            HttpResponseMessage response = await GetAsync(url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            HttpResponseMessage response = await TryGetAsync(new Uri(url), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode) return response;
             long total = 0;
             long? length = response.Content.Headers.ContentLength;
             byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
@@ -51,8 +57,8 @@ namespace BeatSaberModManager.Services.Implementations.Http
                 int read = await stream.ReadAsync(buffer).ConfigureAwait(false);
                 if (read <= 0) break;
                 await ms.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
-                total += read;
                 if (!length.HasValue) continue;
+                total += read;
                 progress?.Report(((double)total + 1) / length.Value);
             }
 
@@ -63,51 +69,56 @@ namespace BeatSaberModManager.Services.Implementations.Http
         }
 
         /// <summary>
-        /// Send multiple GET requests to the specified Uris with an HTTP completion option as an asynchronous operation
-        /// </summary>
-        /// <param name="urls">The urls the requests are sent to.</param>
-        /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <param name="length">The sum of all the content's length</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
-        public async IAsyncEnumerable<HttpResponseMessage> GetAsync(IEnumerable<string> urls, IProgress<double>? progress, double length)
-        {
-            long total = 0;
-            byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
-            foreach (string url in urls)
-            {
-                HttpResponseMessage response = await GetAsync(url).ConfigureAwait(false);
-                MemoryStream ms = new();
-                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                while (true)
-                {
-                    int read = await stream.ReadAsync(buffer).ConfigureAwait(false);
-                    if (read <= 0) break;
-                    await ms.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
-                    total += read;
-                    progress?.Report(((double)total + 1) / length);
-                }
-
-                response.Content = new StreamContent(ms);
-                yield return response;
-            }
-
-            ArrayPool<byte>.Shared.Return(buffer);
-        }
-
-        /// <summary>
-        /// Send multiple GET requests to the specified Uris with an HTTP completion option as an asynchronous operation
+        /// Try to send multiple GET requests to the specified Uris with an HTTP completion option as an asynchronous operation
         /// </summary>
         /// <param name="urls">The urls the requests are sent to.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        public async IAsyncEnumerable<HttpResponseMessage> GetAsync(IReadOnlyList<string> urls, IProgress<double>? progress)
+        public async IAsyncEnumerable<HttpResponseMessage> TryGetAsync(IReadOnlyList<string> urls, IProgress<double>? progress)
         {
             progress?.Report(0);
             for (int i = 0; i < urls.Count; i++)
             {
-                HttpResponseMessage response = await GetAsync(urls[i]).ConfigureAwait(false);
+                HttpResponseMessage response = await TryGetAsync(new Uri(urls[i])).ConfigureAwait(false);
                 progress?.Report(((double)i + 1) / urls.Count);
                 yield return response;
+            }
+        }
+
+        /// <summary>
+        /// Try to send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.
+        /// </summary>
+        /// <param name="uri">The uri the request is sent to.</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        public async Task<HttpResponseMessage> TryGetAsync(Uri uri)
+        {
+            try
+            {
+                return await GetAsync(uri);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Http GET request {Uri} failed", uri);
+                return new HttpResponseMessage(0);
+            }
+        }
+
+        /// <summary>
+        /// Try to send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.
+        /// </summary>
+        /// <param name="uri">The uri the request is sent to.</param>
+        /// <param name="completionOption">An HTTP completion option value that indicates when the operation should be considered completed.</param>
+        /// <returns>The task object representing the asynchronous operation.</returns>
+        public async Task<HttpResponseMessage> TryGetAsync(Uri uri, HttpCompletionOption completionOption)
+        {
+            try
+            {
+                return await GetAsync(uri, completionOption);
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Http GET request {Uri} failed", uri);
+                return new HttpResponseMessage(0);
             }
         }
     }

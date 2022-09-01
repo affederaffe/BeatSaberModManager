@@ -23,7 +23,7 @@
         <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
     </Window.Resources>
 
-    <TabControl Classes="SideBar" Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding AppSettings.Value.LastTabIndex}">
+    <c:HamburgerMenu Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding AppSettings.Value.LastTabIndex}">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
@@ -46,13 +46,7 @@
             </TabItem.Header>
         </TabItem>
 
-        <TabControl.ItemsPanel>
-            <ItemsPanelTemplate>
-                <StackPanel Margin="0, 31, 0, 0" Orientation="Vertical" />
-            </ItemsPanelTemplate>
-        </TabControl.ItemsPanel>
-
-        <TabControl.Tag>
+        <c:HamburgerMenu.Tag>
             <Grid Height="33"
                   ColumnDefinitions="*, Auto, Auto"
                   Margin="0, 5">
@@ -72,7 +66,7 @@
                     <c:IconHeader IconPlacement="Left" Content="{DynamicResource MainWindow:RefreshModsButton}" IconData="{StaticResource Icons:Download}" />
                 </Button>
             </Grid>
-        </TabControl.Tag>
-    </TabControl>
+        </c:HamburgerMenu.Tag>
+    </c:HamburgerMenu>
 
 </Window>

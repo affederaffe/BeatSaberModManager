@@ -108,10 +108,7 @@ namespace BeatSaberModManager
             container.Register<IModInstaller, BeatModsModInstaller>();
         }
 
-        private static void RegisterUpdater(this IRegistrator container)
-        {
-            container.Register<IUpdater, GitHubUpdater>();
-        }
+        private static void RegisterUpdater(this IRegistrator container) => container.Register<IUpdater, GitHubUpdater>();
 
         private static void RegisterAssetProviders(this IRegistrator container)
         {

@@ -68,10 +68,7 @@ namespace BeatSaberModManager.Views.Theming
         /// Inserts the <see cref="FluentThemeBase"/> into the <see cref="Application"/>'s <see cref="Application.Styles"/>.
         /// </summary>
         /// <param name="application">The <see cref="Application"/> to style.</param>
-        public void Initialize(Application application)
-        {
-            application.Styles.Insert(0, _fluentThemeBase);
-        }
+        public void Initialize(Application application) => application.Styles.Insert(0, _fluentThemeBase);
 
         private async Task ReloadExternalThemesAsync(string path)
         {
