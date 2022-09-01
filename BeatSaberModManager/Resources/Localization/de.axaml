@@ -33,6 +33,7 @@
     <sys:String x:Key="DashboardView:UsefulLinks">Nützliche Links</sys:String>
     <sys:String x:Key="DashboardView:BsmgWiki">BSMG Wiki</sys:String>
     <sys:String x:Key="DashboardView:BsmgDiscord">BSMG Discord</sys:String>
+    <sys:String x:Key="DashboardView:GitHub">GitHub</sys:String>
 
     <sys:String x:Key="ModsView:ModNameHeader">Name</sys:String>
     <sys:String x:Key="ModsView:InstalledVersionHeader">Installiert</sys:String>

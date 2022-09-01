@@ -86,7 +86,7 @@
             <Border Grid.Row="2" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
                 <Grid RowDefinitions="Auto, Auto">
                     <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:UsefulLinks}" />
-                    <Grid Grid.Row="1" ColumnDefinitions="*, *, *, *, *" Height="75">
+                    <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" Height="75">
                         <c:HyperlinkButton Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://bsmg.wiki">
                             <Grid RowDefinitions="*, Auto">
                                 <Viewbox Grid.Row="0">
@@ -101,6 +101,14 @@
                                     <PathIcon Data="{StaticResource Icons:Discord}" />
                                 </Viewbox>
                                 <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:BsmgDiscord}" />
+                            </Grid>
+                        </c:HyperlinkButton>
+                        <c:HyperlinkButton Grid.Column="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://github.com/affederaffe/BeatSaberModManager">
+                            <Grid RowDefinitions="*, Auto">
+                                <Viewbox Grid.Row="0">
+                                    <PathIcon Data="{StaticResource Icons:GitHub}" />
+                                </Viewbox>
+                                <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:GitHub}" />
                             </Grid>
                         </c:HyperlinkButton>
                     </Grid>
