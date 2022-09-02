@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.ReactiveUI;
@@ -6,8 +7,6 @@ using Avalonia.ReactiveUI;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
-
-using DryIoc;
 
 
 namespace BeatSaberModManager
@@ -17,7 +16,7 @@ namespace BeatSaberModManager
     /// </summary>
     public class Startup
     {
-        private readonly IResolver _resolver;
+        private readonly Lazy<Application> _application;
         private readonly ISettings<AppSettings> _appSettings;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IInstallDirLocator _installDirLocator;
@@ -29,19 +28,19 @@ namespace BeatSaberModManager
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
 #if RELEASE
-        public Startup(IResolver resolver, ISettings<AppSettings> appSettings, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        public Startup(Lazy<Application> application, ISettings<AppSettings> appSettings, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
-            _resolver = resolver;
+            _application = application;
             _appSettings = appSettings;
             _updater = updater;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
         }
 #else
-        public Startup(IResolver resolver, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator,
+        public Startup(Lazy<Application> application, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator,
             IInstallDirLocator installDirLocator)
         {
-            _resolver = resolver;
+            _application = application;
             _appSettings = appSettings;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
@@ -63,7 +62,7 @@ namespace BeatSaberModManager
         }
 
         private int RunAvaloniaApp() =>
-            AppBuilder.Configure(() => _resolver.Resolve<Application>())
+            AppBuilder.Configure(() => _application.Value)
                 .UsePlatformDetect()
                 .UseReactiveUI()
                 .StartWithClassicDesktopLifetime(null!);

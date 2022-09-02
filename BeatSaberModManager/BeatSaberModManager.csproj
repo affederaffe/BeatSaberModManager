@@ -2,6 +2,7 @@
 
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
+        <LangVersion>preview</LangVersion>
         <AssemblyVersion>0.0.2</AssemblyVersion>
         <PublishSingleFile>true</PublishSingleFile>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -44,8 +45,8 @@
         <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.0.0-preview1" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview1" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview1" />
-        <PackageReference Include="DryIoc.dll" Version="5.2.2" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+        <PackageReference Include="StrongInject" Version="1.4.4" />
         <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.9" />
         <PackageReference Include="XamlNameReferenceGenerator" Version="1.3.4" />
         <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />

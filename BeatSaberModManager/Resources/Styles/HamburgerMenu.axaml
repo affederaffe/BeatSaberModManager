@@ -123,10 +123,10 @@
         </Setter>
 
         <Style Selector="^:pointerover">
-            <Setter Property="Background" Value="{DynamicResource ThemeControlHighlightMidBrush}" />
+            <Setter Property="Background" Value="{DynamicResource ThemeControlHighlightHighBrush}" />
 
             <Style Selector="^ /template/ Border#PART_LayoutRoot">
-                <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
+                <Setter Property="Background" Value="{DynamicResource SystemChromeMediumLowColor}" />
                 <Setter Property="BoxShadow" Value="{StaticResource NavigationItemShadow}" />
                 <Setter Property="TextElement.Foreground" Value="{DynamicResource TabItemHeaderForegroundUnselectedPointerOver}" />
             </Style>

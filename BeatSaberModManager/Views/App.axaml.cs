@@ -1,10 +1,11 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 using System.Reactive;
 
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
 
 using BeatSaberModManager.Views.Localization;
@@ -35,24 +36,24 @@ namespace BeatSaberModManager.Views
 
 #if RELEASE
         /// <inheritdoc />
-        public App(ViewLocator viewLocator, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
+        public App(IEnumerable<IDataTemplate> viewTemplates, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
         {
             _logger = logger;
             _localizationManager = localizationManager;
             _themeManager = themeManager;
             _mainWindow = mainWindow;
-            DataTemplates.Add(viewLocator);
+            DataTemplates.AddRange(viewTemplates);
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
         }
 
 #else
         /// <inheritdoc />
-        public App(ViewLocator viewLocator, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
+        public App(IEnumerable<IDataTemplate> viewTemplates, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
         {
             _localizationManager = localizationManager;
             _themeManager = themeManager;
             _mainWindow = mainWindow;
-            DataTemplates.Add(viewLocator);
+            DataTemplates.AddRange(viewTemplates);
         }
 #endif
 
@@ -75,7 +76,7 @@ namespace BeatSaberModManager.Views
         }
 
 #if RELEASE
-        [SuppressMessage("ReSharper", "AsyncVoidMethod")]
+        // ReSharper disable once AsyncVoidMethod
         private async void ShowException(Exception e)
         {
             _logger.Fatal(e, "Application crashed");

@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 
 using BeatSaberModManager.Models.Implementations.Json;
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -28,11 +28,12 @@ using BeatSaberModManager.Views.Pages;
 using BeatSaberModManager.Views.Theming;
 using BeatSaberModManager.Views.Windows;
 
-using DryIoc;
-
 using ReactiveUI;
 
 using Serilog;
+
+using StrongInject;
+using StrongInject.Modules;
 
 
 namespace BeatSaberModManager
@@ -40,118 +41,123 @@ namespace BeatSaberModManager
     /// <summary>
     /// Main application class.
     /// </summary>
-    public static class Program
+    public static partial class Program
     {
         /// <summary>
         /// Application entry point.
         /// </summary>
-        public static async Task<int> Main(string[] args)
+        public static async Task<int> Main(string[] args) => await new Container(args).RunAsync(static x => x.RunAsync());
+
+        [Register<Startup>(Scope.SingleInstance)]
+        [RegisterModule(typeof(CollectionsModule))]
+        [RegisterModule(typeof(LazyModule))]
+        [RegisterModule(typeof(SerilogModule))]
+        [RegisterModule(typeof(SettingsModule))]
+        [RegisterModule(typeof(HttpModule))]
+        [RegisterModule(typeof(UpdaterModule))]
+        [RegisterModule(typeof(ProtocolHandlerRegistrarModule))]
+        [RegisterModule(typeof(GameServicesModule))]
+        [RegisterModule(typeof(ModServicesModule))]
+        [RegisterModule(typeof(AssetProvidersModule))]
+        [RegisterModule(typeof(ViewModelModule))]
+        [RegisterModule(typeof(ApplicationModule))]
+        [RegisterModule(typeof(ViewsModule))]
+#pragma warning disable SI1103
+        internal partial class Container : IAsyncContainer<Startup>
         {
-            using Container container = CreateContainer(args);
-            return await container.Resolve<Startup>().RunAsync().ConfigureAwait(false);
-        }
-
-        private static Container CreateContainer(IReadOnlyList<string> args)
-        {
-            Container container = new(Rules.Default.With(FactoryMethod.ConstructorWithResolvableArguments).WithDefaultReuse(Reuse.Singleton));
-            container.Register<Startup>();
-            container.RegisterSerilog();
-            container.RegisterSettings();
-            container.RegisterHttpClient();
-            container.RegisterUpdater();
-            container.RegisterGameServices();
-            container.RegisterModServices();
-            container.RegisterAssetProviders();
-            container.RegisterProtocolHandlerRegistrar();
-            container.RegisterApplication();
-            container.RegisterViewModels();
-            container.RegisterViews(args);
-            return container;
-        }
-
-        private static void RegisterSerilog(this IRegistrator container)
-        {
-            Log.Logger = new LoggerConfiguration().WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt"), rollingInterval: RollingInterval.Minute).CreateLogger();
-            container.Register(Made.Of(static () => Log.Logger), setup: Setup.With(condition: static r => r.Parent.ImplementationType is null));
-            container.Register(Made.Of(static () => Log.ForContext(Arg.Index<Type>(0)), static r => r.Parent.ImplementationType), setup: Setup.With(condition: static r => r.Parent.ImplementationType is not null));
-        }
-
-        private static void RegisterSettings(this IRegistrator container)
-            => container.RegisterDelegate<ISettings<AppSettings>>(() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings));
-
-        private static void RegisterHttpClient(this IRegistrator container) => container.Register<HttpProgressClient>();
-
-        private static void RegisterGameServices(this IRegistrator container)
-        {
-            container.Register<IGameVersionProvider, BeatSaberGameVersionProvider>();
-            container.Register<IGameLauncher, BeatSaberGameLauncher>();
-            container.Register<IInstallDirLocator, BeatSaberInstallDirLocator>();
-            container.Register<IInstallDirValidator, BeatSaberInstallDirValidator>();
-            container.Register<IGamePathsProvider, BeatSaberGamePathsProvider>();
-        }
-
-        private static void RegisterProtocolHandlerRegistrar(this IRegistrator container)
-        {
-            if (OperatingSystem.IsWindows())
-                container.Register<IProtocolHandlerRegistrar, WindowsProtocolHandlerRegistrar>();
-            else if (OperatingSystem.IsLinux())
-                container.Register<IProtocolHandlerRegistrar, LinuxProtocolHandlerRegistrar>();
-            else
-                throw new PlatformNotSupportedException();
-        }
-
-        private static void RegisterModServices(this IRegistrator container)
-        {
-            container.Register<IHashProvider, MD5HashProvider>();
-            container.Register<IDependencyResolver, SimpleDependencyResolver>();
-            container.Register<IModProvider, BeatModsModProvider>();
-            container.Register<IModInstaller, BeatModsModInstaller>();
-        }
-
-        private static void RegisterUpdater(this IRegistrator container) => container.Register<IUpdater, GitHubUpdater>();
-
-        private static void RegisterAssetProviders(this IRegistrator container)
-        {
-            container.Register<BeatSaverMapInstaller>();
-            container.Register<IAssetProvider, BeatSaverAssetProvider>();
-            container.Register<ModelSaberModelInstaller>();
-            container.Register<IAssetProvider, ModelSaberAssetProvider>();
-            container.Register<PlaylistInstaller>();
-            container.Register<IAssetProvider, PlaylistAssetProvider>();
-        }
-
-        private static void RegisterViewModels(this IRegistrator container)
-        {
-            container.Register<MainWindowViewModel>();
-            container.Register<DashboardViewModel>();
-            container.Register<ModsViewModel>();
-            container.Register<SettingsViewModel>();
-            container.Register<AssetInstallWindowViewModel>();
-        }
-
-        private static void RegisterApplication(this IRegistrator container)
-        {
-            container.Register<Views.ViewLocator>();
-            container.Register<Application, App>();
-            container.Register<IStatusProgress, StatusProgress>();
-            container.Register<LocalizationManager>();
-            container.Register<ThemeManager>();
-        }
-
-        private static void RegisterViews(this IRegistrator container, IReadOnlyList<string> args)
-        {
-            if (args.Count is 2 && args[0] == "--install")
+            public Container(string[] args)
             {
-                container.Use(new Uri(args[1]));
-                container.Register<Window, AssetInstallWindow>();
+                Args = args;
             }
-            else
-            {
-                container.Register<Window, MainWindow>();
-                container.Register<IViewFor<DashboardViewModel>, DashboardPage>();
-                container.Register<IViewFor<ModsViewModel>, ModsPage>();
-                container.Register<IViewFor<SettingsViewModel>, SettingsPage>();
-            }
+
+            [Instance]
+            private string[] Args { get; }
+
+        }
+#pragma warning restore SI1103
+
+        internal partial class SerilogModule
+        {
+            [Factory(Scope.SingleInstance)]
+            public static ILogger CreateLogger() => new LoggerConfiguration().WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt")).CreateLogger();
+        }
+
+        internal partial class SettingsModule
+        {
+            [Factory(Scope.SingleInstance)]
+            public static ISettings<AppSettings> CreateAppSettings() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings);
+        }
+
+        [Register<HttpProgressClient>]
+        internal partial class HttpModule { }
+
+        [Register<GitHubUpdater, IUpdater>(Scope.SingleInstance)]
+        internal partial class UpdaterModule { }
+
+        internal partial class ProtocolHandlerRegistrarModule
+        {
+            [Factory(Scope.SingleInstance)]
+            public static IProtocolHandlerRegistrar CreateProtocolHandlerRegistrar() =>
+                OperatingSystem.IsWindows() ? new WindowsProtocolHandlerRegistrar() :
+                    OperatingSystem.IsLinux() ? new LinuxProtocolHandlerRegistrar() :
+                        throw new PlatformNotSupportedException();
+        }
+
+        [Register<BeatSaberGameVersionProvider, IGameVersionProvider>(Scope.SingleInstance)]
+        [Register<BeatSaberGamePathsProvider, IGamePathsProvider>(Scope.SingleInstance)]
+        [Register<BeatSaberGameLauncher, IGameLauncher>(Scope.SingleInstance)]
+        [Register<BeatSaberInstallDirLocator, IInstallDirLocator>(Scope.SingleInstance)]
+        [Register<BeatSaberInstallDirValidator, IInstallDirValidator>(Scope.SingleInstance)]
+        internal partial class GameServicesModule { }
+
+        [Register<MD5HashProvider, IHashProvider>(Scope.SingleInstance)]
+        [Register<SimpleDependencyResolver, IDependencyResolver>(Scope.SingleInstance)]
+        [Register<BeatModsModProvider, IModProvider>(Scope.SingleInstance)]
+        [Register<BeatModsModInstaller, IModInstaller>(Scope.SingleInstance)]
+        internal partial class ModServicesModule { }
+
+        [Register<BeatSaverMapInstaller>(Scope.SingleInstance)]
+        [Register<BeatSaverAssetProvider, IAssetProvider>(Scope.SingleInstance)]
+        [Register<ModelSaberModelInstaller>(Scope.SingleInstance)]
+        [Register<ModelSaberAssetProvider, IAssetProvider>(Scope.SingleInstance)]
+        [Register<PlaylistInstaller>(Scope.SingleInstance)]
+        [Register<PlaylistAssetProvider, IAssetProvider>(Scope.SingleInstance)]
+        internal partial class AssetProvidersModule { }
+
+        [Register<MainWindowViewModel>(Scope.SingleInstance)]
+        [Register<DashboardViewModel>(Scope.SingleInstance)]
+        [Register<ModsViewModel>(Scope.SingleInstance)]
+        [Register<SettingsViewModel>(Scope.SingleInstance)]
+        [Register<AssetInstallWindowViewModel>(Scope.SingleInstance)]
+        internal partial class ViewModelModule { }
+
+        [Register<App, Application>(Scope.SingleInstance)]
+        [Register<StatusProgress, IStatusProgress>(Scope.SingleInstance)]
+        [Register<LocalizationManager>(Scope.SingleInstance)]
+        [Register<ThemeManager>(Scope.SingleInstance)]
+        internal partial class ApplicationModule { }
+
+        [Register<MainWindow>(Scope.SingleInstance)]
+        [Register<AssetInstallWindow>(Scope.SingleInstance)]
+        [Register<DashboardPage, IViewFor<DashboardViewModel>>(Scope.SingleInstance)]
+        [Register<ModsPage, IViewFor<ModsViewModel>>(Scope.SingleInstance)]
+        [Register<SettingsPage, IViewFor<SettingsViewModel>>(Scope.SingleInstance)]
+        internal partial class ViewsModule
+        {
+            [Factory(Scope.SingleInstance)]
+            public static Uri? CreateInstallRequestUri(string[] args) => args.Length == 2 && args[0] == "--install" ? new Uri(args[1]) : null;
+
+            [Factory(Scope.SingleInstance)]
+            public static Window CreateMainWindow(Uri? installRequestUri, Lazy<MainWindow> mainWindow, Lazy<AssetInstallWindow> assetInstallWindow) => installRequestUri is null ? mainWindow.Value : assetInstallWindow.Value;
+
+            [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
+            public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<IViewFor<DashboardViewModel>> view) => new(static t => t is DashboardViewModel, (_, _) => view.Value as Control, true);
+
+            [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
+            public static FuncDataTemplate CreateModsPageDataTemplate(Lazy<IViewFor<ModsViewModel>> view) => new(static t => t is ModsViewModel, (_, _) => view.Value as Control, true);
+
+            [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
+            public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<IViewFor<SettingsViewModel>> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value as Control, true);
         }
     }
 }
