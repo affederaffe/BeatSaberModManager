@@ -46,7 +46,11 @@ namespace BeatSaberModManager
         /// <summary>
         /// Application entry point.
         /// </summary>
-        public static async Task<int> Main(string[] args) => await new Container(args).RunAsync(static x => x.RunAsync());
+        public static async Task<int> Main(string[] args)
+        {
+            await using Container container = new(args);
+            return await container.RunAsync(static x => x.RunAsync());
+        }
 
         [Register<Startup>(Scope.SingleInstance)]
         [RegisterModule(typeof(CollectionsModule))]
