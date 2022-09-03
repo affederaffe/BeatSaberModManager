@@ -31,6 +31,7 @@
     <BoxShadows x:Key="NavigationItemShadow">1 1 1 1 #2000, 0 0 1 1 #2fff</BoxShadows>
     <BoxShadows x:Key="NavigationContentShadow">0 0 1 1 #2000</BoxShadows>
     <SolidColorBrush x:Key="PaneBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.5" />
+    <SolidColorBrush x:Key="PaneOverlayBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="1" />
     <cv:TopOnlyThicknessConverter x:Key="TopOnlyThicknessConverter" />
 
     <ControlTheme x:Key="NavigationButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -212,7 +213,7 @@
             <Setter Property="Margin" Value="{StaticResource HeaderMarginExpandedOverlayPane}" />
         </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Overlay]">
-            <Setter Property="PaneBackground" Value="{TemplateBinding PaneBackground}" />
+            <Setter Property="PaneBackground" Value="{StaticResource PaneOverlayBrush}" />
         </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Overlay]">
             <Setter Property="Background" Value="{Binding $parent[TabControl].ContentBackground}" />

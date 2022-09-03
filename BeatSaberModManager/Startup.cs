@@ -37,8 +37,7 @@ namespace BeatSaberModManager
             _installDirLocator = installDirLocator;
         }
 #else
-        public Startup(Lazy<Application> application, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator,
-            IInstallDirLocator installDirLocator)
+        public Startup(Lazy<Application> application, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
         {
             _application = application;
             _appSettings = appSettings;
