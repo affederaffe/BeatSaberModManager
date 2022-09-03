@@ -80,25 +80,25 @@ namespace BeatSaberModManager
         }
 #pragma warning restore SI1103
 
-        internal partial class SerilogModule
+        internal class SerilogModule
         {
             [Factory(Scope.SingleInstance)]
-            public static ILogger CreateLogger() => new LoggerConfiguration().WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "log.txt")).CreateLogger();
+            public static ILogger CreateLogger() => new LoggerConfiguration().WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "Log.txt")).CreateLogger();
         }
 
-        internal partial class SettingsModule
+        internal class SettingsModule
         {
             [Factory(Scope.SingleInstance)]
             public static ISettings<AppSettings> CreateAppSettings() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings);
         }
 
-        [Register<HttpProgressClient>]
-        internal partial class HttpModule { }
+        [Register<HttpProgressClient>(Scope.SingleInstance)]
+        internal class HttpModule { }
 
         [Register<GitHubUpdater, IUpdater>(Scope.SingleInstance)]
-        internal partial class UpdaterModule { }
+        internal class UpdaterModule { }
 
-        internal partial class ProtocolHandlerRegistrarModule
+        internal class ProtocolHandlerRegistrarModule
         {
             [Factory(Scope.SingleInstance)]
             public static IProtocolHandlerRegistrar CreateProtocolHandlerRegistrar() =>
@@ -112,13 +112,13 @@ namespace BeatSaberModManager
         [Register<BeatSaberGameLauncher, IGameLauncher>(Scope.SingleInstance)]
         [Register<BeatSaberInstallDirLocator, IInstallDirLocator>(Scope.SingleInstance)]
         [Register<BeatSaberInstallDirValidator, IInstallDirValidator>(Scope.SingleInstance)]
-        internal partial class GameServicesModule { }
+        internal class GameServicesModule { }
 
         [Register<MD5HashProvider, IHashProvider>(Scope.SingleInstance)]
         [Register<SimpleDependencyResolver, IDependencyResolver>(Scope.SingleInstance)]
         [Register<BeatModsModProvider, IModProvider>(Scope.SingleInstance)]
         [Register<BeatModsModInstaller, IModInstaller>(Scope.SingleInstance)]
-        internal partial class ModServicesModule { }
+        internal class ModServicesModule { }
 
         [Register<BeatSaverMapInstaller>(Scope.SingleInstance)]
         [Register<BeatSaverAssetProvider, IAssetProvider>(Scope.SingleInstance)]
@@ -126,27 +126,27 @@ namespace BeatSaberModManager
         [Register<ModelSaberAssetProvider, IAssetProvider>(Scope.SingleInstance)]
         [Register<PlaylistInstaller>(Scope.SingleInstance)]
         [Register<PlaylistAssetProvider, IAssetProvider>(Scope.SingleInstance)]
-        internal partial class AssetProvidersModule { }
+        internal class AssetProvidersModule { }
 
         [Register<MainWindowViewModel>(Scope.SingleInstance)]
         [Register<DashboardViewModel>(Scope.SingleInstance)]
         [Register<ModsViewModel>(Scope.SingleInstance)]
         [Register<SettingsViewModel>(Scope.SingleInstance)]
         [Register<AssetInstallWindowViewModel>(Scope.SingleInstance)]
-        internal partial class ViewModelModule { }
+        internal class ViewModelModule { }
 
         [Register<App, Application>(Scope.SingleInstance)]
         [Register<StatusProgress, IStatusProgress>(Scope.SingleInstance)]
         [Register<LocalizationManager>(Scope.SingleInstance)]
         [Register<ThemeManager>(Scope.SingleInstance)]
-        internal partial class ApplicationModule { }
+        internal class ApplicationModule { }
 
         [Register<MainWindow>(Scope.SingleInstance)]
         [Register<AssetInstallWindow>(Scope.SingleInstance)]
         [Register<DashboardPage, IViewFor<DashboardViewModel>>(Scope.SingleInstance)]
         [Register<ModsPage, IViewFor<ModsViewModel>>(Scope.SingleInstance)]
         [Register<SettingsPage, IViewFor<SettingsViewModel>>(Scope.SingleInstance)]
-        internal partial class ViewsModule
+        internal class ViewsModule
         {
             [Factory(Scope.SingleInstance)]
             public static Uri? CreateInstallRequestUri(string[] args) => args.Length == 2 && args[0] == "--install" ? new Uri(args[1]) : null;

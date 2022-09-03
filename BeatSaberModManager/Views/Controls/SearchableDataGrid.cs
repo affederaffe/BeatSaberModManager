@@ -24,7 +24,7 @@ namespace BeatSaberModManager.Views.Controls
         /// <summary>
         /// Defines the IsSearchEnabledProperty.
         /// </summary>
-        public static readonly StyledProperty<bool> IsSearchEnabledProperty = AvaloniaProperty.Register<SearchableDataGrid, bool>(nameof(IsSearchEnabled), false, defaultBindingMode: BindingMode.TwoWay) ;
+        public static readonly StyledProperty<bool> IsSearchEnabledProperty = AvaloniaProperty.Register<SearchableDataGrid, bool>(nameof(IsSearchEnabled), false, defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Defines the SearchIconProperty.
