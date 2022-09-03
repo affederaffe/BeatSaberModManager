@@ -57,8 +57,9 @@ namespace BeatSaberModManager.Views
         {
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
             lifetime.MainWindow = _mainWindow.Value;
-            if (Program.IsProduction) return;
+#if DEBUG
             this.AttachDevTools();
+#endif
         }
 
         // ReSharper disable once AsyncVoidMethod
