@@ -22,9 +22,7 @@ namespace BeatSaberModManager.Views
     /// <inheritdoc />
     public class App : Application
     {
-#if RELEASE
         private readonly ILogger _logger = null!;
-#endif
         private readonly LocalizationManager _localizationManager = null!;
         private readonly ThemeManager _themeManager = null!;
         private readonly Lazy<Window> _mainWindow = null!;
@@ -34,7 +32,6 @@ namespace BeatSaberModManager.Views
         /// </summary>
         public App() { }
 
-#if RELEASE
         /// <inheritdoc />
         public App(IEnumerable<IDataTemplate> viewTemplates, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
         {
@@ -43,19 +40,9 @@ namespace BeatSaberModManager.Views
             _themeManager = themeManager;
             _mainWindow = mainWindow;
             DataTemplates.AddRange(viewTemplates);
+            if (!Program.IsProduction) return;
             RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
         }
-
-#else
-        /// <inheritdoc />
-        public App(IEnumerable<IDataTemplate> viewTemplates, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)
-        {
-            _localizationManager = localizationManager;
-            _themeManager = themeManager;
-            _mainWindow = mainWindow;
-            DataTemplates.AddRange(viewTemplates);
-        }
-#endif
 
         /// <inheritdoc />
         public override void Initialize()
@@ -70,12 +57,10 @@ namespace BeatSaberModManager.Views
         {
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
             lifetime.MainWindow = _mainWindow.Value;
-#if DEBUG
+            if (Program.IsProduction) return;
             this.AttachDevTools();
-#endif
         }
 
-#if RELEASE
         // ReSharper disable once AsyncVoidMethod
         private async void ShowException(Exception e)
         {
@@ -85,6 +70,5 @@ namespace BeatSaberModManager.Views
             await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow);
             lifetime.Shutdown(-1);
         }
-#endif
     }
 }

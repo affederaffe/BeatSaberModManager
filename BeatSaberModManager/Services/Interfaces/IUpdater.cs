@@ -12,7 +12,7 @@ namespace BeatSaberModManager.Services.Interfaces
         /// Asynchronously checks for an update of the application.
         /// </summary>
         /// <returns>True when a newer version is available, false otherwise.</returns>
-        Task<bool> NeedsUpdateAsync();
+        ValueTask<bool> NeedsUpdateAsync();
 
         /// <summary>
         /// Asynchronously updates the application.

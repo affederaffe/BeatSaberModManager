@@ -163,5 +163,12 @@ namespace BeatSaberModManager
             [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
             public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<IViewFor<SettingsViewModel>> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value as Control, true);
         }
+
+        internal static bool IsProduction =>
+#if DEBUG
+            false;
+#else
+            true;
+#endif
     }
 }

@@ -37,8 +37,9 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         }
 
         /// <inheritdoc />
-        public async Task<bool> NeedsUpdateAsync()
+        public async ValueTask<bool> NeedsUpdateAsync()
         {
+            if (!Program.IsProduction) return false;
             if (OperatingSystem.IsLinux()) return false;
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
