@@ -75,14 +75,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 .SelectMany(static x => Directory.EnumerateFiles(x, string.Empty, SearchOption.AllDirectories))
                 .Where(IsMod);
             string?[] rawHashes = await Task.WhenAll(files.Select(_hashProvider.CalculateHashForFileAsync)).ConfigureAwait(false);
-            string[] hashes = rawHashes.Where(static x => x is not null).ToArray()!;
+            HashSet<string> hashes = rawHashes.Where(static x => x is not null).ToHashSet(StringComparer.OrdinalIgnoreCase)!;
             foreach (string hash in hashes)
             {
                 if (fileHashModPairs.TryGetValue(hash, out BeatModsMod? mod) &&
                     !installedMods.Contains(mod) &&
                     AvailableMods!.Contains(mod) &&
                     !IsModLoader(mod) &&
-                    !mod.Downloads[0].Hashes.Where(IsMod).Select(static x => x.Hash).Except(hashes, StringComparer.OrdinalIgnoreCase).Any()) // Test if all mod-relevant files (e.g. .dll, .exe, .manifest) of the IMod exist on disk
+                    hashes.IsSupersetOf(mod.Downloads[0].Hashes.Where(IsMod).Select(static x => x.Hash))) // Test if all mod-relevant files (e.g. .dll, .exe, .manifest) of the IMod exist on disk
                     installedMods.Add(mod);
             }
 
