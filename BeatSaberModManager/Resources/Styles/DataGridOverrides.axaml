@@ -1,6 +1,5 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:c="clr-namespace:BeatSaberModManager.Views.Controls">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style Selector="DataGridColumnHeader">
         <Setter Property="IsHitTestVisible" Value="False" />
@@ -15,21 +14,10 @@
         <Setter Property="Background" Value="Transparent" />
     </Style>
 
-    <Style Selector="DataGridRowGroupHeader">
-        <Setter Property="Background" Value="Transparent" />
-    </Style>
-    <Style Selector="DataGridRowGroupHeader:current /template/ Rectangle#CurrencyVisual">
-        <Setter Property="IsVisible" Value="False" />
-    </Style>
-
     <Style Selector="DataGridCell:current /template/ Rectangle#CurrencyVisual">
         <Setter Property="IsVisible" Value="False" />
     </Style>
-
-    <Style Selector="c|SearchableDataGrid:focus DataGridRowGroupHeader:current /template/ Grid#FocusVisual">
-        <Setter Property="IsVisible" Value="False" />
-    </Style>
-    <Style Selector="c|SearchableDataGrid:focus DataGridCell:current /template/ Grid#FocusVisual">
+    <Style Selector="DataGridCell:focus /template/ Grid#FocusVisual">
         <Setter Property="IsVisible" Value="False" />
     </Style>
 
