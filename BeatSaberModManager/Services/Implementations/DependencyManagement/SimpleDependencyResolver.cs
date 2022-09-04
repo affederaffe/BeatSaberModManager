@@ -22,28 +22,44 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
         }
 
         /// <inheritdoc />
-        public bool IsDependency(IMod modification) =>
-            _dependencyRegistry.TryGetValue(modification, out HashSet<IMod>? dependents) && dependents.Count != 0;
+        public bool IsDependency(IMod modification) => _dependencyRegistry.TryGetValue(modification, out HashSet<IMod>? dependents) && dependents.Count != 0;
 
         /// <inheritdoc />
         public IEnumerable<IMod> ResolveDependencies(IMod modification)
         {
-            foreach (IMod dependency in _modProvider.GetDependencies(modification))
-            {
-                if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) dependents.Add(modification);
-                else _dependencyRegistry.Add(dependency, new HashSet<IMod> { modification });
-                yield return dependency;
-            }
+            HashSet<IMod> dependencies = new();
+            ResolveDependencies(modification, dependencies);
+            return dependencies;
         }
 
         /// <inheritdoc />
         public IEnumerable<IMod> UnresolveDependencies(IMod modification)
         {
+            HashSet<IMod> dependencies = new();
+            UnresolveDependencies(modification, dependencies);
+            return dependencies;
+        }
+
+        private void ResolveDependencies(IMod modification, ISet<IMod> dependencies)
+        {
+            foreach (IMod dependency in _modProvider.GetDependencies(modification))
+            {
+                if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) dependents.Add(modification);
+                else _dependencyRegistry.Add(dependency, new HashSet<IMod> { modification });
+                dependencies.Add(dependency);
+                ResolveDependencies(dependency, dependencies);
+            }
+        }
+
+        private void UnresolveDependencies(IMod modification, ISet<IMod> dependencies)
+        {
             foreach (IMod dependency in _modProvider.GetDependencies(modification))
             {
                 if (!_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) continue;
                 dependents.Remove(modification);
-                yield return dependency;
+                dependencies.Add(dependency);
+                if (dependencies.Count == 0)
+                    UnresolveDependencies(dependency, dependencies);
             }
         }
     }
