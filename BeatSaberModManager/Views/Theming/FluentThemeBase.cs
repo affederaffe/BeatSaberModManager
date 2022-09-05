@@ -32,6 +32,7 @@ namespace BeatSaberModManager.Views.Theming
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml") },
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/Base.xaml") },
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Controls/FluentControls.xaml") },
+                new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml") },
                 new StyleInclude(baseUri) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/Brushes.axaml") },
                 new StyleInclude(baseUri) { Source = new Uri("avares://BeatSaberModManager/Resources/Styles/Controls.axaml") }
             };
@@ -39,18 +40,16 @@ namespace BeatSaberModManager.Views.Theming
             FluentLight = new Styles
             {
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/BaseLight.xaml") },
-                new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesLight.xaml") },
-                new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml") }
+                new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesLight.xaml") }
             };
 
             FluentDark = new Styles
             {
                 new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/BaseDark.xaml") },
-                new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesDark.xaml") },
-                new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml") }
+                new StyleInclude(baseUri) { Source = new Uri("avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesDark.xaml") }
             };
 
-            _styles = new Styles { sharedStyles, FluentDark };
+            _styles = new Styles { sharedStyles, FluentLight };
         }
 
         /// <summary>
