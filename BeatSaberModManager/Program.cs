@@ -136,9 +136,9 @@ namespace BeatSaberModManager
         internal class ViewModelModule { }
 
         [Register<App, Application>(Scope.SingleInstance)]
-        [Register<StatusProgress, IStatusProgress>(Scope.SingleInstance)]
         [Register<LocalizationManager>(Scope.SingleInstance)]
         [Register<ThemeManager>(Scope.SingleInstance)]
+        [Register(typeof(StatusProgress), Scope.SingleInstance, typeof(IStatusProgress), typeof(StatusProgress))]
         internal class ApplicationModule { }
 
         [Register<MainWindow>(Scope.SingleInstance)]

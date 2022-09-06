@@ -3,15 +3,13 @@ using System.Globalization;
 
 using BeatSaberModManager.Views.Theming;
 
-using ReactiveUI;
-
 
 namespace BeatSaberModManager.Models.Implementations.Settings
 {
     /// <summary>
     /// Application-wide settings.
     /// </summary>
-    public class AppSettings : ReactiveObject
+    public class AppSettings
     {
         /// <summary>
         /// The index of the tab that was last open.
@@ -46,24 +44,12 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         /// <summary>
         /// The game's installation directory.
         /// </summary>
-        public string? InstallDir
-        {
-            get => _installDir;
-            set => this.RaiseAndSetIfChanged(ref _installDir, value);
-        }
-
-        private string? _installDir;
+        public string? InstallDir { get; set; }
 
         /// <summary>
         /// The directory containing additional <see cref="Theme"/>s.
         /// </summary>
-        public string? ThemesDir
-        {
-            get => _themesDir;
-            set => this.RaiseAndSetIfChanged(ref _themesDir, value);
-        }
-
-        private string? _themesDir;
+        public string? ThemesDir { get; set; }
 
         /// <summary>
         /// A collection of all selected mods.

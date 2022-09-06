@@ -29,12 +29,12 @@ namespace BeatSaberModManager.Views.Windows
             InitializeComponent();
             ViewModel = viewModel;
             LocalizedStatusConverter converter = new(this);
-            ViewModel.StatusProgress.ProgressInfo
+            viewModel.ProgressInfoObservable
                 .Select(converter.Convert)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
             IObservable<bool> executeObservable = ViewModel.InstallCommand.Execute();
-            if (viewModel.AppSettings.Value.CloseOneClickWindow)
+            if (viewModel.CloseOneClickWindow)
                 executeObservable.Delay(TimeSpan.FromMilliseconds(2000)).ObserveOn(RxApp.MainThreadScheduler).Subscribe(_ => Close());
             else
                 executeObservable.Subscribe();

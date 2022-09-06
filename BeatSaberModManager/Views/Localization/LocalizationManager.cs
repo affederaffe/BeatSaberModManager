@@ -44,7 +44,7 @@ namespace BeatSaberModManager.Views.Localization
         public Language SelectedLanguage
         {
             get => _selectedLanguage;
-            set => this.RaiseAndSetIfChanged(ref _selectedLanguage, value);
+            set => _appSettings.Value.LanguageCode = this.RaiseAndSetIfChanged(ref _selectedLanguage, value).CultureInfo.Name;
         }
 
         private Language _selectedLanguage;
@@ -57,7 +57,6 @@ namespace BeatSaberModManager.Views.Localization
         {
             IObservable<Language> selectedLanguageObservable = this.WhenAnyValue(static x => x.SelectedLanguage);
             selectedLanguageObservable.Subscribe(l => application.Resources.MergedDictionaries[0] = l.ResourceProvider);
-            selectedLanguageObservable.Subscribe(l => _appSettings.Value.LanguageCode = l.CultureInfo.Name);
         }
 
         private static Language LoadLanguage(string languageCode)

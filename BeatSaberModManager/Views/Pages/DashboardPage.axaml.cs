@@ -8,6 +8,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Progress;
+using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 
 using ReactiveUI;
@@ -40,18 +41,17 @@ namespace BeatSaberModManager.Views.Pages
         /// <summary>
         /// Initializes a new instance of the <see cref="DashboardPage"/> class.
         /// </summary>
-        public DashboardPage(DashboardViewModel viewModel, Window window)
+        public DashboardPage(DashboardViewModel viewModel, Window window, IStatusProgress statusProgress)
         {
             InitializeComponent();
             ViewModel = viewModel;
-            ReactiveCommand<Unit, IReadOnlyList<IStorageFile>> showFileDialogCommand = ReactiveCommand.CreateFromTask(() => window.StorageProvider.OpenFilePickerAsync(FilePickerOpenOptions), viewModel.ModsViewModel.IsInstallDirValidObservable);
+            ReactiveCommand<Unit, IReadOnlyList<IStorageFile>> showFileDialogCommand = ReactiveCommand.CreateFromTask(() => window.StorageProvider.OpenFilePickerAsync(FilePickerOpenOptions), viewModel.SettingsViewModel.IsInstallDirValidObservable);
             showFileDialogCommand.Where(static x => x.Count == 1)
                 .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
                 .WhereNotNull()
-                .Select(static x => x.AbsolutePath)
-                .SelectMany(ViewModel.InstallPlaylistAsync)
-                .Select(static x => new ProgressInfo(x ? StatusType.Completed : StatusType.Failed, null))
-                .Subscribe(ViewModel.StatusProgress.Report);
+                .InvokeCommand(viewModel.InstallPlaylistCommand);
+            viewModel.InstallPlaylistCommand.Select(static x => new ProgressInfo(x ? StatusType.Completed : StatusType.Failed, null))
+                .Subscribe(statusProgress.Report);
             InstallPlaylistButton.Command = showFileDialogCommand;
         }
     }

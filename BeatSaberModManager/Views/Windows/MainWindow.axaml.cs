@@ -1,3 +1,4 @@
+using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
@@ -27,10 +28,11 @@ namespace BeatSaberModManager.Views.Windows
         {
             InitializeComponent();
             ViewModel = viewModel;
-            this.WhenActivated(disposable => viewModel.AppSettings.Value.WhenAnyValue(static x => x.InstallDir)
+            this.WhenActivated(disposable => viewModel.SettingsViewModel.WhenAnyValue(static x => x.InstallDir)
+                .FirstAsync()
                 .Where(static x => x is null)
                 .SelectMany(_ => new InstallFolderDialogWindow().ShowDialog<string?>(this))
-                .BindTo(viewModel.SettingsViewModel, static x => x.AppSettings.Value.InstallDir)
+                .Subscribe(x => viewModel.SettingsViewModel.InstallDir = x)
                 .DisposeWith(disposable));
         }
     }

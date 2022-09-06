@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
@@ -12,6 +12,7 @@ using Avalonia.Styling;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
+using BeatSaberModManager.ViewModels;
 
 using ReactiveUI;
 
@@ -23,24 +24,39 @@ namespace BeatSaberModManager.Views.Theming
     /// </summary>
     public class ThemeManager : ReactiveObject
     {
-        private readonly ISettings<AppSettings> _appSettings;
+        private readonly SettingsViewModel _settingsViewModel;
         private readonly FluentThemeBase _fluentThemeBase;
         private readonly int _buildInThemesCount;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ThemeManager"/> class.
         /// </summary>
-        public ThemeManager(ISettings<AppSettings> appSettings)
+        public ThemeManager(ISettings<AppSettings> appSettings, SettingsViewModel settingsViewModel)
         {
-            _appSettings = appSettings;
+            _settingsViewModel = settingsViewModel;
             _fluentThemeBase = new FluentThemeBase(null!);
-            Themes = new ObservableCollection<Theme>
+            Themes = new ObservableCollection<Theme>();
+            Themes.CollectionChanged += (_, args) =>
             {
-                new("Fluent Light", _fluentThemeBase.FluentLight),
-                new("Fluent Dark", _fluentThemeBase.FluentDark)
+                if (args.Action != NotifyCollectionChangedAction.Add || args.NewItems?.Count is not 1) return;
+                Theme theme = (args.NewItems[0] as Theme)!;
+                if (theme.Name != appSettings.Value.ThemeName) return;
+                _fluentThemeBase.Style = theme.Style;
+                SelectedTheme = theme;
             };
 
+            Theme fluentLight = new("Fluent Light", _fluentThemeBase.FluentLight);
+            Theme fluentDark = new("Fluent Dark", _fluentThemeBase.FluentDark);
+            _selectedTheme = fluentLight;
+            Themes.Add(fluentLight);
+            Themes.Add(fluentDark);
             _buildInThemesCount = Themes.Count;
+
+            this.WhenAnyValue(static x => x.SelectedTheme).Skip(1).Subscribe(x =>
+            {
+                _fluentThemeBase.Style = x.Style;
+                appSettings.Value.ThemeName = x.Name;
+            });
         }
 
         /// <summary>
@@ -53,11 +69,11 @@ namespace BeatSaberModManager.Views.Theming
         /// </summary>
         public Theme SelectedTheme
         {
-            get => _selectedTheme ?? Themes[0];
+            get => _selectedTheme;
             set => this.RaiseAndSetIfChanged(ref _selectedTheme, value);
         }
 
-        private Theme? _selectedTheme;
+        private Theme _selectedTheme;
 
         /// <summary>
         /// Inserts the <see cref="FluentThemeBase"/> into the <see cref="Application"/>'s <see cref="Application.Styles"/>.
@@ -67,13 +83,7 @@ namespace BeatSaberModManager.Views.Theming
         {
             application.Styles.Insert(0, _fluentThemeBase);
             ReactiveCommand<string, Unit> reloadThemesCommand = ReactiveCommand.CreateFromTask<string>(ReloadExternalThemesAsync);
-            _appSettings.Value.WhenAnyValue(static x => x.ThemesDir).Where(Directory.Exists)
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .InvokeCommand(reloadThemesCommand!);
-            reloadThemesCommand.Subscribe(_ => SelectedTheme = Themes.FirstOrDefault(x => x.Name == _appSettings.Value.ThemeName) ?? Themes[0]);
-            IObservable<Theme> selectedThemeObservable = this.WhenAnyValue(static x => x.SelectedTheme).Skip(1);
-            selectedThemeObservable.Subscribe(t => _fluentThemeBase.Style = t.Style);
-            selectedThemeObservable.Subscribe(t => _appSettings.Value.ThemeName = t.Name);
+            _settingsViewModel.ValidatedThemesDirObservable.ObserveOn(RxApp.MainThreadScheduler).InvokeCommand(reloadThemesCommand);
         }
 
         private async Task ReloadExternalThemesAsync(string path)

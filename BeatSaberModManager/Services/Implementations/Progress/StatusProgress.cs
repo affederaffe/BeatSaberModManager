@@ -11,18 +11,7 @@ namespace BeatSaberModManager.Services.Implementations.Progress
     public sealed class StatusProgress : IStatusProgress, IDisposable
     {
         private readonly Subject<double> _progressValue = new();
-        private readonly ISubject<double> _progressValueSync;
         private readonly Subject<ProgressInfo> _progressInfo = new();
-        private readonly ISubject<ProgressInfo> _progressInfoSync;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="StatusProgress"/> class.
-        /// </summary>
-        public StatusProgress()
-        {
-            _progressValueSync = Subject.Synchronize(_progressValue);
-            _progressInfoSync = Subject.Synchronize(_progressInfo);
-        }
 
         /// <summary>
         /// Signals when the progress value changes.
@@ -35,10 +24,10 @@ namespace BeatSaberModManager.Services.Implementations.Progress
         public IObservable<ProgressInfo> ProgressInfo => _progressInfo;
 
         /// <inheritdoc />
-        public void Report(double value) => _progressValueSync.OnNext(value * 100);
+        public void Report(double value) => _progressValue.OnNext(value * 100);
 
         /// <inheritdoc />
-        public void Report(ProgressInfo value) => _progressInfoSync.OnNext(value);
+        public void Report(ProgressInfo value) => _progressInfo.OnNext(value);
 
         /// <inheritdoc />
         public void Dispose()

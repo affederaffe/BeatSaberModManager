@@ -43,7 +43,7 @@ namespace BeatSaberModManager.Views.Pages
                 .WhereNotNull()
                 .Select(static x => x.AbsolutePath)
                 .Where(installDirValidator.ValidateInstallDir)
-                .BindTo(viewModel, static x => x.AppSettings.Value.InstallDir);
+                .Subscribe(x => viewModel.InstallDir = x);
             SelectThemesFolderButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
                 .Where(static x => x.Count > 0)
@@ -51,7 +51,7 @@ namespace BeatSaberModManager.Views.Pages
                 .WhereNotNull()
                 .Select(static x => x.AbsolutePath)
                 .Where(Directory.Exists)
-                .BindTo(viewModel, static x => x.AppSettings.Value.ThemesDir);
+                .Subscribe(x => viewModel.ThemesDir = x);
         }
     }
 }

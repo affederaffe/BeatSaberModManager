@@ -6,6 +6,7 @@ using System.Reactive;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
@@ -22,6 +23,8 @@ namespace BeatSaberModManager.ViewModels
     public class AssetInstallWindowViewModel : ViewModelBase
     {
         private readonly Uri _uri;
+        private readonly ISettings<AppSettings> _appSettings;
+        private readonly IStatusProgress _progress;
         private readonly IInstallDirValidator _installDirValidator;
         private readonly IEnumerable<IAssetProvider> _assetProviders;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
@@ -32,13 +35,14 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="AssetInstallWindowViewModel"/> class.
         /// </summary>
-        public AssetInstallWindowViewModel(Uri uri, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IStatusProgress progress, IEnumerable<IAssetProvider> assetProviders)
+        public AssetInstallWindowViewModel(Uri uri, StatusProgress statusProgress, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IEnumerable<IAssetProvider> assetProviders)
         {
             _uri = uri;
+            _progress = statusProgress;
+            _appSettings = appSettings;
             _installDirValidator = installDirValidator;
             _assetProviders = assetProviders;
-            AppSettings = appSettings;
-            StatusProgress = (StatusProgress)progress;
+            ProgressInfoObservable = statusProgress.ProgressInfo;
             Log = new ObservableCollection<string>();
             InstallCommand = ReactiveCommand.CreateFromTask(InstallAssetAsync);
             InstallCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
@@ -46,8 +50,11 @@ namespace BeatSaberModManager.ViewModels
             InstallCommand.CombineLatest(InstallCommand.IsExecuting)
                 .Select(static x => !x.First && !x.Second)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
-            StatusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
+            statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
         }
+
+        /// <inheritdoc cref="StatusProgress.ProgressInfo" />
+        public IObservable<ProgressInfo> ProgressInfoObservable { get; }
 
         /// <summary>
         /// Downloads and installs an asset.
@@ -59,15 +66,8 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public ObservableCollection<string> Log { get; }
 
-        /// <summary>
-        /// Exposed for the view.
-        /// </summary>
-        public ISettings<AppSettings> AppSettings { get; }
-
-        /// <summary>
-        /// Exposed for the view.
-        /// </summary>
-        public StatusProgress StatusProgress { get; }
+        /// <inheritdoc cref="AppSettings.CloseOneClickWindow" />
+        public bool CloseOneClickWindow => _appSettings.Value.CloseOneClickWindow;
 
         /// <summary>
         /// True if the operation is currently executing, false otherwise.
@@ -91,9 +91,9 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<bool> InstallAssetAsync()
         {
-            if (!_installDirValidator.ValidateInstallDir(AppSettings.Value.InstallDir)) return false;
+            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir)) return false;
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
-            return assetProvider is not null && await assetProvider.InstallAssetAsync(AppSettings.Value.InstallDir, _uri, StatusProgress).ConfigureAwait(false);
+            return assetProvider is not null && await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir, _uri, _progress).ConfigureAwait(false);
         }
     }
 }
