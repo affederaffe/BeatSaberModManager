@@ -52,7 +52,7 @@ namespace BeatSaberModManager.Views.Theming
             Themes.Add(fluentDark);
             _buildInThemesCount = Themes.Count;
 
-            this.WhenAnyValue(static x => x.SelectedTheme).Skip(1).Subscribe(x =>
+            this.WhenAnyValue(static x => x.SelectedTheme).Skip(1).WhereNotNull().Subscribe(x =>
             {
                 _fluentThemeBase.Style = x.Style;
                 appSettings.Value.ThemeName = x.Name;

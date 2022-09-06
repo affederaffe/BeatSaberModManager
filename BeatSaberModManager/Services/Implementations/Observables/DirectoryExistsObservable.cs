@@ -21,6 +21,7 @@ namespace BeatSaberModManager.Services.Implementations.Observables
         public DirectoryExistsObservable()
         {
             _fileSystemWatcher.Created += OnCreated;
+            _fileSystemWatcher.Renamed += OnRenamed;
             _fileSystemWatcher.Deleted += OnDeleted;
             _fileSystemWatcher.NotifyFilter = NotifyFilters.DirectoryName;
         }
@@ -39,8 +40,9 @@ namespace BeatSaberModManager.Services.Implementations.Observables
                 }
                 else
                 {
-                    _path = value;
-                    _fileSystemWatcher.Path = new DirectoryInfo(value).Parent?.FullName ?? throw new InvalidOperationException("Cannot watch root directory.");
+                    DirectoryInfo directoryInfo = new(value);
+                    _path = System.IO.Path.TrimEndingDirectorySeparator(directoryInfo.FullName);
+                    _fileSystemWatcher.Path = directoryInfo.Parent?.FullName ?? throw new InvalidOperationException("Cannot watch root directory.");
                     _fileSystemWatcher.EnableRaisingEvents = true;
                     _subject.OnNext(true);
                 }
@@ -55,6 +57,8 @@ namespace BeatSaberModManager.Services.Implementations.Observables
             if (e.FullPath == _path)
                 _subject.OnNext(true);
         }
+
+        private void OnRenamed(object sender, RenamedEventArgs e) => _subject.OnNext(e.FullPath == _path);
 
         private void OnDeleted(object sender, FileSystemEventArgs e)
         {
