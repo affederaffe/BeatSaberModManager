@@ -44,6 +44,7 @@ namespace BeatSaberModManager
         {
             if (await _updater.NeedsUpdateAsync().ConfigureAwait(false))
                 return await _updater.UpdateAsync().ConfigureAwait(false);
+            await _appSettings.LoadAsync();
             if (_args.Length == 2 && _args[0] == "--path")
                 _appSettings.Value.InstallDir = _args[1];
             if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))

@@ -58,7 +58,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             string processPath = Environment.ProcessPath!;
             string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.Ordinal);
             IOUtils.TryDeleteFile(oldPath);
-            IOUtils.TryMoveFile(processPath, oldPath);
+            if (!IOUtils.TryMoveFile(processPath, oldPath)) return -1;
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             using ZipArchive archive = new(stream);
             if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true)) return -1;

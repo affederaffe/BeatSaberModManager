@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 
 using Avalonia;
@@ -86,10 +87,11 @@ namespace BeatSaberModManager
             public static ILogger CreateLogger() => new LoggerConfiguration().WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "Log.txt")).CreateLogger();
         }
 
+        [Register(typeof(JsonSettingsProvider<AppSettings>), Scope.SingleInstance, typeof(ISettings<AppSettings>))]
         internal class SettingsModule
         {
-            [Factory(Scope.SingleInstance)]
-            public static ISettings<AppSettings> CreateAppSettings() => new JsonSettingsProvider<AppSettings>(SettingsJsonSerializerContext.Default.AppSettings);
+            [Instance]
+            public static JsonTypeInfo<AppSettings> AppSettingsJsonTypeInfo = SettingsJsonSerializerContext.Default.AppSettings;
         }
 
         [Register<HttpProgressClient>(Scope.SingleInstance)]

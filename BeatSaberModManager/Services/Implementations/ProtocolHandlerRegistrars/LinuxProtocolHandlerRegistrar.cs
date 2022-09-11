@@ -1,7 +1,6 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Runtime.Versioning;
 
 using BeatSaberModManager.Services.Interfaces;
@@ -31,7 +30,16 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         public bool IsProtocolHandlerRegistered(string protocol)
         {
             string handlerPath = GetHandlerPathForProtocol(protocol);
-            return IOUtils.TryReadAllLines(handlerPath, out string[]? text) && text.Any(static s => s.StartsWith($"Exec={Environment.ProcessPath}", StringComparison.Ordinal));
+            using FileStream? fileStream = IOUtils.TryOpenFile(handlerPath, new FileStreamOptions());
+            if (fileStream is null) return false;
+            using StreamReader streamReader = new(fileStream);
+            while (streamReader.ReadLine() is { } line)
+            {
+                if (line.StartsWith($"Exec={Environment.ProcessPath}", StringComparison.Ordinal))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <inheritdoc />

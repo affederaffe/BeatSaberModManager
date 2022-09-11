@@ -1,4 +1,7 @@
-﻿namespace BeatSaberModManager.Models.Interfaces
+﻿using System.Threading.Tasks;
+
+
+namespace BeatSaberModManager.Models.Interfaces
 {
     /// <summary>
     /// Provides a generic getter for settings.
@@ -7,8 +10,18 @@
     public interface ISettings<out T>
     {
         /// <summary>
-        /// Gets or loads the settings instance.
+        /// Gets the loaded settings instance.
         /// </summary>
         T Value { get; }
+
+        /// <summary>
+        /// Asynchronously loads the config.
+        /// </summary>
+        Task LoadAsync();
+
+        /// <summary>
+        /// Asynchronously saves the config.
+        /// </summary>
+        Task SaveAsync();
     }
 }

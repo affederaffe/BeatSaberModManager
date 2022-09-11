@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
+using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
@@ -13,7 +14,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
     /// Automatically loads and saves <typeparamref name="T"/> as a json file.
     /// </summary>
     /// <typeparam name="T">The type of the settings class.</typeparam>
-    public sealed class JsonSettingsProvider<T> : ISettings<T>, IDisposable where T : class, new()
+    public sealed class JsonSettingsProvider<T> : ISettings<T>, IAsyncDisposable where T : class, new()
     {
         private readonly JsonTypeInfo<T> _jsonTypeInfo;
         private readonly string _saveDirPath;
@@ -33,24 +34,46 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         /// <summary>
         /// The instance of the loaded setting <typeparamref name="T"/>.
         /// </summary>
-        public T Value => _value ??= Load();
-        private T? _value;
+        public T Value { get; private set; } = null!;
 
         /// <inheritdoc />
-        public void Dispose() => Save();
+        public async ValueTask DisposeAsync() => await SaveAsync();
 
-        private void Save()
+        /// <inheritdoc />
+        public async Task LoadAsync()
         {
-            string json = JsonSerializer.Serialize(Value, _jsonTypeInfo);
-            if (IOUtils.TryCreateDirectory(_saveDirPath)) File.WriteAllText(_saveFilePath, json);
+
+            if (!IOUtils.TryCreateDirectory(_saveDirPath))
+            {
+                Value = new T();
+                return;
+            }
+
+            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Options = FileOptions.Asynchronous} );
+            if (fileStream is null)
+            {
+                Value = new T();
+                return;
+            }
+
+            try
+            {
+                Value = await JsonSerializer.DeserializeAsync(fileStream, _jsonTypeInfo) ?? new T();
+            }
+            catch
+            {
+                Value = new T();
+                IOUtils.TryDeleteFile(_saveFilePath);
+            }
         }
 
-        private T Load()
+        /// <inheritdoc />
+        public async Task SaveAsync()
         {
-            if (!IOUtils.TryCreateDirectory(_saveDirPath) || !IOUtils.TryReadAllText(_saveFilePath, out string? json)) return new T();
-            T? settings = JsonSerializer.Deserialize(json, _jsonTypeInfo);
-            settings ??= new T();
-            return settings;
+            if (!IOUtils.TryCreateDirectory(_saveDirPath)) return;
+            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Access = FileAccess.Write, Mode = FileMode.Create, Options = FileOptions.Asynchronous });
+            if (fileStream is null) return;
+            await JsonSerializer.SerializeAsync(fileStream, Value, _jsonTypeInfo);
         }
     }
 }
