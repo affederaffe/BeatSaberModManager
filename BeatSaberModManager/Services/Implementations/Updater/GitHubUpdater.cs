@@ -43,8 +43,8 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             if (OperatingSystem.IsLinux()) return false;
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return false;
-            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            _release = JsonSerializer.Deserialize(body, GitHubJsonSerializerContext.Default.Release);
+            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            _release = await JsonSerializer.DeserializeAsync(contentStream, GitHubJsonSerializerContext.Default.Release).ConfigureAwait(false);
             return _release is not null && Version.TryParse(_release.TagName.AsSpan(1, 5), out Version? version) && version > _version;
         }
 

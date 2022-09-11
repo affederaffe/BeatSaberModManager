@@ -41,7 +41,7 @@ namespace BeatSaberModManager.Views.Pages
                 .Where(static x => x.Count > 0)
                 .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
                 .WhereNotNull()
-                .Select(static x => x.AbsolutePath)
+                .Select(static x => x.LocalPath)
                 .Where(installDirValidator.ValidateInstallDir)
                 .Subscribe(x => viewModel.InstallDir = x);
             SelectThemesFolderButton.GetObservable(Button.ClickEvent)
@@ -49,7 +49,7 @@ namespace BeatSaberModManager.Views.Pages
                 .Where(static x => x.Count > 0)
                 .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
                 .WhereNotNull()
-                .Select(static x => x.AbsolutePath)
+                .Select(static x => x.LocalPath)
                 .Where(Directory.Exists)
                 .Subscribe(x => viewModel.ThemesDir = x);
         }

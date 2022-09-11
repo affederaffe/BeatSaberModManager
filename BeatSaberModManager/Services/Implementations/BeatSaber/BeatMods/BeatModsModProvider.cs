@@ -121,8 +121,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri($"https://beatmods.com/api/v1/{args}")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return null;
-            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return JsonSerializer.Deserialize(body, BeatModsModJsonSerializerContext.Default.HashSetBeatModsMod);
+            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            return await JsonSerializer.DeserializeAsync(contentStream, BeatModsModJsonSerializerContext.Default.HashSetBeatModsMod).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -134,14 +134,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             using HttpResponseMessage versionsResponse = await _httpClient.TryGetAsync(new Uri("https://versions.beatmods.com/versions.json")).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode) return null;
-            string versionsBody = await versionsResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            string[]? versions = JsonSerializer.Deserialize(versionsBody, CommonJsonSerializerContext.Default.StringArray);
+            await using Stream versionsStream = await versionsResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            string[]? versions = await JsonSerializer.DeserializeAsync(versionsStream, CommonJsonSerializerContext.Default.StringArray).ConfigureAwait(false);
             if (versions is null) return null;
             if (versions.Contains(gameVersion)) return gameVersion;
             using HttpResponseMessage aliasResponse = await _httpClient.TryGetAsync(new Uri("https://alias.beatmods.com/aliases.json")).ConfigureAwait(false);
             if (!aliasResponse.IsSuccessStatusCode) return null;
-            string aliasBody = await aliasResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
-            Dictionary<string, string[]>? aliases = JsonSerializer.Deserialize(aliasBody, CommonJsonSerializerContext.Default.DictionaryStringStringArray);
+            await using Stream aliasesStream = await aliasResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            Dictionary<string, string[]>? aliases = await JsonSerializer.DeserializeAsync(aliasesStream, CommonJsonSerializerContext.Default.DictionaryStringStringArray).ConfigureAwait(false);
             return aliases?.FirstOrDefault(x => x.Value.Any(alias => alias == gameVersion)).Key;
         }
 

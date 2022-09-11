@@ -37,7 +37,7 @@ namespace BeatSaberModManager.ViewModels
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallModLoaderAsync(settingsViewModel.InstallDir!), modsViewModel.IsSuccessObservable);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallAllModsAsync(settingsViewModel.InstallDir!), modsViewModel.IsSuccessObservable);
             LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(settingsViewModel.InstallDir!), settingsViewModel.IsInstallDirValidObservable);
-            InstallPlaylistCommand = ReactiveCommand.CreateFromTask<Uri, bool>(x => playlistInstaller.InstallPlaylistAsync(settingsViewModel.InstallDir!, x, statusProgress), settingsViewModel.IsInstallDirValidObservable);
+            InstallPlaylistCommand = ReactiveCommand.CreateFromTask<string, bool>(x => playlistInstaller.InstallPlaylistAsync(settingsViewModel.InstallDir!, x, statusProgress), settingsViewModel.IsInstallDirValidObservable);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Install a see cref="BeatSaberModManager.Models.Implementations.BeatSaber.Playlists.Playlist"/>.
         /// </summary>
-        public ReactiveCommand<Uri, bool> InstallPlaylistCommand { get; }
+        public ReactiveCommand<string, bool> InstallPlaylistCommand { get; }
 
         /// <summary>
         /// The version of the game.

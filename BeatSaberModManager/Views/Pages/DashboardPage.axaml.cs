@@ -28,7 +28,7 @@ namespace BeatSaberModManager.Views.Pages
             {
                 new FilePickerFileType("BeatSaber Playlist")
                 {
-                    Patterns = new [] { "*.bpllist" }
+                    Patterns = new [] { "*.bplist" }
                 }
             }
         };
@@ -47,7 +47,7 @@ namespace BeatSaberModManager.Views.Pages
             ViewModel = viewModel;
             ReactiveCommand<Unit, IReadOnlyList<IStorageFile>> showFileDialogCommand = ReactiveCommand.CreateFromTask(() => window.StorageProvider.OpenFilePickerAsync(FilePickerOpenOptions), viewModel.SettingsViewModel.IsInstallDirValidObservable);
             showFileDialogCommand.Where(static x => x.Count == 1)
-                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
+                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri.LocalPath : null)
                 .WhereNotNull()
                 .InvokeCommand(viewModel.InstallPlaylistCommand);
             viewModel.InstallPlaylistCommand.Select(static x => new ProgressInfo(x ? StatusType.Completed : StatusType.Failed, null))

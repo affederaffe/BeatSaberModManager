@@ -103,8 +103,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
                     continue;
                 }
 
-                string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return JsonSerializer.Deserialize(body, BeatSaverJsonSerializerContext.Default.BeatSaverMap);
+                await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync(contentStream, BeatSaverJsonSerializerContext.Default.BeatSaverMap).ConfigureAwait(false);
             }
 
             return null;

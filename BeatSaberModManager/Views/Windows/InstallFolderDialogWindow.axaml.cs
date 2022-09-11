@@ -29,7 +29,7 @@ namespace BeatSaberModManager.Views.Windows
                 .Where(static x => x.Count > 0)
                 .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
                 .WhereNotNull()
-                .Select(static x => x.AbsolutePath)
+                .Select(static x => x.LocalPath)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(Close);
         }

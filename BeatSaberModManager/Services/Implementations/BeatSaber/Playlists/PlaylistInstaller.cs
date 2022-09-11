@@ -51,9 +51,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string fileName = WebUtility.UrlDecode(uri.Segments.Last());
             string filePath = Path.Join(playlistsDirPath, fileName);
             if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
-            string body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            await File.WriteAllTextAsync(filePath, body).ConfigureAwait(false);
-            Playlist? playlist = JsonSerializer.Deserialize(body, PlaylistJsonSerializerContext.Default.Playlist);
+            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            await using Stream writeStream = File.OpenWrite(filePath);
+            await contentStream.CopyToAsync(writeStream);
+            contentStream.Seek(0, SeekOrigin.Begin);
+            Playlist? playlist = await JsonSerializer.DeserializeAsync(contentStream, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
         }
 
@@ -70,9 +72,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string playlistsDirPath = Path.Join(installDir, "Playlists");
             string destFilePath = Path.Join(playlistsDirPath, fileName);
             if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
-            string json = await File.ReadAllTextAsync(filePath).ConfigureAwait(false);
-            await File.WriteAllTextAsync(destFilePath, json).ConfigureAwait(false);
-            Playlist? playlist = JsonSerializer.Deserialize(json, PlaylistJsonSerializerContext.Default.Playlist);
+            await using Stream contentStream = File.OpenRead(filePath);
+            await using Stream writeStream = File.OpenWrite(destFilePath);
+            await contentStream.CopyToAsync(writeStream);
+            contentStream.Seek(0, SeekOrigin.Begin);
+            Playlist? playlist = await JsonSerializer.DeserializeAsync(contentStream, PlaylistJsonSerializerContext.Default.Playlist);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
         }
 

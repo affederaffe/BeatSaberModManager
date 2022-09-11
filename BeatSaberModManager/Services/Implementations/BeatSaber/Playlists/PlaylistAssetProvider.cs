@@ -24,6 +24,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         /// <inheritdoc />
         public Task<bool> InstallAssetAsync(string installDir, Uri uri, IStatusProgress? progress = null)
-            => _playlistInstaller.InstallPlaylistAsync(installDir, new Uri(uri.AbsolutePath[1..]), progress);
+            => _playlistInstaller.InstallPlaylistAsync(installDir, new Uri(uri.LocalPath[1..]), progress);
     }
 }
