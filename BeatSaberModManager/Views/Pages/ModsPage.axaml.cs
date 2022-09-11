@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Reactive.Linq;
 
 using Avalonia;
 using Avalonia.Collections;
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
@@ -34,11 +32,11 @@ namespace BeatSaberModManager.Views.Pages
             ViewModel = viewModel;
             ViewModel.WhenAnyValue(static x => x.GridItems)
                 .WhereNotNull()
-                .Select(static x => new DataGridCollectionView(x.Values) { GroupDescriptions = { new DataGridPathGroupDescription($"{nameof(ModGridItemViewModel.AvailableMod)}.{nameof(ModGridItemViewModel.AvailableMod.Category)}") } })
+                .Select(static x => new DataGridCollectionView(x.Values) { GroupDescriptions = { new DataGridFuncGroupDescription<ModGridItemViewModel, string>(static x => x.AvailableMod.Category) } })
                 .Do(static x => x.MoveCurrentTo(null))
-                .BindTo<DataGridCollectionView, DataGrid, IEnumerable>(ModsDataGrid, static x => x.Items);
+                .Subscribe(x => ModsDataGrid.Items = x);
             ModsDataGrid.GetObservable(SearchableDataGrid.IsSearchEnabledProperty).CombineLatest(ModsDataGrid.GetObservable(SearchableDataGrid.TextProperty))
-                .Where(x => x.Second is not null && ModsDataGrid.Items is DataGridCollectionView)
+                .Where(static x => x.Second is not null)
                 .Select(static x => new Func<object, bool>(o => Filter(x.First, x.Second, o)))
                 .Subscribe(x => ((DataGridCollectionView)ModsDataGrid.Items).Filter = x);
         }

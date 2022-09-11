@@ -1,7 +1,8 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:c="using:BeatSaberModManager.Views.Controls"
-                    xmlns:cv="using:BeatSaberModManager.Views.Converters">
+                    xmlns:cv="using:BeatSaberModManager.Views.Converters"
+                    x:CompileBindings="True">
 
     <Design.PreviewWith>
         <Border Width="400" Height="150">
@@ -216,10 +217,10 @@
             <Setter Property="PaneBackground" Value="{StaticResource PaneOverlayBrush}" />
         </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Overlay]">
-            <Setter Property="Background" Value="{Binding $parent[TabControl].ContentBackground}" />
+            <Setter Property="Background" Value="{Binding $parent[TabControl].Background}" />
         </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Inline] Border#BackgroundBorder">
-            <Setter Property="Background" Value="{Binding $parent[TabControl].ContentBackground}" />
+            <Setter Property="Background" Value="{Binding $parent[TabControl].Background}" />
             <Setter Property="BoxShadow" Value="{StaticResource NavigationContentShadow}" />
         </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Inline][IsPaneOpen=True] Border#BackgroundBorder">

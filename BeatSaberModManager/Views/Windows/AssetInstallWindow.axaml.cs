@@ -28,6 +28,7 @@ namespace BeatSaberModManager.Views.Windows
         {
             InitializeComponent();
             ViewModel = viewModel;
+            ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             LocalizedStatusConverter converter = new(this);
             viewModel.ProgressInfoObservable
                 .Select(converter.Convert)

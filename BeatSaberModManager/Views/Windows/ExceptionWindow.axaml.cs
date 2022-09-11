@@ -25,6 +25,7 @@ namespace BeatSaberModManager.Views.Windows
         public ExceptionWindow(Exception e)
         {
             InitializeComponent();
+            ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             ExceptionTextBlock.Text = e.ToString();
         }
 

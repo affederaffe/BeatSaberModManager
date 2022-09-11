@@ -28,6 +28,7 @@ namespace BeatSaberModManager.Views.Windows
         {
             InitializeComponent();
             ViewModel = viewModel;
+            ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             this.WhenActivated(disposable => viewModel.SettingsViewModel.WhenAnyValue(static x => x.InstallDir)
                 .FirstAsync()
                 .Where(static x => x is null)

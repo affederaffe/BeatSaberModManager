@@ -4,11 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.ExceptionWindow"
+        x:CompileBindings="True"
         Name="Window"
         WindowStartupLocation="CenterOwner"
         TransparencyLevelHint="Mica"
         Background="Transparent"
-        ExtendClientAreaToDecorationsHint="True"
         MinWidth="320" MinHeight="140"
         Width="250" Height="450"
         Title="{DynamicResource ExceptionWindow:Title}">

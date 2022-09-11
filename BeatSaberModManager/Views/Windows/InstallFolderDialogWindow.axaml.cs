@@ -23,6 +23,7 @@ namespace BeatSaberModManager.Views.Windows
         public InstallFolderDialogWindow()
         {
             InitializeComponent();
+            ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             ContinueButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
                 .Where(static x => x.Count > 0)
