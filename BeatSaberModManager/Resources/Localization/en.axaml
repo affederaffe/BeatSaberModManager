@@ -58,7 +58,7 @@
     <sys:String x:Key="OptionsView:ThemesLabel">Themes</sys:String>
 
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">It looks like you haven't set your installation directory yet, would you like to do so?</sys:String>
-    <sys:String x:Key="InstallDirDialogWindow:ContinueButton">Continue</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:SelectButton">Select</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:CancelButton">Cancel</sys:String>
 
     <sys:String x:Key="ExceptionWindow:Title">Application crashed</sys:String>

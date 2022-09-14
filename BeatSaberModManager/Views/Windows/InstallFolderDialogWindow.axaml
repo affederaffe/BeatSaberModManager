@@ -31,7 +31,7 @@
                         Grid.Column="0"
                         Margin="10, 0"
                         HorizontalAlignment="Center"
-                        Content="{DynamicResource InstallDirDialogWindow:ContinueButton}">
+                        Content="{DynamicResource InstallDirDialogWindow:SelectButton}">
                 </Button>
                 <Button Grid.Column="1"
                         Margin="10, 0"
