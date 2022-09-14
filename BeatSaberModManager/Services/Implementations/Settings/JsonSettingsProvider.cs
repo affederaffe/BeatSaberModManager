@@ -49,7 +49,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
                 return;
             }
 
-            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Options = FileOptions.Asynchronous} );
+            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Options = FileOptions.Asynchronous } );
             if (fileStream is null)
             {
                 Value = new T();

@@ -91,7 +91,7 @@ namespace BeatSaberModManager
         internal class SettingsModule
         {
             [Instance]
-            public static JsonTypeInfo<AppSettings> AppSettingsJsonTypeInfo = SettingsJsonSerializerContext.Default.AppSettings;
+            public static readonly JsonTypeInfo<AppSettings> AppSettingsJsonTypeInfo = SettingsJsonSerializerContext.Default.AppSettings;
         }
 
         [Register<HttpProgressClient>(Scope.SingleInstance)]

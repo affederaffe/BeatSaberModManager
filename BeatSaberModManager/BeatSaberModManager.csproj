@@ -10,7 +10,7 @@
         <Nullable>enable</Nullable>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
-        <AnalysisLevel>preview-recommended</AnalysisLevel>
+        <AnalysisLevel>preview-All</AnalysisLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
