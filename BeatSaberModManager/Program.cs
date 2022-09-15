@@ -30,8 +30,6 @@ using BeatSaberModManager.Views.Pages;
 using BeatSaberModManager.Views.Theming;
 using BeatSaberModManager.Views.Windows;
 
-using ReactiveUI;
-
 using Serilog;
 
 using StrongInject;
@@ -150,9 +148,9 @@ namespace BeatSaberModManager
 
         [Register<MainWindow>(Scope.SingleInstance)]
         [Register<AssetInstallWindow>(Scope.SingleInstance)]
-        [Register<DashboardPage, IViewFor<DashboardViewModel>>(Scope.SingleInstance)]
-        [Register<ModsPage, IViewFor<ModsViewModel>>(Scope.SingleInstance)]
-        [Register<SettingsPage, IViewFor<SettingsViewModel>>(Scope.SingleInstance)]
+        [Register<DashboardPage>(Scope.SingleInstance)]
+        [Register<ModsPage>(Scope.SingleInstance)]
+        [Register<SettingsPage>(Scope.SingleInstance)]
         internal class ViewsModule
         {
             [Factory(Scope.SingleInstance)]
@@ -162,13 +160,13 @@ namespace BeatSaberModManager
             public static Window CreateMainWindow(Uri? installRequestUri, Lazy<MainWindow> mainWindow, Lazy<AssetInstallWindow> assetInstallWindow) => installRequestUri is null ? mainWindow.Value : assetInstallWindow.Value;
 
             [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
-            public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<IViewFor<DashboardViewModel>> view) => new(static t => t is DashboardViewModel, (_, _) => view.Value as Control, true);
+            public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<DashboardPage> view) => new(static t => t is DashboardViewModel, (_, _) => view.Value, true);
 
             [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
-            public static FuncDataTemplate CreateModsPageDataTemplate(Lazy<IViewFor<ModsViewModel>> view) => new(static t => t is ModsViewModel, (_, _) => view.Value as Control, true);
+            public static FuncDataTemplate CreateModsPageDataTemplate(Lazy<ModsPage> view) => new(static t => t is ModsViewModel, (_, _) => view.Value, true);
 
             [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
-            public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<IViewFor<SettingsViewModel>> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value as Control, true);
+            public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<SettingsPage> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value, true);
         }
 
         internal static bool IsProduction =>
