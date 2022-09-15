@@ -14,7 +14,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel that represents an <see cref="IMod"/> which can be selected an deselected.
     /// </summary>
-    public class ModGridItemViewModel : ViewModelBase, IDisposable
+    public sealed class ModGridItemViewModel : ViewModelBase, IDisposable
     {
         private readonly ISettings<AppSettings> _appSettings;
         private readonly IDependencyResolver _dependencyResolver;
@@ -88,7 +88,7 @@ namespace BeatSaberModManager.ViewModels
         private bool _isCheckBoxChecked;
 
         /// <summary>
-        /// 
+        /// Start observing the checkbox state and resolve dependencies as needed.
         /// </summary>
         /// <param name="gridItems"></param>
         public void Initialize(Dictionary<IMod, ModGridItemViewModel> gridItems)

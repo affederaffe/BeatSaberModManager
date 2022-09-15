@@ -7,7 +7,7 @@ using Avalonia.Media;
 namespace BeatSaberModManager.Views.Controls
 {
     /// <summary>
-    /// 
+    /// A Header with a dockable icon.
     /// </summary>
     public class IconHeader : TemplatedControl
     {

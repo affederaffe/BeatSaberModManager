@@ -8,7 +8,7 @@ namespace BeatSaberModManager.Services.Implementations.Observables
     /// <summary>
     /// An <see cref="IObservable{T}"/> that signals when the directory at the specified <see cref="Path"/> becomes valid or invalid.
     /// </summary>
-    public class DirectoryExistsObservable : IObservable<bool>, IDisposable
+    public sealed class DirectoryExistsObservable : IObservable<bool>, IDisposable
     {
         private readonly FileSystemWatcher _fileSystemWatcher = new();
         private readonly BehaviorSubject<bool> _subject = new(false);
