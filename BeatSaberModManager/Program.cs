@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
@@ -84,7 +85,11 @@ namespace BeatSaberModManager
         internal class SerilogModule
         {
             [Factory(Scope.SingleInstance)]
-            public static ILogger CreateLogger() => new LoggerConfiguration().WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "Log.txt")).CreateLogger();
+            public static ILogger CreateLogger() => new LoggerConfiguration()
+                .WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "Log.txt"),
+                    rollingInterval: RollingInterval.Day,
+                    formatProvider: CultureInfo.InvariantCulture)
+                .CreateLogger();
         }
 
         [Register(typeof(JsonSettingsProvider<AppSettings>), Scope.SingleInstance, typeof(ISettings<AppSettings>))]

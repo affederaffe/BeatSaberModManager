@@ -15,7 +15,7 @@ using Microsoft.Win32;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     /// <inheritdoc />
-    public class BeatSaberInstallDirLocator : IInstallDirLocator
+    public partial class BeatSaberInstallDirLocator : IInstallDirLocator
     {
         private readonly IInstallDirValidator _installDirValidator;
 
@@ -71,10 +71,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             string acf = Path.Join(path, "appmanifest_620980.acf");
             await using FileStream? fileStream = IOUtils.TryOpenFile(acf, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) return null;
-            Regex regex = new("\\s\"installdir\"\\s+\"(.+)\"");
-            string? line;
+            Regex regex = InstallDirRegex();
             using StreamReader reader = new(fileStream);
-            while ((line = await reader.ReadLineAsync().ConfigureAwait(false)) is not null)
+            while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
             {
                 Match match = regex.Match(line);
                 if (!match.Success) continue;
@@ -108,8 +107,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                 string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
                 if (libraryPath is null) continue;
                 string finalPath = Path.Join(libraryPath, "Software", "hyperbolic-magnetism-beat-saber");
-                if (_installDirValidator.ValidateInstallDir(finalPath))
-                    return finalPath;
+                if (_installDirValidator.ValidateInstallDir(finalPath)) return finalPath;
             }
 
             return null;
@@ -128,14 +126,19 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             string vdf = Path.Join(path, "steamapps", "libraryfolders.vdf");
             await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, new FileStreamOptions { Options = FileOptions.Asynchronous });
             if (fileStream is null) yield break;
-            Regex regex = new("\\s\"(?:\\d|path)\"\\s+\"(.+)\"");
+            Regex regex = LibraryPathRegex();
             using StreamReader vdfReader = new(fileStream);
             while (await vdfReader.ReadLineAsync().ConfigureAwait(false) is { } line)
             {
                 Match match = regex.Match(line);
-                if (match.Success)
-                    yield return Path.Join(match.Groups[1].Value.Replace(@"\\", "/", StringComparison.Ordinal), "steamapps");
+                if (match.Success) yield return Path.Join(match.Groups[1].Value.Replace(@"\\", "/", StringComparison.Ordinal), "steamapps");
             }
         }
+
+        [GeneratedRegex("\\s\"installdir\"\\s+\"(.+)\"")]
+        private static partial Regex InstallDirRegex();
+
+        [GeneratedRegex("\\s\"(?:\\d|path)\"\\s+\"(.+)\"")]
+        private static partial Regex LibraryPathRegex();
     }
 }
