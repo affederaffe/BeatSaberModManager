@@ -30,10 +30,10 @@ namespace BeatSaberModManager.ViewModels
             settingsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
             DirectoryExistsObservable appDataDirExistsObservable = new();
             settingsViewModel.ValidatedInstallDirObservable.Select(gamePathsProvider.GetAppDataPath).Subscribe(x => appDataDirExistsObservable.Path = x);
-            OpenAppDataCommand = ReactiveCommand.Create<Unit, bool>(_ => PlatformUtils.TryOpenUri(gamePathsProvider.GetAppDataPath(appDataDirExistsObservable.Path!)), appDataDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
+            OpenAppDataCommand = ReactiveCommand.Create<Unit, bool>(_ => PlatformUtils.TryOpenUri(appDataDirExistsObservable.Path!), appDataDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
             DirectoryExistsObservable logsDirExistsObservable = new();
             settingsViewModel.ValidatedInstallDirObservable.Select(gamePathsProvider.GetLogsPath).Subscribe(x => logsDirExistsObservable.Path = x);
-            OpenLogsCommand = ReactiveCommand.Create<Unit, bool>(_ => PlatformUtils.TryOpenUri(gamePathsProvider.GetLogsPath(logsDirExistsObservable.Path!)), logsDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
+            OpenLogsCommand = ReactiveCommand.Create<Unit, bool>(_ => PlatformUtils.TryOpenUri(logsDirExistsObservable.Path!), logsDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
             UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallModLoaderAsync(settingsViewModel.InstallDir!), modsViewModel.IsSuccessObservable);
             UninstallAllModsCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallAllModsAsync(settingsViewModel.InstallDir!), modsViewModel.IsSuccessObservable);
             LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(settingsViewModel.InstallDir!), settingsViewModel.IsInstallDirValidObservable);
