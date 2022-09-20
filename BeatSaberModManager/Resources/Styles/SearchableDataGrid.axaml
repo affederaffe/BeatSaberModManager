@@ -27,6 +27,7 @@
                                       Grid.ColumnSpan="2"
                                       HorizontalAlignment="Right"
                                       Background="Transparent"
+                                      BorderBrush="{x:Null}"
                                       IsChecked="{TemplateBinding IsSearchEnabled, Mode=TwoWay}"
                                       Content="{TemplateBinding SearchIcon}">
                         </ToggleButton>

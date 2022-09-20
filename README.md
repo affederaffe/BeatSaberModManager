@@ -33,6 +33,9 @@ Mod Assistant uses mods from [BeatMods](https://beatmods.com/) and shows whateve
 **I hit install but now my game won't launch, I can't click any buttons, I only see a black screen, etc** \
 Please visit the [Beat Saber Modding Group](https://discord.gg/beatsabermods) `#pc-help` channels. Check the pinned messages or ask for help and see if you can work things out.
 
+### Theming
+See [Theming](Theming.md)
+
 ### Credits
 ModAssistant by Assistant: https://github.com/Assistant/ModAssistant \
 BSIPA-Linux by geefr: https://github.com/geefr/BSIPA-Linux
