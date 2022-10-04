@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
-using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
@@ -30,48 +27,29 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         }
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<IMod> InstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null)
+        public async Task<bool> InstallModAsync(string installDir, IMod modification)
         {
-            BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
-            if (beatModsMods.Length <= 0) yield break;
+            if (modification is not BeatModsMod beatModsMod) return false;
             string pendingDirPath = Path.Join(installDir, "IPA", "Pending");
-            IOUtils.TryCreateDirectory(pendingDirPath);
-            int i = 0;
-            progress?.Report(new ProgressInfo(StatusType.Installing, beatModsMods[i].Name));
-            await foreach (ZipArchive archive in _modProvider.DownloadModsAsync(beatModsMods, progress).ConfigureAwait(false))
-            {
-                bool isModLoader = _modProvider.IsModLoader(beatModsMods[i]);
-                string extractDir = isModLoader ? installDir : pendingDirPath;
-                if (!IOUtils.TryExtractArchive(archive, extractDir, true)) continue;
-                if (isModLoader) await InstallBsipaAsync(installDir).ConfigureAwait(false);
-                yield return beatModsMods[i++];
-                if (i >= beatModsMods.Length) break;
-                progress?.Report(new ProgressInfo(StatusType.Installing, beatModsMods[i].Name));
-            }
-
-            progress?.Report(new ProgressInfo(StatusType.Completed, null));
+            if (!IOUtils.TryCreateDirectory(pendingDirPath)) return false;
+            using ZipArchive? archive = await _modProvider.DownloadModAsync(beatModsMod).ConfigureAwait(false);
+            if (archive is null) return false;
+            bool isModLoader = _modProvider.IsModLoader(beatModsMod);
+            string extractDir = isModLoader ? installDir : pendingDirPath;
+            return IOUtils.TryExtractArchive(archive, extractDir, true);
         }
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<IMod> UninstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null)
+        public async Task UninstallModAsync(string installDir, IMod modification)
         {
-            BeatModsMod[] beatModsMods = mods.OfType<BeatModsMod>().ToArray();
-            if (beatModsMods.Length <= 0) yield break;
-            for (int i = 0; i < beatModsMods.Length; i++)
-            {
-                progress?.Report(new ProgressInfo(StatusType.Uninstalling, beatModsMods[i].Name));
-                progress?.Report(((double)i + 1) / beatModsMods.Length);
-                bool isModLoader = _modProvider.IsModLoader(beatModsMods[i]);
-                if (isModLoader) await UninstallBsipaAsync(installDir, beatModsMods[i]).ConfigureAwait(false);
-                else RemoveModFiles(installDir, beatModsMods[i]);
-                yield return beatModsMods[i];
-            }
-
-            progress?.Report(new ProgressInfo(StatusType.Completed, null));
+            if (modification is not BeatModsMod beatModsMod) return;
+            bool isModLoader = _modProvider.IsModLoader(beatModsMod);
+            if (isModLoader) await UninstallBsipaAsync(installDir, beatModsMod).ConfigureAwait(false);
+            else RemoveModFiles(installDir, beatModsMod);
         }
 
         /// <inheritdoc />
-        public void RemoveAllMods(string installDir)
+        public void RemoveAllModFiles(string installDir)
         {
             string pluginsDirPath = Path.Join(installDir, "Plugins");
             string libsDirPath = Path.Join(installDir, "Libs");

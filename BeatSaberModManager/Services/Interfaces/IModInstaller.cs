@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Interfaces;
 
@@ -14,24 +14,21 @@ namespace BeatSaberModManager.Services.Interfaces
         /// Asynchronously installs multiple mods.
         /// </summary>
         /// <param name="installDir">The game's installation directory.</param>
-        /// <param name="mods">The mods to install.</param>
-        /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>The successfully installed mods.</returns>
-        IAsyncEnumerable<IMod> InstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null);
+        /// <param name="modification">The mod to install.</param>
+        /// <returns>True if the operation succeeds, false otherwise.</returns>
+        Task<bool> InstallModAsync(string installDir, IMod modification);
 
         /// <summary>
         /// Asynchronously uninstalls multiple mods.
         /// </summary>
         /// <param name="installDir">The game's installation directory.</param>
-        /// <param name="mods">The mods to uninstall.</param>
-        /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>The successfully uninstalled mods.</returns>
-        IAsyncEnumerable<IMod> UninstallModsAsync(string installDir, IEnumerable<IMod> mods, IStatusProgress? progress = null);
+        /// <param name="modification">The mod to uninstall.</param>
+        Task UninstallModAsync(string installDir, IMod modification);
 
         /// <summary>
         /// Removes all installed mods.
         /// </summary>
         /// <param name="installDir">The game's installation directory.</param>
-        void RemoveAllMods(string installDir);
+        void RemoveAllModFiles(string installDir);
     }
 }

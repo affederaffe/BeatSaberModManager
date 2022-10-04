@@ -82,19 +82,19 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         private async Task<bool> InstallPlaylistAsync(string installDir, Playlist playlist, IStatusProgress? progress = null)
         {
+            progress?.Report(0);
             BeatSaverMap[] maps = await GetMapsAsync(playlist).ConfigureAwait(false);
-            string[] urls = maps.Select(static x => x.Versions.Last().DownloadUrl).ToArray();
-            int i = 0;
-            progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
-            await foreach (HttpResponseMessage response in _httpClient.TryGetAsync(urls, progress).ConfigureAwait(false))
+            for (int i = 0; i < maps.Length; i++)
             {
-                if (!response.IsSuccessStatusCode) return false;
+                progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
+                if (maps[i].Versions.Length <= 0) continue;
+                HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(maps[i].Versions.Last().DownloadUrl)).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode) continue;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using ZipArchive archive = new(stream);
                 bool success = BeatSaverMapInstaller.TryExtractBeatSaverMapToDir(installDir, maps[i], archive);
                 if (!success) progress?.Report(new ProgressInfo(StatusType.Failed, maps[i].Name));
-                if (++i >= maps.Length) return true;
-                progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
+                progress?.Report(((double)i + 1) / maps.Length);
             }
 
             return true;
@@ -111,7 +111,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
                     maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByHashAsync(playlist.Songs[i].Hash!).ConfigureAwait(false);
             }
 
-            return maps.Where(static x => x?.Versions.Length is > 0).ToArray()!;
+            return maps.Where(static x => x?.Versions.Length > 0).ToArray()!;
         }
     }
 }

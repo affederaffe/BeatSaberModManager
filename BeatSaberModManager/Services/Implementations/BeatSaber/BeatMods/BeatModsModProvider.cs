@@ -106,15 +106,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         }
 
         /// <inheritdoc />
-        public async IAsyncEnumerable<ZipArchive> DownloadModsAsync(IEnumerable<IMod> mods, IProgress<double>? progress = null)
+        public async Task<ZipArchive?> DownloadModAsync(IMod modification)
         {
-            string[] urls = mods.OfType<BeatModsMod>().Select(static x => $"https://beatmods.com{x.Downloads[0].Url}").ToArray();
-            await foreach (HttpResponseMessage response in _httpClient.TryGetAsync(urls, progress).ConfigureAwait(false))
-            {
-                if (!response.IsSuccessStatusCode) continue;
-                Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                yield return new ZipArchive(stream);
-            }
+            if (modification is not BeatModsMod beatModsMod) return null;
+            HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri($"https://beatmods.com{beatModsMod.Downloads[0].Url}")).ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode) return null;
+            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            return new ZipArchive(stream);
         }
 
         private async Task<HashSet<BeatModsMod>?> GetModsAsync(string? args)

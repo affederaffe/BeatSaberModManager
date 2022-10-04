@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Buffers;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -30,7 +29,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
         /// <summary>
         /// Initializes a new instance of the <see cref="HttpProgressClient"/> class with a UserAgent and a default timeout.
         /// </summary>
-        public HttpProgressClient(ILogger logger) : base(new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All })
+        public HttpProgressClient(ILogger logger)
         {
             _logger = logger;
             DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(ThisAssembly.Info.Product, ThisAssembly.Info.Version)));
@@ -40,12 +39,12 @@ namespace BeatSaberModManager.Services.Implementations.Http
         /// <summary>
         /// Try to send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.
         /// </summary>
-        /// <param name="url">The url the request is sent to.</param>
+        /// <param name="uri">The uri the request is sent to.</param>
         /// <param name="progress">Optionally track the progress of the operation.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>
-        public async Task<HttpResponseMessage> TryGetAsync(string url, IProgress<double>? progress)
+        public async Task<HttpResponseMessage> TryGetAsync(Uri uri, IProgress<double>? progress)
         {
-            HttpResponseMessage response = await TryGetAsync(new Uri(url), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            HttpResponseMessage response = await TryGetAsync(uri, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode) return response;
             long total = 0;
             long? length = response.Content.Headers.ContentLength;
@@ -66,23 +65,6 @@ namespace BeatSaberModManager.Services.Implementations.Http
             ms.Position = 0;
             response.Content = new StreamContent(ms);
             return response;
-        }
-
-        /// <summary>
-        /// Try to send multiple GET requests to the specified Uris with an HTTP completion option as an asynchronous operation
-        /// </summary>
-        /// <param name="urls">The urls the requests are sent to.</param>
-        /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
-        public async IAsyncEnumerable<HttpResponseMessage> TryGetAsync(IReadOnlyList<string> urls, IProgress<double>? progress)
-        {
-            progress?.Report(0);
-            for (int i = 0; i < urls.Count; i++)
-            {
-                HttpResponseMessage response = await TryGetAsync(new Uri(urls[i])).ConfigureAwait(false);
-                progress?.Report(((double)i + 1) / urls.Count);
-                yield return response;
-            }
         }
 
         /// <summary>

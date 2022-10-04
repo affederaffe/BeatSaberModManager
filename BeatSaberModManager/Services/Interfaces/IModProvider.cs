@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO.Compression;
 using System.Threading.Tasks;
 
@@ -58,9 +57,8 @@ namespace BeatSaberModManager.Services.Interfaces
         /// <summary>
         /// Asynchronously downloads multiple mods.
         /// </summary>
-        /// <param name="mods">The mods to download.</param>
-        /// <param name="progress">Optionally track the progress of the operation.</param>
-        /// <returns>The mod's files as <see cref="ZipArchive"/>s.</returns>
-        IAsyncEnumerable<ZipArchive> DownloadModsAsync(IEnumerable<IMod> mods, IProgress<double>? progress = null);
+        /// <param name="modification">The mod to download.</param>
+        /// <returns>The mod's file as <see cref="ZipArchive"/>.</returns>
+        Task<ZipArchive?> DownloadModAsync(IMod modification);
     }
 }
