@@ -42,7 +42,6 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         /// <inheritdoc />
         public async Task LoadAsync()
         {
-
             if (!IOUtils.TryCreateDirectory(_saveDirPath))
             {
                 Value = new T();
