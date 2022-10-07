@@ -170,8 +170,9 @@ namespace BeatSaberModManager.ViewModels
         private async Task<Dictionary<IMod, ModGridItemViewModel>?> CreateModGridItemsAsync(string installDir)
         {
             await _modProvider.LoadAvailableModsForCurrentVersionAsync(installDir).ConfigureAwait(false);
+            if (_modProvider.AvailableMods is null) return null;
             await _modProvider.LoadInstalledModsAsync(installDir).ConfigureAwait(false);
-            if (_modProvider.AvailableMods is null || _modProvider.InstalledMods is null) return null;
+            if (_modProvider.InstalledMods is null) return null;
             Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods.ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
             InstalledModsCount = gridItems.Values.Count(static x => x.InstalledMod is not null);
             foreach (ModGridItemViewModel gridItem in gridItems.Values)
