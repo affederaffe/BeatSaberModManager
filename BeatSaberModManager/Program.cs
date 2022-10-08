@@ -84,7 +84,7 @@ namespace BeatSaberModManager
         {
             [Factory(Scope.SingleInstance)]
             public static ILogger CreateLogger() => new LoggerConfiguration()
-                .WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "Log.txt"),
+                .WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "Logs", "Log.txt"),
                     rollingInterval: RollingInterval.Day,
                     formatProvider: CultureInfo.InvariantCulture)
                 .CreateLogger();
