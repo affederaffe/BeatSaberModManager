@@ -159,7 +159,7 @@
         <Setter Property="TabStripPlacement" Value="Left" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel IsHitTestVisible="False" Background="{TemplateBinding PaneBackground}">
+                <Panel Background="{TemplateBinding PaneBackground}">
                     <SplitView x:Name="PART_NavigationPane"
                                CompactPaneLength="{StaticResource PaneCompactWidth}"
                                DisplayMode="Inline"
@@ -181,7 +181,7 @@
                             </ItemsPresenter>
                         </SplitView.Pane>
                         <SplitView.Content>
-                            <Grid RowDefinitions="*, Auto" IsHitTestVisible="False" Background="{TemplateBinding ContentBackground}">
+                            <Grid RowDefinitions="*, Auto" Background="{TemplateBinding ContentBackground}">
                                 <ContentPresenter Grid.Row="0" 
                                                   Name="PART_SelectedContentHost"
                                                   Padding="{TemplateBinding Padding}"

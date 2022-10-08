@@ -1,9 +1,0 @@
-<Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:CompileBindings="True">
-
-    <Style Selector="SplitView /template/ Panel#PART_PaneRoot">
-        <Setter Property="IsHitTestVisible" Value="False" />
-    </Style>
-
-</Styles>

@@ -11,7 +11,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
-                    <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, *, Auto, Auto" IsHitTestVisible="False">
+                    <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, *, Auto, Auto">
                         <DataGridColumnHeader Name="PART_TopLeftCornerHeader"
                                               Grid.Row="0"
                                               Grid.Column="0"
