@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -17,7 +18,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel for <see cref="BeatSaberModManager.Views.Pages.ModsPage"/>.
     /// </summary>
-    public class ModsViewModel : ViewModelBase
+    public class ModsViewModel : ViewModelBase, IActivatableViewModel
     {
         private readonly ISettings<AppSettings> _appSettings;
         private readonly SettingsViewModel _settingsViewModel;
@@ -26,11 +27,14 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModInstaller _modInstaller;
         private readonly IStatusProgress _progress;
         private readonly object _initializeSyncLock;
+        private readonly ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> _initializeCommand;
         private readonly ObservableAsPropertyHelper<Dictionary<IMod, ModGridItemViewModel>?> _gridItems;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isEmpty;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
+
+        private bool _isInitialized;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModsViewModel"/> class.
@@ -44,23 +48,34 @@ namespace BeatSaberModManager.ViewModels
             _modInstaller = modInstaller;
             _progress = progress;
             _initializeSyncLock = new object();
-            ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> initializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
-            initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
-            initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            initializeCommand.Select(static x => x is null)
-                .CombineLatest(initializeCommand.IsExecuting)
+            Activator = new ViewModelActivator();
+            _initializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
+            _initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
+            _initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
+            _initializeCommand.Select(static x => x is null)
+                .CombineLatest(_initializeCommand.IsExecuting)
                 .Select(static x => x.First && !x.Second)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
-            initializeCommand.Select(static x => x?.Count == 0)
-                .CombineLatest(initializeCommand.IsExecuting)
+            _initializeCommand.Select(static x => x?.Count == 0)
+                .CombineLatest(_initializeCommand.IsExecuting)
                 .Select(static x => x.First && !x.Second)
                 .ToProperty(this, nameof(IsEmpty), out _isEmpty);
-            IsSuccessObservable = initializeCommand.Select(static x => x?.Count > 0)
-                .CombineLatest(initializeCommand.IsExecuting, settingsViewModel.IsInstallDirValidObservable)
+            IsSuccessObservable = _initializeCommand.Select(static x => x?.Count > 0)
+                .CombineLatest(_initializeCommand.IsExecuting, settingsViewModel.IsInstallDirValidObservable)
                 .Select(static x => x.First && !x.Second && x.Third);
             IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            _settingsViewModel.ValidatedInstallDirObservable.InvokeCommand(initializeCommand);
+            this.WhenActivated(WhenActivated);
         }
+
+        private void WhenActivated(CompositeDisposable disposable)
+        {
+            if (_isInitialized) return;
+            _settingsViewModel.ValidatedInstallDirObservable.InvokeCommand(_initializeCommand);
+            _isInitialized = true;
+        }
+
+        /// <inheritdoc />
+        public ViewModelActivator Activator { get; }
 
         /// <summary>
         /// Signals when mod loading completes.

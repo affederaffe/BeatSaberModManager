@@ -58,7 +58,13 @@ namespace BeatSaberModManager.Services.Implementations.Observables
                 _subject.OnNext(true);
         }
 
-        private void OnRenamed(object sender, RenamedEventArgs e) => _subject.OnNext(e.FullPath == _path);
+        private void OnRenamed(object sender, RenamedEventArgs e)
+        {
+            if (e.OldFullPath == _path)
+                _subject.OnNext(false);
+            if (e.FullPath == _path)
+                _subject.OnNext(true);
+        }
 
         private void OnDeleted(object sender, FileSystemEventArgs e)
         {
