@@ -14,7 +14,7 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         /// <summary>
         /// The index of the tab that was last open.
         /// </summary>
-        public int LastTabIndex { get; set; }
+        public int TabIndex { get; set; }
 
         /// <summary>
         /// The name of the theme used.

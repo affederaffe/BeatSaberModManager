@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 
@@ -18,7 +17,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel for <see cref="BeatSaberModManager.Views.Pages.ModsPage"/>.
     /// </summary>
-    public class ModsViewModel : ViewModelBase, IActivatableViewModel
+    public class ModsViewModel : ViewModelBase
     {
         private readonly ISettings<AppSettings> _appSettings;
         private readonly SettingsViewModel _settingsViewModel;
@@ -27,14 +26,11 @@ namespace BeatSaberModManager.ViewModels
         private readonly IModInstaller _modInstaller;
         private readonly IStatusProgress _progress;
         private readonly object _initializeSyncLock;
-        private readonly ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> _initializeCommand;
         private readonly ObservableAsPropertyHelper<Dictionary<IMod, ModGridItemViewModel>?> _gridItems;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
         private readonly ObservableAsPropertyHelper<bool> _isEmpty;
         private readonly ObservableAsPropertyHelper<bool> _isFailed;
-
-        private bool _isInitialized;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ModsViewModel"/> class.
@@ -48,34 +44,27 @@ namespace BeatSaberModManager.ViewModels
             _modInstaller = modInstaller;
             _progress = progress;
             _initializeSyncLock = new object();
-            Activator = new ViewModelActivator();
-            _initializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
-            _initializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
-            _initializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
-            _initializeCommand.Select(static x => x is null)
-                .CombineLatest(_initializeCommand.IsExecuting)
+            InitializeCommand = ReactiveCommand.CreateFromTask<string, Dictionary<IMod, ModGridItemViewModel>?>(GetModGridItemsAsync);
+            InitializeCommand.ToProperty(this, nameof(GridItems), out _gridItems);
+            InitializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
+            InitializeCommand.Select(static x => x is null)
+                .CombineLatest(InitializeCommand.IsExecuting)
                 .Select(static x => x.First && !x.Second)
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
-            _initializeCommand.Select(static x => x?.Count == 0)
-                .CombineLatest(_initializeCommand.IsExecuting)
+            InitializeCommand.Select(static x => x?.Count == 0)
+                .CombineLatest(InitializeCommand.IsExecuting)
                 .Select(static x => x.First && !x.Second)
                 .ToProperty(this, nameof(IsEmpty), out _isEmpty);
-            IsSuccessObservable = _initializeCommand.Select(static x => x?.Count > 0)
-                .CombineLatest(_initializeCommand.IsExecuting, settingsViewModel.IsInstallDirValidObservable)
+            IsSuccessObservable = InitializeCommand.Select(static x => x?.Count > 0)
+                .CombineLatest(InitializeCommand.IsExecuting, settingsViewModel.IsInstallDirValidObservable)
                 .Select(static x => x.First && !x.Second && x.Third);
             IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            this.WhenActivated(WhenActivated);
         }
 
-        private void WhenActivated(CompositeDisposable disposable)
-        {
-            if (_isInitialized) return;
-            _settingsViewModel.ValidatedInstallDirObservable.InvokeCommand(_initializeCommand);
-            _isInitialized = true;
-        }
-
-        /// <inheritdoc />
-        public ViewModelActivator Activator { get; }
+        /// <summary>
+        /// Initializes the grid items.
+        /// </summary>
+        public ReactiveCommand<string, Dictionary<IMod, ModGridItemViewModel>?> InitializeCommand { get; }
 
         /// <summary>
         /// Signals when mod loading completes.

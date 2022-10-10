@@ -22,7 +22,7 @@
         <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
     </Window.Resources>
 
-    <c:HamburgerMenu Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding LastTabIndex}">
+    <c:HamburgerMenu x:Name="HamburgerMenu" Margin="{Binding #Window.OffScreenMargin}">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>

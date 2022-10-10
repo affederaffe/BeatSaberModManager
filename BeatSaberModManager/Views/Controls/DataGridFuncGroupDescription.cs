@@ -33,9 +33,6 @@ namespace BeatSaberModManager.Views.Controls
         }
 
         /// <inheritdoc />
-        public override bool KeysMatch(object groupKey, object itemKey) =>
-            groupKey is TKey tGroupKey && itemKey is TKey tItemKey
-                ? EqualityComparer<TKey>.Default.Equals(tGroupKey, tItemKey)
-                : base.KeysMatch(groupKey, itemKey);
+        public override bool KeysMatch(object groupKey, object itemKey) => groupKey is TKey tGroupKey && itemKey is TKey tItemKey && EqualityComparer<TKey>.Default.Equals(tGroupKey, tItemKey);
     }
 }

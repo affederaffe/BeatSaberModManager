@@ -1,9 +1,8 @@
 ﻿using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Progress;
-using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Utils;
 
@@ -15,26 +14,29 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel for <see cref="BeatSaberModManager.Views.Windows.MainWindow"/>.
     /// </summary>
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     {
-        private readonly ISettings<AppSettings> _appSettings;
         private readonly ObservableAsPropertyHelper<ProgressInfo> _progressInfo;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindowViewModel"/> class.
         /// </summary>
-        public MainWindowViewModel(ISettings<AppSettings> appSettings, DashboardViewModel dashboardViewModel, ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, StatusProgress statusProgress)
+        public MainWindowViewModel(DashboardViewModel dashboardViewModel, ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, StatusProgress statusProgress)
         {
-            _appSettings = appSettings;
             DashboardViewModel = dashboardViewModel;
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;
+            Activator = new ViewModelActivator();
             InstallCommand = ReactiveCommand.CreateFromTask(modsViewModel.RefreshModsAsync, modsViewModel.IsSuccessObservable);
             MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink), modsViewModel.WhenAnyValue(static x => x.SelectedGridItem).Select(static x => x?.AvailableMod.MoreInfoLink is not null));
             statusProgress.ProgressInfo.ToProperty(this, nameof(ProgressInfo), out _progressInfo, scheduler: RxApp.MainThreadScheduler);
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue, scheduler: RxApp.MainThreadScheduler);
+            this.WhenActivated(disposable => settingsViewModel.ValidatedInstallDirObservable.InvokeCommand(modsViewModel.InitializeCommand).DisposeWith(disposable));
         }
+
+        /// <inheritdoc />
+        public ViewModelActivator Activator { get; }
 
         /// <summary>
         /// The ViewModel for a dashboard view.
@@ -70,12 +72,5 @@ namespace BeatSaberModManager.ViewModels
         /// The current progress of the operation.
         /// </summary>
         public double ProgressValue => _progressValue.Value;
-
-        /// <inheritdoc cref="AppSettings.LastTabIndex" />
-        public int LastTabIndex
-        {
-            get => _appSettings.Value.LastTabIndex;
-            set => _appSettings.Value.LastTabIndex = value;
-        }
     }
 }
