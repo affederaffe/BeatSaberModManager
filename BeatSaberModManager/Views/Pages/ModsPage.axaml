@@ -78,7 +78,7 @@
                         <DataTemplate DataType="vm:ModGridItemViewModel">
                             <Label VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
-                                   Content="{Binding InstalledMod.Version, FallbackValue={x:Null}}"
+                                   Content="{Binding InstalledMod.Version}"
                                    Foreground="{Binding IsUpToDate, Converter={StaticResource IsUpToDateColorConverter}}">
                             </Label>
                         </DataTemplate>
