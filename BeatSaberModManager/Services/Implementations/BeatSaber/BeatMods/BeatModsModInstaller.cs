@@ -36,7 +36,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             if (archive is null) return false;
             bool isModLoader = _modProvider.IsModLoader(beatModsMod);
             string extractDir = isModLoader ? installDir : pendingDirPath;
-            return IOUtils.TryExtractArchive(archive, extractDir, true);
+            bool success = IOUtils.TryExtractArchive(archive, extractDir, true);
+            return isModLoader ? success && await InstallBsipaAsync(installDir) : success;
         }
 
         /// <inheritdoc />
@@ -61,7 +62,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             IOUtils.TryDeleteFile(winhttpPath);
         }
 
-        private static Task InstallBsipaAsync(string installDir) =>
+        private static Task<bool> InstallBsipaAsync(string installDir) =>
             OperatingSystem.IsWindows()
                 ? InstallBsipaWindowsAsync(installDir)
                 : OperatingSystem.IsLinux()
@@ -76,10 +77,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                     : throw new PlatformNotSupportedException();
 
         [SupportedOSPlatform("windows")]
-        private static async Task InstallBsipaWindowsAsync(string installDir)
+        private static async Task<bool> InstallBsipaWindowsAsync(string installDir)
         {
             string winhttpPath = Path.Join(installDir, "winhttp.dll");
-            if (File.Exists(winhttpPath)) return;
+            if (File.Exists(winhttpPath)) return true;
 
             ProcessStartInfo processStartInfo = new()
             {
@@ -88,16 +89,17 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 Arguments = "-n"
             };
 
-            if (!PlatformUtils.TryStartProcess(processStartInfo, out Process? process)) return;
+            if (!PlatformUtils.TryStartProcess(processStartInfo, out Process? process)) return false;
             await process.WaitForExitAsync().ConfigureAwait(false);
+            return true;
         }
 
         [SupportedOSPlatform("linux")]
-        private static async Task InstallBsipaLinuxAsync(string installDir)
+        private static async Task<bool> InstallBsipaLinuxAsync(string installDir)
         {
             string protonRegPath = Path.Join(installDir, "../../compatdata/620980/pfx/user.reg");
             await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Access = FileAccess.ReadWrite, Options = FileOptions.Asynchronous });
-            if (fileStream is null) return;
+            if (fileStream is null) return false;
             using StreamReader reader = new(fileStream);
             string content = await reader.ReadToEndAsync().ConfigureAwait(false);
             await using StreamWriter streamWriter = new(fileStream);
@@ -105,12 +107,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 await streamWriter.WriteLineAsync("\n[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
 
             string winhttpPath = Path.Join(installDir, "winhttp.dll");
-            if (File.Exists(winhttpPath)) return;
+            if (File.Exists(winhttpPath)) return true;
 
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(installDir);
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
             Directory.SetCurrentDirectory(oldDir);
+            return true;
         }
 
         [SupportedOSPlatform("windows")]
