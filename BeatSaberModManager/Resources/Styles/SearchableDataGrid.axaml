@@ -11,19 +11,14 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
-                    <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, Auto, *, Auto, Auto">
-                        <DataGridColumnHeader Name="PART_TopLeftCornerHeader"
-                                              Grid.Row="0"
-                                              Grid.Column="0"
-                                              Theme="{StaticResource DataGridTopLeftColumnHeader}">
-                        </DataGridColumnHeader>
+                    <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, *, Auto, Auto">
                         <DataGridColumnHeadersPresenter Name="PART_ColumnHeadersPresenter"
-                                                        Grid.Column="1"
+                                                        Grid.Column="0"
                                                         Grid.Row="0" Grid.ColumnSpan="2">
                         </DataGridColumnHeadersPresenter>
                         <ToggleButton Name="PART_SearchToggleButton"
                                       Grid.Row="0"
-                                      Grid.Column="1"
+                                      Grid.Column="0"
                                       Grid.ColumnSpan="2"
                                       HorizontalAlignment="Right"
                                       Background="Transparent"
@@ -32,7 +27,7 @@
                                       Content="{TemplateBinding SearchIcon}">
                         </ToggleButton>
                         <Rectangle Name="PART_ColumnHeadersAndRowsSeparator"
-                                   Grid.Row="0" Grid.ColumnSpan="3" Grid.Column="0"
+                                   Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"
                                    VerticalAlignment="Bottom"
                                    Height="1"
                                    Fill="{DynamicResource DataGridGridLinesBrush}">
@@ -41,7 +36,7 @@
                         <TextBox Name="PART_SearchTextBox"
                                  Grid.Row="1"
                                  Grid.Column="0"
-                                 Grid.ColumnSpan="3"
+                                 Grid.ColumnSpan="2"
                                  IsVisible="{TemplateBinding IsSearchEnabled, Mode=TwoWay}"
                                  Watermark="{TemplateBinding Watermark}"
                                  Text="{TemplateBinding Text, Mode=TwoWay}">
@@ -50,7 +45,7 @@
                         <DataGridRowsPresenter Name="PART_RowsPresenter" Grid.Row="2"
                                                Grid.RowSpan="2"
                                                Grid.Column="0"
-                                               Grid.ColumnSpan="3">
+                                               Grid.ColumnSpan="2">
                             <DataGridRowsPresenter.GestureRecognizers>
                                 <ScrollGestureRecognizer CanHorizontallyScroll="True" CanVerticallyScroll="True" />
                             </DataGridRowsPresenter.GestureRecognizers>
@@ -59,11 +54,11 @@
                         <Rectangle Name="PART_BottomRightCorner"
                                    Fill="{DynamicResource DataGridScrollBarsSeparatorBackground}"
                                    Grid.Row="3"
-                                   Grid.Column="2">
+                                   Grid.Column="1">
                         </Rectangle>
                         <ScrollBar Name="PART_VerticalScrollbar"
                                    Grid.Row="2"
-                                   Grid.Column="2"
+                                   Grid.Column="1"
                                    Orientation="Vertical"
                                    Width="{DynamicResource ScrollBarSize}">
                         </ScrollBar>
@@ -81,7 +76,7 @@
                         <Border x:Name="PART_DisabledVisualElement"
                                 Grid.Row="0"
                                 Grid.RowSpan="5"
-                                Grid.ColumnSpan="3"
+                                Grid.ColumnSpan="2"
                                 Grid.Column="0"
                                 IsHitTestVisible="False"
                                 HorizontalAlignment="Stretch"
@@ -94,16 +89,6 @@
                 </Border>
             </ControlTemplate>
         </Setter>
-
-        <Style Selector="^:empty-columns /template/ DataGridColumnHeader#PART_TopLeftCornerHeader">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-        <Style Selector="^:empty-columns /template/ DataGridColumnHeadersPresenter#PART_ColumnHeadersPresenter">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
-        <Style Selector="^:empty-columns /template/ Rectangle#PART_ColumnHeadersAndRowsSeparator">
-            <Setter Property="IsVisible" Value="True" />
-        </Style>
     </ControlTheme>
 
     <ControlTheme x:Key="{x:Type DataGridCell}" TargetType="DataGridCell">
@@ -120,7 +105,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
-                    <Grid x:Name="PART_CellRoot" ColumnDefinitions="*,Auto">
+                    <Grid x:Name="PART_CellRoot" ColumnDefinitions="*, Auto">
                         <ContentPresenter Grid.Column="0" Margin="{TemplateBinding Padding}"
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                           VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
