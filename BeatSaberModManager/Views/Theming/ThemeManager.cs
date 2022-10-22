@@ -38,7 +38,7 @@ namespace BeatSaberModManager.Views.Theming
             Themes = new ObservableCollection<Theme>();
             Themes.CollectionChanged += (_, args) =>
             {
-                if (args.Action != NotifyCollectionChangedAction.Add || args.NewItems?.Count is not 1) return;
+                if (args.Action != NotifyCollectionChangedAction.Add || args.NewItems?.Count != 1) return;
                 Theme theme = (args.NewItems[0] as Theme)!;
                 if (theme.Name != appSettings.Value.ThemeName) return;
                 _fluentThemeBase.Style = theme.Style;
