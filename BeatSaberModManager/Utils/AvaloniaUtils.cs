@@ -21,7 +21,7 @@ namespace BeatSaberModManager.Utils
         /// <param name="style">The parsed <see cref="IStyle"/> if the operation succeeds, null otherwise.</param>
         /// <typeparam name="T">The type of the <see cref="IStyle"/>.</typeparam>
         /// <returns>True if the operation succeeds, false otherwise.</returns>
-        public static bool TryParse<T>(string xaml, string dir, [MaybeNullWhen(false)] out T style) where T : class, IStyle
+        public static bool TryParse<T>(string xaml, string dir, [NotNullWhen(true)] out T? style) where T : class, IStyle
         {
             try
             {

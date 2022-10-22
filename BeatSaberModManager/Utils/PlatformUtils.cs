@@ -26,7 +26,7 @@ namespace BeatSaberModManager.Utils
         /// <param name="startInfo">The information used to start the process.</param>
         /// <param name="process">The <see cref="Process"/> when the operation succeeds.</param>
         /// <returns>True if the operation succeeds, false otherwise.</returns>
-        public static bool TryStartProcess(ProcessStartInfo startInfo, [MaybeNullWhen(false)] out Process process)
+        public static bool TryStartProcess(ProcessStartInfo startInfo, [NotNullWhen(true)] out Process? process)
         {
             try
             {
