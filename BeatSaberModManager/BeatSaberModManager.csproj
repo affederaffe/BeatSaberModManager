@@ -44,7 +44,7 @@
         <PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview3" />
         <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.0.0-preview3" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview3" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview2" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview3" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
         <PackageReference Include="StrongInject" Version="1.4.5-CI-20220524-023137" />
         <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.10" />
