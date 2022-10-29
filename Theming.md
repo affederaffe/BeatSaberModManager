@@ -8,7 +8,7 @@ If you have a particularly popular theme, you can submit a Pull Request to add y
 Custom themes are loaded from the directory selected in the settings.
 
 ### Create Themes
-To create your own theme, create a new file name `{ThemeName}.axaml`.\
+To create your own theme, create a new file named `{ThemeName}.axaml`.\
 See the [AvaloniaUI documentation](https://docs.avaloniaui.net/docs/styling) for the basic syntax.
 Currently, you cannot load external pictures due to a [limitation of Avalonia](https://github.com/AvaloniaUI/Avalonia/issues/2183), so you're stuck with overriding colors for now.
 To see which resource names are used, browse the `.axaml` files in the [source code](https://github.com/affederaffe/BeatSaberModManager/tree/main/BeatSaberModManager).\
