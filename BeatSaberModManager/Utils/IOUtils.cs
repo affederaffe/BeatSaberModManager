@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.IO.Compression;
+using System.Threading.Tasks;
 
 
 namespace BeatSaberModManager.Utils
@@ -98,7 +101,7 @@ namespace BeatSaberModManager.Utils
         }
 
         /// <summary>
-        /// Attempts to open a <see cref="FileStream"/> on the specified path, having the specified mode with read, write, or read/write access and the specified sharing option.
+        /// Attempts to open a <see cref="FileStream"/> o the specified path, having the specified mode with read, write, or read/write access and the specified sharing option.
         /// </summary>
         /// <param name="path">The file to open.</param>
         /// <param name="options">An object that describes optional FileStream parameters to use.</param>
@@ -108,6 +111,23 @@ namespace BeatSaberModManager.Utils
             try
             {
                 return File.Open(path, options);
+            }
+            catch (ArgumentException) { }
+            catch (IOException) { }
+            catch (UnauthorizedAccessException) { }
+            return null;
+        }
+
+        /// <summary>
+        /// Attempts to read the lines of a file.
+        /// </summary>
+        /// <param name="path">The file to read.</param>
+        /// <returns>All the lines of the file if the operation succeeds, null otherwise.</returns>
+        public static async Task<string[]?> TryReadAllLinesAsync(string path)
+        {
+            try
+            {
+                return await File.ReadAllLinesAsync(path);
             }
             catch (ArgumentException) { }
             catch (IOException) { }

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.Versioning;
 using System.Threading.Tasks;
 
@@ -98,13 +100,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         private static async Task<bool> InstallBsipaLinuxAsync(string installDir)
         {
             string protonRegPath = Path.Join(installDir, "../../compatdata/620980/pfx/user.reg");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(protonRegPath, new FileStreamOptions { Access = FileAccess.ReadWrite, Options = FileOptions.Asynchronous });
-            if (fileStream is null) return false;
-            using StreamReader reader = new(fileStream);
-            string content = await reader.ReadToEndAsync().ConfigureAwait(false);
-            await using StreamWriter streamWriter = new(fileStream);
-            if (!content.Contains("[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\""))
-                await streamWriter.WriteLineAsync("\n[Software\\\\Wine\\\\DllOverrides]\n\"winhttp\"=\"native,builtin\"").ConfigureAwait(false);
+            string[]? lines = await IOUtils.TryReadAllLinesAsync(protonRegPath).ConfigureAwait(false);
+            if (lines is null) return false;
+            IEnumerable<string> newLines = lines.Select(static x => x.StartsWith("[Software\\\\Wine\\\\DllOverrides]", StringComparison.Ordinal) ? x + "\n\"winhttp\"=\"native,builtin\"" : x);
+            await File.WriteAllLinesAsync(protonRegPath, newLines).ConfigureAwait(false);
 
             string winhttpPath = Path.Join(installDir, "winhttp.dll");
             if (File.Exists(winhttpPath)) return true;
