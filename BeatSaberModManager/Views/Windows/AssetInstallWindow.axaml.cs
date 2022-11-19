@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reactive.Linq;
 
+using Avalonia;
+using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
@@ -29,6 +31,8 @@ namespace BeatSaberModManager.Views.Windows
             InitializeComponent();
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
+            TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
+            Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             LocalizedStatusConverter converter = new(this);
             viewModel.ProgressInfoObservable
                 .Select(converter.Convert)

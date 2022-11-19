@@ -7,7 +7,6 @@
         x:CompileBindings="True"
         Name="Window"
         WindowStartupLocation="CenterOwner"
-        TransparencyLevelHint="Mica"
         Background="Transparent"
         MinWidth="320" MinHeight="140"
         Width="250" Height="450"

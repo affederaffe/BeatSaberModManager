@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reactive.Linq;
 
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
@@ -24,6 +25,8 @@ namespace BeatSaberModManager.Views.Windows
         {
             InitializeComponent();
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
+            TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
+            Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             ContinueButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
                 .Where(static x => x.Count > 0)

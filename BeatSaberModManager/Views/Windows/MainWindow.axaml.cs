@@ -3,6 +3,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
 using Avalonia.ReactiveUI;
 
@@ -33,6 +34,8 @@ namespace BeatSaberModManager.Views.Windows
             InitializeComponent();
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
+            TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
+            Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             HamburgerMenu.SelectedIndex = appSettings.Value.TabIndex;
             HamburgerMenu.GetObservable(SelectingItemsControl.SelectedIndexProperty).Subscribe(x => appSettings.Value.TabIndex = x);
             this.WhenActivated(disposable => viewModel.SettingsViewModel.WhenAnyValue(static x => x.InstallDir)

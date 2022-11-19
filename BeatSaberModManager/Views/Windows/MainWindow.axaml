@@ -13,16 +13,16 @@
         Name="Window"
         Title="{StaticResource MainWindow:Title}"
         Icon="/Resources/Icons/Icon.ico"
-        TransparencyLevelHint="Mica"
         Background="Transparent"
         MinWidth="820" MinHeight="350"
-        Width="1100" Height="600">
+        Width="1100" Height="600"
+        Margin="{Binding #Window.OffScreenMargin}">
 
     <Window.Resources>
         <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
     </Window.Resources>
 
-    <c:HamburgerMenu x:Name="HamburgerMenu" Margin="{Binding #Window.OffScreenMargin}">
+    <c:HamburgerMenu x:Name="HamburgerMenu" Padding="0, 30, 0, 0">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>

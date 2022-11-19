@@ -8,7 +8,6 @@
         Name="Window"
         Icon="/Resources/Icons/Icon.ico"
         WindowStartupLocation="CenterOwner"
-        TransparencyLevelHint="Mica"
         Background="Transparent"
         MinWidth="320" MinHeight="140"
         Width="320" Height="140">

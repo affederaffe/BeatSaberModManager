@@ -1,5 +1,6 @@
 using System;
 
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -26,6 +27,8 @@ namespace BeatSaberModManager.Views.Windows
         {
             InitializeComponent();
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
+            TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
+            Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             ExceptionTextBlock.Text = e.ToString();
         }
 

@@ -9,7 +9,7 @@
              x:DataType="vm:DashboardViewModel"
              x:CompileBindings="True">
 
-    <ScrollViewer Margin="31" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid RowDefinitions="Auto, Auto, Auto">
             <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
                 <UniformGrid Rows="1">

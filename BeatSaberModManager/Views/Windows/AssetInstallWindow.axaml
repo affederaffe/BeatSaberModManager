@@ -11,7 +11,6 @@
         Name="Window"
         Title="OneClick™ Installer"
         Icon="/Resources/Icons/Icon.ico"
-        TransparencyLevelHint="Mica"
         Background="Transparent"
         MinWidth="200" MinHeight="200"
         Width="300" Height="500">
