@@ -6,18 +6,6 @@
              x:Class="BeatSaberModManager.Views.Pages.IntroPage"
              x:CompileBindings="True">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <StackPanel Orientation="Vertical">
-            <Label FontSize="30" Margin="0, 0, 0, 10" HorizontalAlignment="Center" Content="{DynamicResource IntroView:Name}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line1}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line2}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line3}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line4}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line5}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line6}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line7}" />
-            <Label FontSize="17.5" HorizontalAlignment="Center" Content="{DynamicResource IntroView:IntroText:Line8}" />
-        </StackPanel>
-    </ScrollViewer>
+    <ScrollViewer Margin="0, 30, 0, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Content="{DynamicResource IntroView:IntroText}" />
 
 </UserControl>

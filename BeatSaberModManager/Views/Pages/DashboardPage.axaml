@@ -9,7 +9,7 @@
              x:DataType="vm:DashboardViewModel"
              x:CompileBindings="True">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer Margin="30" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid RowDefinitions="Auto, Auto, Auto">
             <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
                 <UniformGrid Rows="1">
@@ -73,9 +73,9 @@
                         <Button Grid.Column="5"
                                 Grid.Row="3"
                                 Margin="0, 10, 0, 0"
-                                Background="{DynamicResource SystemErrorBrush}"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
+                                Background="{DynamicResource SystemErrorBrush}"
                                 Content="{DynamicResource DashboardView:UninstallAllModsButton}"
                                 Command="{Binding UninstallAllModsCommand}">
                         </Button>

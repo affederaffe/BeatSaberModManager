@@ -10,15 +10,18 @@
     <sys:String x:Key="MainWindow:MoreInfoButton">Weitere Infos</sys:String>
     <sys:String x:Key="MainWindow:RefreshModsButton">Mods erneuern</sys:String>
 
-    <sys:String x:Key="IntroView:Name">Beat Saber Mod Manager</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line1">Bitte lies diese Seite vollständig und aufmerksam.</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line2">Durch Nutzung dieses Programmes stimmst du den folgenden Bedingungen zu:</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line3">Beat Saber unterstützt normalerweise keine Mods. Das heißt:</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line4">Mods werden nach jedem Update kaputt gehen. Das ist normal und nicht Beat Games' Schuld.</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line5">Mods werden Fehler und Leistungsprobleme verursachen. Das ist nicht Beat Games' Schuld.</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line6">Mods werden kostenlos von Leuten in ihrer Freizeit erstellt. Bitte sei geduldig und verständnisvoll.</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line7">Bitte vergib KEINE schlechte Bewertung, weil die Mods nicht funktionieren. Das ist nicht Beat Games' Schuld.</sys:String>
-    <sys:String x:Key="IntroView:IntroText:Line8">Sie versuchen nicht, Mods zu unterbinden.</sys:String>
+    <TextBlock x:Key="IntroView:IntroText" FontSize="17.5" LineHeight="30" TextAlignment="Center">
+        <Span FontSize="30" FontWeight="Bold" >Beat Saber Mod Manager</Span><LineBreak />
+        <LineBreak />
+        Bitte lies diese Seite vollständig und aufmerksam<LineBreak />
+        Durch Nutzung dieses Programmes stimmst du den folgenden Bedingungen zu:<LineBreak />
+        Beat Saber unterstützt normalerweise <Span FontWeight="Bold">keine</Span> Mods. Das heißt:<LineBreak />
+        Mods werden nach jedem Update <Span FontWeight="Bold">kaputt gehen</Span>. Das ist normal und nicht Beat Games' Schuld.<LineBreak />
+        Mods <Span FontWeight="Bold">werden Fehler</Span> und Leistungsprobleme verursachen. Das ist nicht Beat Games' Schuld.<LineBreak />
+        Mods werden <Span FontWeight="Bold">kostenlos</Span> von Leuten in ihrer <Span FontWeight="Bold">Freizeit</Span> erstellt. Bitte sei geduldig und verständnisvoll.<LineBreak />
+        Bitte vergib KEINE schlechte Bewertung, weil die Mods nicht funktionieren. Das ist nicht Beat Games' Schuld.<LineBreak />
+        Sie versuchen <Span FontWeight="Bold">nicht</Span>, Mods zu unterbinden.<LineBreak />
+    </TextBlock>
 
     <sys:String x:Key="DashboardView:AppVersionLabel">Anwendungsversion</sys:String>
     <sys:String x:Key="DashboardView:GameVersionLabel">Spielversion</sys:String>
@@ -68,8 +71,5 @@
     <sys:String x:Key="Status:Uninstalling">Deinstalliere:</sys:String>
     <sys:String x:Key="Status:Completed">Installation abgeschlossen</sys:String>
     <sys:String x:Key="Status:Failed">Installation fehlgeschlagen</sys:String>
-
-    <sys:String x:Key="Theme:Dark">Dunkel</sys:String>
-    <sys:String x:Key="Theme:Light">Hell</sys:String>
 
 </ResourceDictionary>

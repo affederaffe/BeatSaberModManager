@@ -22,7 +22,7 @@
         <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
     </Window.Resources>
 
-    <c:HamburgerMenu x:Name="HamburgerMenu" Padding="0, 30, 0, 0">
+    <c:HamburgerMenu x:Name="HamburgerMenu">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
