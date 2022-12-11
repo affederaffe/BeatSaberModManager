@@ -11,7 +11,7 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="{TemplateBinding CornerRadius}">
-                    <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, *, Auto, Auto">
+                    <Grid ColumnDefinitions="*, Auto" RowDefinitions="30, Auto, *, Auto, Auto">
                         <DataGridColumnHeadersPresenter Name="PART_ColumnHeadersPresenter"
                                                         Grid.Column="0"
                                                         Grid.Row="0" Grid.ColumnSpan="2">
@@ -23,6 +23,7 @@
                                       HorizontalAlignment="Right"
                                       Background="Transparent"
                                       BorderBrush="{x:Null}"
+                                      CornerRadius="0"
                                       IsChecked="{TemplateBinding IsSearchEnabled, Mode=TwoWay}"
                                       Content="{TemplateBinding SearchIcon}">
                         </ToggleButton>

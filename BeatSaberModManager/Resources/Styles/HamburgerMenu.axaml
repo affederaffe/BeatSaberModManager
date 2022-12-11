@@ -203,11 +203,11 @@
                                       Width="{StaticResource PaneCompactWidth}"
                                       Height="{StaticResource HamburgerMenuButtonHeight}"
                                       Padding="0"
+                                      CornerRadius="0"
                                       HorizontalAlignment="Left"
                                       VerticalAlignment="Top"
                                       HorizontalContentAlignment="Center"
                                       Theme="{StaticResource NavigationButton}"
-                                      CornerRadius="4"
                                       IsChecked="{Binding #PART_NavigationPane.IsPaneOpen, Mode=TwoWay}">
                             <PathIcon Data="{DynamicResource Icons:HamburgerMenu}" Foreground="{TemplateBinding Foreground}" />
                         </ToggleButton>
