@@ -10,7 +10,7 @@
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
 
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+    <ScrollViewer Margin="0. 30, 0, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid ColumnDefinitions="*, 4*, Auto, Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
             <Label Grid.Column="1"
                    Grid.Row="0"

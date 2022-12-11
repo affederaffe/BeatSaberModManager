@@ -52,21 +52,23 @@
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="Template">
             <ControlTemplate>
-                <ContentPresenter Name="PART_ContentPresenter"
-                                  Padding="0"
-                                  Margin="0"
-                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                  Background="{TemplateBinding Background}"
-                                  BorderBrush="{TemplateBinding BorderBrush}"
-                                  BorderThickness="{TemplateBinding BorderThickness}"
-                                  Content="{TemplateBinding Content}"
-                                  ContentTemplate="{TemplateBinding ContentTemplate}"
-                                  CornerRadius="{TemplateBinding CornerRadius}"
-                                  TextElement.FontFamily="{TemplateBinding FontFamily}"
-                                  TextElement.FontSize="{TemplateBinding FontSize}"
-                                  TextElement.FontWeight="{TemplateBinding FontWeight}">
-                </ContentPresenter>
+                <Panel>
+                    <Panel IsHitTestVisible="False" Background="{TemplateBinding Background}" />
+                    <ContentPresenter Name="PART_ContentPresenter"
+                                      Padding="0"
+                                      Margin="0"
+                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      CornerRadius="{TemplateBinding CornerRadius}"
+                                      TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                      TextElement.FontSize="{TemplateBinding FontSize}"
+                                      TextElement.FontWeight="{TemplateBinding FontWeight}">
+                    </ContentPresenter>
+                </Panel>
             </ControlTemplate>
         </Setter>
 
@@ -183,14 +185,18 @@
                                 </ItemsPresenter>
                             </SplitView.Pane>
                             <SplitView.Content>
-                                <Grid RowDefinitions="*, Auto" Background="{TemplateBinding ContentBackground}">
-                                    <ContentPresenter Grid.Row="0"
-                                                      Name="PART_SelectedContentHost"
-                                                      Padding="{TemplateBinding Padding}"
-                                                      Content="{TemplateBinding SelectedContent}"
-                                                      ContentTemplate="{TemplateBinding SelectedContentTemplate}" />
-                                    <ContentPresenter Grid.Row="1" Content="{TemplateBinding Tag}" />
-                                </Grid>
+                                <Panel>
+                                    <Panel IsHitTestVisible="False" Background="{TemplateBinding ContentBackground}" />
+                                    <Grid RowDefinitions="*, Auto" >
+                                        <ContentPresenter Grid.Row="0"
+                                                          Name="PART_SelectedContentHost"
+                                                          Padding="{TemplateBinding Padding}"
+                                                          Content="{TemplateBinding SelectedContent}"
+                                                          ContentTemplate="{TemplateBinding SelectedContentTemplate}">
+                                        </ContentPresenter>
+                                        <ContentPresenter Grid.Row="1" Content="{TemplateBinding Tag}" />
+                                    </Grid>
+                                </Panel>
                             </SplitView.Content>
                         </SplitView>
                         <ToggleButton x:Name="HamburgerMenuButton"
