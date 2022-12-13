@@ -1,0 +1,31 @@
+<linker>
+    <assembly fullname="Avalonia.Themes.Fluent">
+        <type fullname="CompiledAvaloniaXaml.!AvaloniaResources" />
+        <type fullname="CompiledAvaloniaXaml.!IndexerAccessorFactoryClosure" />
+        <type fullname="CompiledAvaloniaXaml.!XamlLoader" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlContext" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlContext/ParentStackEnumerable/Enumerator" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlHelpers" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlTrampolines" />
+    </assembly>
+
+    <assembly fullname="Avalonia.Controls.DataGrid">
+        <type fullname="CompiledAvaloniaXaml.!AvaloniaResources" />
+        <type fullname="CompiledAvaloniaXaml.!IndexerAccessorFactoryClosure" />
+        <type fullname="CompiledAvaloniaXaml.!XamlLoader" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlContext" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlContext/ParentStackEnumerable/Enumerator" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlHelpers" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlTrampolines" />
+    </assembly>
+
+    <assembly fullname="BeatSaberModManager">
+        <type fullname="CompiledAvaloniaXaml.!AvaloniaResources" />
+        <type fullname="CompiledAvaloniaXaml.!IndexerAccessorFactoryClosure" />
+        <type fullname="CompiledAvaloniaXaml.!XamlLoader" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlContext" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlContext/ParentStackEnumerable/Enumerator" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlHelpers" />
+        <type fullname="CompiledAvaloniaXaml.XamlIlTrampolines" />
+    </assembly>
+</linker>

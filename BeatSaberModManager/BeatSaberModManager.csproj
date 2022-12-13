@@ -32,6 +32,7 @@
     <ItemGroup>
         <AvaloniaResource Include="Resources/**" />
         <None Include="Resources/Icons/Icon.ico" CopyToOutputDirectory="PreserveNewest" />
+        <TrimmerRootDescriptor Include="TrimmerRoots.xml" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
