@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Services.Interfaces;
@@ -9,7 +10,7 @@ using BeatSaberModManager.Utils;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     /// <inheritdoc />
-    public class BeatSaberGameVersionProvider : IGameVersionProvider
+    public partial class BeatSaberGameVersionProvider : IGameVersionProvider
     {
         /// <inheritdoc />
         public async Task<string?> DetectGameVersionAsync(string installDir)
@@ -22,14 +23,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 
             SearchForKey(reader, key);
             if (fileStream.Position == fileStream.Length) return null; // we went through the entire stream without finding the key
-            ReadWhileDigit(reader);
+            SearchForDigit(reader);
 
             const int rewind = -sizeof(int) - sizeof(byte);
             fileStream.Seek(rewind, SeekOrigin.Current); // rewind to the string length
 
-            int len = reader.ReadInt32();
-            byte[] bytes = reader.ReadBytes(len);
-            return Encoding.UTF8.GetString(bytes);
+            string str = reader.ReadString();
+            Regex regex = VersionRegex();
+            Match match = regex.Match(str);
+            return !match.Success ? null : match.Value;
         }
 
         private static void SearchForKey(BinaryReader reader, string key)
@@ -42,7 +44,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             }
         }
 
-        private static void ReadWhileDigit(BinaryReader reader)
+        private static void SearchForDigit(BinaryReader reader)
         {
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
@@ -50,5 +52,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                 if (char.IsDigit(current)) break;
             }
         }
+
+        [GeneratedRegex("[\\d]+.[\\d]+.[\\d]+")]
+        private static partial Regex VersionRegex();
     }
 }
