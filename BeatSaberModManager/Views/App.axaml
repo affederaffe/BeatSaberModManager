@@ -5,10 +5,15 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="/Resources/Localization/en.axaml" />
-                <ResourceInclude Source="/Resources/Icons/Icons.axaml" />
+                <MergeResourceInclude Source="/Resources/Styles/Themes.axaml" />
+                <MergeResourceInclude Source="/Resources/Localization/Localizations.axaml" />
+                <MergeResourceInclude Source="/Resources/Icons/Icons.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
+
+    <Application.Styles>
+        <StyleInclude Source="/Resources/Styles/FluentTheme.axaml" />
+    </Application.Styles>
 
 </Application>

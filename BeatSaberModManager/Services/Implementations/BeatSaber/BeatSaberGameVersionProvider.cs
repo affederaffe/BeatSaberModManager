@@ -28,7 +28,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             const int rewind = -sizeof(int) - sizeof(byte);
             fileStream.Seek(rewind, SeekOrigin.Current); // rewind to the string length
 
-            string str = reader.ReadString();
+            int length = reader.ReadInt32();
+            byte[] bytes = reader.ReadBytes(length);
+            string str = Encoding.UTF8.GetString(bytes);
             Regex regex = VersionRegex();
             Match match = regex.Match(str);
             return !match.Success ? null : match.Value;

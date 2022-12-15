@@ -4,29 +4,21 @@
         <TargetFramework>net7.0</TargetFramework>
         <LangVersion>preview</LangVersion>
         <AssemblyVersion>0.0.4</AssemblyVersion>
+        <OutputType>WinExe</OutputType>
         <PublishSingleFile>true</PublishSingleFile>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
         <Nullable>enable</Nullable>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
-        <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
+        <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+        <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
         <AnalysisLevel>preview-All</AnalysisLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ApplicationIcon>Resources/Icons/Icon.ico</ApplicationIcon>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
-        <OutputType>Exe</OutputType>
-        <Optimize>false</Optimize>
-        <DebugType>full</DebugType>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-        <OutputType>WinExe</OutputType>
-        <Optimize>true</Optimize>
-        <DebugType>none</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
@@ -36,16 +28,16 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.999-cibuild0027572-beta" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0-preview4" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0-preview4" />
+        <PackageReference Include="Avalonia" Version="11.0.999-cibuild0027572-beta" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.999-cibuild0027572-beta" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.999-cibuild0027572-beta" />
+        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.0.999-cibuild0027572-beta" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.999-cibuild0027572-beta" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.999-cibuild0027572-beta" />
         <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
         <PackageReference Include="StrongInject" Version="1.4.5-CI-20220524-023137" />
         <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.10" />

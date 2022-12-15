@@ -1,0 +1,19 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:CompileBindings="True">
+
+    <Styles.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source="avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml" />
+                <ResourceInclude Source="avares://Avalonia.Themes.Fluent/Accents/Base.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Styles.Resources>
+
+    <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/FluentControls.xaml" />
+    <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
+    <StyleInclude Source="avares://BeatSaberModManager/Resources/Styles/Brushes.axaml" />
+    <StyleInclude Source="avares://BeatSaberModManager/Resources/Styles/Controls.axaml" />
+
+</Styles>
