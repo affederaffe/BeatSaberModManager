@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    x:CompileBindings="True">
 
     <MergeResourceInclude x:Key="en" Source="/Resources/Localization/en.axaml" />
     <MergeResourceInclude x:Key="de" Source="/Resources/Localization/de.axaml" />

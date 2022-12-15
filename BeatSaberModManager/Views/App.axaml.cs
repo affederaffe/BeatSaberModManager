@@ -22,15 +22,10 @@ namespace BeatSaberModManager.Views
     /// <inheritdoc />
     public class App : Application
     {
-        private readonly ILogger _logger = null!;
-        private readonly LocalizationManager _localizationManager = null!;
-        private readonly ThemeManager _themeManager = null!;
-        private readonly Lazy<Window> _mainWindow = null!;
-
-        /// <summary>
-        /// [Required by Avalonia]
-        /// </summary>
-        public App() { }
+        private readonly ILogger _logger;
+        private readonly LocalizationManager _localizationManager;
+        private readonly ThemeManager _themeManager;
+        private readonly Lazy<Window> _mainWindow;
 
         /// <inheritdoc />
         public App(IEnumerable<IDataTemplate> viewTemplates, ILogger logger, LocalizationManager localizationManager, ThemeManager themeManager, Lazy<Window> mainWindow)

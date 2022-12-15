@@ -126,11 +126,11 @@ namespace BeatSaberModManager.ViewModels
             IMod[] install = GridItems!.Values.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods))
                 .Select(static x => x.AvailableMod)
                 .ToArray();
-            await InstallModsAsync(_settingsViewModel.InstallDir!, install).ConfigureAwait(false);
+            await InstallModsAsync(_settingsViewModel.InstallDir!, install);
             IMod[] uninstall = GridItems.Values.Where(static x => !x.IsCheckBoxChecked && x.InstalledMod is not null)
                 .Select(static x => x.AvailableMod)
                 .ToArray();
-            await UninstallModsAsync(_settingsViewModel.InstallDir!, uninstall).ConfigureAwait(false);
+            await UninstallModsAsync(_settingsViewModel.InstallDir!, uninstall);
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace BeatSaberModManager.ViewModels
         {
             IMod? modLoader = GridItems!.Values.FirstOrDefault(x => _modProvider.IsModLoader(x.InstalledMod))?.AvailableMod;
             if (modLoader is null) return;
-            await UninstallModsAsync(installDir, new[] { modLoader }).ConfigureAwait(false);
+            await UninstallModsAsync(installDir, new[] { modLoader });
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace BeatSaberModManager.ViewModels
             IMod[] mods = GridItems!.Values.Where(static x => x.InstalledMod is not null)
                 .Select(static x => x.AvailableMod)
                 .ToArray();
-            await UninstallModsAsync(installDir, mods).ConfigureAwait(false);
+            await UninstallModsAsync(installDir, mods);
             _modInstaller.RemoveAllModFiles(installDir);
         }
 
@@ -173,9 +173,9 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<Dictionary<IMod, ModGridItemViewModel>?> CreateModGridItemsAsync(string installDir)
         {
-            await _modProvider.LoadAvailableModsForCurrentVersionAsync(installDir).ConfigureAwait(false);
+            await _modProvider.LoadAvailableModsForCurrentVersionAsync(installDir);
             if (_modProvider.AvailableMods is null) return null;
-            await _modProvider.LoadInstalledModsAsync(installDir).ConfigureAwait(false);
+            await _modProvider.LoadInstalledModsAsync(installDir);
             if (_modProvider.InstalledMods is null) return null;
             Dictionary<IMod, ModGridItemViewModel> gridItems = _modProvider.AvailableMods.ToDictionary(static x => x, x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings, _dependencyResolver));
             InstalledModsCount = gridItems.Values.Count(static x => x.InstalledMod is not null);
@@ -195,7 +195,7 @@ namespace BeatSaberModManager.ViewModels
             for (int i = 0; i < mods.Count; i++)
             {
                 _progress.Report(new ProgressInfo(StatusType.Installing, mods[i].Name));
-                bool success = await _modInstaller.InstallModAsync(installDir, mods[i]).ConfigureAwait(false);
+                bool success = await _modInstaller.InstallModAsync(installDir, mods[i]);
                 if (!success) continue;
                 _progress.Report(((double)i + 1) / mods.Count);
                 if (!GridItems!.TryGetValue(mods[i], out ModGridItemViewModel? gridItem)) continue;
