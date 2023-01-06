@@ -4,8 +4,6 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-using JetBrains.Annotations;
-
 
 namespace BeatSaberModManager.Views.Windows
 {
@@ -32,7 +30,6 @@ namespace BeatSaberModManager.Views.Windows
             ExceptionTextBlock.Text = e.ToString();
         }
 
-        [UsedImplicitly]
         private void OkButtonClicked(object? sender, RoutedEventArgs e) => Close();
     }
 }

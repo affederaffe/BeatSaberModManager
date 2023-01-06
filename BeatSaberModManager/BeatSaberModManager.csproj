@@ -34,20 +34,20 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.999-cibuild0027642-beta" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="*-*" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.999-cibuild0027642-beta" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.999-cibuild0027642-beta" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.999-cibuild0027642-beta" />
-        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="11.0.999-cibuild0027642-beta" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.999-cibuild0027642-beta" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.999-cibuild0027642-beta" />
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
-        <PackageReference Include="StrongInject" Version="1.4.5-CI-20220524-023137" />
-        <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.0.10" />
-        <PackageReference Include="XamlNameReferenceGenerator" Version="1.5.1" />
+        <PackageReference Include="Avalonia" Version="*-*" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="*-*" />
+        <PackageReference Include="Avalonia.Desktop" Version="*-*" />
+        <PackageReference Include="Avalonia.Markup.Xaml.Loader" Version="*-*" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="*-*" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="*-*" />
+        <PackageReference Include="Serilog.Sinks.File" Version="*-*" />
+        <PackageReference Include="StrongInject" Version="*-*" />
+        <PackageReference Include="ThisAssembly.AssemblyInfo" Version="*-*" />
+        <PackageReference Include="XamlNameReferenceGenerator" Version="*-*" />
         <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
     </ItemGroup>
 

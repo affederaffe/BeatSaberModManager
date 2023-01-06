@@ -6,8 +6,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 
-using JetBrains.Annotations;
-
 using ReactiveUI;
 
 
@@ -37,7 +35,6 @@ namespace BeatSaberModManager.Views.Windows
                 .Subscribe(Close);
         }
 
-        [UsedImplicitly]
         private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null!);
     }
 }
