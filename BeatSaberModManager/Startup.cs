@@ -26,15 +26,14 @@ namespace BeatSaberModManager
         /// <summary>
         /// Initializes a new instance of the <see cref="Startup"/> class.
         /// </summary>
-
-        public Startup(string[] args, Lazy<Application> application, ISettings<AppSettings> appSettings, IUpdater updater, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator)
+        public Startup(string[] args, Lazy<Application> application, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator, IUpdater updater)
         {
             _args = args;
             _application = application;
             _appSettings = appSettings;
-            _updater = updater;
             _installDirValidator = installDirValidator;
             _installDirLocator = installDirLocator;
+            _updater = updater;
         }
 
         /// <summary>
@@ -45,8 +44,8 @@ namespace BeatSaberModManager
             if (await _updater.NeedsUpdateAsync().ConfigureAwait(false))
                 return await _updater.UpdateAsync().ConfigureAwait(false);
             await _appSettings.LoadAsync();
-            if (_args.Length == 2 && _args[0] == "--path")
-                _appSettings.Value.InstallDir = _args[1];
+            if (_args is ["--path", { } installDir])
+                _appSettings.Value.InstallDir = installDir;
             if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
                 _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
             return RunAvaloniaApp();

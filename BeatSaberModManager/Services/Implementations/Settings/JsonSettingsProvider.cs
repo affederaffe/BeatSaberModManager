@@ -14,7 +14,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
     /// Automatically loads and saves <typeparamref name="T"/> as a json file.
     /// </summary>
     /// <typeparam name="T">The type of the settings class.</typeparam>
-    public sealed class JsonSettingsProvider<T> : ISettings<T> where T : class, new()
+    public sealed class JsonSettingsProvider<T> : ISettings<T>, IAsyncDisposable where T : class, new()
     {
         private readonly JsonTypeInfo<T> _jsonTypeInfo;
         private readonly string _saveDirPath;
@@ -64,12 +64,15 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         }
 
         /// <inheritdoc />
-        public void Save()
+        public async Task SaveAsync()
         {
             if (!IOUtils.TryCreateDirectory(_saveDirPath)) return;
-            using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Access = FileAccess.Write, Mode = FileMode.Create });
+            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Access = FileAccess.Write, Mode = FileMode.Create });
             if (fileStream is null) return;
-            JsonSerializer.Serialize(fileStream, Value, _jsonTypeInfo);
+            await JsonSerializer.SerializeAsync(fileStream, Value, _jsonTypeInfo);
         }
+
+        /// <inheritdoc />
+        public async ValueTask DisposeAsync() => await SaveAsync();
     }
 }

@@ -57,7 +57,7 @@ namespace BeatSaberModManager.Views
         // ReSharper disable once AsyncVoidMethod
         private async void ShowException(Exception e)
         {
-            _logger.Fatal(e, "Application crashed");
+            _logger.Fatal(e, "Application crashed.");
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } lifetime) return;
             lifetime.MainWindow.Show();
             await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow);

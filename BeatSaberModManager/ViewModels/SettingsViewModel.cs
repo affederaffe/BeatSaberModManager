@@ -74,44 +74,28 @@ namespace BeatSaberModManager.ViewModels
         public int TabIndex
         {
             get => _appSettings.Value.TabIndex;
-            set
-            {
-                _appSettings.Value.TabIndex = value;
-                _appSettings.Save();
-            }
+            set => _appSettings.Value.TabIndex = value;
         }
 
         /// <inheritdoc cref="AppSettings.SaveSelectedMods" />
         public bool SaveSelectedMods
         {
             get => _appSettings.Value.SaveSelectedMods;
-            set
-            {
-                _appSettings.Value.SaveSelectedMods = value;
-                _appSettings.Save();
-            }
+            set => _appSettings.Value.SaveSelectedMods = value;
         }
 
         /// <inheritdoc cref="AppSettings.ForceReinstallMods" />
         public bool ForceReinstallMods
         {
             get => _appSettings.Value.ForceReinstallMods;
-            set
-            {
-                _appSettings.Value.ForceReinstallMods = value;
-                _appSettings.Save();
-            }
+            set => _appSettings.Value.ForceReinstallMods = value;
         }
 
         /// <inheritdoc cref="AppSettings.CloseOneClickWindow" />
         public bool CloseOneClickWindow
         {
             get => _appSettings.Value.CloseOneClickWindow;
-            set
-            {
-                _appSettings.Value.CloseOneClickWindow = value;
-                _appSettings.Save();
-            }
+            set => _appSettings.Value.CloseOneClickWindow = value;
         }
 
         /// <summary>
@@ -120,11 +104,7 @@ namespace BeatSaberModManager.ViewModels
         public string? InstallDir
         {
             get => _installDir ??= _appSettings.Value.InstallDir;
-            set
-            {
-                _appSettings.Value.InstallDir = this.RaiseAndSetIfChanged(ref _installDir, value);
-                _appSettings.Save();
-            }
+            set => _appSettings.Value.InstallDir = this.RaiseAndSetIfChanged(ref _installDir, value);
         }
 
         private string? _installDir;
@@ -135,11 +115,7 @@ namespace BeatSaberModManager.ViewModels
         public string? ThemesDir
         {
             get => _themesDir ??= _appSettings.Value.ThemesDir;
-            set
-            {
-                _appSettings.Value.ThemesDir = this.RaiseAndSetIfChanged(ref _themesDir, value);
-                _appSettings.Save();
-            }
+            set => _appSettings.Value.ThemesDir = this.RaiseAndSetIfChanged(ref _themesDir, value);
         }
 
         private string? _themesDir;

@@ -49,7 +49,17 @@ namespace BeatSaberModManager
         public static async Task<int> Main(string[] args)
         {
             await using Container container = new(args);
-            return await container.RunAsync(static x => x.RunAsync());
+            try
+            {
+                return await container.RunAsync<Startup, int>(static x => x.RunAsync());
+            }
+            catch (Exception e)
+            {
+                await using AsyncOwned<ILogger> logger = await container.ResolveAsync<ILogger>();
+                logger.Value.Fatal(e, "Application crashed.");
+                if (IsProduction) return -1;
+                throw;
+            }
         }
 
         [Register<Startup>(Scope.SingleInstance)]
@@ -67,7 +77,7 @@ namespace BeatSaberModManager
         [RegisterModule(typeof(ApplicationModule))]
         [RegisterModule(typeof(ViewsModule))]
 #pragma warning disable SI1103
-        internal partial class Container : IAsyncContainer<Startup>
+        internal partial class Container : IAsyncContainer<Startup>, IAsyncContainer<ILogger>
         {
             public Container(string[] args)
             {

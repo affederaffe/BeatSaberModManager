@@ -22,6 +22,6 @@ namespace BeatSaberModManager.Models.Interfaces
         /// <summary>
         /// Save the config to disk.
         /// </summary>
-        void Save();
+        Task SaveAsync();
     }
 }
