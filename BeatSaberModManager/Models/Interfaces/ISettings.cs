@@ -20,8 +20,8 @@ namespace BeatSaberModManager.Models.Interfaces
         Task LoadAsync();
 
         /// <summary>
-        /// Asynchronously saves the config.
+        /// Save the config to disk.
         /// </summary>
-        Task SaveAsync();
+        void Save();
     }
 }

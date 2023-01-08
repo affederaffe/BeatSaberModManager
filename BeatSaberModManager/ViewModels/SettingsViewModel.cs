@@ -74,21 +74,33 @@ namespace BeatSaberModManager.ViewModels
         public bool SaveSelectedMods
         {
             get => _appSettings.Value.SaveSelectedMods;
-            set => _appSettings.Value.SaveSelectedMods = value;
+            set
+            {
+                _appSettings.Value.SaveSelectedMods = value;
+                _appSettings.Save();
+            }
         }
 
         /// <inheritdoc cref="AppSettings.ForceReinstallMods" />
         public bool ForceReinstallMods
         {
             get => _appSettings.Value.ForceReinstallMods;
-            set => _appSettings.Value.ForceReinstallMods = value;
+            set
+            {
+                _appSettings.Value.ForceReinstallMods = value;
+                _appSettings.Save();
+            }
         }
 
         /// <inheritdoc cref="AppSettings.CloseOneClickWindow" />
         public bool CloseOneClickWindow
         {
             get => _appSettings.Value.CloseOneClickWindow;
-            set => _appSettings.Value.CloseOneClickWindow = value;
+            set
+            {
+                _appSettings.Value.CloseOneClickWindow = value;
+                _appSettings.Save();
+            }
         }
 
         /// <summary>
@@ -97,7 +109,11 @@ namespace BeatSaberModManager.ViewModels
         public bool BeatSaverOneClickCheckboxChecked
         {
             get => _beatSaverOneClickCheckboxChecked;
-            set => this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
+                _appSettings.Save();
+            }
         }
 
         private bool _beatSaverOneClickCheckboxChecked;
@@ -108,7 +124,11 @@ namespace BeatSaberModManager.ViewModels
         public bool ModelSaberOneClickCheckboxChecked
         {
             get => _modelSaberOneClickCheckboxChecked;
-            set => this.RaiseAndSetIfChanged(ref _modelSaberOneClickCheckboxChecked, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _modelSaberOneClickCheckboxChecked, value);
+                _appSettings.Save();
+            }
         }
 
         private bool _modelSaberOneClickCheckboxChecked;
@@ -119,7 +139,11 @@ namespace BeatSaberModManager.ViewModels
         public bool PlaylistOneClickCheckBoxChecked
         {
             get => _playlistOneClickCheckBoxChecked;
-            set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
+                _appSettings.Save();
+            }
         }
 
         private bool _playlistOneClickCheckBoxChecked;
@@ -130,7 +154,11 @@ namespace BeatSaberModManager.ViewModels
         public string? InstallDir
         {
             get => _installDir ??= _appSettings.Value.InstallDir;
-            set => _appSettings.Value.InstallDir = this.RaiseAndSetIfChanged(ref _installDir, value);
+            set
+            {
+                _appSettings.Value.InstallDir = this.RaiseAndSetIfChanged(ref _installDir, value);
+                _appSettings.Save();
+            }
         }
 
         private string? _installDir;
@@ -141,7 +169,11 @@ namespace BeatSaberModManager.ViewModels
         public string? ThemesDir
         {
             get => _themesDir ??= _appSettings.Value.ThemesDir;
-            set => _appSettings.Value.ThemesDir = this.RaiseAndSetIfChanged(ref _themesDir, value);
+            set
+            {
+                _appSettings.Value.ThemesDir = this.RaiseAndSetIfChanged(ref _themesDir, value);
+                _appSettings.Save();
+            }
         }
 
         private string? _themesDir;
