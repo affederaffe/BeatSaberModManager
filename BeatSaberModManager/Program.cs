@@ -154,7 +154,7 @@ namespace BeatSaberModManager
         internal class ViewsModule
         {
             [Factory(Scope.SingleInstance)]
-            public static Uri? CreateInstallRequestUri(string[] args) => args.Length == 2 && args[0] == "--install" ? new Uri(args[1]) : null;
+            public static Uri? CreateInstallRequestUri(string[] args) => args is ["--install", { } uri] ? new Uri(uri) : null;
 
             [Factory(Scope.SingleInstance)]
             public static Window CreateMainWindow(Uri? installRequestUri, Lazy<MainWindow> mainWindow, Lazy<AssetInstallWindow> assetInstallWindow) => installRequestUri is null ? mainWindow.Value : assetInstallWindow.Value;

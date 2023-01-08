@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reactive.Linq;
 
 using Avalonia;
@@ -7,8 +9,6 @@ using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Controls;
-
-using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Pages
@@ -30,15 +30,26 @@ namespace BeatSaberModManager.Views.Pages
         {
             InitializeComponent();
             ViewModel = viewModel;
-            ViewModel.WhenAnyValue(static x => x.GridItems)
-                .WhereNotNull()
-                .Select(static x => new DataGridCollectionView(x.Values) { GroupDescriptions = { new DataGridFuncGroupDescription<ModGridItemViewModel, string>(static x => x.AvailableMod.Category) } })
-                .Do(static x => x.MoveCurrentTo(null))
-                .Subscribe(x => ModsDataGrid.Items = x);
-            ModsDataGrid.GetObservable(SearchableDataGrid.IsSearchEnabledProperty).CombineLatest(ModsDataGrid.GetObservable(SearchableDataGrid.TextProperty))
+            DataGridCollectionView dataGridCollectionView = new(viewModel.GridItems)
+            {
+                GroupDescriptions =
+                {
+                    new DataGridFuncGroupDescription<ModGridItemViewModel, string>(static x => x.AvailableMod.Category)
+                },
+                SortDescriptions =
+                {
+                    new DataGridComparerSortDescription(Comparer<ModGridItemViewModel>.Create(static (x, y) => x.AvailableMod.IsRequired.CompareTo(y.AvailableMod.IsRequired)), ListSortDirection.Descending),
+                    new DataGridComparerSortDescription(Comparer<ModGridItemViewModel>.Create(static (x, y) => string.CompareOrdinal(x.AvailableMod.Category, y.AvailableMod.Category)), ListSortDirection.Ascending),
+                    new DataGridComparerSortDescription(Comparer<ModGridItemViewModel>.Create(static (x, y) => string.CompareOrdinal(x.AvailableMod.Name, y.AvailableMod.Name)), ListSortDirection.Ascending)
+                }
+            };
+
+            ModsDataGrid.Items = dataGridCollectionView;
+            ModsDataGrid.GetObservable(SearchableDataGrid.IsSearchEnabledProperty)
+                .CombineLatest(ModsDataGrid.GetObservable(SearchableDataGrid.TextProperty))
                 .Where(static x => x.Second is not null)
                 .Select(static x => new Func<object, bool>(o => Filter(x.First, x.Second, o)))
-                .Subscribe(x => ((DataGridCollectionView)ModsDataGrid.Items).Filter = x);
+                .Subscribe(x => dataGridCollectionView.Filter = x);
         }
 
         private static bool Filter(bool enabled, string? query, object o) =>
