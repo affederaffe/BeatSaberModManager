@@ -9,7 +9,7 @@
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
     <sys:String x:Key="MainWindow:SettingsHeader">Settings</sys:String>
     <sys:String x:Key="MainWindow:MoreInfoButton">More Info</sys:String>
-    <sys:String x:Key="MainWindow:RefreshModsButton">Refresh Mods</sys:String>
+    <sys:String x:Key="MainWindow:UpdateModsButton">Update Mods</sys:String>
 
     <TextBlock x:Key="IntroView:IntroText" FontSize="17.5" LineHeight="30" TextAlignment="Center">
         <Span FontSize="30" FontWeight="Bold" >Beat Saber Mod Manager</Span><LineBreak />

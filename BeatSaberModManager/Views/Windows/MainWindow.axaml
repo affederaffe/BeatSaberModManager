@@ -61,7 +61,7 @@
                     <c:IconHeader Padding="4, 0, 0, 0" IconPlacement="Left" Content="{DynamicResource MainWindow:MoreInfoButton}" IconData="{StaticResource Icons:Info}" />
                 </Button>
                 <Button Grid.Column="2" Margin="5, 0, 10, 0" Command="{Binding InstallCommand}">
-                    <c:IconHeader IconPlacement="Left" Content="{DynamicResource MainWindow:RefreshModsButton}" IconData="{StaticResource Icons:Download}" />
+                    <c:IconHeader IconPlacement="Left" Content="{DynamicResource MainWindow:UpdateModsButton}" IconData="{StaticResource Icons:Download}" />
                 </Button>
             </Grid>
         </c:HamburgerMenu.Tag>
