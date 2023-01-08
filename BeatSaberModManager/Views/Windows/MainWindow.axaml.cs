@@ -4,11 +4,8 @@ using System.Reactive.Linq;
 
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Primitives;
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Models.Implementations.Settings;
-using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.ViewModels;
 
 using ReactiveUI;
