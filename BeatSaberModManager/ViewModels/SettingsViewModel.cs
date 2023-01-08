@@ -70,6 +70,17 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public ReactiveCommand<Unit, bool> OpenThemesDirCommand { get; }
 
+        /// <inheritdoc cref="AppSettings.TabIndex" />
+        public int TabIndex
+        {
+            get => _appSettings.Value.TabIndex;
+            set
+            {
+                _appSettings.Value.TabIndex = value;
+                _appSettings.Save();
+            }
+        }
+
         /// <inheritdoc cref="AppSettings.SaveSelectedMods" />
         public bool SaveSelectedMods
         {
@@ -104,51 +115,6 @@ namespace BeatSaberModManager.ViewModels
         }
 
         /// <summary>
-        /// Checks or unchecks the checkbox control.
-        /// </summary>
-        public bool BeatSaverOneClickCheckboxChecked
-        {
-            get => _beatSaverOneClickCheckboxChecked;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
-                _appSettings.Save();
-            }
-        }
-
-        private bool _beatSaverOneClickCheckboxChecked;
-
-        /// <summary>
-        /// Checks or unchecks the checkbox control.
-        /// </summary>
-        public bool ModelSaberOneClickCheckboxChecked
-        {
-            get => _modelSaberOneClickCheckboxChecked;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _modelSaberOneClickCheckboxChecked, value);
-                _appSettings.Save();
-            }
-        }
-
-        private bool _modelSaberOneClickCheckboxChecked;
-
-        /// <summary>
-        /// Checks or unchecks the checkbox control.
-        /// </summary>
-        public bool PlaylistOneClickCheckBoxChecked
-        {
-            get => _playlistOneClickCheckBoxChecked;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
-                _appSettings.Save();
-            }
-        }
-
-        private bool _playlistOneClickCheckBoxChecked;
-
-        /// <summary>
         /// The game's installation directory.
         /// </summary>
         public string? InstallDir
@@ -177,6 +143,39 @@ namespace BeatSaberModManager.ViewModels
         }
 
         private string? _themesDir;
+
+        /// <summary>
+        /// Checks or unchecks the checkbox control.
+        /// </summary>
+        public bool BeatSaverOneClickCheckboxChecked
+        {
+            get => _beatSaverOneClickCheckboxChecked;
+            set => this.RaiseAndSetIfChanged(ref _beatSaverOneClickCheckboxChecked, value);
+        }
+
+        private bool _beatSaverOneClickCheckboxChecked;
+
+        /// <summary>
+        /// Checks or unchecks the checkbox control.
+        /// </summary>
+        public bool ModelSaberOneClickCheckboxChecked
+        {
+            get => _modelSaberOneClickCheckboxChecked;
+            set => this.RaiseAndSetIfChanged(ref _modelSaberOneClickCheckboxChecked, value);
+        }
+
+        private bool _modelSaberOneClickCheckboxChecked;
+
+        /// <summary>
+        /// Checks or unchecks the checkbox control.
+        /// </summary>
+        public bool PlaylistOneClickCheckBoxChecked
+        {
+            get => _playlistOneClickCheckBoxChecked;
+            set => this.RaiseAndSetIfChanged(ref _playlistOneClickCheckBoxChecked, value);
+        }
+
+        private bool _playlistOneClickCheckBoxChecked;
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {

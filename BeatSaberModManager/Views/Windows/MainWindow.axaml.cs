@@ -29,15 +29,13 @@ namespace BeatSaberModManager.Views.Windows
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
         /// </summary>
-        public MainWindow(MainWindowViewModel viewModel, ISettings<AppSettings> appSettings)
+        public MainWindow(MainWindowViewModel viewModel)
         {
             InitializeComponent();
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
-            HamburgerMenu.SelectedIndex = appSettings.Value.TabIndex;
-            HamburgerMenu.GetObservable(SelectingItemsControl.SelectedIndexProperty).Subscribe(x => appSettings.Value.TabIndex = x);
             this.WhenActivated(disposable => viewModel.SettingsViewModel.WhenAnyValue(static x => x.InstallDir)
                 .FirstAsync()
                 .Where(static x => x is null)
