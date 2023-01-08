@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Collections;
 using Avalonia.Controls;
 using Avalonia.Controls.Chrome;
 using Avalonia.Controls.Primitives;
@@ -85,6 +86,13 @@ namespace BeatSaberModManager.Views.Controls
             base.OnPropertyChanged(change);
             if (change.Property == IsSearchEnabledProperty && change.GetNewValue<bool>())
                 _searchTextBox?.Focus();
+        }
+
+        /// <inheritdoc />
+        protected override void OnInitialized()
+        {
+            if (Items is DataGridCollectionView dataGridCollectionView)
+                dataGridCollectionView.MoveCurrentTo(null);
         }
     }
 }
