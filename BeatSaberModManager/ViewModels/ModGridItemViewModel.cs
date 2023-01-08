@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reactive.Linq;
+﻿using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
@@ -12,7 +11,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel that represents an <see cref="IMod"/> which can be selected an deselected.
     /// </summary>
-    public sealed class ModGridItemViewModel : ViewModelBase, IDisposable
+    public sealed class ModGridItemViewModel : ViewModelBase
     {
         private readonly ObservableAsPropertyHelper<bool> _isUpToDate;
 
@@ -77,11 +76,5 @@ namespace BeatSaberModManager.ViewModels
         }
 
         private bool _isCheckBoxChecked;
-
-        /// <inheritdoc />
-        public void Dispose()
-        {
-            _isUpToDate.Dispose();
-        }
     }
 }
