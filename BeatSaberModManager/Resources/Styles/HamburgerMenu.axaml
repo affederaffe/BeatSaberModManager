@@ -7,11 +7,6 @@
     <Design.PreviewWith>
         <Border Width="400" Height="150">
             <c:HamburgerMenu>
-                <FlyoutBase.AttachedFlyout>
-                    <Flyout>
-                        <TextBox Text="Hello World" />
-                    </Flyout>
-                </FlyoutBase.AttachedFlyout>
                 <TabItem Header="Item1" IsSelected="True">
                     <UserControl>
                         <Border Height="400" Background="Green" />
@@ -36,7 +31,7 @@
     <cv:TopOnlyThicknessConverter x:Key="TopOnlyThicknessConverter" />
 
     <ControlTheme x:Key="NavigationButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -52,23 +47,19 @@
         <Setter Property="ClipToBounds" Value="False" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel>
-                    <Panel IsHitTestVisible="False" Background="{TemplateBinding Background}" />
-                    <ContentPresenter Name="PART_ContentPresenter"
-                                      Padding="0"
-                                      Margin="0"
-                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      BorderBrush="{TemplateBinding BorderBrush}"
-                                      BorderThickness="{TemplateBinding BorderThickness}"
-                                      Content="{TemplateBinding Content}"
-                                      ContentTemplate="{TemplateBinding ContentTemplate}"
-                                      CornerRadius="{TemplateBinding CornerRadius}"
-                                      TextElement.FontFamily="{TemplateBinding FontFamily}"
-                                      TextElement.FontSize="{TemplateBinding FontSize}"
-                                      TextElement.FontWeight="{TemplateBinding FontWeight}">
-                    </ContentPresenter>
-                </Panel>
+                <ContentPresenter Name="PART_ContentPresenter"
+                                  Padding="{TemplateBinding Padding}"
+                                  HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  Background="{TemplateBinding Background}"
+                                  BorderBrush="{TemplateBinding BorderBrush}"
+                                  BorderThickness="{TemplateBinding BorderThickness}"
+                                  Content="{TemplateBinding Content}"
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  CornerRadius="{TemplateBinding CornerRadius}"
+                                  TextElement.FontFamily="{TemplateBinding FontFamily}"
+                                  TextElement.FontSize="{TemplateBinding FontSize}"
+                                  TextElement.FontWeight="{TemplateBinding FontWeight}" />
             </ControlTemplate>
         </Setter>
 
@@ -153,87 +144,71 @@
     </ControlTheme>
 
     <ControlTheme x:Key="{x:Type c:HamburgerMenu}" TargetType="c:HamburgerMenu">
-        <Setter Property="PaneBackground" Value="{StaticResource PaneBrush}" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="PaneBackground" Value="{DynamicResource PaneBrush}" />
         <Setter Property="Background" Value="{DynamicResource SystemChromeMediumColor}" />
         <Setter Property="ContentBackground" Value="{DynamicResource SystemChromeLowColor}" />
         <Setter Property="ItemContainerTheme" Value="{StaticResource HamburgerMenuTabItem}" />
         <Setter Property="TabStripPlacement" Value="Left" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel>
-                    <Panel Background="{TemplateBinding PaneBackground}" IsHitTestVisible="False" />
-                    <Panel>
-                        <SplitView x:Name="PART_NavigationPane"
-                                   OpenPaneLength="{StaticResource PaneExpandWidth}"
-                                   CompactPaneLength="{StaticResource PaneCompactWidth}"
-                                   Margin="{TemplateBinding Padding}"
-                                   DisplayMode="Inline"
-                                   IsPaneOpen="True"
-                                   PaneBackground="Transparent">
-                            <SplitView.Pane>
-                                <ItemsPresenter Grid.Row="0"
-                                                Margin="{Binding #HamburgerMenuButton.Height, Converter={StaticResource TopOnlyThicknessConverter}}"
-                                                Name="PART_ItemsPresenter"
-                                                HorizontalAlignment="Stretch"
-                                                ItemTemplate="{TemplateBinding ItemTemplate}"
-                                                Items="{TemplateBinding Items}">
-                                    <ItemsPresenter.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel x:Name="HamburgerItemsPanel" Margin="0,2" Orientation="Vertical" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsPresenter.ItemsPanel>
-                                </ItemsPresenter>
-                            </SplitView.Pane>
-                            <SplitView.Content>
-                                <Panel>
-                                    <Panel IsHitTestVisible="False" Background="{TemplateBinding ContentBackground}" />
-                                    <Grid RowDefinitions="*, Auto" >
-                                        <ContentPresenter Grid.Row="0"
-                                                          Name="PART_SelectedContentHost"
-                                                          Padding="{TemplateBinding Padding}"
-                                                          Content="{TemplateBinding SelectedContent}"
-                                                          ContentTemplate="{TemplateBinding SelectedContentTemplate}">
-                                        </ContentPresenter>
-                                        <ContentPresenter Grid.Row="1" Content="{TemplateBinding Tag}" />
-                                    </Grid>
-                                </Panel>
-                            </SplitView.Content>
-                        </SplitView>
-                        <ToggleButton x:Name="HamburgerMenuButton"
-                                      Width="{StaticResource PaneCompactWidth}"
-                                      Height="{StaticResource HamburgerMenuButtonHeight}"
-                                      Padding="0"
-                                      CornerRadius="0"
-                                      HorizontalAlignment="Left"
-                                      VerticalAlignment="Top"
-                                      HorizontalContentAlignment="Center"
-                                      Theme="{StaticResource NavigationButton}"
-                                      IsChecked="{Binding #PART_NavigationPane.IsPaneOpen, Mode=TwoWay}">
-                            <PathIcon Data="{DynamicResource Icons:HamburgerMenu}" Foreground="{TemplateBinding Foreground}" />
-                        </ToggleButton>
-                    </Panel>
+                <Panel Background="{TemplateBinding PaneBackground}">
+                    <SplitView x:Name="PART_NavigationPane"
+                               CompactPaneLength="{StaticResource PaneCompactWidth}"
+                               DisplayMode="Inline"
+                               IsPaneOpen="True"
+                               OpenPaneLength="{StaticResource PaneExpandWidth}"
+                               PaneBackground="Transparent">
+                        <SplitView.Pane>
+                            <ItemsPresenter Grid.Row="1"
+                                            Name="PART_ItemsPresenter"
+                                            HorizontalAlignment="Stretch"
+                                            Margin="{Binding #HamburgerMenuButton.Height, Converter={StaticResource TopOnlyThicknessConverter}}">
+                                <ItemsPresenter.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel x:Name="HamburgerItemsPanel" Margin="0,2" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsPresenter.ItemsPanel>
+                            </ItemsPresenter>
+                        </SplitView.Pane>
+                        <SplitView.Content>
+                            <Panel>
+                                <Panel IsHitTestVisible="False" Background="{TemplateBinding ContentBackground}" />
+                                <Grid RowDefinitions="*, Auto">
+                                    <ContentPresenter Grid.Row="0"
+                                                      Name="PART_SelectedContentHost"
+                                                      Background="Transparent"
+                                                      Padding="{TemplateBinding Padding}"
+                                                      Content="{TemplateBinding SelectedContent}"
+                                                      ContentTemplate="{TemplateBinding SelectedContentTemplate}">
+                                    </ContentPresenter>
+                                    <ContentPresenter Grid.Row="1" Content="{TemplateBinding Tag}" />
+                                </Grid>
+                            </Panel>
+                        </SplitView.Content>
+                    </SplitView>
+                    <ToggleButton x:Name="HamburgerMenuButton"
+                                  Width="{StaticResource PaneCompactWidth}"
+                                  Height="{StaticResource HamburgerMenuButtonHeight}"
+                                  Margin="0"
+                                  Padding="0"
+                                  CornerRadius="0"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Top"
+                                  HorizontalContentAlignment="Center"
+                                  Theme="{StaticResource NavigationButton}"
+                                  IsChecked="{Binding #PART_NavigationPane.IsPaneOpen, Mode=TwoWay}">
+                        <PathIcon Data="{DynamicResource Icons:HamburgerMenu}" Foreground="{TemplateBinding Foreground}" />
+                    </ToggleButton>
                 </Panel>
             </ControlTemplate>
         </Setter>
 
-        <Style Selector="^ /template/ SplitView[IsPaneOpen=True] TextBlock#HeaderHolder">
-            <Setter Property="Margin" Value="{StaticResource HeaderMarginCollapsedPane}" />
-        </Style>
-        <Style Selector="^ /template/ SplitView[DisplayMode=Overlay][IsPaneOpen=True] TextBlock#HeaderHolder">
-            <Setter Property="Margin" Value="{StaticResource HeaderMarginExpandedOverlayPane}" />
-        </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Overlay]">
             <Setter Property="PaneBackground" Value="{StaticResource PaneOverlayBrush}" />
         </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Overlay]">
-            <Setter Property="Background" Value="{Binding $parent[TabControl].Background}" />
-        </Style>
-        <Style Selector="^ /template/ SplitView[DisplayMode=Inline] Border#BackgroundBorder">
-            <Setter Property="Background" Value="{Binding $parent[TabControl].Background}" />
-            <Setter Property="BoxShadow" Value="{StaticResource NavigationContentShadow}" />
-        </Style>
-        <Style Selector="^ /template/ SplitView[DisplayMode=Inline][IsPaneOpen=True] Border#BackgroundBorder">
-            <Setter Property="CornerRadius" Value="8, 0, 0, 0" />
+            <Setter Property="Background" Value="{Binding $parent[c:HamburgerMenu].ContentBackground}" />
         </Style>
     </ControlTheme>
 
