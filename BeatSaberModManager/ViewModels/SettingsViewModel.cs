@@ -21,6 +21,10 @@ namespace BeatSaberModManager.ViewModels
         private readonly ISettings<AppSettings> _appSettings;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
 
+        private const string BeatSaverScheme = "beatsaver";
+        private const string ModelSaberScheme = "modelsaber";
+        private const string BSPlaylistScheme = "bsplaylist";
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsViewModel"/> class.
         /// </summary>
@@ -28,9 +32,9 @@ namespace BeatSaberModManager.ViewModels
         {
             _appSettings = appSettings;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
-            _beatSaverOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered("beatsaver");
-            _modelSaberOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered("modelsaber");
-            _playlistOneClickCheckBoxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered("bsplaylist");
+            _beatSaverOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(BeatSaverScheme);
+            _modelSaberOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(ModelSaberScheme);
+            _playlistOneClickCheckBoxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(BSPlaylistScheme);
             DirectoryExistsObservable installDirExistsObservable = new();
             IsInstallDirValidObservable = installDirExistsObservable.Select(_ => installDirValidator.ValidateInstallDir(installDirExistsObservable.Path));
             ValidatedInstallDirObservable = IsInstallDirValidObservable.Where(static x => x).Select(_ => installDirExistsObservable.Path!);
@@ -40,9 +44,9 @@ namespace BeatSaberModManager.ViewModels
             ValidatedThemesDirObservable = themesDirExistsObservable.Where(static x => x).Select(_ => themesDirExistsObservable.Path!);
             this.WhenAnyValue(static x => x.ThemesDir).Subscribe(x => themesDirExistsObservable.Path = x);
             OpenThemesDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(themesDirExistsObservable.Path!), themesDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
-            this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, "beatsaver"));
-            this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, "modelsaber"));
-            this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, "bsplaylist"));
+            this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, BeatSaverScheme));
+            this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, ModelSaberScheme));
+            this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, BSPlaylistScheme));
         }
 
         /// <summary>

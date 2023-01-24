@@ -55,13 +55,13 @@ namespace BeatSaberModManager.ViewModels
             InitializeCommand = ReactiveCommand.CreateFromTask<string, bool>(FetchModsAsync);
             InitializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
             InitializeCommand.CombineLatest(InitializeCommand.IsExecuting)
-                .Select(static x => !x.First && !x.Second)
+                .Select(static x => x is (false, false))
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
             InitializeCommand.CombineLatest(InitializeCommand.IsExecuting)
-                .Select(x => x.First && !x.Second && _gridItemsSourceCache.Count == 0)
+                .Select(x => x is (true, false) && _gridItemsSourceCache.Count == 0)
                 .ToProperty(this, nameof(IsEmpty), out _isEmpty);
             IsSuccessObservable = InitializeCommand.CombineLatest(InitializeCommand.IsExecuting, settingsViewModel.IsInstallDirValidObservable)
-                .Select(x => x.First && !x.Second && x.Third && _gridItemsSourceCache.Count != 0);
+                .Select(x => x is (true, false, true) && _gridItemsSourceCache.Count != 0);
             IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
             IObservable<IChangeSet<ModGridItemViewModel, IMod>> connection = _gridItemsSourceCache.Connect();
             IObservable<PropertyValue<ModGridItemViewModel, bool>> whenAnyCheckBoxChecked = connection.WhenPropertyChanged(static x => x.IsCheckBoxChecked);
@@ -83,7 +83,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// An <see cref="ReadOnlyObservableCollection{T}"/> of <see cref="ModGridItemViewModel"/> for display in a DataGrid.
         /// </summary>
-        public ReadOnlyObservableCollection<ModGridItemViewModel> GridItems => _gridItemsList;
+        public IEnumerable<ModGridItemViewModel> GridItems => _gridItemsList;
 
         /// <summary>
         /// Initializes the grid items.
@@ -140,7 +140,7 @@ namespace BeatSaberModManager.ViewModels
                 .Select(static x => x.AvailableMod)
                 .ToArray();
             await InstallModsAsync(_settingsViewModel.InstallDir!, install);
-            IMod[] uninstall = _gridItemsSourceCache.Items.Where(static x => !x.IsCheckBoxChecked && x.InstalledMod is not null)
+            IMod[] uninstall = _gridItemsSourceCache.Items.Where(static x => x is { IsCheckBoxChecked: false, InstalledMod: { } })
                 .Select(static x => x.AvailableMod)
                 .ToArray();
             await UninstallModsAsync(_settingsViewModel.InstallDir!, uninstall);
@@ -232,7 +232,7 @@ namespace BeatSaberModManager.ViewModels
         {
             bool isDependency = _dependencyResolver.IsDependency(gridItem.AvailableMod);
             gridItem.IsCheckBoxEnabled = !isDependency;
-            gridItem.IsCheckBoxChecked = isDependency || (gridItem.IsCheckBoxChecked && gridItem.InstalledMod is not null);
+            gridItem.IsCheckBoxChecked = isDependency || gridItem is { IsCheckBoxChecked: true, InstalledMod: { } };
         }
 
         private void UpdateSelectedModsList(PropertyValue<ModGridItemViewModel, bool> value)

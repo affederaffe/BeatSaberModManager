@@ -48,7 +48,7 @@ namespace BeatSaberModManager.ViewModels
             InstallCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
             InstallCommand.ToProperty(this, nameof(IsSuccess), out _isSuccess);
             InstallCommand.CombineLatest(InstallCommand.IsExecuting)
-                .Select(static x => !x.First && !x.Second)
+                .Select(static x => x is (false, false))
                 .ToProperty(this, nameof(IsFailed), out _isFailed);
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue);
         }
