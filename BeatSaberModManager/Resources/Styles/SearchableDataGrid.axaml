@@ -27,12 +27,6 @@
                                       IsChecked="{TemplateBinding IsSearchEnabled, Mode=TwoWay}"
                                       Content="{TemplateBinding SearchIcon}">
                         </ToggleButton>
-                        <Rectangle Name="PART_ColumnHeadersAndRowsSeparator"
-                                   Grid.Row="0" Grid.ColumnSpan="2" Grid.Column="0"
-                                   VerticalAlignment="Bottom"
-                                   Height="1"
-                                   Fill="{DynamicResource DataGridGridLinesBrush}">
-                        </Rectangle>
 
                         <TextBox Name="PART_SearchTextBox"
                                  Grid.Row="1"
