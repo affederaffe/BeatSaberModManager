@@ -12,8 +12,6 @@ using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
 
-using ReactiveUI;
-
 
 namespace BeatSaberModManager.Views.Pages
 {
@@ -39,17 +37,13 @@ namespace BeatSaberModManager.Views.Pages
             SelectInstallFolderButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
                 .Where(static x => x.Count > 0)
-                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
-                .WhereNotNull()
-                .Select(static x => x.LocalPath)
+                .Select(static x => x[0].Path.LocalPath)
                 .Where(installDirValidator.ValidateInstallDir)
                 .Subscribe(x => viewModel.InstallDir = x);
             SelectThemesFolderButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
                 .Where(static x => x.Count > 0)
-                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
-                .WhereNotNull()
-                .Select(static x => x.LocalPath)
+                .Select(static x => x[0].Path.LocalPath)
                 .Where(Directory.Exists)
                 .Subscribe(x => viewModel.ThemesDir = x);
         }

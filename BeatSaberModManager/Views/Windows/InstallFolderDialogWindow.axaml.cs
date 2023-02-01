@@ -28,9 +28,7 @@ namespace BeatSaberModManager.Views.Windows
             ContinueButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
                 .Where(static x => x.Count > 0)
-                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri : null)
-                .WhereNotNull()
-                .Select(static x => x.LocalPath)
+                .Select(static x => x[0].Path.LocalPath)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(Close);
         }

@@ -47,8 +47,7 @@ namespace BeatSaberModManager.Views.Pages
             ViewModel = viewModel;
             ReactiveCommand<Unit, IReadOnlyList<IStorageFile>> showFileDialogCommand = ReactiveCommand.CreateFromTask(() => window.StorageProvider.OpenFilePickerAsync(FilePickerOpenOptions), viewModel.SettingsViewModel.IsInstallDirValidObservable);
             showFileDialogCommand.Where(static x => x.Count == 1)
-                .Select(static x => x[0].TryGetUri(out Uri? uri) ? uri.LocalPath : null)
-                .WhereNotNull()
+                .Select(static x => x[0].Path.LocalPath)
                 .InvokeCommand(viewModel.InstallPlaylistCommand);
             viewModel.InstallPlaylistCommand.Select(static x => new ProgressInfo(x ? StatusType.Completed : StatusType.Failed, null))
                 .Subscribe(statusProgress.Report);
