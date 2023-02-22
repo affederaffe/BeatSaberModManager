@@ -26,8 +26,6 @@
     <Thickness x:Key="HeaderMarginExpandedOverlayPane">212, 0, 0, 0</Thickness>
     <BoxShadows x:Key="NavigationItemShadow">1 1 1 1 #2000, 0 0 1 1 #2fff</BoxShadows>
     <BoxShadows x:Key="NavigationContentShadow">0 0 1 1 #2000</BoxShadows>
-    <SolidColorBrush x:Key="PaneBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="0.5" />
-    <SolidColorBrush x:Key="PaneOverlayBrush" Color="{DynamicResource SystemChromeMediumColor}" Opacity="1" />
     <cv:TopOnlyThicknessConverter x:Key="TopOnlyThicknessConverter" />
 
     <ControlTheme x:Key="NavigationButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
@@ -145,7 +143,7 @@
 
     <ControlTheme x:Key="{x:Type c:HamburgerMenu}" TargetType="c:HamburgerMenu">
         <Setter Property="Padding" Value="0" />
-        <Setter Property="PaneBackground" Value="{DynamicResource PaneBrush}" />
+        <Setter Property="PaneBackground" Value="{DynamicResource SystemChromeMediumColor}" />
         <Setter Property="Background" Value="{DynamicResource SystemChromeMediumColor}" />
         <Setter Property="ContentBackground" Value="{DynamicResource SystemChromeLowColor}" />
         <Setter Property="ItemContainerTheme" Value="{StaticResource HamburgerMenuTabItem}" />
@@ -205,7 +203,7 @@
         </Setter>
 
         <Style Selector="^ /template/ SplitView[DisplayMode=Overlay]">
-            <Setter Property="PaneBackground" Value="{StaticResource PaneOverlayBrush}" />
+            <Setter Property="PaneBackground" Value="{DynamicResource SystemChromeMediumColor}" />
         </Style>
         <Style Selector="^ /template/ SplitView[DisplayMode=Overlay]">
             <Setter Property="Background" Value="{Binding $parent[c:HamburgerMenu].ContentBackground}" />

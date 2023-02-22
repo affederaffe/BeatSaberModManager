@@ -16,8 +16,7 @@
                         <PathIcon DockPanel.Dock="{TemplateBinding IconPlacement}"
                                   HorizontalAlignment="Center"
                                   VerticalAlignment="Center"
-                                  Data="{TemplateBinding IconData}"
-                                  Foreground="{TemplateBinding Foreground}">
+                                  Data="{TemplateBinding IconData}">
                         </PathIcon>
                         <TextBlock HorizontalAlignment="Center"
                                    VerticalAlignment="Center"

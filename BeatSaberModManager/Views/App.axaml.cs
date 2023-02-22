@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reactive;
+using System.Threading.Tasks;
 
 using Avalonia;
 using Avalonia.Controls;
@@ -36,7 +37,7 @@ namespace BeatSaberModManager.Views
             _mainWindow = mainWindow;
             DataTemplates.AddRange(viewTemplates);
             if (!Program.IsProduction) return;
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(ShowException);
+            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(e => _ = ShowExceptionAsync(e));
         }
 
         /// <inheritdoc />
@@ -54,8 +55,7 @@ namespace BeatSaberModManager.Views
             lifetime.MainWindow = _mainWindow.Value;
         }
 
-        // ReSharper disable once AsyncVoidMethod
-        private async void ShowException(Exception e)
+        private async Task ShowExceptionAsync(Exception e)
         {
             _logger.Fatal(e, "Application crashed.");
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } lifetime) return;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reactive.Linq;
 
 using Avalonia.Controls;
@@ -40,12 +39,6 @@ namespace BeatSaberModManager.Views.Pages
                 .Select(static x => x[0].Path.LocalPath)
                 .Where(installDirValidator.ValidateInstallDir)
                 .Subscribe(x => viewModel.InstallDir = x);
-            SelectThemesFolderButton.GetObservable(Button.ClickEvent)
-                .SelectMany(_ => window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
-                .Where(static x => x.Count > 0)
-                .Select(static x => x[0].Path.LocalPath)
-                .Where(Directory.Exists)
-                .Subscribe(x => viewModel.ThemesDir = x);
         }
     }
 }

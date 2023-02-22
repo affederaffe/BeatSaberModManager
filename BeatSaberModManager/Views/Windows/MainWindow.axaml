@@ -25,22 +25,22 @@
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:IntroHeader}" IconData="{StaticResource Icons:Info}" Foreground="{DynamicResource InfoIconBrush}" />
+                <c:IconHeader Content="{DynamicResource MainWindow:IntroHeader}" IconData="{StaticResource Icons:Info}" />
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding DashboardViewModel}">
             <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:DashboardHeader}" IconData="{StaticResource Icons:Dashboard}" Foreground="{DynamicResource DashboardIconBrush}" />
+                <c:IconHeader Content="{DynamicResource MainWindow:DashboardHeader}" IconData="{StaticResource Icons:Dashboard}" />
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding ModsViewModel}">
             <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:ModsHeader}" IconData="{StaticResource Icons:Library}" Foreground="{DynamicResource LibraryIconBrush}" />
+                <c:IconHeader Content="{DynamicResource MainWindow:ModsHeader}" IconData="{StaticResource Icons:Library}" />
             </TabItem.Header>
         </TabItem>
         <TabItem Content="{Binding SettingsViewModel}">
             <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:SettingsHeader}" IconData="{StaticResource Icons:Settings}" Foreground="{DynamicResource SettingsIconBrush}" />
+                <c:IconHeader Content="{DynamicResource MainWindow:SettingsHeader}" IconData="{StaticResource Icons:Settings}" />
             </TabItem.Header>
         </TabItem>
 

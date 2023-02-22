@@ -11,10 +11,10 @@ namespace BeatSaberModManager.Views.Theming
         /// <summary>
         /// Initializes a new instance of the <see cref="Theme"/> class.
         /// </summary>
-        public Theme(string name, IStyle style)
+        public Theme(string name, ThemeVariant themeVariant)
         {
             Name = name;
-            Style = style;
+            ThemeVariant = themeVariant;
         }
 
         /// <summary>
@@ -23,8 +23,8 @@ namespace BeatSaberModManager.Views.Theming
         public string Name { get; }
 
         /// <summary>
-        /// The associated <see cref="IStyle"/> of the theme.
+        /// The associated <see cref="ThemeVariant"/> of the theme.
         /// </summary>
-        public IStyle Style { get; }
+        public ThemeVariant ThemeVariant { get; }
     }
 }

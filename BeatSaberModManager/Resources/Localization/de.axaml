@@ -47,19 +47,23 @@
     <sys:String x:Key="ModsView:NoModsAvailable">Noch keine Mods für diese Version verfügbar</sys:String>
     <sys:String x:Key="ModsView:SearchWatermark">Suche...</sys:String>
 
-    <sys:String x:Key="OptionsView:InstallationLabel">Installationsordner</sys:String>
-    <sys:String x:Key="OptionsView:OpenFolderButton">Ordner öffnen</sys:String>
-    <sys:String x:Key="OptionsView:SelectFolderButton">Ordner auswählen</sys:String>
-    <sys:String x:Key="OptionsView:OneClickHandlerLabel">OneClick™ Unterstützung</sys:String>
-    <sys:String x:Key="OptionsView:BeatSaverLabel">BeatSaver</sys:String>
-    <sys:String x:Key="OptionsView:ModelSaberLabel">ModelSaber</sys:String>
-    <sys:String x:Key="OptionsView:PlaylistLabel">Playlist</sys:String>
-    <sys:String x:Key="OptionsView:LanguageLabel">Sprache</sys:String>
-    <sys:String x:Key="OptionsView:MiscLabel">Verschiedenes</sys:String>
-    <sys:String x:Key="OptionsView:ForceReinstallModsButton">Installierte Mods neu installieren</sys:String>
-    <sys:String x:Key="OptionsView:CloseOneClickWindow">OneClick™ Fenster automatisch schließen</sys:String>
-    <sys:String x:Key="OptionsView:SaveSelectedMods">Ausgewählte mods speichern</sys:String>
-    <sys:String x:Key="OptionsView:ThemesLabel">Themen</sys:String>
+    <sys:String x:Key="SettingsView:InstallationLabel">Installationsordner</sys:String>
+    <sys:String x:Key="SettingsView:OpenFolderButton">Ordner öffnen</sys:String>
+    <sys:String x:Key="SettingsView:SelectFolderButton">Ordner auswählen</sys:String>
+    <sys:String x:Key="SettingsView:OneClickHandlerLabel">OneClick™ Unterstützung</sys:String>
+    <sys:String x:Key="SettingsView:BeatSaverLabel">BeatSaver</sys:String>
+    <sys:String x:Key="SettingsView:ModelSaberLabel">ModelSaber</sys:String>
+    <sys:String x:Key="SettingsView:PlaylistLabel">Playlist</sys:String>
+    <sys:String x:Key="SettingsView:LanguageLabel">Sprache</sys:String>
+    <sys:String x:Key="SettingsView:MiscLabel">Verschiedenes</sys:String>
+    <sys:String x:Key="SettingsView:ForceReinstallModsButton">Installierte Mods neu installieren</sys:String>
+    <sys:String x:Key="SettingsView:CloseOneClickWindow">OneClick™ Fenster automatisch schließen</sys:String>
+    <sys:String x:Key="SettingsView:SaveSelectedMods">Ausgewählte mods speichern</sys:String>
+    <sys:String x:Key="SettingsView:ThemesLabel">Themen</sys:String>
+
+    <sys:String x:Key="Themes:System">System</sys:String>
+    <sys:String x:Key="Themes:Light">Hell</sys:String>
+    <sys:String x:Key="Themes:Dark">Dunkel</sys:String>
 
     <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:SelectButton">Auswählen</sys:String>

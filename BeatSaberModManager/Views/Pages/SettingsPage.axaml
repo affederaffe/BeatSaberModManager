@@ -3,20 +3,25 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:BeatSaberModManager.ViewModels"
+             xmlns:cv="using:BeatSaberModManager.Views.Converters"
              xmlns:l="using:BeatSaberModManager.Views.Localization"
              xmlns:t="using:BeatSaberModManager.Views.Theming"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Pages.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
+    
+    <UserControl.Resources>
+        <cv:ResourceConverter x:Key="ResourceConverter" />
+    </UserControl.Resources>
 
     <ScrollViewer Margin="0. 30, 0, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Grid ColumnDefinitions="*, 4*, Auto, Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
+        <Grid ColumnDefinitions="*, 4*, Auto, Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
             <Label Grid.Column="1"
                    Grid.Row="0"
                    FontWeight="Bold"
                    HorizontalAlignment="Stretch"
-                   Content="{DynamicResource OptionsView:InstallationLabel}">
+                   Content="{DynamicResource SettingsView:InstallationLabel}">
             </Label>
             <TextBox Grid.Column="1"
                      Grid.Row="1"
@@ -28,7 +33,7 @@
                     Grid.Row="1"
                     Margin="10, 0, 0, 0"
                     HorizontalAlignment="Center"
-                    Content="{DynamicResource OptionsView:OpenFolderButton}"
+                    Content="{DynamicResource SettingsView:OpenFolderButton}"
                     Command="{Binding OpenInstallDirCommand}">
             </Button>
             <Button x:Name="SelectInstallFolderButton"
@@ -36,14 +41,14 @@
                     Grid.Row="1"
                     Margin="10, 0, 0, 0"
                     HorizontalAlignment="Center"
-                    Content="{DynamicResource OptionsView:SelectFolderButton}">
+                    Content="{DynamicResource SettingsView:SelectFolderButton}">
             </Button>
 
             <Label Grid.Column="1"
                    Grid.Row="2"
                    Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
-                   Content="{DynamicResource OptionsView:OneClickHandlerLabel}">
+                   Content="{DynamicResource SettingsView:OneClickHandlerLabel}">
             </Label>
             <Grid Grid.Column="1"
                   Grid.Row="3"
@@ -53,7 +58,7 @@
                 <Label Grid.Column="0"
                        Grid.Row="0"
                        VerticalAlignment="Center"
-                       Content="{DynamicResource OptionsView:BeatSaverLabel}">
+                       Content="{DynamicResource SettingsView:BeatSaverLabel}">
                 </Label>
                 <CheckBox Grid.Column="1"
                           Grid.Row="0"
@@ -63,7 +68,7 @@
                 <Label Grid.Column="0"
                        Grid.Row="1"
                        VerticalAlignment="Center"
-                       Content="{DynamicResource OptionsView:ModelSaberLabel}">
+                       Content="{DynamicResource SettingsView:ModelSaberLabel}">
                 </Label>
                 <CheckBox Grid.Column="1"
                           Grid.Row="1"
@@ -73,7 +78,7 @@
                 <Label Grid.Column="0"
                        Grid.Row="2"
                        VerticalAlignment="Center"
-                       Content="{DynamicResource OptionsView:PlaylistLabel}">
+                       Content="{DynamicResource SettingsView:PlaylistLabel}">
                 </Label>
                 <CheckBox Grid.Column="1"
                           Grid.Row="2"
@@ -86,7 +91,7 @@
                    Grid.Row="4"
                    Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
-                   Content="{DynamicResource OptionsView:LanguageLabel}">
+                   Content="{DynamicResource SettingsView:LanguageLabel}">
             </Label>
             <ComboBox x:Name="LanguagesComboBox"
                       x:DataType="l:LocalizationManager"
@@ -105,7 +110,7 @@
                    Grid.Row="6"
                    Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
-                   Content="{DynamicResource OptionsView:MiscLabel}">
+                   Content="{DynamicResource SettingsView:MiscLabel}">
             </Label>
             <Grid Grid.Column="1"
                   Grid.Row="7"
@@ -115,7 +120,7 @@
                 <Label Grid.Column="0"
                        Grid.Row="0"
                        VerticalAlignment="Center"
-                       Content="{DynamicResource OptionsView:ForceReinstallModsButton}">
+                       Content="{DynamicResource SettingsView:ForceReinstallModsButton}">
                 </Label>
                 <CheckBox Grid.Column="1"
                           Grid.Row="0"
@@ -125,7 +130,7 @@
                 <Label Grid.Column="0"
                        Grid.Row="1"
                        VerticalAlignment="Center"
-                       Content="{DynamicResource OptionsView:CloseOneClickWindow}">
+                       Content="{DynamicResource SettingsView:CloseOneClickWindow}">
                 </Label>
                 <CheckBox Grid.Column="1"
                           Grid.Row="1"
@@ -135,7 +140,7 @@
                 <Label Grid.Column="0"
                        Grid.Row="2"
                        VerticalAlignment="Center"
-                       Content="{DynamicResource OptionsView:SaveSelectedMods}">
+                       Content="{DynamicResource SettingsView:SaveSelectedMods}">
                 </Label>
                 <CheckBox Grid.Column="1"
                           Grid.Row="2"
@@ -147,39 +152,19 @@
                    Grid.Row="8"
                    Margin="0, 17.5, 0, 0"
                    FontWeight="Bold"
-                   Content="{DynamicResource OptionsView:ThemesLabel}">
+                   Content="{DynamicResource SettingsView:ThemesLabel}">
             </Label>
-            <TextBox Grid.Column="1"
-                     Grid.Row="9"
-                     IsHitTestVisible="False"
-                     HorizontalAlignment="Stretch"
-                     Text="{Binding ThemesDir}">
-            </TextBox>
-            <Button Grid.Column="2"
-                    Grid.Row="9"
-                    Margin="10, 0, 0, 0"
-                    HorizontalAlignment="Center"
-                    Content="{DynamicResource OptionsView:OpenFolderButton}"
-                    Command="{Binding OpenThemesDirCommand}">
-            </Button>
-            <Button x:Name="SelectThemesFolderButton"
-                    Grid.Column="3"
-                    Grid.Row="9"
-                    Margin="10, 0, 0, 0"
-                    HorizontalAlignment="Center"
-                    Content="{DynamicResource OptionsView:SelectFolderButton}">
-            </Button>
             <ComboBox x:Name="ThemesComboBox"
                       x:DataType="t:ThemeManager"
                       Grid.Column="1"
-                      Grid.Row="10"
+                      Grid.Row="9"
                       Margin="0, 10, 0, 0"
                       VerticalAlignment="Center"
                       Items="{Binding Themes}"
                       SelectedItem="{Binding SelectedTheme}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="t:Theme">
-                        <Label Content="{Binding Name}" />
+                        <Label Content="{Binding Name, Converter={StaticResource ResourceConverter}}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
