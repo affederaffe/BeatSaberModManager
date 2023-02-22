@@ -3,17 +3,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:BeatSaberModManager.ViewModels"
-             xmlns:cv="using:BeatSaberModManager.Views.Converters"
              xmlns:l="using:BeatSaberModManager.Views.Localization"
              xmlns:t="using:BeatSaberModManager.Views.Theming"
+             xmlns:h="using:BeatSaberModManager.Views.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Pages.SettingsPage"
              x:DataType="vm:SettingsViewModel"
              x:CompileBindings="True">
-    
-    <UserControl.Resources>
-        <cv:ResourceConverter x:Key="ResourceConverter" />
-    </UserControl.Resources>
 
     <ScrollViewer Margin="0. 30, 0, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid ColumnDefinitions="*, 4*, Auto, Auto, *" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
@@ -164,7 +160,7 @@
                       SelectedItem="{Binding SelectedTheme}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate DataType="t:Theme">
-                        <Label Content="{Binding Name, Converter={StaticResource ResourceConverter}}" />
+                        <Label h:ResourceKeyBindingHelper.SourceResourceKey="{Binding Name}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>

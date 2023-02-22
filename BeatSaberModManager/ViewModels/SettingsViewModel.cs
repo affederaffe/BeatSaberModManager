@@ -100,17 +100,6 @@ namespace BeatSaberModManager.ViewModels
         private string? _installDir;
 
         /// <summary>
-        /// A directory containing additional Themes.
-        /// </summary>
-        public string? ThemesDir
-        {
-            get => _themesDir ??= _appSettings.Value.ThemesDir;
-            set => _appSettings.Value.ThemesDir = this.RaiseAndSetIfChanged(ref _themesDir, value);
-        }
-
-        private string? _themesDir;
-
-        /// <summary>
         /// Checks or unchecks the checkbox control.
         /// </summary>
         public bool BeatSaverOneClickCheckboxChecked

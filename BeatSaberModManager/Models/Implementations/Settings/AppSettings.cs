@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 
-using BeatSaberModManager.Views.Theming;
-
 
 namespace BeatSaberModManager.Models.Implementations.Settings
 {
@@ -45,11 +43,6 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         /// The game's installation directory.
         /// </summary>
         public string? InstallDir { get; set; }
-
-        /// <summary>
-        /// The directory containing additional <see cref="Theme"/>s.
-        /// </summary>
-        public string? ThemesDir { get; set; }
 
         /// <summary>
         /// A collection of all selected mods.

@@ -6,6 +6,7 @@
         xmlns:cv="using:BeatSaberModManager.Views.Converters"
         xmlns:p="using:BeatSaberModManager.Views.Pages"
         xmlns:c="using:BeatSaberModManager.Views.Controls"
+        xmlns:h="using:BeatSaberModManager.Views.Helpers"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -18,7 +19,7 @@
         Width="1100" Height="600">
 
     <Window.Resources>
-        <cv:LocalizedStatusConverter x:Key="LocalizedStatusConverter" />
+        <cv:StatusTypeEnumConverter x:Key="StatusTypeEnumConverter" />
     </Window.Resources>
 
     <c:HamburgerMenu x:Name="HamburgerMenu" Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding SettingsViewModel.TabIndex, Mode=TwoWay}">
@@ -55,7 +56,10 @@
                              Value="{Binding ProgressValue}">
                 </ProgressBar>
                 <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
-                    <Label Margin="10, 0, 5, 0" Content="{Binding ProgressInfo, Converter={StaticResource LocalizedStatusConverter}}" />
+                    <StackPanel Margin="10, 0, 5, 0" Orientation="Horizontal">
+                        <Label h:ResourceKeyBindingHelper.SourceResourceKey="{Binding ProgressInfo.StatusType, Converter={StaticResource StatusTypeEnumConverter}}" />
+                        <Label Content="{Binding ProgressInfo.Text}" />
+                    </StackPanel>
                 </Viewbox>
                 <Button Grid.Column="1" Margin="5, 0, 5, 0" Command="{Binding MoreInfoCommand}">
                     <c:IconHeader Padding="4, 0, 0, 0" IconPlacement="Left" Content="{DynamicResource MainWindow:MoreInfoButton}" IconData="{StaticResource Icons:Info}" />

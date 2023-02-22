@@ -19,11 +19,11 @@
         <Grid RowDefinitions="2.75*, *">
             <Rectangle Grid.Row="0"
                        IsHitTestVisible="False"
-                       Fill="{DynamicResource BackgroundMediumLowBrush}">
+                       Fill="{DynamicResource SystemChromeMediumLowColor}">
             </Rectangle>
             <Rectangle Grid.Row="1"
                        IsHitTestVisible="False"
-                       Fill="{DynamicResource BackgroundMediumBrush}">
+                       Fill="{DynamicResource SystemChromeMediumColor}">
             </Rectangle>
 
             <Viewbox Grid.Row="0" Stretch="Uniform" Margin="50">

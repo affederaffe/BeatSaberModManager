@@ -11,7 +11,7 @@
 
     <ScrollViewer Margin="30" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
         <Grid RowDefinitions="Auto, Auto, Auto">
-            <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
+            <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
                 <UniformGrid Rows="1">
                     <Grid RowDefinitions="3*, *">
                         <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding AppVersion}" />
@@ -28,7 +28,7 @@
                 </UniformGrid>
             </Border>
 
-            <Border Grid.Row="1" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
+            <Border Grid.Row="1" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
                 <Grid RowDefinitions="Auto, Auto">
                     <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:ToolsLabel}" />
                     <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" RowDefinitions="*, *, *, *, *">
@@ -83,7 +83,7 @@
                 </Grid>
             </Border>
 
-            <Border Grid.Row="2" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource BackgroundHighBrush}">
+            <Border Grid.Row="2" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
                 <Grid RowDefinitions="Auto, Auto">
                     <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:UsefulLinks}" />
                     <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" Height="75">

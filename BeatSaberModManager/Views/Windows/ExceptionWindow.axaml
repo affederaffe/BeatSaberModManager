@@ -12,7 +12,7 @@
         Width="250" Height="450"
         Title="{DynamicResource ExceptionWindow:Title}">
 
-    <Panel Margin="{Binding #Window.OffScreenMargin}" Background="{DynamicResource BackgroundMediumLowBrush}">
+    <Panel Margin="{Binding #Window.OffScreenMargin}" Background="{DynamicResource SystemChromeMediumLowColor}">
         <ScrollViewer Margin="10, 31, 10, 10" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
                 <TextBlock x:Name="ExceptionTextBlock"

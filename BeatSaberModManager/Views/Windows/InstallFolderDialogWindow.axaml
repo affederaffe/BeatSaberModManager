@@ -13,7 +13,7 @@
         Width="320" Height="140">
 
         <Panel Margin="{Binding #Window.OffScreenMargin}">
-            <Rectangle IsHitTestVisible="False" Fill="{DynamicResource BackgroundMediumLowBrush}" />
+            <Rectangle IsHitTestVisible="False" Fill="{DynamicResource SystemChromeMediumLowColor}" />
 
             <TextBlock Margin="20"
                        TextWrapping="Wrap"

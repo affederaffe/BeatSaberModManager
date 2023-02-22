@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using Avalonia;
 using Avalonia.Styling;
@@ -31,7 +32,7 @@ namespace BeatSaberModManager.Views.Theming
                 new("Themes:Dark", ThemeVariant.Dark)
             };
 
-            _selectedTheme = Themes[0];
+            _selectedTheme = Themes.FirstOrDefault(x => x.Name == appSettings.Value.ThemeName) ?? Themes[0];
         }
 
         /// <summary>

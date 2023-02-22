@@ -33,9 +33,8 @@ namespace BeatSaberModManager.Views.Windows
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
-            LocalizedStatusConverter converter = new(this);
             viewModel.ProgressInfoObservable
-                .Select(converter.Convert)
+                .Select(x => $"{(this.TryFindResource(StatusTypeEnumConverter.Convert(x.StatusType), out object? value) ? value : null)}: {x.Text}")
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));
             IObservable<bool> executeObservable = ViewModel.InstallCommand.Execute();
