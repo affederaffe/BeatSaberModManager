@@ -18,7 +18,7 @@ It strives to look more visually appealing and support both Windows and Linux, w
 
 ### Usage
 1. **Run the game at least once before trying to mod the game!**
-2. Now check / uncheck the mods you wish to install or uninstall and press <kbd>Refresh Mods</kbd>.
+2. Now check / uncheck the mods you wish to install or uninstall and press <kbd>Update Mods</kbd>.
    Unlike ModAssistant, there is no extra <kbd>Uninstall</kbd> button, installed mods that are unchecked will automatically be uninstalled.
 3. Mods are installed to `IPA/Pending` until the game is run. Boot the game to complete mod installation.
 
