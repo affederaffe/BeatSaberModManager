@@ -9,7 +9,6 @@ It strives to look more visually appealing and support both Windows and Linux, w
 - Dependency resolution
 - Installed mod detection
 - Mod uninstallation
-- Theming support
 - OneClick™ support for [BeatSaver](https://beatsaver.com), [ModelSaber](https://modelsaber.com) and [Playlists](https://bsaber.com/category/playlists)
 
 ### Installation
