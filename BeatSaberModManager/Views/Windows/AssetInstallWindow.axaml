@@ -45,7 +45,7 @@
             </Viewbox>
 
             <ScrollViewer Grid.Row="1" Margin="10" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <ItemsControl Items="{Binding Log}" />
+                <ItemsControl ItemsSource="{Binding Log}" />
             </ScrollViewer>
         </Grid>
     </Panel>

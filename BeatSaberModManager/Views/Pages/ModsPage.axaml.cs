@@ -44,7 +44,7 @@ namespace BeatSaberModManager.Views.Pages
                 }
             };
 
-            ModsDataGrid.Items = dataGridCollectionView;
+            ModsDataGrid.ItemsSource = dataGridCollectionView;
             ModsDataGrid.GetObservable(SearchableDataGrid.IsSearchEnabledProperty)
                 .CombineLatest(ModsDataGrid.GetObservable(SearchableDataGrid.TextProperty))
                 .Where(static x => x.Second is not null)

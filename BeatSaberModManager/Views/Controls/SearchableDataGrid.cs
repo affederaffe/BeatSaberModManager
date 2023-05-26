@@ -14,10 +14,8 @@ namespace BeatSaberModManager.Views.Controls
     /// </summary>
     public class SearchableDataGrid : DataGrid
     {
-        /// <summary>
         /// <inheritdoc cref="TextBox.TextProperty" />
-        /// </summary>
-        public static readonly DirectProperty<SearchableDataGrid, string?> TextProperty = TextBlock.TextProperty.AddOwner<SearchableDataGrid>(static o => o.Text, static (o, v) => o.Text = v);
+        public static readonly StyledProperty<string?> TextProperty = TextBlock.TextProperty.AddOwner<SearchableDataGrid>();
 
         /// <inheritdoc cref="TextBox.WatermarkProperty" />
         public static readonly StyledProperty<string?> WatermarkProperty = TextBox.WatermarkProperty.AddOwner<SearchableDataGrid>();
@@ -34,16 +32,12 @@ namespace BeatSaberModManager.Views.Controls
 
         private TextBox? _searchTextBox;
 
-        /// <summary>
-        /// Gets or sets the text of the search text box.
-        /// </summary>
+        /// <inheritdoc cref="TextBox.Text" />
         public string? Text
         {
-            get => _text;
-            set => SetAndRaise(TextProperty, ref _text, value);
+            get => GetValue(TextProperty);
+            set => SetValue(TextProperty, value);
         }
-
-        private string? _text;
 
         /// <summary>
         /// Gets or sets a value indicating whether the search text box is enabled for user interaction.
@@ -91,7 +85,7 @@ namespace BeatSaberModManager.Views.Controls
         /// <inheritdoc />
         protected override void OnInitialized()
         {
-            if (Items is DataGridCollectionView dataGridCollectionView)
+            if (ItemsSource is DataGridCollectionView dataGridCollectionView)
                 dataGridCollectionView.MoveCurrentTo(null);
         }
     }

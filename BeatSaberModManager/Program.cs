@@ -56,7 +56,7 @@ namespace BeatSaberModManager
             catch (Exception e)
             {
                 await using AsyncOwned<ILogger> logger = await container.ResolveAsync<ILogger>();
-                logger.Value.Fatal(e, "Application crashed.");
+                logger.Value.Fatal(e, "Application crashed");
                 if (IsProduction) return -1;
                 throw;
             }

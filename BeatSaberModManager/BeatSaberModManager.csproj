@@ -9,7 +9,6 @@
         <Nullable>enable</Nullable>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-        <ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
         <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
         <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
         <AnalysisLevel>preview-All</AnalysisLevel>
@@ -47,7 +46,6 @@
         <PackageReference Include="Serilog.Sinks.File" Version="*-*" />
         <PackageReference Include="StrongInject" Version="*-*" />
         <PackageReference Include="ThisAssembly.AssemblyInfo" Version="*-*" />
-        <PackageReference Include="XamlNameReferenceGenerator" Version="*-*" />
         <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
     </ItemGroup>
 
