@@ -13,6 +13,7 @@
         <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
         <AnalysisLevel>preview-All</AnalysisLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ApplicationIcon>Resources/Icons/Icon.ico</ApplicationIcon>
