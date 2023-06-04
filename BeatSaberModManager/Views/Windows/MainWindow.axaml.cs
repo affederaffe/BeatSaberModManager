@@ -3,7 +3,6 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
@@ -31,7 +30,6 @@ namespace BeatSaberModManager.Views.Windows
             InitializeComponent();
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
-            TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             this.WhenActivated(disposable => viewModel.SettingsViewModel.WhenAnyValue(static x => x.InstallDir)
                 .FirstAsync()

@@ -14,11 +14,13 @@ namespace BeatSaberModManager.Views.Controls
     /// </summary>
     public class SearchableDataGrid : DataGrid
     {
-        /// <inheritdoc cref="TextBox.TextProperty" />
-        public static readonly StyledProperty<string?> TextProperty = TextBlock.TextProperty.AddOwner<SearchableDataGrid>();
-
         /// <inheritdoc cref="TextBox.WatermarkProperty" />
         public static readonly StyledProperty<string?> WatermarkProperty = TextBox.WatermarkProperty.AddOwner<SearchableDataGrid>();
+
+        /// <summary>
+        /// Defines the QueryProperty.
+        /// </summary>
+        public static readonly StyledProperty<string?> QueryProperty = AvaloniaProperty.Register<SearchableDataGrid, string?>(nameof(Query), defaultBindingMode: BindingMode.TwoWay);
 
         /// <summary>
         /// Defines the IsSearchEnabledProperty.
@@ -33,10 +35,10 @@ namespace BeatSaberModManager.Views.Controls
         private TextBox? _searchTextBox;
 
         /// <inheritdoc cref="TextBox.Text" />
-        public string? Text
+        public string? Query
         {
-            get => GetValue(TextProperty);
-            set => SetValue(TextProperty, value);
+            get => GetValue(QueryProperty);
+            set => SetValue(QueryProperty, value);
         }
 
         /// <summary>

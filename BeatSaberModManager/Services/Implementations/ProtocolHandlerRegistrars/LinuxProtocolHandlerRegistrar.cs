@@ -64,11 +64,11 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
 
         private string GetHandlerPathForProtocol(string protocol) => Path.Join(_localAppDataPath, GetHandlerNameForProtocol(protocol));
 
-        private static string GetHandlerNameForProtocol(string protocol) => $"{ThisAssembly.Info.Product}-url-{protocol}.desktop";
+        private static string GetHandlerNameForProtocol(string protocol) => $"{Program.Product}-url-{protocol}.desktop";
 
         private static string GetDesktopFileContent(string protocol) =>
             @$"[Desktop Entry]
-Name={ThisAssembly.Info.Product}
+Name={Program.Product}
 Comment=URL:{protocol} Protocol
 Type=Application
 Categories=Utility

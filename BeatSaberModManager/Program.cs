@@ -94,7 +94,7 @@ namespace BeatSaberModManager
         {
             [Factory(Scope.SingleInstance)]
             public static ILogger CreateLogger() => new LoggerConfiguration()
-                .WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), ThisAssembly.Info.Product, "Logs", "Log.txt"),
+                .WriteTo.File(Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Product, "Logs", "Log.txt"),
                     rollingInterval: RollingInterval.Day,
                     formatProvider: CultureInfo.InvariantCulture)
                 .CreateLogger();
@@ -178,6 +178,10 @@ namespace BeatSaberModManager
             [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
             public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<SettingsPage> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value, true);
         }
+
+        internal const string Version = "0.0.5";
+
+        internal const string Product = nameof(BeatSaberModManager);
 
         internal static bool IsProduction =>
 #if DEBUG

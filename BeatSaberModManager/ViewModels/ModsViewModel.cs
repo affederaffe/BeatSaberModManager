@@ -71,7 +71,14 @@ namespace BeatSaberModManager.ViewModels
                 .Where(static x => x.HasValue)
                 .Select(static x => x.Value)
                 .Subscribe(UpdateGridItemState);
-            connection.Bind(out _gridItemsList)
+            IObservable<Func<ModGridItemViewModel, bool>> filter = this.WhenAnyValue(static x => x.IsSearchEnabled, static x => x.Query)
+                .Select(static x => new Func<ModGridItemViewModel, bool>(gridItem => Filter(x.Item1, x.Item2, gridItem)));
+            IComparer<ModGridItemViewModel> comparer = ComparerChainingExtensions.ThenByDescending<ModGridItemViewModel, bool>(null, static x => x.AvailableMod.IsRequired)
+                .ThenBy(static x => x.AvailableMod.Category)
+                .ThenBy(static x => x.AvailableMod.Name);
+            connection.Filter(filter)
+                .Sort(comparer)
+                .Bind(out _gridItemsList)
                 .DisposeMany()
                 .Subscribe();
             connection.AutoRefresh(static x => x.InstalledMod)
@@ -132,6 +139,28 @@ namespace BeatSaberModManager.ViewModels
         private ModGridItemViewModel? _selectedGridItem;
 
         /// <summary>
+        /// True if the <see cref="Query"/> should be applied, false otherwise.
+        /// </summary>
+        public bool IsSearchEnabled
+        {
+            get => _isSearchEnabled;
+            set => this.RaiseAndSetIfChanged(ref _isSearchEnabled, value);
+        }
+
+        private bool _isSearchEnabled;
+
+        /// <summary>
+        /// The query to filter mods by.
+        /// </summary>
+        public string? Query
+        {
+            get => _query;
+            set => this.RaiseAndSetIfChanged(ref _query, value);
+        }
+
+        private string? _query;
+
+        /// <summary>
         /// Asynchronously installs selected mods and uninstalls unselected ones.
         /// </summary>
         public async Task UpdateModsAsync()
@@ -140,7 +169,7 @@ namespace BeatSaberModManager.ViewModels
                 .Select(static x => x.AvailableMod)
                 .ToArray();
             await InstallModsAsync(_settingsViewModel.InstallDir!, install);
-            IMod[] uninstall = _gridItemsSourceCache.Items.Where(static x => x is { IsCheckBoxChecked: false, InstalledMod: { } })
+            IMod[] uninstall = _gridItemsSourceCache.Items.Where(static x => x is { IsCheckBoxChecked: false, InstalledMod: not null })
                 .Select(static x => x.AvailableMod)
                 .ToArray();
             await UninstallModsAsync(_settingsViewModel.InstallDir!, uninstall);
@@ -232,7 +261,7 @@ namespace BeatSaberModManager.ViewModels
         {
             bool isDependency = _dependencyResolver.IsDependency(gridItem.AvailableMod);
             gridItem.IsCheckBoxEnabled = !isDependency;
-            gridItem.IsCheckBoxChecked = isDependency || gridItem is { IsCheckBoxChecked: true, InstalledMod: { } };
+            gridItem.IsCheckBoxChecked = isDependency || gridItem is { IsCheckBoxChecked: true, InstalledMod: not null };
         }
 
         private void UpdateSelectedModsList(PropertyValue<ModGridItemViewModel, bool> value)
@@ -242,5 +271,11 @@ namespace BeatSaberModManager.ViewModels
             else
                 _appSettings.Value.SelectedMods.Remove(value.Sender.AvailableMod.Name);
         }
+
+        private static bool Filter(bool enabled, string? query, ModGridItemViewModel gridItem) =>
+            !enabled ||
+            string.IsNullOrWhiteSpace(query) ||
+            gridItem.AvailableMod.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+            gridItem.AvailableMod.Description.Contains(query, StringComparison.OrdinalIgnoreCase);
     }
 }

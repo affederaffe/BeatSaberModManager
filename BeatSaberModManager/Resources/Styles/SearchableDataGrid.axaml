@@ -1,7 +1,6 @@
 ﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:c="using:BeatSaberModManager.Views.Controls"
-                    x:CompileBindings="True">
+                    xmlns:c="using:BeatSaberModManager.Views.Controls">
 
     <ControlTheme x:Key="{x:Type c:SearchableDataGrid}" TargetType="c:SearchableDataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
         <Setter Property="Template">
@@ -34,7 +33,7 @@
                                  Grid.ColumnSpan="2"
                                  IsVisible="{TemplateBinding IsSearchEnabled, Mode=TwoWay}"
                                  Watermark="{TemplateBinding Watermark}"
-                                 Text="{TemplateBinding Text, Mode=TwoWay}">
+                                 Text="{TemplateBinding Query, Mode=TwoWay}">
                         </TextBox>
 
                         <DataGridRowsPresenter Name="PART_RowsPresenter" Grid.Row="2"

@@ -23,7 +23,6 @@ namespace BeatSaberModManager.Views.Windows
         {
             InitializeComponent();
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
-            TransparencyLevelHint = OperatingSystem.IsWindowsVersionAtLeast(11) ? WindowTransparencyLevel.Mica : WindowTransparencyLevel.Blur;
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             ContinueButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))

@@ -32,7 +32,7 @@ namespace BeatSaberModManager.Services.Implementations.Http
         public HttpProgressClient(ILogger logger)
         {
             _logger = logger;
-            DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(ThisAssembly.Info.Product, ThisAssembly.Info.Version)));
+            DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue(Program.Product, Program.Version)));
             Timeout = TimeSpan.FromMinutes(3);
         }
 

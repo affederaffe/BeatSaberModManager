@@ -17,6 +17,7 @@
         <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
         <ApplicationIcon>Resources/Icons/Icon.ico</ApplicationIcon>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -46,7 +47,6 @@
         <PackageReference Include="Avalonia.Themes.Fluent" Version="*-*" />
         <PackageReference Include="Serilog.Sinks.File" Version="*-*" />
         <PackageReference Include="StrongInject" Version="*-*" />
-        <PackageReference Include="ThisAssembly.AssemblyInfo" Version="*-*" />
         <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
     </ItemGroup>
 

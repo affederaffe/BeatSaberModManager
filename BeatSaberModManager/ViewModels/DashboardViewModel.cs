@@ -24,7 +24,7 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public DashboardViewModel(ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IGamePathsProvider gamePathsProvider, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
         {
-            AppVersion = ThisAssembly.Info.Version;
+            AppVersion = Program.Version;
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;
             settingsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
