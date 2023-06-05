@@ -35,11 +35,15 @@ namespace BeatSaberModManager.ViewModels
             _beatSaverOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(BeatSaverScheme);
             _modelSaberOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(ModelSaberScheme);
             _playlistOneClickCheckBoxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(BSPlaylistScheme);
+            PickInstallDirInteraction = new Interaction<Unit, string?>();
             DirectoryExistsObservable installDirExistsObservable = new();
             IsInstallDirValidObservable = installDirExistsObservable.Select(_ => installDirValidator.ValidateInstallDir(installDirExistsObservable.Path));
             ValidatedInstallDirObservable = IsInstallDirValidObservable.Where(static x => x).Select(_ => installDirExistsObservable.Path!);
-            this.WhenAnyValue(static x => x.InstallDir).Subscribe(x => installDirExistsObservable.Path = x);
             OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(installDirExistsObservable.Path!), installDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
+            PickInstallDirCommand = ReactiveCommand.CreateFromObservable(() => PickInstallDirInteraction.Handle(Unit.Default)
+                .Where(installDirValidator.ValidateInstallDir));
+            PickInstallDirCommand.Subscribe(x => InstallDir = x);
+            this.WhenAnyValue(static x => x.InstallDir).Subscribe(x => installDirExistsObservable.Path = x);
             this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, BeatSaverScheme));
             this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, ModelSaberScheme));
             this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, BSPlaylistScheme));
@@ -59,6 +63,16 @@ namespace BeatSaberModManager.ViewModels
         /// Opens the <see cref="InstallDir"/> in the file explorer.
         /// </summary>
         public ReactiveCommand<Unit, bool> OpenInstallDirCommand { get; }
+
+        /// <summary>
+        /// Select a new installation directory.
+        /// </summary>
+        public ReactiveCommand<Unit, string?> PickInstallDirCommand { get; }
+
+        /// <summary>
+        /// Ask the user to pick an installation directory.
+        /// </summary>
+        public Interaction<Unit, string?> PickInstallDirInteraction { get; }
 
         /// <inheritdoc cref="AppSettings.TabIndex" />
         public int TabIndex

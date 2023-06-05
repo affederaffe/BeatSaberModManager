@@ -36,8 +36,8 @@ namespace BeatSaberModManager.Views
             _themeManager = themeManager;
             _mainWindow = mainWindow;
             DataTemplates.AddRange(viewTemplates);
-            if (!Program.IsProduction) return;
-            RxApp.DefaultExceptionHandler = Observer.Create<Exception>(e => _ = ShowExceptionAsync(e));
+            if (Program.IsProduction)
+                RxApp.DefaultExceptionHandler = Observer.Create<Exception>(e => _ = ShowExceptionAsync(e));
         }
 
         /// <inheritdoc />
@@ -51,14 +51,15 @@ namespace BeatSaberModManager.Views
         /// <inheritdoc />
         public override void OnFrameworkInitializationCompleted()
         {
-            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime lifetime) return;
-            lifetime.MainWindow = _mainWindow.Value;
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
+                lifetime.MainWindow = _mainWindow.Value;
         }
 
         private async Task ShowExceptionAsync(Exception e)
         {
             _logger.Fatal(e, "Application crashed");
-            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } lifetime) return;
+            if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } lifetime)
+                return;
             lifetime.MainWindow.Show();
             await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow);
             lifetime.Shutdown(-1);

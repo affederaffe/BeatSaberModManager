@@ -1,12 +1,10 @@
-﻿using System;
-using System.Reactive.Linq;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
@@ -27,18 +25,19 @@ namespace BeatSaberModManager.Views.Pages
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsPage"/> class.
         /// </summary>
-        public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager, IInstallDirValidator installDirValidator)
+        public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager)
         {
             InitializeComponent();
             LanguagesComboBox.DataContext = localizationManager;
             ThemesComboBox.DataContext = themeManager;
             ViewModel = viewModel;
-            SelectInstallFolderButton.GetObservable(Button.ClickEvent)
-                .SelectMany(_ => window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
-                .Where(static x => x.Count > 0)
-                .Select(static x => x[0].Path.LocalPath)
-                .Where(installDirValidator.ValidateInstallDir)
-                .Subscribe(x => viewModel.InstallDir = x);
+            viewModel.PickInstallDirInteraction.RegisterHandler(async context => context.SetOutput(await SelectInstallDirAsync(window)));
+        }
+
+        private static async Task<string?> SelectInstallDirAsync(TopLevel window)
+        {
+            IReadOnlyList<IStorageFolder> folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions());
+            return folders.Count == 1 ? folders[0].TryGetLocalPath() : null;
         }
     }
 }

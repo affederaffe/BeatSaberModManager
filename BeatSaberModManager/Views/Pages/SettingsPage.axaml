@@ -36,7 +36,8 @@
                     Grid.Row="1"
                     Margin="10, 0, 0, 0"
                     HorizontalAlignment="Center"
-                    Content="{DynamicResource SettingsView:SelectFolderButton}">
+                    Content="{DynamicResource SettingsView:SelectFolderButton}"
+                    Command="{Binding PickInstallDirCommand}">
             </Button>
 
             <Label Grid.Column="1"

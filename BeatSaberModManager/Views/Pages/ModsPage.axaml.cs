@@ -26,7 +26,8 @@ namespace BeatSaberModManager.Views.Pages
             ViewModel = viewModel;
             ModsDataGrid.ItemsSource = new DataGridCollectionView(viewModel.GridItems)
             {
-                GroupDescriptions = {
+                GroupDescriptions =
+                {
                     new DataGridFuncGroupDescription<ModGridItemViewModel, string>(static x => x.AvailableMod.Category)
                 }
             };
