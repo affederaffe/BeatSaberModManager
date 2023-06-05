@@ -1,4 +1,5 @@
-﻿using System.Reactive;
+﻿using System;
+using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
@@ -28,11 +29,22 @@ namespace BeatSaberModManager.ViewModels
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;
             Activator = new ViewModelActivator();
+            PickInstallDirInteraction = new Interaction<Unit, string?>();
             InstallCommand = ReactiveCommand.CreateFromTask(modsViewModel.UpdateModsAsync, modsViewModel.IsSuccessObservable);
-            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink), modsViewModel.WhenAnyValue(static x => x.SelectedGridItem).Select(static x => x?.AvailableMod.MoreInfoLink is not null));
+            IObservable<bool> canOpenMoreInfoLink = modsViewModel.WhenAnyValue(static x => x.SelectedGridItem).Select(static x => x?.AvailableMod.MoreInfoLink is not null);
+            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(modsViewModel.SelectedGridItem!.AvailableMod.MoreInfoLink), canOpenMoreInfoLink);
             statusProgress.ProgressInfo.ToProperty(this, nameof(ProgressInfo), out _progressInfo, scheduler: RxApp.MainThreadScheduler);
             statusProgress.ProgressValue.ToProperty(this, nameof(ProgressValue), out _progressValue, scheduler: RxApp.MainThreadScheduler);
-            this.WhenActivated(disposable => settingsViewModel.ValidatedInstallDirObservable.InvokeCommand(modsViewModel.InitializeCommand).DisposeWith(disposable));
+            this.WhenActivated(disposable =>
+            {
+                settingsViewModel.WhenAnyValue(static x => x.InstallDir)
+                    .FirstAsync()
+                    .Where(static x => x is null)
+                    .SelectMany(PickInstallDirInteraction.Handle(Unit.Default))
+                    .Subscribe(x => settingsViewModel.InstallDir = x)
+                    .DisposeWith(disposable);
+                settingsViewModel.ValidatedInstallDirObservable.InvokeCommand(modsViewModel.InitializeCommand).DisposeWith(disposable);
+            });
         }
 
         /// <inheritdoc />
@@ -62,6 +74,11 @@ namespace BeatSaberModManager.ViewModels
         /// Opens the <see cref="BeatSaberModManager.Models.Interfaces.IMod.MoreInfoLink"/> of the <see cref="BeatSaberModManager.ViewModels.ModsViewModel.SelectedGridItem"/>
         /// </summary>
         public ReactiveCommand<Unit, bool> MoreInfoCommand { get; }
+
+        /// <summary>
+        /// Ask the user to pick an installation directory.
+        /// </summary>
+        public Interaction<Unit, string?> PickInstallDirInteraction { get; }
 
         /// <summary>
         /// The current information of the operation.

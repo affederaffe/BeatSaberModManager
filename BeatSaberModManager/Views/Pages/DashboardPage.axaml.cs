@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Reactive;
-using System.Reactive.Linq;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.ReactiveUI;
 
-using BeatSaberModManager.Models.Implementations.Progress;
-using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
-
-using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Pages
@@ -41,17 +35,17 @@ namespace BeatSaberModManager.Views.Pages
         /// <summary>
         /// Initializes a new instance of the <see cref="DashboardPage"/> class.
         /// </summary>
-        public DashboardPage(DashboardViewModel viewModel, Window window, IStatusProgress statusProgress)
+        public DashboardPage(DashboardViewModel viewModel, Window window)
         {
             InitializeComponent();
             ViewModel = viewModel;
-            ReactiveCommand<Unit, IReadOnlyList<IStorageFile>> showFileDialogCommand = ReactiveCommand.CreateFromTask(() => window.StorageProvider.OpenFilePickerAsync(FilePickerOpenOptions), viewModel.SettingsViewModel.IsInstallDirValidObservable);
-            showFileDialogCommand.Where(static x => x.Count == 1)
-                .Select(static x => x[0].Path.LocalPath)
-                .InvokeCommand(viewModel.InstallPlaylistCommand);
-            viewModel.InstallPlaylistCommand.Select(static x => new ProgressInfo(x ? StatusType.Completed : StatusType.Failed, null))
-                .Subscribe(statusProgress.Report);
-            InstallPlaylistButton.Command = showFileDialogCommand;
+            viewModel.PickPlaylistInteraction.RegisterHandler(async context => context.SetOutput(await SelectPlaylistFileAsync(window)));
+        }
+
+        private async Task<string?> SelectPlaylistFileAsync(TopLevel window)
+        {
+            IReadOnlyList<IStorageFile> files = await window.StorageProvider.OpenFilePickerAsync(FilePickerOpenOptions);
+            return files.Count == 1 ? files[0].TryGetLocalPath() : null;
         }
     }
 }

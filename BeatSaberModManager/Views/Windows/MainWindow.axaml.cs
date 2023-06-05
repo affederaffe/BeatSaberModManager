@@ -1,13 +1,9 @@
 using System;
-using System.Reactive.Disposables;
-using System.Reactive.Linq;
 
 using Avalonia;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
-
-using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Windows
@@ -31,12 +27,7 @@ namespace BeatSaberModManager.Views.Windows
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
-            this.WhenActivated(disposable => viewModel.SettingsViewModel.WhenAnyValue(static x => x.InstallDir)
-                .FirstAsync()
-                .Where(static x => x is null)
-                .SelectMany(_ => new InstallFolderDialogWindow().ShowDialog<string?>(this))
-                .Subscribe(x => viewModel.SettingsViewModel.InstallDir = x)
-                .DisposeWith(disposable));
+            viewModel.PickInstallDirInteraction.RegisterHandler(async context => context.SetOutput(await new InstallFolderDialogWindow().ShowDialog<string?>(this)));
         }
     }
 }

@@ -36,7 +36,8 @@
                                 Grid.Row="1"
                                 HorizontalAlignment="Stretch"
                                 HorizontalContentAlignment="Center"
-                                Content="{DynamicResource DashboardView:InstallPlaylistButton}">
+                                Content="{DynamicResource DashboardView:InstallPlaylistButton}"
+                                Command="{Binding InstallPlaylistCommand}">
                         </Button>
                         <Button Grid.Column="1"
                                 Grid.Row="3"
