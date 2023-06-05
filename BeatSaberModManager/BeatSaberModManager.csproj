@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <LangVersion>preview</LangVersion>
         <AssemblyVersion>0.0.5</AssemblyVersion>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -9,8 +9,6 @@
         <Nullable>enable</Nullable>
         <EnableNETAnalyzers>true</EnableNETAnalyzers>
         <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
-        <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
-        <EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
         <AnalysisLevel>preview-All</AnalysisLevel>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <SuppressTrimAnalysisWarnings>true</SuppressTrimAnalysisWarnings>
@@ -39,14 +37,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="*-*" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="*-*" />
-        <PackageReference Include="Avalonia.Desktop" Version="*-*" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="*-*" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="*-*" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="*-*" />
-        <PackageReference Include="Serilog.Sinks.File" Version="*-*" />
-        <PackageReference Include="StrongInject" Version="*-*" />
+        <PackageReference Include="Avalonia" Version="11.0.999-cibuild0036175-beta" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.999-cibuild0036175-beta" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.999-cibuild0036175-beta" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.999-cibuild0036175-beta" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.999-cibuild0036175-beta" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.999-cibuild0036175-beta" />
+        <PackageReference Include="DynamicData" Version="7.14.2" />
+        <PackageReference Include="ReactiveUI" Version="19.2.1" />
+        <PackageReference Include="Serilog" Version="3.0.0-dev-02022" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
+        <PackageReference Include="StrongInject" Version="1.4.4" />
         <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
     </ItemGroup>
 
