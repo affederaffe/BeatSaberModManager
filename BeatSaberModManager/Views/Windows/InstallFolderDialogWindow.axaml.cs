@@ -26,12 +26,12 @@ namespace BeatSaberModManager.Views.Windows
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             ContinueButton.GetObservable(Button.ClickEvent)
                 .SelectMany(_ => StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()))
-                .Where(static x => x.Count > 0)
+                .Where(static x => x.Count == 1)
                 .Select(static x => x[0].Path.LocalPath)
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(Close);
         }
 
-        private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null!);
+        private void OnCancelButtonClicked(object? sender, RoutedEventArgs e) => Close(null);
     }
 }

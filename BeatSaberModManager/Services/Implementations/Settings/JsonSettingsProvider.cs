@@ -66,10 +66,11 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         /// <inheritdoc />
         public async Task SaveAsync()
         {
-            if (!IOUtils.TryCreateDirectory(_saveDirPath)) return;
+            if (!IOUtils.TryCreateDirectory(_saveDirPath))
+                return;
             await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Access = FileAccess.Write, Mode = FileMode.Create });
-            if (fileStream is null) return;
-            await JsonSerializer.SerializeAsync(fileStream, Value, _jsonTypeInfo);
+            if (fileStream is not null)
+                await JsonSerializer.SerializeAsync(fileStream, Value, _jsonTypeInfo);
         }
 
         /// <inheritdoc />

@@ -64,8 +64,8 @@ namespace BeatSaberModManager.Views.Controls
 
         private static void CalibrateAngles(AvaloniaPropertyChangedEventArgs<double> e)
         {
-            if (e.Sender is not ProgressRing pr) return;
-            pr.SweepAngle = (pr.Value - pr.Minimum) / (pr.Maximum - pr.Minimum) * 360;
+            if (e.Sender is ProgressRing pr)
+                pr.SweepAngle = (pr.Value - pr.Minimum) / (pr.Maximum - pr.Minimum) * 360;
         }
     }
 }

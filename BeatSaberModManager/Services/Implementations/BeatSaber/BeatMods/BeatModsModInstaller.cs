@@ -31,11 +31,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <inheritdoc />
         public async Task<bool> InstallModAsync(string installDir, IMod modification)
         {
-            if (modification is not BeatModsMod beatModsMod) return false;
+            if (modification is not BeatModsMod beatModsMod)
+                return false;
             string pendingDirPath = Path.Join(installDir, "IPA", "Pending");
-            if (!IOUtils.TryCreateDirectory(pendingDirPath)) return false;
+            if (!IOUtils.TryCreateDirectory(pendingDirPath))
+                return false;
             using ZipArchive? archive = await _modProvider.DownloadModAsync(beatModsMod).ConfigureAwait(false);
-            if (archive is null) return false;
+            if (archive is null)
+                return false;
             bool isModLoader = _modProvider.IsModLoader(beatModsMod);
             string extractDir = isModLoader ? installDir : pendingDirPath;
             bool success = IOUtils.TryExtractArchive(archive, extractDir, true);
@@ -45,9 +48,11 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <inheritdoc />
         public async Task UninstallModAsync(string installDir, IMod modification)
         {
-            if (modification is not BeatModsMod beatModsMod) return;
+            if (modification is not BeatModsMod beatModsMod)
+                return;
             bool isModLoader = _modProvider.IsModLoader(beatModsMod);
-            if (isModLoader) await UninstallBsipaAsync(installDir, beatModsMod).ConfigureAwait(false);
+            if (isModLoader)
+                await UninstallBsipaAsync(installDir, beatModsMod).ConfigureAwait(false);
             else RemoveModFiles(installDir, beatModsMod);
         }
 
@@ -82,7 +87,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         private static async Task<bool> InstallBsipaWindowsAsync(string installDir)
         {
             string winhttpPath = Path.Join(installDir, "winhttp.dll");
-            if (File.Exists(winhttpPath)) return true;
+            if (File.Exists(winhttpPath))
+                return true;
 
             ProcessStartInfo processStartInfo = new()
             {
@@ -91,7 +97,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 Arguments = "-n"
             };
 
-            if (!PlatformUtils.TryStartProcess(processStartInfo, out Process? process)) return false;
+            if (!PlatformUtils.TryStartProcess(processStartInfo, out Process? process))
+                return false;
             await process.WaitForExitAsync().ConfigureAwait(false);
             return true;
         }
@@ -101,13 +108,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             string protonRegPath = Path.Join(installDir, "../../compatdata/620980/pfx/user.reg");
             string[]? lines = await IOUtils.TryReadAllLinesAsync(protonRegPath).ConfigureAwait(false);
-            if (lines is null) return false;
+            if (lines is null)
+                return false;
             IEnumerable<string> newLines = lines.Select(static x => x.StartsWith("[Software\\\\Wine\\\\DllOverrides]", StringComparison.Ordinal) ? x + "\n\"winhttp\"=\"native,builtin\"" : x);
             await File.WriteAllLinesAsync(protonRegPath, newLines).ConfigureAwait(false);
-
             string winhttpPath = Path.Join(installDir, "winhttp.dll");
-            if (File.Exists(winhttpPath)) return true;
-
+            if (File.Exists(winhttpPath))
+                return true;
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(installDir);
             IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });

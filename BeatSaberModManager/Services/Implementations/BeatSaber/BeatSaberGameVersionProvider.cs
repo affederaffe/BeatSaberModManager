@@ -17,12 +17,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             string filePath = Path.Join(installDir, "Beat Saber_Data", "globalgamemanagers");
             await using FileStream? fileStream = IOUtils.TryOpenFile(filePath, new FileStreamOptions { Options = FileOptions.Asynchronous });
-            if (fileStream is null) return null;
+            if (fileStream is null)
+                return null;
             using BinaryReader reader = new(fileStream, Encoding.UTF8);
             const string key = "public.app-category.games";
 
             SearchForKey(reader, key);
-            if (fileStream.Position == fileStream.Length) return null; // we went through the entire stream without finding the key
+            if (fileStream.Position == fileStream.Length)
+                return null; // we went through the entire stream without finding the key
             SearchForDigit(reader);
 
             const int rewind = -sizeof(int) - sizeof(byte);
@@ -51,7 +53,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
                 char current = (char)reader.ReadByte();
-                if (char.IsDigit(current)) break;
+                if (char.IsDigit(current))
+                    break;
             }
         }
 

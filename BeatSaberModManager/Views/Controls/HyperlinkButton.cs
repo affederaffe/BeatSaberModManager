@@ -32,8 +32,8 @@ namespace BeatSaberModManager.Views.Controls
         /// </summary>
         protected override void OnClick()
         {
-            if (!IsEffectivelyEnabled || Uri is null) return;
-            PlatformUtils.TryOpenUri(Uri);
+            if (IsEffectivelyEnabled && Uri is not null)
+                PlatformUtils.TryOpenUri(Uri);
         }
     }
 }

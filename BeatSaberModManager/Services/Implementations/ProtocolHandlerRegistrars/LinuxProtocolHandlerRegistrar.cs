@@ -31,7 +31,8 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         {
             string handlerPath = GetHandlerPathForProtocol(protocol);
             using FileStream? fileStream = IOUtils.TryOpenFile(handlerPath, new FileStreamOptions());
-            if (fileStream is null) return false;
+            if (fileStream is null)
+                return false;
             using StreamReader streamReader = new(fileStream);
             while (streamReader.ReadLine() is { } line)
             {

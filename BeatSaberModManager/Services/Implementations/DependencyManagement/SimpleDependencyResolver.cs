@@ -44,8 +44,10 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
         {
             foreach (IMod dependency in _modProvider.GetDependencies(modification))
             {
-                if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) dependents.Add(modification);
-                else _dependencyRegistry.Add(dependency, new HashSet<IMod> { modification });
+                if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents))
+                    dependents.Add(modification);
+                else
+                    _dependencyRegistry.Add(dependency, new HashSet<IMod> { modification });
                 dependencies.Add(dependency);
                 ResolveDependencies(dependency, dependencies);
             }
@@ -55,7 +57,8 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
         {
             foreach (IMod dependency in _modProvider.GetDependencies(modification))
             {
-                if (!_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents)) continue;
+                if (!_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents))
+                    continue;
                 dependents.Remove(modification);
                 dependencies.Add(dependency);
                 if (dependencies.Count == 0)

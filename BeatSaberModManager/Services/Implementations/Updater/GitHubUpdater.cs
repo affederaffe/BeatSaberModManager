@@ -39,10 +39,11 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         /// <inheritdoc />
         public async ValueTask<bool> NeedsUpdateAsync()
         {
-            if (!Program.IsProduction) return false;
-            if (OperatingSystem.IsLinux()) return false;
+            if (!Program.IsProduction || OperatingSystem.IsLinux())
+                return false;
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return false;
+            if (!response.IsSuccessStatusCode)
+                return false;
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             _release = await JsonSerializer.DeserializeAsync(contentStream, GitHubJsonSerializerContext.Default.Release).ConfigureAwait(false);
             return _release is not null && Version.TryParse(_release.TagName.AsSpan(1, 5), out Version? version) && version > _version;
@@ -52,16 +53,20 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         public async Task<int> UpdateAsync()
         {
             Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.Ordinal));
-            if (asset is null) return -1;
+            if (asset is null)
+                return -1;
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(asset.DownloadUrl)).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return -1;
+            if (!response.IsSuccessStatusCode)
+                return -1;
             string processPath = Environment.ProcessPath!;
             string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.Ordinal);
             IOUtils.TryDeleteFile(oldPath);
-            if (!IOUtils.TryMoveFile(processPath, oldPath)) return -1;
+            if (!IOUtils.TryMoveFile(processPath, oldPath))
+                return -1;
             Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             using ZipArchive archive = new(stream);
-            if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true)) return -1;
+            if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true))
+                return -1;
             ProcessStartInfo processStartInfo = new(processPath);
             foreach (string arg in _args)
                 processStartInfo.ArgumentList.Add(arg);

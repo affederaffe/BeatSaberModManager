@@ -72,8 +72,8 @@ namespace BeatSaberModManager.Views.Controls
             base.OnApplyTemplate(e);
             _searchTextBox = e.NameScope.Get<TextBox>("PART_SearchTextBox");
             CaptionButtons? captionButtons = ChromeOverlayLayer.GetOverlayLayer(this)?.FindDescendantOfType<CaptionButtons>();
-            if (captionButtons is null) return;
-            e.NameScope.Get<ToggleButton>("PART_SearchToggleButton").Margin = new Thickness(0, 0, captionButtons.Bounds.Width, 0);
+            if (captionButtons is not null)
+                e.NameScope.Get<ToggleButton>("PART_SearchToggleButton").Margin = new Thickness(0, 0, captionButtons.Bounds.Width, 0);
         }
 
         /// <inheritdoc />

@@ -24,7 +24,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel for <see cref="BeatSaberModManager.Views.Pages.ModsPage"/>.
     /// </summary>
-    public class ModsViewModel : ViewModelBase
+    public class ModsViewModel : ViewModelBase, IDisposable
     {
         private readonly ISettings<AppSettings> _appSettings;
         private readonly SettingsViewModel _settingsViewModel;
@@ -181,8 +181,8 @@ namespace BeatSaberModManager.ViewModels
         public async Task UninstallModLoaderAsync(string installDir)
         {
             IMod? modLoader = _gridItemsSourceCache.Items.FirstOrDefault(x => _modProvider.IsModLoader(x.InstalledMod))?.AvailableMod;
-            if (modLoader is null) return;
-            await UninstallModsAsync(installDir, new[] { modLoader });
+            if (modLoader is not null)
+                await UninstallModsAsync(installDir, new[] { modLoader });
         }
 
         /// <summary>
@@ -200,9 +200,11 @@ namespace BeatSaberModManager.ViewModels
         private async Task<bool> FetchModsAsync(string installDir)
         {
             await _modProvider.LoadAvailableModsForCurrentVersionAsync(installDir);
-            if (_modProvider.AvailableMods is null) return false;
+            if (_modProvider.AvailableMods is null)
+                return false;
             await _modProvider.LoadInstalledModsAsync(installDir);
-            if (_modProvider.InstalledMods is null) return false;
+            if (_modProvider.InstalledMods is null)
+                return false;
             _gridItemsSourceCache.Edit(innerCache =>
             {
                 innerCache.Clear();
@@ -224,11 +226,12 @@ namespace BeatSaberModManager.ViewModels
             {
                 _progress.Report(new ProgressInfo(StatusType.Installing, mods[i].Name));
                 bool success = await _modInstaller.InstallModAsync(installDir, mods[i]);
-                if (!success) continue;
+                if (!success)
+                    continue;
                 _progress.Report(((double)i + 1) / mods.Count);
                 Optional<ModGridItemViewModel> gridItem = _gridItemsSourceCache.Lookup(mods[i]);
-                if (!gridItem.HasValue) continue;
-                gridItem.Value.InstalledMod = mods[i];
+                if (gridItem.HasValue)
+                    gridItem.Value.InstalledMod = mods[i];
             }
 
             _progress.Report(1);
@@ -249,8 +252,8 @@ namespace BeatSaberModManager.ViewModels
                 await _modInstaller.UninstallModAsync(installDir, mods[i]);
                 _progress.Report(((double)i + 1) / mods.Count);
                 Optional<ModGridItemViewModel> gridItem = _gridItemsSourceCache.Lookup(mods[i]);
-                if (!gridItem.HasValue) continue;
-                gridItem.Value.InstalledMod = null;
+                if (gridItem.HasValue)
+                    gridItem.Value.InstalledMod = null;
             }
 
             _progress.Report(1);
@@ -277,5 +280,12 @@ namespace BeatSaberModManager.ViewModels
             string.IsNullOrWhiteSpace(query) ||
             gridItem.AvailableMod.Name.Contains(query, StringComparison.OrdinalIgnoreCase) ||
             gridItem.AvailableMod.Description.Contains(query, StringComparison.OrdinalIgnoreCase);
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+            _gridItemsSourceCache.Dispose();
+        }
     }
 }

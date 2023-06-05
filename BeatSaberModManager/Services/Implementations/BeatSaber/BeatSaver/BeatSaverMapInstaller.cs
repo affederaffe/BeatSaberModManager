@@ -131,7 +131,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
         private async Task<bool> TryInstallBeatSaverMapAsync(string installDir, BeatSaverMap? map, IStatusProgress? progress = null)
         {
-            if (map is null || map.Versions.Length <= 0) return false;
+            if (map is null || map.Versions.Length <= 0)
+                return false;
             progress?.Report(new ProgressInfo(StatusType.Installing, map.Name));
             using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
             return archive is not null && TryExtractBeatSaverMapToDir(installDir, map, archive);

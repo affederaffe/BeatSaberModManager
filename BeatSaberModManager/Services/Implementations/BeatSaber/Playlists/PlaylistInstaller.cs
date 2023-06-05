@@ -46,11 +46,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         public async Task<bool> InstallPlaylistAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
             using HttpResponseMessage response = await _httpClient.TryGetAsync(uri).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return false;
+            if (!response.IsSuccessStatusCode)
+                return false;
             string playlistsDirPath = Path.Join(installDir, "Playlists");
             string fileName = WebUtility.UrlDecode(uri.Segments.Last());
             string filePath = Path.Join(playlistsDirPath, fileName);
-            if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
+            if (!IOUtils.TryCreateDirectory(playlistsDirPath))
+                return false;
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             await using Stream writeStream = File.OpenWrite(filePath);
             await contentStream.CopyToAsync(writeStream);
@@ -71,9 +73,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string fileName = Path.GetFileName(filePath);
             string playlistsDirPath = Path.Join(installDir, "Playlists");
             string destFilePath = Path.Join(playlistsDirPath, fileName);
-            if (!IOUtils.TryCreateDirectory(playlistsDirPath)) return false;
-            await using Stream contentStream = File.OpenRead(filePath);
-            await using Stream writeStream = File.OpenWrite(destFilePath);
+            if (!IOUtils.TryCreateDirectory(playlistsDirPath))
+                return false;
+            await using FileStream contentStream = File.OpenRead(filePath);
+            await using FileStream writeStream = File.OpenWrite(destFilePath);
             await contentStream.CopyToAsync(writeStream);
             contentStream.Seek(0, SeekOrigin.Begin);
             Playlist? playlist = await JsonSerializer.DeserializeAsync(contentStream, PlaylistJsonSerializerContext.Default.Playlist);

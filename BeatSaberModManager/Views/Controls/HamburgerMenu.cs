@@ -66,14 +66,16 @@ namespace BeatSaberModManager.Views.Controls
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
             base.OnPropertyChanged(change);
-            if (change.Property != BoundsProperty || _splitView is null) return;
+            if (change.Property != BoundsProperty || _splitView is null)
+                return;
             (Rect oldBounds, Rect newBounds) = change.GetOldAndNewValue<Rect>();
             EnsureSplitViewMode(oldBounds, newBounds);
         }
 
         private void EnsureSplitViewMode(Rect oldBounds, Rect newBounds)
         {
-            if (_splitView is null) return;
+            if (_splitView is null)
+                return;
             int threshold = ExpandedModeThresholdWidth;
             if (newBounds.Width >= threshold && oldBounds.Width < threshold)
             {

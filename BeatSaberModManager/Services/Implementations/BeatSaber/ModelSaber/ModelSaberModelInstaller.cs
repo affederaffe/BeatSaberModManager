@@ -38,13 +38,16 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
         public async Task<bool> InstallModelAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
             string? folderName = GetFolderName(uri);
-            if (folderName is null) return false;
+            if (folderName is null)
+                return false;
             string folderPath = Path.Join(installDir, folderName);
-            if (!IOUtils.TryCreateDirectory(folderPath)) return false;
+            if (!IOUtils.TryCreateDirectory(folderPath))
+                return false;
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(new ProgressInfo(StatusType.Installing, modelName));
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri($"https://modelsaber.com/files/{uri.Host}{uri.LocalPath}"), progress).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return false;
+            if (!response.IsSuccessStatusCode)
+                return false;
             string filePath = Path.Join(folderPath, modelName);
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             await using Stream writeStream = File.OpenWrite(filePath);

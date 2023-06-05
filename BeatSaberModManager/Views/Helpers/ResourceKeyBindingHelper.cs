@@ -22,8 +22,8 @@ namespace BeatSaberModManager.Views.Helpers
 
         private static void OnSourceResourceKeyChanged(ContentControl element, AvaloniaPropertyChangedEventArgs args)
         {
-            if (args.NewValue is null) return;
-            element[!ContentControl.ContentProperty] = new DynamicResourceExtension(args.NewValue);
+            if (args.NewValue is not null)
+                element[!ContentControl.ContentProperty] = new DynamicResourceExtension(args.NewValue);
         }
 
         /// <summary>

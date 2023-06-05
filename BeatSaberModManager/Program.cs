@@ -57,7 +57,8 @@ namespace BeatSaberModManager
             {
                 await using AsyncOwned<ILogger> logger = await container.ResolveAsync<ILogger>();
                 logger.Value.Fatal(e, "Application crashed");
-                if (IsProduction) return -1;
+                if (IsProduction)
+                    return -1;
                 throw;
             }
         }
@@ -108,10 +109,10 @@ namespace BeatSaberModManager
         }
 
         [Register<HttpProgressClient>(Scope.SingleInstance)]
-        internal class HttpModule { }
+        internal class HttpModule;
 
         [Register<GitHubUpdater, IUpdater>(Scope.SingleInstance)]
-        internal class UpdaterModule { }
+        internal class UpdaterModule;
 
         internal class ProtocolHandlerRegistrarModule
         {
@@ -127,13 +128,13 @@ namespace BeatSaberModManager
         [Register<BeatSaberGameLauncher, IGameLauncher>(Scope.SingleInstance)]
         [Register<BeatSaberInstallDirLocator, IInstallDirLocator>(Scope.SingleInstance)]
         [Register<BeatSaberInstallDirValidator, IInstallDirValidator>(Scope.SingleInstance)]
-        internal class GameServicesModule { }
+        internal class GameServicesModule;
 
         [Register<MD5HashProvider, IHashProvider>(Scope.SingleInstance)]
         [Register<SimpleDependencyResolver, IDependencyResolver>(Scope.SingleInstance)]
         [Register<BeatModsModProvider, IModProvider>(Scope.SingleInstance)]
         [Register<BeatModsModInstaller, IModInstaller>(Scope.SingleInstance)]
-        internal class ModServicesModule { }
+        internal class ModServicesModule;
 
         [Register<BeatSaverMapInstaller>(Scope.SingleInstance)]
         [Register<BeatSaverAssetProvider, IAssetProvider>(Scope.SingleInstance)]
@@ -141,20 +142,20 @@ namespace BeatSaberModManager
         [Register<ModelSaberAssetProvider, IAssetProvider>(Scope.SingleInstance)]
         [Register<PlaylistInstaller>(Scope.SingleInstance)]
         [Register<PlaylistAssetProvider, IAssetProvider>(Scope.SingleInstance)]
-        internal class AssetProvidersModule { }
+        internal class AssetProvidersModule;
 
         [Register<MainWindowViewModel>(Scope.SingleInstance)]
         [Register<DashboardViewModel>(Scope.SingleInstance)]
         [Register<ModsViewModel>(Scope.SingleInstance)]
         [Register<SettingsViewModel>(Scope.SingleInstance)]
         [Register<AssetInstallWindowViewModel>(Scope.SingleInstance)]
-        internal class ViewModelModule { }
+        internal class ViewModelModule;
 
         [Register<App, Application>(Scope.SingleInstance)]
         [Register<LocalizationManager>(Scope.SingleInstance)]
         [Register<ThemeManager>(Scope.SingleInstance)]
         [Register(typeof(StatusProgress), Scope.SingleInstance, typeof(IStatusProgress), typeof(StatusProgress))]
-        internal class ApplicationModule { }
+        internal class ApplicationModule;
 
         [Register<MainWindow>(Scope.SingleInstance)]
         [Register<AssetInstallWindow>(Scope.SingleInstance)]

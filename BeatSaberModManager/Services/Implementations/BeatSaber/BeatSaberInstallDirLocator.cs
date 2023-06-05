@@ -60,7 +60,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir).ConfigureAwait(false))
             {
                 string? installDir = await MatchSteamBeatSaberInstallDirAsync(libPath).ConfigureAwait(false);
-                if (installDir is not null) return Path.GetFullPath(installDir);
+                if (installDir is not null)
+                    return Path.GetFullPath(installDir);
             }
 
             return null;
@@ -70,13 +71,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             string acf = Path.Join(path, "appmanifest_620980.acf");
             await using FileStream? fileStream = IOUtils.TryOpenFile(acf, new FileStreamOptions { Options = FileOptions.Asynchronous });
-            if (fileStream is null) return null;
+            if (fileStream is null)
+                return null;
             Regex regex = InstallDirRegex();
             using StreamReader reader = new(fileStream);
             while (await reader.ReadLineAsync().ConfigureAwait(false) is { } line)
             {
                 Match match = regex.Match(line);
-                if (!match.Success) continue;
+                if (!match.Success)
+                    continue;
                 string installDir = Path.Join(path, "common", match.Groups[1].Value);
                 if (_installDirValidator.ValidateInstallDir(installDir))
                     return installDir;
@@ -90,7 +93,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             using RegistryKey? oculusInstallDirKey = Registry.LocalMachine.OpenSubKey("Software")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();
-            if (string.IsNullOrEmpty(oculusInstallDir)) return null;
+            if (string.IsNullOrEmpty(oculusInstallDir))
+                return null;
             string finalPath = Path.Join(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
             string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
             return installDir is null ? null : Path.GetFullPath(installDir);
@@ -100,14 +104,17 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         private string? LocateInOculusLibrary()
         {
             using RegistryKey? librariesKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Libraries");
-            if (librariesKey is null) return null;
+            if (librariesKey is null)
+                return null;
             foreach (string libraryKeyName in librariesKey.GetSubKeyNames())
             {
                 using RegistryKey? libraryKey = librariesKey.OpenSubKey(libraryKeyName);
                 string? libraryPath = libraryKey?.GetValue("Path")?.ToString();
-                if (libraryPath is null) continue;
+                if (libraryPath is null)
+                    continue;
                 string finalPath = Path.Join(libraryPath, "Software", "hyperbolic-magnetism-beat-saber");
-                if (_installDirValidator.ValidateInstallDir(finalPath)) return finalPath;
+                if (_installDirValidator.ValidateInstallDir(finalPath))
+                    return finalPath;
             }
 
             return null;
@@ -125,13 +132,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             yield return path;
             string vdf = Path.Join(path, "steamapps", "libraryfolders.vdf");
             await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, new FileStreamOptions { Options = FileOptions.Asynchronous });
-            if (fileStream is null) yield break;
+            if (fileStream is null)
+                yield break;
             Regex regex = LibraryPathRegex();
             using StreamReader vdfReader = new(fileStream);
             while (await vdfReader.ReadLineAsync().ConfigureAwait(false) is { } line)
             {
                 Match match = regex.Match(line);
-                if (match.Success) yield return Path.Join(match.Groups[1].Value.Replace(@"\\", "/", StringComparison.Ordinal), "steamapps");
+                if (match.Success)
+                    yield return Path.Join(match.Groups[1].Value.Replace(@"\\", "/", StringComparison.Ordinal), "steamapps");
             }
         }
 

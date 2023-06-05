@@ -134,8 +134,8 @@
         </Style>
 
         <Style Selector="^:pressed /template/ Border#PART_LayoutRoot">
-            <Setter Property="Border.Background" Value="{DynamicResource SystemChromeLowColor}" />
-            <Setter Property="Border.BoxShadow" Value="{StaticResource NavigationItemShadow}" />
+            <Setter Property="Background" Value="{DynamicResource SystemChromeLowColor}" />
+            <Setter Property="BoxShadow" Value="{StaticResource NavigationItemShadow}" />
             <Setter Property="TextElement.Foreground" Value="{DynamicResource TabItemHeaderForegroundUnselectedPressed}" />
         </Style>
     </ControlTheme>

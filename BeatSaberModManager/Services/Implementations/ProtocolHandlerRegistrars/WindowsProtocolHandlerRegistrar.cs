@@ -17,7 +17,8 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         {
             RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Classes")?.OpenSubKey(protocol);
             string? commandValue = protocolKey?.OpenSubKey("shell")?.OpenSubKey("open")?.OpenSubKey("command")?.GetValue(string.Empty)?.ToString();
-            if (commandValue is null || Environment.ProcessPath is null) return false;
+            if (commandValue is null || Environment.ProcessPath is null)
+                return false;
             int end = Environment.ProcessPath.Length + 1;
             return commandValue.Length >= end && commandValue[1..end] == Environment.ProcessPath;
         }
@@ -38,8 +39,8 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         {
             using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Classes")?.OpenSubKey(protocol, true);
             string? registeredProviderName = protocolKey?.GetValue("OneClick-Provider")?.ToString();
-            if (registeredProviderName != Program.Product) return;
-            protocolKey?.DeleteSubKeyTree(string.Empty, false);
+            if (registeredProviderName == Program.Product)
+                protocolKey?.DeleteSubKeyTree(string.Empty, false);
         }
     }
 }

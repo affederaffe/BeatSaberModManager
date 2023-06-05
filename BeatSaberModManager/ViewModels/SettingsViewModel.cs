@@ -134,8 +134,10 @@ namespace BeatSaberModManager.ViewModels
 
         private void ToggleOneClickHandler(bool active, string protocol)
         {
-            if (active) _protocolHandlerRegistrar.RegisterProtocolHandler(protocol);
-            else _protocolHandlerRegistrar.UnregisterProtocolHandler(protocol);
+            if (active)
+                _protocolHandlerRegistrar.RegisterProtocolHandler(protocol);
+            else
+                _protocolHandlerRegistrar.UnregisterProtocolHandler(protocol);
         }
     }
 }

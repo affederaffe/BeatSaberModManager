@@ -45,7 +45,8 @@ namespace BeatSaberModManager.Services.Implementations.Http
         public async Task<HttpResponseMessage> TryGetAsync(Uri uri, IProgress<double>? progress)
         {
             HttpResponseMessage response = await TryGetAsync(uri, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode) return response;
+            if (!response.IsSuccessStatusCode)
+                return response;
             long total = 0;
             long? length = response.Content.Headers.ContentLength;
             byte[] buffer = ArrayPool<byte>.Shared.Rent(8192);
@@ -54,9 +55,11 @@ namespace BeatSaberModManager.Services.Implementations.Http
             while (true)
             {
                 int read = await stream.ReadAsync(buffer).ConfigureAwait(false);
-                if (read <= 0) break;
+                if (read <= 0)
+                    break;
                 await ms.WriteAsync(buffer.AsMemory(0, read)).ConfigureAwait(false);
-                if (!length.HasValue) continue;
+                if (!length.HasValue)
+                    continue;
                 total += read;
                 progress?.Report(((double)total + 1) / length.Value);
             }
