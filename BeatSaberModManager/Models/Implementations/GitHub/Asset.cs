@@ -12,12 +12,12 @@ namespace BeatSaberModManager.Models.Implementations.GitHub
         /// The name of the asset.
         /// </summary>
         [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
+        public required string Name { get; init; }
 
         /// <summary>
         /// The url to download the asset from.
         /// </summary>
         [JsonPropertyName("browser_download_url")]
-        public string DownloadUrl { get; set; } = null!;
+        public required string DownloadUrl { get; init; }
     }
 }

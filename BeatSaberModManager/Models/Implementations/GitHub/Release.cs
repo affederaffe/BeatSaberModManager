@@ -12,12 +12,12 @@ namespace BeatSaberModManager.Models.Implementations.GitHub
         /// The tag of the <see cref="Release"/>.
         /// </summary>
         [JsonPropertyName("tag_name")]
-        public string TagName { get; set; } = null!;
+        public required string TagName { get; init; }
 
         /// <summary>
         /// All assets of the <see cref="Release"/>.
         /// </summary>
         [JsonPropertyName("assets")]
-        public Asset[] Assets { get; set; } = null!;
+        public required Asset[] Assets { get; init; }
     }
 }

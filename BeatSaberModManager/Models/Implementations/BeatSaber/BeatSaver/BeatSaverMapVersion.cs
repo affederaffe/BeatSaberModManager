@@ -12,6 +12,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
         /// The url to download the map from.
         /// </summary>
         [JsonPropertyName("downloadURL")]
-        public string DownloadUrl { get; set; } = null!;
+        public required string DownloadUrl { get; init; }
     }
 }

@@ -12,12 +12,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         /// The MD5 hash for the <see cref="File"/>.
         /// </summary>
         [JsonPropertyName("hash")]
-        public string Hash { get; set; } = null!;
+        public required string Hash { get; init; }
 
         /// <summary>
         /// The relative file path.
         /// </summary>
         [JsonPropertyName("file")]
-        public string File { get; set; } = null!;
+        public required string File { get; init; }
     }
 }

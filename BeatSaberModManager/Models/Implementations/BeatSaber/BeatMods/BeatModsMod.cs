@@ -12,46 +12,46 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
     {
         /// <inheritdoc />
         [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
+        public required string Name { get; init; }
 
         /// <inheritdoc />
         [JsonPropertyName("version")]
         [JsonConverter(typeof(VersionConverter))]
-        public Version Version { get; set; } = null!;
+        public required Version Version { get; init; }
 
         /// <inheritdoc />
         [JsonPropertyName("description")]
-        public string Description { get; set; } = null!;
+        public required string Description { get; init; }
 
         /// <inheritdoc />
         [JsonPropertyName("category")]
-        public string Category { get; set; } = null!;
+        public required string Category { get; init; }
 
         /// <inheritdoc />
         [JsonPropertyName("link")]
-        public string MoreInfoLink { get; set; } = null!;
+        public required string MoreInfoLink { get; init; }
 
         /// <inheritdoc />
         [JsonPropertyName("required")]
-        public bool IsRequired { get; set; }
+        public required bool IsRequired { get; init; }
 
         /// <summary>
         /// The downloads for the mod.
         /// </summary>
         [JsonPropertyName("downloads")]
-        public BeatModsDownload[] Downloads { get; set; } = null!;
+        public required BeatModsDownload[] Downloads { get; init; }
 
         /// <summary>
         /// The dependencies of the mod.
         /// </summary>
         [JsonPropertyName("dependencies")]
-        public BeatModsDependency[] Dependencies { get; set; } = null!;
+        public required BeatModsDependency[] Dependencies { get; init; }
 
         /// <inheritdoc />
         public bool Equals(BeatModsMod? other) => other is not null && (ReferenceEquals(this, other) || (Name == other.Name && Version.Equals(other.Version)));
 
         /// <inheritdoc />
-        public override bool Equals(object? obj) => obj is not null && (ReferenceEquals(this, obj) || (obj.GetType() == GetType() && Equals(obj as BeatModsMod)));
+        public override bool Equals(object? obj) => obj is not null && (ReferenceEquals(this, obj) || (obj is BeatModsMod beatModsMod && Equals(beatModsMod)));
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Name, Version);

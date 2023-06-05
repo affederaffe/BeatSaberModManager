@@ -12,12 +12,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
         /// The name of the mapper.
         /// </summary>
         [JsonPropertyName("levelAuthorName")]
-        public string LevelAuthorName { get; set; } = null!;
+        public required string LevelAuthorName { get; init; }
 
         /// <summary>
         /// The name of the song.
         /// </summary>
         [JsonPropertyName("songName")]
-        public string SongName { get; set; } = null!;
+        public required string SongName { get; init; }
     }
 }

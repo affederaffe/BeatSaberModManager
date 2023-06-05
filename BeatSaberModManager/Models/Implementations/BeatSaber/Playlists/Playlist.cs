@@ -11,19 +11,19 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlists
         /// <summary>
         /// The title of the playlist.
         /// </summary>
-        [JsonPropertyName("playlistName")]
-        public string PlaylistTitle { get; set; } = null!;
+        [JsonPropertyName("playlistTitle")]
+        public required string PlaylistTitle { get; init; }
 
         /// <summary>
         /// The author of the playlist.
         /// </summary>
         [JsonPropertyName("playlistAuthor")]
-        public string PlaylistAuthor { get; set; } = null!;
+        public required string PlaylistAuthor { get; init; }
 
         /// <summary>
         /// The songs included in the playlist.
         /// </summary>
         [JsonPropertyName("songs")]
-        public PlaylistSong[] Songs { get; set; } = null!;
+        public required PlaylistSong[] Songs { get; init; }
     }
 }

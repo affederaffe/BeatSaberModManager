@@ -14,7 +14,7 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         /// The name of the dependency.
         /// </summary>
         [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
+        public required string Name { get; init; }
 
         /// <summary>
         /// Cached <see cref="IMod"/> to avoid finding it again by <see cref="Name"/>.

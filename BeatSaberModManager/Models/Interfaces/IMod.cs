@@ -11,31 +11,31 @@ namespace BeatSaberModManager.Models.Interfaces
         /// <summary>
         /// The mod's display name.
         /// </summary>
-        string Name { get; set; }
+        string Name { get; }
 
         /// <summary>
         /// The mod's version.
         /// </summary>
-        Version Version { get; set; }
+        Version Version { get; }
 
         /// <summary>
         /// The description or summary of the mod.
         /// </summary>
-        string Description { get; set; }
+        string Description { get; }
 
         /// <summary>
         /// The category of the mod.
         /// </summary>
-        string Category { get; set; }
+        string Category { get; }
 
         /// <summary>
         /// A link which provides more resources about the mod.
         /// </summary>
-        string MoreInfoLink { get; set; }
+        string MoreInfoLink { get; }
 
         /// <summary>
         /// Indicates if the mod must be installed.
         /// </summary>
-        bool IsRequired { get; set; }
+        bool IsRequired { get; }
     }
 }

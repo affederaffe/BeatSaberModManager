@@ -12,25 +12,25 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
         /// The map's unique identifier on https://beatsaver.com.
         /// </summary>
         [JsonPropertyName("id")]
-        public string Id { get; set; } = null!;
+        public required string Id { get; init; }
 
         /// <summary>
         /// The name of the map.
         /// </summary>
         [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
+        public required string Name { get; init; }
 
         /// <summary>
         /// Additional metadata.
         /// </summary>
         [JsonPropertyName("metadata")]
-        public BeatSaverMapMetaData MetaData { get; set; } = null!;
+        public required BeatSaverMapMetaData MetaData { get; init; }
 
         /// <summary>
         /// All versions of the map.<br/>
         /// The last entry corresponds to the latest version.
         /// </summary>
         [JsonPropertyName("versions")]
-        public BeatSaverMapVersion[] Versions { get; set; } = null!;
+        public required BeatSaverMapVersion[] Versions { get; init; }
     }
 }
