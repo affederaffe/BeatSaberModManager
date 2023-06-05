@@ -27,7 +27,6 @@ jobs:
                 uses: actions/setup-dotnet@v3
                 with:
                     dotnet-version: "8.0.x"
-                    include-prerelease: true
 
             -   name: Build Self Contained
                 run: dotnet publish ./BeatSaberModManager/BeatSaberModManager.csproj -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true
@@ -58,7 +57,6 @@ jobs:
                 uses: actions/setup-dotnet@v3
                 with:
                     dotnet-version: "8.0.x"
-                    include-prerelease: true
 
             -   name: Build Self Contained
                 run: dotnet publish ./BeatSaberModManager/BeatSaberModManager.csproj -c Release -r win10-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true
