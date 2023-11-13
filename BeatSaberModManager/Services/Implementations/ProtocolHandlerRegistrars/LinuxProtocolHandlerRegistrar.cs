@@ -36,7 +36,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
             using StreamReader streamReader = new(fileStream);
             while (streamReader.ReadLine() is { } line)
             {
-                if (line.StartsWith($"Exec={Environment.ProcessPath}", StringComparison.Ordinal))
+                if (line.StartsWith($"Exec={Program.Product}", StringComparison.Ordinal))
                     return true;
             }
 
@@ -68,17 +68,15 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         private static string GetHandlerNameForProtocol(string protocol) => $"{Program.Product}-url-{protocol}.desktop";
 
         private static string GetDesktopFileContent(string protocol) =>
-            $"""
-             [Desktop Entry]
-             Name={Program.Product}
-             Comment=URL:{protocol} Protocol
-             Type=Application
-             Categories=Utility
-             Exec={Environment.ProcessPath} --install %u
-             Terminal=false
-             NoDisplay=true
-             MimeType=x-scheme-handler/{protocol}
-
-             """;
+            @$"[Desktop Entry]
+Name={Program.Product}
+Comment=URL:{protocol} Protocol
+Type=Application
+Categories=Utility
+Exec={Program.Product} --install %u
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/{protocol}
+";
     }
 }
