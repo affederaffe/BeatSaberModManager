@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 
 namespace BeatSaberModManager.Models.Implementations.GitHub
@@ -18,6 +19,6 @@ namespace BeatSaberModManager.Models.Implementations.GitHub
         /// The url to download the asset from.
         /// </summary>
         [JsonPropertyName("browser_download_url")]
-        public required string DownloadUrl { get; init; }
+        public required Uri DownloadUrl { get; init; }
     }
 }

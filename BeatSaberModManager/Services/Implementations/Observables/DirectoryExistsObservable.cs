@@ -78,6 +78,7 @@ namespace BeatSaberModManager.Services.Implementations.Observables
             _fileSystemWatcher.Created -= OnCreated;
             _fileSystemWatcher.Deleted -= OnDeleted;
             _fileSystemWatcher.Dispose();
+            _subject.Dispose();
         }
     }
 }

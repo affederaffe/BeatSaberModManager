@@ -1,4 +1,6 @@
-﻿using Avalonia.Collections;
+﻿using System;
+
+using Avalonia.Collections;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.ViewModels;
@@ -22,6 +24,7 @@ namespace BeatSaberModManager.Views.Pages
         /// </summary>
         public ModsPage(ModsViewModel viewModel)
         {
+            ArgumentNullException.ThrowIfNull(viewModel);
             InitializeComponent();
             ViewModel = viewModel;
             ModsDataGrid.ItemsSource = new DataGridCollectionView(viewModel.GridItems)

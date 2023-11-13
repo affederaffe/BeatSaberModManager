@@ -40,7 +40,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
             return dependencies;
         }
 
-        private void ResolveDependencies(IMod modification, ISet<IMod> dependencies)
+        private void ResolveDependencies(IMod modification, HashSet<IMod> dependencies)
         {
             foreach (IMod dependency in _modProvider.GetDependencies(modification))
             {
@@ -53,7 +53,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
             }
         }
 
-        private void UnresolveDependencies(IMod modification, ISet<IMod> dependencies)
+        private void UnresolveDependencies(IMod modification, HashSet<IMod> dependencies)
         {
             foreach (IMod dependency in _modProvider.GetDependencies(modification))
             {

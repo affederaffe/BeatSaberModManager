@@ -23,6 +23,7 @@ namespace BeatSaberModManager.Views.Windows
         /// <param name="e">The <see cref="Exception"/> to display.</param>
         public ExceptionWindow(Exception e)
         {
+            ArgumentNullException.ThrowIfNull(e);
             InitializeComponent();
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();

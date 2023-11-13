@@ -20,7 +20,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel for <see cref="BeatSaberModManager.Views.Windows.AssetInstallWindow"/>.
     /// </summary>
-    public class AssetInstallWindowViewModel : ViewModelBase
+    public sealed class AssetInstallWindowViewModel : ViewModelBase
     {
         private readonly Uri _uri;
         private readonly ISettings<AppSettings> _appSettings;
@@ -37,6 +37,8 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public AssetInstallWindowViewModel(Uri uri, StatusProgress statusProgress, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IEnumerable<IAssetProvider> assetProviders)
         {
+            ArgumentNullException.ThrowIfNull(statusProgress);
+            ArgumentNullException.ThrowIfNull(assetProviders);
             _uri = uri;
             _progress = statusProgress;
             _appSettings = appSettings;
@@ -94,7 +96,7 @@ namespace BeatSaberModManager.ViewModels
             if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
                 return false;
             IAssetProvider? assetProvider = _assetProviders.FirstOrDefault(x => x.Protocol == _uri.Scheme);
-            return assetProvider is not null && await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir, _uri, _progress);
+            return assetProvider is not null && await assetProvider.InstallAssetAsync(_appSettings.Value.InstallDir, _uri, _progress).ConfigureAwait(false);
         }
     }
 }

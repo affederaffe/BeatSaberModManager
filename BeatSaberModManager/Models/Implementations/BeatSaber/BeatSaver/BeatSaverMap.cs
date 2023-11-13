@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
@@ -31,6 +32,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver
         /// The last entry corresponds to the latest version.
         /// </summary>
         [JsonPropertyName("versions")]
-        public required BeatSaverMapVersion[] Versions { get; init; }
+        public required IReadOnlyList<BeatSaverMapVersion> Versions { get; init; }
     }
 }

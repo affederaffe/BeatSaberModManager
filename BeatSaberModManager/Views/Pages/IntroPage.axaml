@@ -5,6 +5,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Pages.IntroPage">
 
-    <ScrollViewer Margin="0, 30, 0, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Content="{DynamicResource IntroView:IntroText}" />
+    <ScrollViewer Margin="0, 30, 0, 0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Content="{DynamicResource IntroView:IntroText}" HorizontalAlignment="Center" VerticalAlignment="Center" />
 
 </UserControl>

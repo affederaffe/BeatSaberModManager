@@ -23,11 +23,12 @@ namespace BeatSaberModManager.Views.Windows
         /// </summary>
         public MainWindow(MainWindowViewModel viewModel)
         {
+            ArgumentNullException.ThrowIfNull(viewModel);
             InitializeComponent();
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
-            viewModel.PickInstallDirInteraction.RegisterHandler(async context => context.SetOutput(await new InstallFolderDialogWindow().ShowDialog<string?>(this)));
+            viewModel.PickInstallDirInteraction.RegisterHandler(async context => context.SetOutput(await new InstallFolderDialogWindow().ShowDialog<string?>(this).ConfigureAwait(false)));
         }
     }
 }

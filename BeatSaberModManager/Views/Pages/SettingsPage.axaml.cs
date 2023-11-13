@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Avalonia.Controls;
@@ -27,16 +28,17 @@ namespace BeatSaberModManager.Views.Pages
         /// </summary>
         public SettingsPage(SettingsViewModel viewModel, Window window, LocalizationManager localizationManager, ThemeManager themeManager)
         {
+            ArgumentNullException.ThrowIfNull(viewModel);
             InitializeComponent();
             LanguagesComboBox.DataContext = localizationManager;
             ThemesComboBox.DataContext = themeManager;
             ViewModel = viewModel;
-            viewModel.PickInstallDirInteraction.RegisterHandler(async context => context.SetOutput(await SelectInstallDirAsync(window)));
+            viewModel.PickInstallDirInteraction.RegisterHandler(async context => context.SetOutput(await SelectInstallDirAsync(window).ConfigureAwait(false)));
         }
 
         private static async Task<string?> SelectInstallDirAsync(TopLevel window)
         {
-            IReadOnlyList<IStorageFolder> folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions());
+            IReadOnlyList<IStorageFolder> folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()).ConfigureAwait(false);
             return folders.Count == 1 ? folders[0].TryGetLocalPath() : null;
         }
     }

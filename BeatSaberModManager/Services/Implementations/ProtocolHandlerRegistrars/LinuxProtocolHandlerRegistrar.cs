@@ -30,7 +30,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         public bool IsProtocolHandlerRegistered(string protocol)
         {
             string handlerPath = GetHandlerPathForProtocol(protocol);
-            using FileStream? fileStream = IOUtils.TryOpenFile(handlerPath, new FileStreamOptions());
+            using FileStream? fileStream = IOUtils.TryOpenFile(handlerPath, FileMode.Open, FileAccess.Read);
             if (fileStream is null)
                 return false;
             using StreamReader streamReader = new(fileStream);
@@ -68,15 +68,17 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         private static string GetHandlerNameForProtocol(string protocol) => $"{Program.Product}-url-{protocol}.desktop";
 
         private static string GetDesktopFileContent(string protocol) =>
-            @$"[Desktop Entry]
-Name={Program.Product}
-Comment=URL:{protocol} Protocol
-Type=Application
-Categories=Utility
-Exec={Environment.ProcessPath} --install %u
-Terminal=false
-NoDisplay=true
-MimeType=x-scheme-handler/{protocol}
-";
+            $"""
+             [Desktop Entry]
+             Name={Program.Product}
+             Comment=URL:{protocol} Protocol
+             Type=Application
+             Categories=Utility
+             Exec={Environment.ProcessPath} --install %u
+             Terminal=false
+             NoDisplay=true
+             MimeType=x-scheme-handler/{protocol}
+
+             """;
     }
 }

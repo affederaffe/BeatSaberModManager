@@ -70,7 +70,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         private async Task<string?> MatchSteamBeatSaberInstallDirAsync(string path)
         {
             string acf = Path.Join(path, "appmanifest_620980.acf");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(acf, new FileStreamOptions { Options = FileOptions.Asynchronous });
+#pragma warning disable CA2007
+            await using FileStream? fileStream = IOUtils.TryOpenFile(acf, FileMode.Open, FileAccess.Read);
+#pragma warning restore CA2007
             if (fileStream is null)
                 return null;
             Regex regex = InstallDirRegex();
@@ -131,7 +133,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             yield return path;
             string vdf = Path.Join(path, "steamapps", "libraryfolders.vdf");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, new FileStreamOptions { Options = FileOptions.Asynchronous });
+#pragma warning disable CA2007
+            await using FileStream? fileStream = IOUtils.TryOpenFile(vdf, FileMode.Open, FileAccess.Read);
+#pragma warning restore CA2007
             if (fileStream is null)
                 yield break;
             Regex regex = LibraryPathRegex();

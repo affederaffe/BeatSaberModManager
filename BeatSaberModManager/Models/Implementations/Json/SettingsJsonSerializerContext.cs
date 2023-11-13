@@ -7,5 +7,5 @@ namespace BeatSaberModManager.Models.Implementations.Json
 {
     [JsonSerializable(typeof(AppSettings))]
     [JsonSourceGenerationOptions(WriteIndented = true, IgnoreReadOnlyProperties = true)]
-    internal partial class SettingsJsonSerializerContext : JsonSerializerContext;
+    internal sealed partial class SettingsJsonSerializerContext : JsonSerializerContext;
 }

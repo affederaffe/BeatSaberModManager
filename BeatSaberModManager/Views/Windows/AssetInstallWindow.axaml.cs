@@ -28,6 +28,7 @@ namespace BeatSaberModManager.Views.Windows
         /// </summary>
         public AssetInstallWindow(AssetInstallWindowViewModel viewModel)
         {
+            ArgumentNullException.ThrowIfNull(viewModel);
             InitializeComponent();
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();

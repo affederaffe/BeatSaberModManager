@@ -27,7 +27,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             switch (_installDirLocator.DetectPlatform(installDir))
             {
                 case PlatformType.Steam:
-                    PlatformUtils.TryOpenUri("steam://rungameid/620980");
+                    PlatformUtils.TryOpenUri(new Uri("steam://rungameid/620980"));
                     break;
                 case PlatformType.Oculus:
                     PlatformUtils.TryStartProcess(new ProcessStartInfo("Beat Saber.exe") { WorkingDirectory = installDir }, out _);

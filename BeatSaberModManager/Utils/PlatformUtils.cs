@@ -8,16 +8,16 @@ namespace BeatSaberModManager.Utils
     /// <summary>
     /// Utilities for platform specific operations.
     /// </summary>
-    public static class PlatformUtils
+    internal static class PlatformUtils
     {
         /// <summary>
         /// Attempts to use the standard program to open the <paramref name="uri"/>.
         /// </summary>
         /// <param name="uri">The uri to open.</param>
         /// <returns>True if the operation succeeds, false otherwise.</returns>
-        public static bool TryOpenUri(string uri) =>
+        public static bool TryOpenUri(Uri uri) =>
             OperatingSystem.IsWindows()
-                ? TryStartProcess(new ProcessStartInfo(uri) { UseShellExecute = true }, out _)
+                ? TryStartProcess(new ProcessStartInfo(uri.LocalPath) { UseShellExecute = true }, out _)
                 : OperatingSystem.IsLinux() && TryStartProcess(new ProcessStartInfo("xdg-open", $"\"{uri}\""), out _);
 
         /// <summary>

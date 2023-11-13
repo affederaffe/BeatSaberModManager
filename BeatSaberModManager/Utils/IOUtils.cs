@@ -102,13 +102,14 @@ namespace BeatSaberModManager.Utils
         /// Attempts to open a <see cref="FileStream"/> o the specified path, having the specified mode with read, write, or read/write access and the specified sharing option.
         /// </summary>
         /// <param name="path">The file to open.</param>
-        /// <param name="options">An object that describes optional FileStream parameters to use.</param>
+        /// <param name="mode">A <see cref="FileMode"/>value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten.</param>
+        /// <param name="access">A <see cref="FileAccess"/> value that specifies the operations that can be performed on the file.</param>
         /// <returns>The <see cref="FileStream"/> if the operation succeeds, null otherwise.</returns>
-        public static FileStream? TryOpenFile(string path, FileStreamOptions options)
+        public static FileStream? TryOpenFile(string path, FileMode mode, FileAccess access)
         {
             try
             {
-                return File.Open(path, options);
+                return File.Open(path, mode, access);
             }
             catch (ArgumentException) { }
             catch (IOException) { }
@@ -125,7 +126,7 @@ namespace BeatSaberModManager.Utils
         {
             try
             {
-                return await File.ReadAllLinesAsync(path);
+                return await File.ReadAllLinesAsync(path).ConfigureAwait(false);
             }
             catch (ArgumentException) { }
             catch (IOException) { }

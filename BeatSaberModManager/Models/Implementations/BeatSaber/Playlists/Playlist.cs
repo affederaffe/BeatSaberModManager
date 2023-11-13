@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlists
@@ -24,6 +25,6 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.Playlists
         /// The songs included in the playlist.
         /// </summary>
         [JsonPropertyName("songs")]
-        public required PlaylistSong[] Songs { get; init; }
+        public required IReadOnlyList<PlaylistSong> Songs { get; init; }
     }
 }

@@ -61,7 +61,7 @@ namespace BeatSaberModManager.Views
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } lifetime)
                 return;
             lifetime.MainWindow.Show();
-            await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow);
+            await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow).ConfigureAwait(true);
             lifetime.Shutdown(-1);
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Avalonia;
@@ -38,7 +39,7 @@ namespace BeatSaberModManager.Views.Theming
         /// <summary>
         /// A collection of all available <see cref="Theme"/>s.
         /// </summary>
-        public Theme[] Themes { get; }
+        public IReadOnlyList<Theme> Themes { get; }
 
         /// <summary>
         /// The currently selected <see cref="Theme"/>.

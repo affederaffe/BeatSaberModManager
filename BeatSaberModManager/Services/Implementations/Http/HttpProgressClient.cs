@@ -79,13 +79,18 @@ namespace BeatSaberModManager.Services.Implementations.Http
         {
             try
             {
-                return await GetAsync(uri);
+                return await GetAsync(uri).ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (HttpRequestException httpRequestException)
             {
-                _logger.Error(e, "Http GET request {Uri} failed", uri);
-                return new HttpResponseMessage(0);
+                _logger.Error(httpRequestException, "Http GET request {Uri} failed", uri);
             }
+            catch (TimeoutException timeoutException)
+            {
+                _logger.Error(timeoutException, "Http GET request {Uri} timed out", uri);
+            }
+
+            return new HttpResponseMessage(0);
         }
 
         /// <summary>
@@ -98,13 +103,18 @@ namespace BeatSaberModManager.Services.Implementations.Http
         {
             try
             {
-                return await GetAsync(uri, completionOption);
+                return await GetAsync(uri, completionOption).ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (HttpRequestException httpRequestException)
             {
-                _logger.Error(e, "Http GET request {Uri} failed", uri);
-                return new HttpResponseMessage(0);
+                _logger.Error(httpRequestException, "Http GET request {Uri} failed", uri);
             }
+            catch (TimeoutException timeoutException)
+            {
+                _logger.Error(timeoutException, "Http GET request {Uri} timed out", uri);
+            }
+
+            return new HttpResponseMessage(0);
         }
     }
 }

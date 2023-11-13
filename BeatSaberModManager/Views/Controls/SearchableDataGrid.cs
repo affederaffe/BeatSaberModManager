@@ -1,3 +1,5 @@
+using System;
+
 using Avalonia;
 using Avalonia.Collections;
 using Avalonia.Controls;
@@ -69,6 +71,7 @@ namespace BeatSaberModManager.Views.Controls
         /// <inheritdoc />
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
+            ArgumentNullException.ThrowIfNull(e);
             base.OnApplyTemplate(e);
             _searchTextBox = e.NameScope.Get<TextBox>("PART_SearchTextBox");
             CaptionButtons? captionButtons = ChromeOverlayLayer.GetOverlayLayer(this)?.FindDescendantOfType<CaptionButtons>();
@@ -79,6 +82,7 @@ namespace BeatSaberModManager.Views.Controls
         /// <inheritdoc />
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
+            ArgumentNullException.ThrowIfNull(change);
             base.OnPropertyChanged(change);
             if (change.Property == IsSearchEnabledProperty && change.GetNewValue<bool>())
                 _searchTextBox?.Focus();

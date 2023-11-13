@@ -43,7 +43,7 @@ namespace BeatSaberModManager
         {
             if (await _updater.NeedsUpdateAsync().ConfigureAwait(false))
                 return await _updater.UpdateAsync().ConfigureAwait(false);
-            await _appSettings.LoadAsync();
+            await _appSettings.LoadAsync().ConfigureAwait(false);
             if (_args is ["--path", { } installDir])
                 _appSettings.Value.InstallDir = installDir;
             if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))

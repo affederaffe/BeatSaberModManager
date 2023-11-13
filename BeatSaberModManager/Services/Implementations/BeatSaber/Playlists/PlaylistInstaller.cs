@@ -45,6 +45,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallPlaylistAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
+            ArgumentNullException.ThrowIfNull(uri);
             using HttpResponseMessage response = await _httpClient.TryGetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return false;
@@ -53,11 +54,15 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string filePath = Path.Join(playlistsDirPath, fileName);
             if (!IOUtils.TryCreateDirectory(playlistsDirPath))
                 return false;
+#pragma warning disable CA2007
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            await using Stream writeStream = File.OpenWrite(filePath);
-            await contentStream.CopyToAsync(writeStream);
+            await using Stream? writeStream = IOUtils.TryOpenFile(filePath, FileMode.Create, FileAccess.Write);
+#pragma warning restore CA2007
+            if (writeStream is null)
+                return false;
+            await contentStream.CopyToAsync(writeStream).ConfigureAwait(false);
             contentStream.Seek(0, SeekOrigin.Begin);
-            Playlist? playlist = await JsonSerializer.DeserializeAsync(contentStream, PlaylistJsonSerializerContext.Default.Playlist);
+            Playlist? playlist = await JsonSerializer.DeserializeAsync(contentStream, PlaylistJsonSerializerContext.Default.Playlist).ConfigureAwait(false);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
         }
 
@@ -75,11 +80,17 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             string destFilePath = Path.Join(playlistsDirPath, fileName);
             if (!IOUtils.TryCreateDirectory(playlistsDirPath))
                 return false;
-            await using FileStream contentStream = File.OpenRead(filePath);
-            await using FileStream writeStream = File.OpenWrite(destFilePath);
-            await contentStream.CopyToAsync(writeStream);
+#pragma warning disable CA2007
+            await using FileStream? contentStream = IOUtils.TryOpenFile(filePath, FileMode.Open, FileAccess.Read);
+            if (contentStream is null)
+                return false;
+            await using FileStream? writeStream = IOUtils.TryOpenFile(destFilePath, FileMode.Create, FileAccess.Write);
+#pragma warning restore CA2007
+            if (writeStream is null)
+                return false;
+            await contentStream.CopyToAsync(writeStream).ConfigureAwait(false);
             contentStream.Seek(0, SeekOrigin.Begin);
-            Playlist? playlist = await JsonSerializer.DeserializeAsync(contentStream, PlaylistJsonSerializerContext.Default.Playlist);
+            Playlist? playlist = await JsonSerializer.DeserializeAsync(contentStream, PlaylistJsonSerializerContext.Default.Playlist).ConfigureAwait(false);
             return playlist is not null && await InstallPlaylistAsync(installDir, playlist, progress).ConfigureAwait(false);
         }
 
@@ -90,8 +101,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             for (int i = 0; i < maps.Length; i++)
             {
                 progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
-                if (maps[i].Versions.Length <= 0) continue;
-                HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(maps[i].Versions.Last().DownloadUrl)).ConfigureAwait(false);
+                if (maps[i].Versions.Count <= 0) continue;
+                HttpResponseMessage response = await _httpClient.TryGetAsync(maps[i].Versions[^1].DownloadUrl).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode) continue;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using ZipArchive archive = new(stream);
@@ -105,7 +116,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
 
         private async Task<BeatSaverMap[]> GetMapsAsync(Playlist playlist)
         {
-            BeatSaverMap?[] maps = new BeatSaverMap?[playlist.Songs.Length];
+            BeatSaverMap?[] maps = new BeatSaverMap?[playlist.Songs.Count];
             for (int i = 0; i < maps.Length; i++)
             {
                 if (!string.IsNullOrEmpty(playlist.Songs[i].Id))
@@ -114,7 +125,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
                     maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByHashAsync(playlist.Songs[i].Hash!).ConfigureAwait(false);
             }
 
-            return maps.Where(static x => x?.Versions.Length > 0).ToArray()!;
+            return maps.Where(static x => x?.Versions.Count > 0).ToArray()!;
         }
     }
 }

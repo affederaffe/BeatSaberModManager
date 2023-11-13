@@ -44,7 +44,9 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return false;
+#pragma warning disable CA2007
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#pragma warning restore CA2007
             _release = await JsonSerializer.DeserializeAsync(contentStream, GitHubJsonSerializerContext.Default.Release).ConfigureAwait(false);
             return _release is not null && Version.TryParse(_release.TagName.AsSpan(1, 5), out Version? version) && version > _version;
         }
@@ -55,7 +57,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.Ordinal));
             if (asset is null)
                 return -1;
-            using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(asset.DownloadUrl)).ConfigureAwait(false);
+            using HttpResponseMessage response = await _httpClient.TryGetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return -1;
             string processPath = Environment.ProcessPath!;
@@ -63,7 +65,9 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             IOUtils.TryDeleteFile(oldPath);
             if (!IOUtils.TryMoveFile(processPath, oldPath))
                 return -1;
-            Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#pragma warning disable CA2007
+            await using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#pragma warning restore CA2007
             using ZipArchive archive = new(stream);
             if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true))
                 return -1;

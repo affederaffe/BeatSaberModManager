@@ -13,7 +13,11 @@ namespace BeatSaberModManager.Models.Implementations.Json
             Version.TryParse(reader.GetString() ?? string.Empty, out Version? version) ? version : new Version(0, 0, 0);
 
         /// <inheritdoc />
-        public override void Write(Utf8JsonWriter writer, Version value, JsonSerializerOptions options) =>
+        public override void Write(Utf8JsonWriter writer, Version value, JsonSerializerOptions options)
+        {
+            ArgumentNullException.ThrowIfNull(writer);
+            ArgumentNullException.ThrowIfNull(value);
             writer.WriteStringValue(value.ToString());
+        }
     }
 }

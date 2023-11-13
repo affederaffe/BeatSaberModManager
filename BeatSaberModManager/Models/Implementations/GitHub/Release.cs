@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 
 namespace BeatSaberModManager.Models.Implementations.GitHub
@@ -18,6 +19,6 @@ namespace BeatSaberModManager.Models.Implementations.GitHub
         /// All assets of the <see cref="Release"/>.
         /// </summary>
         [JsonPropertyName("assets")]
-        public required Asset[] Assets { get; init; }
+        public required IReadOnlyList<Asset> Assets { get; init; }
     }
 }

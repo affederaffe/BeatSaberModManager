@@ -1,3 +1,5 @@
+using System;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Primitives;
@@ -58,6 +60,7 @@ namespace BeatSaberModManager.Views.Controls
         /// <inheritdoc />
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
+            ArgumentNullException.ThrowIfNull(e);
             base.OnApplyTemplate(e);
             _splitView = e.NameScope.Find<SplitView>("PART_NavigationPane");
         }
@@ -65,6 +68,7 @@ namespace BeatSaberModManager.Views.Controls
         /// <inheritdoc />
         protected override void OnPropertyChanged(AvaloniaPropertyChangedEventArgs change)
         {
+            ArgumentNullException.ThrowIfNull(change);
             base.OnPropertyChanged(change);
             if (change.Property != BoundsProperty || _splitView is null)
                 return;

@@ -20,6 +20,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
     /// <inheritdoc />
     public class BeatModsModProvider : IModProvider
     {
+        private static readonly string[] _installedModsLocations = { Path.Join("IPA", "Pending"), "Plugins", "Libs" };
+
         private readonly HttpProgressClient _httpClient;
         private readonly IHashProvider _hashProvider;
         private readonly IGameVersionProvider _gameVersionProvider;
@@ -70,7 +72,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             if (fileHashModPairs is null)
                 return;
             HashSet<IMod> installedMods = new();
-            IMod? bsipa = await GetInstalledModLoaderAsync(installDir, fileHashModPairs);
+            IMod? bsipa = await GetInstalledModLoaderAsync(installDir, fileHashModPairs).ConfigureAwait(false);
             if (bsipa is not null)
                 installedMods.Add(bsipa);
             IEnumerable<string> files = _installedModsLocations.Select(x => Path.Join(installDir, x))
@@ -125,7 +127,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri($"https://beatmods.com/api/v1/{args}")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return null;
+#pragma warning disable CA2007
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#pragma warning restore CA2007
             return await JsonSerializer.DeserializeAsync(contentStream, BeatModsModJsonSerializerContext.Default.HashSetBeatModsMod).ConfigureAwait(false);
         }
 
@@ -139,7 +143,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage versionsResponse = await _httpClient.TryGetAsync(new Uri("https://versions.beatmods.com/versions.json")).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode)
                 return null;
+#pragma warning disable CA2007
             await using Stream versionsStream = await versionsResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#pragma warning restore CA2007
             string[]? versions = await JsonSerializer.DeserializeAsync(versionsStream, CommonJsonSerializerContext.Default.StringArray).ConfigureAwait(false);
             if (versions is null)
                 return null;
@@ -147,7 +153,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage aliasResponse = await _httpClient.TryGetAsync(new Uri("https://alias.beatmods.com/aliases.json")).ConfigureAwait(false);
             if (!aliasResponse.IsSuccessStatusCode)
                 return null;
+#pragma warning disable CA2007
             await using Stream aliasesStream = await aliasResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#pragma warning restore CA2007
             Dictionary<string, string[]>? aliases = await JsonSerializer.DeserializeAsync(aliasesStream, CommonJsonSerializerContext.Default.DictionaryStringStringArray).ConfigureAwait(false);
             return aliases?.FirstOrDefault(x => x.Value.Any(alias => alias == gameVersion)).Key;
         }
@@ -166,7 +174,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 return null;
             approved.UnionWith(inactive);
             Dictionary<string, BeatModsMod> fileHashModPairs = new(approved.Count, StringComparer.OrdinalIgnoreCase);
-            foreach (BeatModsMod mod in approved.Where(static x => x.Downloads.Length == 1))
+            foreach (BeatModsMod mod in approved.Where(static x => x.Downloads.Count == 1))
             {
                 foreach (BeatModsHash hash in mod.Downloads[0].Hashes)
                     fileHashModPairs.TryAdd(hash.Hash, mod);
@@ -182,7 +190,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="fileHashModPairs">A map of all hashes and their corresponding <see cref="BeatModsMod"/>.</param>
         /// <returns>The <see cref="IMod"/> of BSIPA if found, null otherwise.</returns>
-        private async Task<IMod?> GetInstalledModLoaderAsync(string installDir, IReadOnlyDictionary<string, BeatModsMod> fileHashModPairs)
+        private async Task<IMod?> GetInstalledModLoaderAsync(string installDir, Dictionary<string, BeatModsMod> fileHashModPairs)
         {
             string injectorPath = Path.Join(installDir, "Beat Saber_Data", "Managed", "IPA.Injector.dll");
             string? injectorHash = await _hashProvider.CalculateHashForFileAsync(injectorPath).ConfigureAwait(false);
@@ -192,7 +200,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             {
                 string fileName = beatModsHash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null, StringComparison.Ordinal);
                 string path = Path.Join(installDir, fileName);
-                string? hash = await _hashProvider.CalculateHashForFileAsync(path);
+                string? hash = await _hashProvider.CalculateHashForFileAsync(path).ConfigureAwait(false);
                 if (!beatModsHash.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase))
                     return null;
             }
@@ -213,7 +221,5 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <param name="file">The path of the mod's file.</param>
         /// <returns>true if the file is a mod, false otherwise.</returns>
         private static bool IsModFile(string file) => Path.GetExtension(file) is ".dll" or ".manifest" or ".exe";
-
-        private static readonly string[] _installedModsLocations = { Path.Join("IPA", "Pending"), "Plugins", "Libs" };
     }
 }

@@ -37,6 +37,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
         /// <returns>True if the operation succeeds, false otherwise.</returns>
         public async Task<bool> InstallModelAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
+            ArgumentNullException.ThrowIfNull(uri);
             string? folderName = GetFolderName(uri);
             if (folderName is null)
                 return false;
@@ -49,9 +50,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
             if (!response.IsSuccessStatusCode)
                 return false;
             string filePath = Path.Join(folderPath, modelName);
+#pragma warning disable CA2007
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            await using Stream writeStream = File.OpenWrite(filePath);
-            await contentStream.CopyToAsync(writeStream);
+            await using Stream? writeStream = IOUtils.TryOpenFile(filePath, FileMode.Create, FileAccess.Write);
+#pragma warning restore CA2007
+            if (writeStream is null)
+                return false;
+            await contentStream.CopyToAsync(writeStream).ConfigureAwait(false);
             return true;
         }
 

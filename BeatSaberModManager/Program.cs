@@ -48,14 +48,18 @@ namespace BeatSaberModManager
         /// </summary>
         public static async Task<int> Main(string[] args)
         {
+#pragma warning disable CA2007
             await using Container container = new(args);
+#pragma warning restore CA2007
             try
             {
-                return await container.RunAsync<Startup, int>(static x => x.RunAsync());
+                return await container.RunAsync<Startup, int>(static x => x.RunAsync()).ConfigureAwait(false);
             }
             catch (Exception e)
             {
-                await using AsyncOwned<ILogger> logger = await container.ResolveAsync<ILogger>();
+#pragma warning disable CA2007
+                await using AsyncOwned<ILogger> logger = await container.ResolveAsync<ILogger>().ConfigureAwait(false);
+#pragma warning restore CA2007
                 logger.Value.Fatal(e, "Application crashed");
                 if (IsProduction)
                     return -1;
@@ -78,20 +82,14 @@ namespace BeatSaberModManager
         [RegisterModule(typeof(ApplicationModule))]
         [RegisterModule(typeof(ViewsModule))]
 #pragma warning disable SI1103
-        internal partial class Container : IAsyncContainer<Startup>, IAsyncContainer<ILogger>
+        internal sealed partial class Container(string[] args) : IAsyncContainer<Startup>, IAsyncContainer<ILogger>
         {
-            public Container(string[] args)
-            {
-                Args = args;
-            }
-
             [Instance]
-            private string[] Args { get; }
-
+            private string[] Args { get; } = args;
         }
 #pragma warning restore SI1103
 
-        internal class SerilogModule
+        internal static class SerilogModule
         {
             [Factory(Scope.SingleInstance)]
             public static ILogger CreateLogger() => new LoggerConfiguration()
@@ -102,19 +100,19 @@ namespace BeatSaberModManager
         }
 
         [Register(typeof(JsonSettingsProvider<AppSettings>), Scope.SingleInstance, typeof(ISettings<AppSettings>))]
-        internal class SettingsModule
+        internal static class SettingsModule
         {
             [Instance]
             public static readonly JsonTypeInfo<AppSettings> AppSettingsJsonTypeInfo = SettingsJsonSerializerContext.Default.AppSettings;
         }
 
         [Register<HttpProgressClient>(Scope.SingleInstance)]
-        internal class HttpModule;
+        internal static class HttpModule;
 
         [Register<GitHubUpdater, IUpdater>(Scope.SingleInstance)]
-        internal class UpdaterModule;
+        internal static class UpdaterModule;
 
-        internal class ProtocolHandlerRegistrarModule
+        internal static class ProtocolHandlerRegistrarModule
         {
             [Factory(Scope.SingleInstance)]
             public static IProtocolHandlerRegistrar CreateProtocolHandlerRegistrar() =>
@@ -128,13 +126,13 @@ namespace BeatSaberModManager
         [Register<BeatSaberGameLauncher, IGameLauncher>(Scope.SingleInstance)]
         [Register<BeatSaberInstallDirLocator, IInstallDirLocator>(Scope.SingleInstance)]
         [Register<BeatSaberInstallDirValidator, IInstallDirValidator>(Scope.SingleInstance)]
-        internal class GameServicesModule;
+        internal static class GameServicesModule;
 
         [Register<MD5HashProvider, IHashProvider>(Scope.SingleInstance)]
         [Register<SimpleDependencyResolver, IDependencyResolver>(Scope.SingleInstance)]
         [Register<BeatModsModProvider, IModProvider>(Scope.SingleInstance)]
         [Register<BeatModsModInstaller, IModInstaller>(Scope.SingleInstance)]
-        internal class ModServicesModule;
+        internal static class ModServicesModule;
 
         [Register<BeatSaverMapInstaller>(Scope.SingleInstance)]
         [Register<BeatSaverAssetProvider, IAssetProvider>(Scope.SingleInstance)]
@@ -142,27 +140,27 @@ namespace BeatSaberModManager
         [Register<ModelSaberAssetProvider, IAssetProvider>(Scope.SingleInstance)]
         [Register<PlaylistInstaller>(Scope.SingleInstance)]
         [Register<PlaylistAssetProvider, IAssetProvider>(Scope.SingleInstance)]
-        internal class AssetProvidersModule;
+        internal static class AssetProvidersModule;
 
         [Register<MainWindowViewModel>(Scope.SingleInstance)]
         [Register<DashboardViewModel>(Scope.SingleInstance)]
         [Register<ModsViewModel>(Scope.SingleInstance)]
         [Register<SettingsViewModel>(Scope.SingleInstance)]
         [Register<AssetInstallWindowViewModel>(Scope.SingleInstance)]
-        internal class ViewModelModule;
+        internal static class ViewModelModule;
 
         [Register<App, Application>(Scope.SingleInstance)]
         [Register<LocalizationManager>(Scope.SingleInstance)]
         [Register<ThemeManager>(Scope.SingleInstance)]
         [Register(typeof(StatusProgress), Scope.SingleInstance, typeof(IStatusProgress), typeof(StatusProgress))]
-        internal class ApplicationModule;
+        internal static class ApplicationModule;
 
         [Register<MainWindow>(Scope.SingleInstance)]
         [Register<AssetInstallWindow>(Scope.SingleInstance)]
         [Register<DashboardPage>(Scope.SingleInstance)]
         [Register<ModsPage>(Scope.SingleInstance)]
         [Register<SettingsPage>(Scope.SingleInstance)]
-        internal class ViewsModule
+        internal static class ViewsModule
         {
             [Factory(Scope.SingleInstance)]
             public static Uri? CreateInstallRequestUri(string[] args) => args is ["--install", { } uri] ? new Uri(uri) : null;

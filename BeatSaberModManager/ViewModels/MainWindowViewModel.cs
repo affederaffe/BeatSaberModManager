@@ -15,7 +15,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel for <see cref="BeatSaberModManager.Views.Windows.MainWindow"/>.
     /// </summary>
-    public class MainWindowViewModel : ViewModelBase, IActivatableViewModel
+    public sealed class MainWindowViewModel : ViewModelBase, IActivatableViewModel
     {
         private readonly ObservableAsPropertyHelper<ProgressInfo> _progressInfo;
         private readonly ObservableAsPropertyHelper<double> _progressValue;
@@ -25,6 +25,8 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public MainWindowViewModel(DashboardViewModel dashboardViewModel, ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, StatusProgress statusProgress)
         {
+            ArgumentNullException.ThrowIfNull(modsViewModel);
+            ArgumentNullException.ThrowIfNull(statusProgress);
             DashboardViewModel = dashboardViewModel;
             ModsViewModel = modsViewModel;
             SettingsViewModel = settingsViewModel;

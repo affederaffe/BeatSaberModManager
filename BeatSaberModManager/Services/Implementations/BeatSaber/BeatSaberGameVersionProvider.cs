@@ -16,7 +16,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         public async Task<string?> DetectGameVersionAsync(string installDir)
         {
             string filePath = Path.Join(installDir, "Beat Saber_Data", "globalgamemanagers");
-            await using FileStream? fileStream = IOUtils.TryOpenFile(filePath, new FileStreamOptions { Options = FileOptions.Asynchronous });
+#pragma warning disable CA2007
+            await using FileStream? fileStream = IOUtils.TryOpenFile(filePath, FileMode.Open, FileAccess.Read);
+#pragma warning restore CA2007
             if (fileStream is null)
                 return null;
             using BinaryReader reader = new(fileStream, Encoding.UTF8);
@@ -58,7 +60,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             }
         }
 
-        [GeneratedRegex("[\\d]+.[\\d]+.[\\d]+")]
+        [GeneratedRegex(@"[\d]+.[\d]+.[\d]+")]
         private static partial Regex VersionRegex();
     }
 }

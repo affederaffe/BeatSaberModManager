@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
@@ -12,12 +14,12 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
         /// The url to download the mod from.
         /// </summary>
         [JsonPropertyName("url")]
-        public required string Url { get; init; }
+        public required Uri Url { get; init; }
 
         /// <summary>
         /// The mod's files and their corresponding hashes.
         /// </summary>
         [JsonPropertyName("hashMd5")]
-        public required BeatModsHash[] Hashes { get; init; }
+        public required IReadOnlyList<BeatModsHash> Hashes { get; init; }
     }
 }

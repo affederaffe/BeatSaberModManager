@@ -16,7 +16,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <inheritdoc />
         public async Task<string?> CalculateHashForFileAsync(string path)
         {
-            await using FileStream? fileStream = IOUtils.TryOpenFile(path, new FileStreamOptions { Options = FileOptions.Asynchronous });
+#pragma warning disable CA2007
+            await using FileStream? fileStream = IOUtils.TryOpenFile(path, FileMode.Open, FileAccess.Read);
+#pragma warning restore CA2007
             return fileStream is null ? null : await CalculateHashForStreamAsync(fileStream).ConfigureAwait(false);
         }
 

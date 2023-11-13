@@ -1,3 +1,5 @@
+using System;
+
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -8,7 +10,7 @@ namespace BeatSaberModManager.Views.Helpers
     /// <summary>
     /// Helper for using a <see cref="DynamicResourceExtension"/> with a <see cref="CompiledBindingExtension"/> as the key.
     /// </summary>
-    public class ResourceKeyBindingHelper
+    public sealed class ResourceKeyBindingHelper
     {
         /// <summary>
         /// Defines the SourceResourceKeyProperty property.
@@ -31,13 +33,21 @@ namespace BeatSaberModManager.Views.Helpers
         /// </summary>
         /// <param name="element">Control to set SourceResourceKey property on.</param>
         /// <param name="value">SourceResourceKey property value.</param>
-        public static void SetSourceResourceKey(ContentControl element, object value) => element.SetValue(SourceResourceKeyProperty, value);
+        public static void SetSourceResourceKey(ContentControl? element, object value)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            element.SetValue(SourceResourceKeyProperty, value);
+        }
 
         /// <summary>
         /// Helper for reading Column property from a Control.
         /// </summary>
         /// <param name="element">Control to read SourceResourceKey property from.</param>
         /// <returns>Column property value.</returns>
-        public static object GetSourceResourceKey(ContentControl element) => element.GetValue(SourceResourceKeyProperty);
+        public static object GetSourceResourceKey(ContentControl element)
+        {
+            ArgumentNullException.ThrowIfNull(element);
+            return element.GetValue(SourceResourceKeyProperty);
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace BeatSaberModManager.Models.Implementations.Settings
     /// <summary>
     /// Application-wide settings.
     /// </summary>
-    public class AppSettings
+    public sealed class AppSettings
     {
         /// <summary>
         /// The index of the tab that was last open.
@@ -47,12 +47,7 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         /// <summary>
         /// A collection of all selected mods.
         /// </summary>
-        public HashSet<string> SelectedMods
-        {
-            get => _selectedMods ??= new HashSet<string>();
-            set => _selectedMods = value;
-        }
-
+        public HashSet<string> SelectedMods => _selectedMods ??= new HashSet<string>();
         private HashSet<string>? _selectedMods;
     }
 }

@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Utils;
 
+using Serilog;
+
 
 namespace BeatSaberModManager.Services.Implementations.Settings
 {
@@ -16,6 +18,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
     /// <typeparam name="T">The type of the settings class.</typeparam>
     public sealed class JsonSettingsProvider<T> : ISettings<T>, IAsyncDisposable where T : class, new()
     {
+        private readonly ILogger _logger;
         private readonly JsonTypeInfo<T> _jsonTypeInfo;
         private readonly string _saveDirPath;
         private readonly string _saveFilePath;
@@ -23,8 +26,9 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonSettingsProvider{T}"/> class.
         /// </summary>
-        public JsonSettingsProvider(JsonTypeInfo<T> jsonTypeInfo)
+        public JsonSettingsProvider(ILogger logger, JsonTypeInfo<T> jsonTypeInfo)
         {
+            _logger = logger;
             _jsonTypeInfo = jsonTypeInfo;
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             _saveDirPath = Path.Join(appDataFolderPath, Program.Product);
@@ -45,7 +49,9 @@ namespace BeatSaberModManager.Services.Implementations.Settings
                 return;
             }
 
-            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Options = FileOptions.Asynchronous });
+#pragma warning disable CA2007
+            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, FileMode.Open, FileAccess.Read);
+#pragma warning restore CA2007
             if (fileStream is null)
             {
                 Value = new T();
@@ -54,10 +60,11 @@ namespace BeatSaberModManager.Services.Implementations.Settings
 
             try
             {
-                Value = await JsonSerializer.DeserializeAsync(fileStream, _jsonTypeInfo) ?? new T();
+                Value = await JsonSerializer.DeserializeAsync(fileStream, _jsonTypeInfo).ConfigureAwait(false) ?? new T();
             }
-            catch
+            catch (JsonException e)
             {
+                _logger.Warning(e, "Invalid config, deleting");
                 Value = new T();
                 IOUtils.TryDeleteFile(_saveFilePath);
             }
@@ -68,12 +75,14 @@ namespace BeatSaberModManager.Services.Implementations.Settings
         {
             if (!IOUtils.TryCreateDirectory(_saveDirPath))
                 return;
-            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, new FileStreamOptions { Access = FileAccess.Write, Mode = FileMode.Create });
+#pragma warning disable CA2007
+            await using FileStream? fileStream = IOUtils.TryOpenFile(_saveFilePath, FileMode.Create, FileAccess.Write);
+#pragma warning restore CA2007
             if (fileStream is not null)
-                await JsonSerializer.SerializeAsync(fileStream, Value, _jsonTypeInfo);
+                await JsonSerializer.SerializeAsync(fileStream, Value, _jsonTypeInfo).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
-        public async ValueTask DisposeAsync() => await SaveAsync();
+        public async ValueTask DisposeAsync() => await SaveAsync().ConfigureAwait(false);
     }
 }

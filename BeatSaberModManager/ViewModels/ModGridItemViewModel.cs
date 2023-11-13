@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System;
+using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Implementations.Settings;
 using BeatSaberModManager.Models.Interfaces;
@@ -20,6 +21,8 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public ModGridItemViewModel(IMod availableMod, IMod? installedMod, ISettings<AppSettings> appSettings)
         {
+            ArgumentNullException.ThrowIfNull(availableMod);
+            ArgumentNullException.ThrowIfNull(appSettings);
             _availableMod = availableMod;
             _installedMod = installedMod;
             _isCheckBoxChecked = installedMod is not null || availableMod.IsRequired || (appSettings.Value.SaveSelectedMods && appSettings.Value.SelectedMods.Contains(availableMod.Name));

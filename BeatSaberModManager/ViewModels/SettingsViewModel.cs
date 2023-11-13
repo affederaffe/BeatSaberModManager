@@ -16,10 +16,11 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// ViewModel for <see cref="BeatSaberModManager.Views.Pages.SettingsPage"/>.
     /// </summary>
-    public class SettingsViewModel : ViewModelBase
+    public sealed class SettingsViewModel : ViewModelBase, IDisposable
     {
         private readonly ISettings<AppSettings> _appSettings;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
+        private readonly DirectoryExistsObservable _installDirExistsObservable;
 
         private const string BeatSaverScheme = "beatsaver";
         private const string ModelSaberScheme = "modelsaber";
@@ -30,20 +31,21 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public SettingsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar)
         {
+            ArgumentNullException.ThrowIfNull(protocolHandlerRegistrar);
             _appSettings = appSettings;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
             _beatSaverOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(BeatSaverScheme);
             _modelSaberOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(ModelSaberScheme);
             _playlistOneClickCheckBoxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(BSPlaylistScheme);
             PickInstallDirInteraction = new Interaction<Unit, string?>();
-            DirectoryExistsObservable installDirExistsObservable = new();
-            IsInstallDirValidObservable = installDirExistsObservable.Select(_ => installDirValidator.ValidateInstallDir(installDirExistsObservable.Path));
-            ValidatedInstallDirObservable = IsInstallDirValidObservable.Where(static x => x).Select(_ => installDirExistsObservable.Path!);
-            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(installDirExistsObservable.Path!), installDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
+            _installDirExistsObservable = new DirectoryExistsObservable();
+            IsInstallDirValidObservable = _installDirExistsObservable.Select(_ => installDirValidator.ValidateInstallDir(_installDirExistsObservable.Path));
+            ValidatedInstallDirObservable = IsInstallDirValidObservable.Where(static x => x).Select(_ => _installDirExistsObservable.Path!);
+            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(new Uri(_installDirExistsObservable.Path!)), _installDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
             PickInstallDirCommand = ReactiveCommand.CreateFromObservable(() => PickInstallDirInteraction.Handle(Unit.Default)
                 .Where(installDirValidator.ValidateInstallDir));
             PickInstallDirCommand.Subscribe(x => InstallDir = x);
-            this.WhenAnyValue(static x => x.InstallDir).Subscribe(x => installDirExistsObservable.Path = x);
+            this.WhenAnyValue(static x => x.InstallDir).Subscribe(x => _installDirExistsObservable.Path = x);
             this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, BeatSaverScheme));
             this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, ModelSaberScheme));
             this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, BSPlaylistScheme));
@@ -152,6 +154,14 @@ namespace BeatSaberModManager.ViewModels
                 _protocolHandlerRegistrar.RegisterProtocolHandler(protocol);
             else
                 _protocolHandlerRegistrar.UnregisterProtocolHandler(protocol);
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            _installDirExistsObservable.Dispose();
+            OpenInstallDirCommand.Dispose();
+            PickInstallDirCommand.Dispose();
         }
     }
 }

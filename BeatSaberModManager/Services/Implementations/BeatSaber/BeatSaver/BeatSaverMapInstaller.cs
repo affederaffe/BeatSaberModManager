@@ -84,6 +84,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         /// <returns>True when the operation succeeds, false otherwise.</returns>
         public static bool TryExtractBeatSaverMapToDir(string installDir, BeatSaverMap map, ZipArchive archive)
         {
+            ArgumentNullException.ThrowIfNull(map);
             string customLevelsDirectoryPath = Path.Join(installDir, "Beat Saber_Data", "CustomLevels");
             IOUtils.TryCreateDirectory(customLevelsDirectoryPath);
             string mapName = string.Concat($"{map.Id} ({map.MetaData.SongName} - {map.MetaData.LevelAuthorName})".Split(_illegalCharacters));
@@ -103,7 +104,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
                     continue;
                 }
 
+#pragma warning disable CA2007
                 await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+#pragma warning restore CA2007
                 return await JsonSerializer.DeserializeAsync(contentStream, BeatSaverJsonSerializerContext.Default.BeatSaverMap).ConfigureAwait(false);
             }
 
@@ -114,7 +117,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             while (retries != 0)
             {
-                HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(mapVersion.DownloadUrl), progress).ConfigureAwait(false);
+                HttpResponseMessage response = await _httpClient.TryGetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);
@@ -131,10 +134,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
 
         private async Task<bool> TryInstallBeatSaverMapAsync(string installDir, BeatSaverMap? map, IStatusProgress? progress = null)
         {
-            if (map is null || map.Versions.Length <= 0)
+            if (map is null || map.Versions.Count <= 0)
                 return false;
             progress?.Report(new ProgressInfo(StatusType.Installing, map.Name));
-            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions.Last(), progress).ConfigureAwait(false);
+            using ZipArchive? archive = await DownloadBeatSaverMapAsync(map.Versions[^1], progress).ConfigureAwait(false);
             return archive is not null && TryExtractBeatSaverMapToDir(installDir, map, archive);
         }
 

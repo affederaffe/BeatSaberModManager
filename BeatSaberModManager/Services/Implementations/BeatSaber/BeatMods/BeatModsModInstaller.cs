@@ -18,6 +18,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
     /// <inheritdoc />
     public class BeatModsModInstaller : IModInstaller
     {
+        private static readonly string[] _installIpaArgs = { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" };
+        private static readonly string[] _uninstallIpaArgs = { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" };
+
         private readonly IModProvider _modProvider;
 
         /// <summary>
@@ -42,7 +45,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             bool isModLoader = _modProvider.IsModLoader(beatModsMod);
             string extractDir = isModLoader ? installDir : pendingDirPath;
             bool success = IOUtils.TryExtractArchive(archive, extractDir, true);
-            return isModLoader ? success && await InstallBsipaAsync(installDir) : success;
+            return isModLoader ? success && await InstallBsipaAsync(installDir).ConfigureAwait(false) : success;
         }
 
         /// <inheritdoc />
@@ -110,14 +113,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             string[]? lines = await IOUtils.TryReadAllLinesAsync(protonRegPath).ConfigureAwait(false);
             if (lines is null)
                 return false;
-            IEnumerable<string> newLines = lines.Select(static x => x.StartsWith("[Software\\\\Wine\\\\DllOverrides]", StringComparison.Ordinal) ? x + "\n\"winhttp\"=\"native,builtin\"" : x);
+            IEnumerable<string> newLines = lines.Select(static x => x.StartsWith(@"[Software\\Wine\\DllOverrides]", StringComparison.Ordinal) ? x + "\n\"winhttp\"=\"native,builtin\"" : x);
             await File.WriteAllLinesAsync(protonRegPath, newLines).ConfigureAwait(false);
             string winhttpPath = Path.Join(installDir, "winhttp.dll");
             if (File.Exists(winhttpPath))
                 return true;
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(installDir);
-            IPA.Program.Main(new[] { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" });
+            IPA.Program.Main(_installIpaArgs);
             Directory.SetCurrentDirectory(oldDir);
             return true;
         }
@@ -142,7 +145,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             string oldDir = Directory.GetCurrentDirectory();
             Directory.SetCurrentDirectory(installDir);
-            IPA.Program.Main(new[] { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" });
+            IPA.Program.Main(_uninstallIpaArgs);
             Directory.SetCurrentDirectory(oldDir);
             RemoveBsipaFiles(installDir, bsipa);
             return ValueTask.CompletedTask;
