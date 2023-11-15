@@ -33,7 +33,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
         {
             _args = args;
             _httpClient = httpClient;
-            _version = new Version(Program.Version);
+            _version = new Version(ThisAssembly.Info.Version);
         }
 
         /// <inheritdoc />

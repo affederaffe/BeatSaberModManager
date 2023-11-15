@@ -31,7 +31,7 @@ namespace BeatSaberModManager.Services.Implementations.Settings
             _logger = logger;
             _jsonTypeInfo = jsonTypeInfo;
             string appDataFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-            _saveDirPath = Path.Join(appDataFolderPath, Program.Product);
+            _saveDirPath = Path.Join(appDataFolderPath, ThisAssembly.Info.Product);
             _saveFilePath = Path.Join(_saveDirPath, $"{typeof(T).Name}.json");
         }
 

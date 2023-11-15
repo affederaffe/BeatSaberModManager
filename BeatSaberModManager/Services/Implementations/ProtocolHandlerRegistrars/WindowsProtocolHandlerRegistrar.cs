@@ -30,7 +30,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
             using RegistryKey commandKey = protocolKey.CreateSubKey("shell").CreateSubKey("open").CreateSubKey("command");
             protocolKey.SetValue(string.Empty, $"URL:{protocol} Protocol", RegistryValueKind.String);
             protocolKey.SetValue("URL Protocol", string.Empty, RegistryValueKind.String);
-            protocolKey.SetValue("OneClick-Provider", Program.Product, RegistryValueKind.String);
+            protocolKey.SetValue("OneClick-Provider", ThisAssembly.Info.Product, RegistryValueKind.String);
             commandKey.SetValue(string.Empty, $"\"{Environment.ProcessPath}\" \"--install\" \"%1\"");
         }
 
@@ -39,7 +39,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
         {
             using RegistryKey? protocolKey = Registry.CurrentUser.OpenSubKey("Software")?.OpenSubKey("Classes")?.OpenSubKey(protocol, true);
             string? registeredProviderName = protocolKey?.GetValue("OneClick-Provider")?.ToString();
-            if (registeredProviderName == Program.Product)
+            if (registeredProviderName == ThisAssembly.Info.Product)
                 protocolKey?.DeleteSubKeyTree(string.Empty, false);
         }
     }

@@ -41,7 +41,7 @@ namespace BeatSaberModManager.ViewModels
             _settingsViewModel = settingsViewModel;
             _statusProgress = statusProgress;
             _playlistInstaller = playlistInstaller;
-            AppVersion = Program.Version;
+            AppVersion = ThisAssembly.Info.Version;
             ModsViewModel = modsViewModel;
             PickPlaylistInteraction = new Interaction<Unit, string?>();
             settingsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
