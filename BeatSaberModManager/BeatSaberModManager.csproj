@@ -34,21 +34,22 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Configuration)'=='Debug'">
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.0" />
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.0.5" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.0.0" />
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.0" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.0.0" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.0" />
-        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.0" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.0" />
-        <PackageReference Include="DynamicData" Version="7.14.2" />
-        <PackageReference Include="ReactiveUI" Version="19.2.1" />
-        <PackageReference Include="Serilog" Version="3.0.1" />
-        <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
+        <PackageReference Include="Avalonia" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
+        <PackageReference Include="DynamicData" Version="8.1.1" />
+        <PackageReference Include="ReactiveUI" Version="19.5.1" />
+        <PackageReference Include="Serilog" Version="3.1.1" />
+        <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00968" />
         <PackageReference Include="StrongInject" Version="1.4.5-CI-20220524-023137" />
+        <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.4.1" />
         <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
     </ItemGroup>
 
