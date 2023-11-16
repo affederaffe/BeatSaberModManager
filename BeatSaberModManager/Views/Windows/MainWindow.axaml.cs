@@ -1,9 +1,17 @@
 using System;
+using System.Linq;
+using System.Reactive.Linq;
 
 using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Chrome;
+using Avalonia.Controls.Primitives;
 using Avalonia.ReactiveUI;
+using Avalonia.VisualTree;
 
 using BeatSaberModManager.ViewModels;
+
+using ReactiveUI;
 
 
 namespace BeatSaberModManager.Views.Windows
@@ -27,7 +35,6 @@ namespace BeatSaberModManager.Views.Windows
             InitializeComponent();
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
-            Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
             viewModel.PickInstallDirInteraction.RegisterHandler(async context => context.SetOutput(await new InstallFolderDialogWindow().ShowDialog<string?>(this).ConfigureAwait(false)));
         }
     }

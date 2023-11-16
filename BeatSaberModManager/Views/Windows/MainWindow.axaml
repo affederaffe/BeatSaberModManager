@@ -11,6 +11,7 @@
         x:Class="BeatSaberModManager.Views.Windows.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Name="Window"
+        Margin="{Binding #Window.OffScreenMargin}"
         TransparencyLevelHint="Mica, Blur, None"
         Title="{StaticResource MainWindow:Title}"
         Icon="/Resources/Icons/Icon.ico"
@@ -22,7 +23,7 @@
         <cv:StatusTypeEnumConverter x:Key="StatusTypeEnumConverter" />
     </Window.Resources>
 
-    <c:HamburgerMenu x:Name="HamburgerMenu" Margin="{Binding #Window.OffScreenMargin}" SelectedIndex="{Binding SettingsViewModel.TabIndex, Mode=TwoWay}">
+    <c:HamburgerMenu x:Name="HamburgerMenu" Margin="{Binding #Window.OffScreenMargin}" ContentMargin="{Binding #Window.WindowDecorationMargin}" SelectedIndex="{Binding SettingsViewModel.TabIndex, Mode=TwoWay}">
         <TabItem>
             <p:IntroPage />
             <TabItem.Header>

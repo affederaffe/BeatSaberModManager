@@ -149,11 +149,13 @@
         <Setter Property="TabStripPlacement" Value="Left" />
         <Setter Property="Template">
             <ControlTemplate>
-                <Panel Background="{TemplateBinding PaneBackground}">
+                <Panel Background="{x:Null}">
+                    <Rectangle Fill="{TemplateBinding PaneBackground}" IsHitTestVisible="False" />
                     <SplitView x:Name="PART_NavigationPane"
                                CompactPaneLength="{StaticResource PaneCompactWidth}"
                                DisplayMode="Inline"
                                IsPaneOpen="True"
+                               Margin="{TemplateBinding ContentMargin}"
                                OpenPaneLength="{StaticResource PaneExpandWidth}"
                                PaneBackground="Transparent">
                         <SplitView.Pane>

@@ -31,6 +31,11 @@ namespace BeatSaberModManager.Views.Controls
         public static readonly StyledProperty<int> ExpandedModeThresholdWidthProperty = AvaloniaProperty.Register<HamburgerMenu, int>(nameof(ExpandedModeThresholdWidth), 1008);
 
         /// <summary>
+        /// Defines the <see cref="ContentMarginProperty "/> property.
+        /// </summary>
+        public static readonly StyledProperty<Thickness> ContentMarginProperty = AvaloniaProperty.Register<HamburgerMenu, Thickness>(nameof(ContentMargin));
+
+        /// <summary>
         /// Gets or sets the brush used to draw the pane's background.
         /// </summary>
         public IBrush? PaneBackground
@@ -55,6 +60,15 @@ namespace BeatSaberModManager.Views.Controls
         {
             get => GetValue(ExpandedModeThresholdWidthProperty);
             set => SetValue(ExpandedModeThresholdWidthProperty, value);
+        }
+
+        /// <summary>
+        /// Gets or sets margin of the content.
+        /// </summary>
+        public Thickness ContentMargin
+        {
+            get => GetValue(ContentMarginProperty);
+            set => SetValue(ContentMarginProperty, value);
         }
 
         /// <inheritdoc />
