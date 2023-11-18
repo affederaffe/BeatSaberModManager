@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 
 using Avalonia;
+using Avalonia.Media;
 using Avalonia.ReactiveUI;
 
 using BeatSaberModManager.Models.Implementations.Settings;
@@ -51,10 +52,17 @@ namespace BeatSaberModManager
             return RunAvaloniaApp();
         }
 
-        private int RunAvaloniaApp() =>
-            AppBuilder.Configure(() => _application.Value)
+        private int RunAvaloniaApp() => BuildAvaloniaApp().StartWithClassicDesktopLifetime(null!);
+
+        private AppBuilder BuildAvaloniaApp()
+        {
+            AppBuilder appBuilder = AppBuilder.Configure(() => _application.Value)
                 .UsePlatformDetect()
                 .UseReactiveUI()
-                .StartWithClassicDesktopLifetime(null!);
+                .WithInterFont();
+            if (OperatingSystem.IsLinux())
+                appBuilder = appBuilder.With(new FontManagerOptions { DefaultFamilyName = "Noto Sans" });
+            return appBuilder;
+        }
     }
 }
