@@ -1,3 +1,6 @@
 [submodule "BSIPA-Linux"]
 	path = BSIPA-Linux
 	url = https://github.com/geefr/BSIPA-Linux.git
+[submodule "LibDepotDownloader"]
+	path = LibDepotDownloader
+	url = https://github.com/affederaffe/LibDepotDownloader
