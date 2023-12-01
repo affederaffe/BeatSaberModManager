@@ -1,0 +1,21 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:labs="using:Avalonia.Labs.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="BeatSaberModManager.Views.Dialogs.PickInstallDirDialog">
+
+    <labs:ContentDialog x:Name="Dialog"
+                        Title="{DynamicResource PickInstallDirDialog:Title}"
+                        PrimaryButtonText="{DynamicResource PickInstallDirDialog:SelectButton}"
+                        SecondaryButtonText="{DynamicResource PickInstallDirDialog:CancelButton}">
+        <TextBlock Margin="20"
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Top"
+                   Text="{DynamicResource PickInstallDirDialog:NoInstallDirText}">
+        </TextBlock>
+    </labs:ContentDialog>
+
+</UserControl>
