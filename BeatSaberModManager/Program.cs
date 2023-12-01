@@ -18,6 +18,7 @@ using BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.DependencyManagement;
 using BeatSaberModManager.Services.Implementations.Http;
+using BeatSaberModManager.Services.Implementations.LegacyVersions.Steam;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars;
 using BeatSaberModManager.Services.Implementations.Settings;
@@ -25,10 +26,13 @@ using BeatSaberModManager.Services.Implementations.Updater;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views;
+using BeatSaberModManager.Views.Helpers;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Pages;
 using BeatSaberModManager.Views.Theming;
 using BeatSaberModManager.Views.Windows;
+
+using LibDepotDownloader;
 
 using Serilog;
 
@@ -76,6 +80,7 @@ namespace BeatSaberModManager
         [RegisterModule(typeof(UpdaterModule))]
         [RegisterModule(typeof(ProtocolHandlerRegistrarModule))]
         [RegisterModule(typeof(GameServicesModule))]
+        [RegisterModule(typeof(LegacyGameVersionsModule))]
         [RegisterModule(typeof(ModServicesModule))]
         [RegisterModule(typeof(AssetProvidersModule))]
         [RegisterModule(typeof(ViewModelModule))]
@@ -128,6 +133,11 @@ namespace BeatSaberModManager
         [Register<BeatSaberInstallDirValidator, IInstallDirValidator>(Scope.SingleInstance)]
         internal static class GameServicesModule;
 
+        [Register<SteamLegacyGameVersionProvider, ILegacyGameVersionProvider>(Scope.SingleInstance)]
+        [Register<SteamLegacyGameVersionInstaller, ILegacyGameVersionInstaller>(Scope.SingleInstance)]
+        [Register<DialogSteamAuthenticator, ISteamAuthenticator>(Scope.SingleInstance)]
+        internal static class LegacyGameVersionsModule;
+
         [Register<MD5HashProvider, IHashProvider>(Scope.SingleInstance)]
         [Register<SimpleDependencyResolver, IDependencyResolver>(Scope.SingleInstance)]
         [Register<BeatModsModProvider, IModProvider>(Scope.SingleInstance)]
@@ -145,6 +155,7 @@ namespace BeatSaberModManager
         [Register<MainWindowViewModel>(Scope.SingleInstance)]
         [Register<DashboardViewModel>(Scope.SingleInstance)]
         [Register<ModsViewModel>(Scope.SingleInstance)]
+        [Register<LegacyGameVersionsViewModel>(Scope.SingleInstance)]
         [Register<SettingsViewModel>(Scope.SingleInstance)]
         [Register<AssetInstallWindowViewModel>(Scope.SingleInstance)]
         internal static class ViewModelModule;
@@ -152,13 +163,14 @@ namespace BeatSaberModManager
         [Register<App, Application>(Scope.SingleInstance)]
         [Register<LocalizationManager>(Scope.SingleInstance)]
         [Register<ThemeManager>(Scope.SingleInstance)]
-        [Register(typeof(StatusProgress), Scope.SingleInstance, typeof(IStatusProgress), typeof(StatusProgress))]
+        [Register<StatusProgress>(Scope.InstancePerDependency)]
         internal static class ApplicationModule;
 
         [Register<MainWindow>(Scope.SingleInstance)]
         [Register<AssetInstallWindow>(Scope.SingleInstance)]
         [Register<DashboardPage>(Scope.SingleInstance)]
         [Register<ModsPage>(Scope.SingleInstance)]
+        [Register<LegacyGameVersionsPage>(Scope.SingleInstance)]
         [Register<SettingsPage>(Scope.SingleInstance)]
         internal static class ViewsModule
         {
@@ -175,7 +187,10 @@ namespace BeatSaberModManager
             public static FuncDataTemplate CreateModsPageDataTemplate(Lazy<ModsPage> view) => new(static t => t is ModsViewModel, (_, _) => view.Value, true);
 
             [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
-            public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<SettingsPage> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value, true);
+            public static FuncDataTemplate CreateLegacyGameVersionsPageDataTemplate(Lazy<LegacyGameVersionsPage> view) => new(static t => t is LegacyGameVersionsViewModel, (_, _) => view.Value, true);
+
+            [Factory(Scope.SingleInstance, typeof(IDataTemplate))]
+            public static FuncDataTemplate CreateSettingsPageDataTemplate(Lazy<SettingsPage> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value, true);
         }
 
         internal static bool IsProduction =>

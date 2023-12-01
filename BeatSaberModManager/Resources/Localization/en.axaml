@@ -6,9 +6,8 @@
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
     <sys:String x:Key="MainWindow:DashboardHeader">Dashboard</sys:String>
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
+    <sys:String x:Key="MainWindow:LegacyGameVersionsHeader">Legacy Versions</sys:String>
     <sys:String x:Key="MainWindow:SettingsHeader">Settings</sys:String>
-    <sys:String x:Key="MainWindow:MoreInfoButton">More Info</sys:String>
-    <sys:String x:Key="MainWindow:UpdateModsButton">Update Mods</sys:String>
 
     <TextBlock x:Key="IntroView:IntroText" FontSize="17.5" LineHeight="30" TextAlignment="Center">
         <Span FontSize="30" FontWeight="Bold" >Beat Saber Mod Manager</Span><LineBreak />
@@ -45,6 +44,11 @@
     <sys:String x:Key="ModsView:FailedToLoad">Failed to load mods</sys:String>
     <sys:String x:Key="ModsView:NoModsAvailable">No mods available for this version yet</sys:String>
     <sys:String x:Key="ModsView:SearchWatermark">Search...</sys:String>
+    <sys:String x:Key="ModsView:MoreInfoButton">More Info</sys:String>
+    <sys:String x:Key="ModsView:UpdateModsButton">Update Mods</sys:String>
+
+    <sys:String x:Key="LegacyGameVersionsView:MoreInfoButton">More Info</sys:String>
+    <sys:String x:Key="LegacyGameVersionsView:InstallVersionButton">Install Version</sys:String>
 
     <sys:String x:Key="SettingsView:InstallationLabel">Installation</sys:String>
     <sys:String x:Key="SettingsView:OpenFolderButton">Open Folder</sys:String>
@@ -64,12 +68,19 @@
     <sys:String x:Key="Themes:Light">Light</sys:String>
     <sys:String x:Key="Themes:Dark">Dark</sys:String>
 
-    <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">It looks like you haven't set your installation directory yet, would you like to do so?</sys:String>
-    <sys:String x:Key="InstallDirDialogWindow:SelectButton">Select</sys:String>
-    <sys:String x:Key="InstallDirDialogWindow:CancelButton">Cancel</sys:String>
+    <sys:String x:Key="PickInstallDirDialog:NoInstallDirText">It looks like you haven't set your installation directory yet, would you like to do so?</sys:String>
+    <sys:String x:Key="PickInstallDirDialog:SelectButton">Select</sys:String>
+    <sys:String x:Key="PickInstallDirDialog:CancelButton">Cancel</sys:String>
 
-    <sys:String x:Key="ExceptionWindow:Title">Application crashed</sys:String>
-    <sys:String x:Key="ExceptionWindow:Ok">Ok</sys:String>
+    <sys:String x:Key="ExceptionDialog:Title">Application crashed</sys:String>
+    <sys:String x:Key="ExceptionDialog:Ok">Ok</sys:String>
+
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:Title">Steam authentication required</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:ContinueButton">Continue</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:CancelButton">Cancel</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:UsernameLabel">Username</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:PasswordLabel">Password</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:RememberPasswordLabel">Remember password</sys:String>
 
     <sys:String x:Key="Status:Installing">Installing:</sys:String>
     <sys:String x:Key="Status:Uninstalling">Uninstalling:</sys:String>

@@ -7,19 +7,9 @@ using BeatSaberModManager.Services.Interfaces;
 namespace BeatSaberModManager.Services.Implementations.DependencyManagement
 {
     /// <inheritdoc />
-    public class SimpleDependencyResolver : IDependencyResolver
+    public class SimpleDependencyResolver(IModProvider modProvider) : IDependencyResolver
     {
-        private readonly IModProvider _modProvider;
-        private readonly Dictionary<IMod, HashSet<IMod>> _dependencyRegistry;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SimpleDependencyResolver"/> class.
-        /// </summary>
-        public SimpleDependencyResolver(IModProvider modProvider)
-        {
-            _modProvider = modProvider;
-            _dependencyRegistry = new Dictionary<IMod, HashSet<IMod>>();
-        }
+        private readonly Dictionary<IMod, HashSet<IMod>> _dependencyRegistry = new();
 
         /// <inheritdoc />
         public bool IsDependency(IMod modification) => _dependencyRegistry.TryGetValue(modification, out HashSet<IMod>? dependents) && dependents.Count != 0;
@@ -42,7 +32,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
 
         private void ResolveDependencies(IMod modification, HashSet<IMod> dependencies)
         {
-            foreach (IMod dependency in _modProvider.GetDependencies(modification))
+            foreach (IMod dependency in modProvider.GetDependencies(modification))
             {
                 if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents))
                     dependents.Add(modification);
@@ -55,7 +45,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
 
         private void UnresolveDependencies(IMod modification, HashSet<IMod> dependencies)
         {
-            foreach (IMod dependency in _modProvider.GetDependencies(modification))
+            foreach (IMod dependency in modProvider.GetDependencies(modification))
             {
                 if (!_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents))
                     continue;

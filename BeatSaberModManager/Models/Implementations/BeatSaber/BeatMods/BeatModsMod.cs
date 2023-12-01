@@ -9,7 +9,7 @@ using BeatSaberModManager.Models.Interfaces;
 namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 {
     /// <inheritdoc cref="BeatSaberModManager.Models.Interfaces.IMod" />
-    public class BeatModsMod : IMod
+    public class BeatModsMod : IMod, IEquatable<BeatModsMod>
     {
         /// <inheritdoc />
         [JsonPropertyName("name")]
@@ -50,5 +50,11 @@ namespace BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods
 
         /// <inheritdoc />
         public override int GetHashCode() => HashCode.Combine(Name, Version);
+
+        /// <inheritdoc />
+        public bool Equals(BeatModsMod? other) => other is not null && (ReferenceEquals(this, other) || (Name == other.Name && Version.Equals(other.Version)));
+
+        /// <inheritdoc />
+        public override bool Equals(object? obj) => obj is not null && (ReferenceEquals(this, obj) || (obj is BeatModsMod beatModsMod && Equals(beatModsMod)));
     }
 }

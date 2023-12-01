@@ -33,7 +33,7 @@ namespace BeatSaberModManager.Views.Windows
             ViewModel = viewModel;
             ExtendClientAreaToDecorationsHint = !OperatingSystem.IsLinux();
             Margin = ExtendClientAreaToDecorationsHint ? WindowDecorationMargin : new Thickness();
-            viewModel.ProgressInfoObservable
+            viewModel.StatusProgress.ProgressInfo
                 .Select(x => $"{(this.TryFindResource(StatusTypeEnumConverter.Convert(x.StatusType), out object? value) ? value : null)}: {x.Text}")
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(x => ViewModel.Log.Insert(0, x));

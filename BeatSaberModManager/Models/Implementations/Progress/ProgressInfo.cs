@@ -6,26 +6,17 @@ namespace BeatSaberModManager.Models.Implementations.Progress
     /// <summary>
     /// Represents information about the current operation.
     /// </summary>
-    public readonly struct ProgressInfo : IEquatable<ProgressInfo>
+    public readonly struct ProgressInfo(StatusType statusType, string? text) : IEquatable<ProgressInfo>
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProgressInfo"/> struct.
-        /// </summary>
-        public ProgressInfo(StatusType statusType, string? text)
-        {
-            StatusType = statusType;
-            Text = text;
-        }
-
         /// <summary>
         /// The status of the current operation.
         /// </summary>
-        public StatusType StatusType { get; }
+        public StatusType StatusType { get; } = statusType;
 
         /// <summary>
         /// The message to display.
         /// </summary>
-        public string? Text { get; }
+        public string? Text { get; } = text;
 
         /// <inheritdoc />
         public override bool Equals(object? obj) => obj is ProgressInfo progressInfo && this == progressInfo;

@@ -1,0 +1,65 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="using:BeatSaberModManager.Views.Controls">
+
+    <ControlTheme x:Key="{x:Type c:CardControl}" TargetType="c:CardControl">
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="Width" Value="200"/>
+        <Setter Property="Height" Value="260"/>
+        <Setter Property="BoxShadow" Value="0 0 7 0 #000000" />
+        <Setter Property="InternalBoxShadow" Value="0 0 5 0 #000000" />
+        <Setter Property="InternalCornerRadius" Value="7" />
+        <Setter Property="CornerRadius" Value="7" />
+        <Setter Property="InternalPadding" Value="20" />
+        <Setter Property="ScaleOnPointerOver" Value="True"/>
+        <Setter Property="Background" Value="{DynamicResource ThemeControlHighBrush}" />
+        <Setter Property="SecondaryBackground" Value="{DynamicResource ThemeControlMidBrush}" />
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Border BoxShadow="{TemplateBinding BoxShadow}"
+                        CornerRadius="{TemplateBinding CornerRadius}"
+                        Background="{TemplateBinding Background}"
+                        Margin="{TemplateBinding Padding}">
+                    <Grid RowDefinitions="*, Auto">
+                        <Grid Grid.Row="0" RowDefinitions="*">
+                            <ContentPresenter  Name="PART_ContentPresenter"
+                                               Content="{TemplateBinding Content}"
+                                               ContentTemplate="{TemplateBinding ContentTemplate}"
+                                               CornerRadius="{TemplateBinding TopCornerRadius}"
+                                               Padding="{TemplateBinding InternalPadding}">
+                            </ContentPresenter>
+                        </Grid>
+                        <Border Grid.Row="1" ClipToBounds="false"
+                                Background="{TemplateBinding SecondaryBackground}"
+                                CornerRadius="{TemplateBinding BottomCornerRadius}">
+                            <Border CornerRadius="{TemplateBinding BottomCornerRadius}">
+                                <Grid ColumnDefinitions="10, *, 10" RowDefinitions="10, *, 5, *, 10">
+                                    <ContentPresenter Grid.Column="1"
+                                                      Grid.Row="1"
+                                                      Name="PART_HeaderPresenter"
+                                                      Content="{TemplateBinding Header}"
+                                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                                    </ContentPresenter>
+                                    <ContentPresenter Grid.Column="1"
+                                                      Grid.Row="3"
+                                                      Content="{TemplateBinding SecondaryHeader}"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                                    </ContentPresenter>
+                                </Grid>
+                            </Border>
+                        </Border>
+                    </Grid>
+                </Border>
+            </ControlTemplate>
+        </Setter>
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Easing="ExponentialEaseOut" Duration="0:0:0.2" />
+            </Transitions>
+        </Setter>
+    </ControlTheme>
+
+</ResourceDictionary>

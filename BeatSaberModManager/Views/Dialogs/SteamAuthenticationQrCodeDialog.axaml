@@ -1,0 +1,16 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:labs="using:Avalonia.Labs.Controls"
+             xmlns:qr="clr-namespace:Avalonia.Labs.Qr;assembly=Avalonia.Labs.Qr"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BeatSaberModManager.Views.Dialogs.SteamAuthenticationQrCodeDialog">
+
+    <labs:ContentDialog x:Name="Dialog"
+                        Title="{DynamicResource SteamAuthenticationLoginDetailsDialog:Title}"
+                        PrimaryButtonText="{DynamicResource SteamAuthenticationQrCodeDialog:ContinueButton}">
+        <qr:QrCode x:Name="QrCode" />
+    </labs:ContentDialog>
+
+</UserControl>

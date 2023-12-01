@@ -23,8 +23,8 @@
                                       Background="Transparent"
                                       BorderBrush="{x:Null}"
                                       CornerRadius="0"
-                                      IsChecked="{TemplateBinding IsSearchEnabled, Mode=TwoWay}"
-                                      Content="{TemplateBinding SearchIcon}">
+                                      IsChecked="{TemplateBinding IsSearchEnabled, Mode=TwoWay}">
+                            <PathIcon Data="{StaticResource Icons:Search}" />
                         </ToggleButton>
 
                         <TextBox Name="PART_SearchTextBox"

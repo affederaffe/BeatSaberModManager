@@ -3,10 +3,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:BeatSaberModManager.ViewModels"
-        xmlns:cv="using:BeatSaberModManager.Views.Converters"
         xmlns:p="using:BeatSaberModManager.Views.Pages"
         xmlns:c="using:BeatSaberModManager.Views.Controls"
-        xmlns:h="using:BeatSaberModManager.Views.Helpers"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="BeatSaberModManager.Views.Windows.MainWindow"
         x:DataType="vm:MainWindowViewModel"
@@ -19,57 +17,33 @@
         MinWidth="820" MinHeight="350"
         Width="1100" Height="600">
 
-    <Window.Resources>
-        <cv:StatusTypeEnumConverter x:Key="StatusTypeEnumConverter" />
-    </Window.Resources>
-
     <c:HamburgerMenu x:Name="HamburgerMenu" Margin="{Binding #Window.OffScreenMargin}" ContentMargin="{Binding #Window.WindowDecorationMargin}" SelectedIndex="{Binding SettingsViewModel.TabIndex, Mode=TwoWay}">
-        <TabItem>
-            <p:IntroPage />
-            <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:IntroHeader}" IconData="{StaticResource Icons:Info}" />
-            </TabItem.Header>
-        </TabItem>
-        <TabItem Content="{Binding DashboardViewModel}">
-            <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:DashboardHeader}" IconData="{StaticResource Icons:Dashboard}" />
-            </TabItem.Header>
-        </TabItem>
-        <TabItem Content="{Binding ModsViewModel}">
-            <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:ModsHeader}" IconData="{StaticResource Icons:Library}" />
-            </TabItem.Header>
-        </TabItem>
-        <TabItem Content="{Binding SettingsViewModel}">
-            <TabItem.Header>
-                <c:IconHeader Content="{DynamicResource MainWindow:SettingsHeader}" IconData="{StaticResource Icons:Settings}" />
-            </TabItem.Header>
-        </TabItem>
-
-        <c:HamburgerMenu.Tag>
-            <Grid Height="33"
-                  ColumnDefinitions="*, Auto, Auto"
-                  Margin="0, 5">
-                <ProgressBar Grid.Column="0"
-                             Margin="10, 0, 5, 0"
-                             HorizontalAlignment="Stretch"
-                             VerticalAlignment="Stretch"
-                             Value="{Binding ProgressValue}">
-                </ProgressBar>
-                <Viewbox Grid.Column="0" ZIndex="1" ClipToBounds="True">
-                    <StackPanel Margin="10, 0, 5, 0" Orientation="Horizontal">
-                        <Label h:ResourceKeyBindingHelper.SourceResourceKey="{Binding ProgressInfo.StatusType, Converter={StaticResource StatusTypeEnumConverter}}" />
-                        <Label Content="{Binding ProgressInfo.Text}" />
-                    </StackPanel>
-                </Viewbox>
-                <Button Grid.Column="1" Margin="5, 0, 5, 0" Command="{Binding MoreInfoCommand}">
-                    <c:IconHeader Padding="4, 0, 0, 0" IconPlacement="Left" Content="{DynamicResource MainWindow:MoreInfoButton}" IconData="{StaticResource Icons:Info}" />
-                </Button>
-                <Button Grid.Column="2" Margin="5, 0, 10, 0" Command="{Binding InstallCommand}">
-                    <c:IconHeader IconPlacement="Left" Content="{DynamicResource MainWindow:UpdateModsButton}" IconData="{StaticResource Icons:Download}" />
-                </Button>
-            </Grid>
-        </c:HamburgerMenu.Tag>
+           <TabItem>
+               <p:IntroPage />
+               <TabItem.Header>
+                   <c:IconHeader Content="{DynamicResource MainWindow:IntroHeader}" IconData="{StaticResource Icons:Info}" />
+               </TabItem.Header>
+           </TabItem>
+           <TabItem Content="{Binding DashboardViewModel}">
+               <TabItem.Header>
+                   <c:IconHeader Content="{DynamicResource MainWindow:DashboardHeader}" IconData="{StaticResource Icons:Dashboard}" />
+               </TabItem.Header>
+           </TabItem>
+           <TabItem Content="{Binding ModsViewModel}">
+               <TabItem.Header>
+                   <c:IconHeader Content="{DynamicResource MainWindow:ModsHeader}" IconData="{StaticResource Icons:Library}" />
+               </TabItem.Header>
+           </TabItem>
+           <TabItem Content="{Binding LegacyGameVersionsViewModel}">
+               <TabItem.Header>
+                   <c:IconHeader Content="{DynamicResource MainWindow:LegacyGameVersionsHeader}" IconData="{StaticResource Icons:ShiftsActivity}" />
+               </TabItem.Header>
+           </TabItem>
+           <TabItem Content="{Binding SettingsViewModel}">
+               <TabItem.Header>
+                   <c:IconHeader Content="{DynamicResource MainWindow:SettingsHeader}" IconData="{StaticResource Icons:Settings}" />
+               </TabItem.Header>
+           </TabItem>
     </c:HamburgerMenu>
 
 </Window>

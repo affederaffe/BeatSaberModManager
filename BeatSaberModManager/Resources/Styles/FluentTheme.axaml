@@ -1,7 +1,9 @@
 <Styles xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:labs="using:Avalonia.Labs.Controls">
 
     <FluentTheme />
+    <labs:ControlThemes />
     <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml" />
     <StyleInclude Source="avares://BeatSaberModManager/Resources/Styles/Brushes.axaml" />
     <StyleInclude Source="avares://BeatSaberModManager/Resources/Styles/Controls.axaml" />

@@ -9,9 +9,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
 using Avalonia.Markup.Xaml;
 
+using BeatSaberModManager.Views.Dialogs;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
-using BeatSaberModManager.Views.Windows;
 
 using ReactiveUI;
 
@@ -61,7 +61,8 @@ namespace BeatSaberModManager.Views
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } lifetime)
                 return;
             lifetime.MainWindow.Show();
-            await new ExceptionWindow(e).ShowDialog(lifetime.MainWindow).ConfigureAwait(true);
+            ExceptionDialog exceptionDialog = new() { ExceptionTextBlock = { Text = e.ToString() } };
+            await exceptionDialog.Dialog.ShowAsync(lifetime.MainWindow).ConfigureAwait(true);
             lifetime.Shutdown(-1);
         }
     }

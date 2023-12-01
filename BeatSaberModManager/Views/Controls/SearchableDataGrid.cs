@@ -6,6 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Chrome;
 using Avalonia.Controls.Primitives;
 using Avalonia.Data;
+using Avalonia.Input;
 using Avalonia.VisualTree;
 
 
@@ -28,11 +29,6 @@ namespace BeatSaberModManager.Views.Controls
         /// Defines the IsSearchEnabledProperty.
         /// </summary>
         public static readonly StyledProperty<bool> IsSearchEnabledProperty = AvaloniaProperty.Register<SearchableDataGrid, bool>(nameof(IsSearchEnabled), defaultBindingMode: BindingMode.TwoWay);
-
-        /// <summary>
-        /// Defines the SearchIconProperty.
-        /// </summary>
-        public static readonly StyledProperty<PathIcon> SearchIconProperty = AvaloniaProperty.Register<SearchableDataGrid, PathIcon>(nameof(SearchIcon));
 
         private TextBox? _searchTextBox;
 
@@ -59,15 +55,6 @@ namespace BeatSaberModManager.Views.Controls
             set => SetValue(WatermarkProperty, value);
         }
 
-        /// <summary>
-        /// Gets or sets the icon of the search icon.
-        /// </summary>
-        public PathIcon SearchIcon
-        {
-            get => GetValue(SearchIconProperty);
-            set => SetValue(SearchIconProperty, value);
-        }
-
         /// <inheritdoc />
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
@@ -85,7 +72,7 @@ namespace BeatSaberModManager.Views.Controls
             ArgumentNullException.ThrowIfNull(change);
             base.OnPropertyChanged(change);
             if (change.Property == IsSearchEnabledProperty && change.GetNewValue<bool>())
-                _searchTextBox?.Focus();
+                _searchTextBox?.Focus(NavigationMethod.Pointer);
         }
 
         /// <inheritdoc />

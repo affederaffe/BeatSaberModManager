@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeatSaberModManager", "Beat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IPA-lib", "BSIPA-Linux\IPA-lib\IPA-lib.csproj", "{5203504D-A4DE-49CB-8C4F-D74BEA4384BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibDepotDownloader", "LibDepotDownloader\LibDepotDownloader\LibDepotDownloader.csproj", "{A31CF792-F495-41C5-9141-623F7BD91C8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{5203504D-A4DE-49CB-8C4F-D74BEA4384BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5203504D-A4DE-49CB-8C4F-D74BEA4384BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5203504D-A4DE-49CB-8C4F-D74BEA4384BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A31CF792-F495-41C5-9141-623F7BD91C8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A31CF792-F495-41C5-9141-623F7BD91C8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A31CF792-F495-41C5-9141-623F7BD91C8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A31CF792-F495-41C5-9141-623F7BD91C8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

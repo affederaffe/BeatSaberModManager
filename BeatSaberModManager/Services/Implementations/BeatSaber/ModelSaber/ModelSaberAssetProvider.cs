@@ -7,23 +7,13 @@ using BeatSaberModManager.Services.Interfaces;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
 {
     /// <inheritdoc />
-    public class ModelSaberAssetProvider : IAssetProvider
+    public class ModelSaberAssetProvider(ModelSaberModelInstaller modelSaberModelInstaller) : IAssetProvider
     {
-        private readonly ModelSaberModelInstaller _modelSaberModelInstaller;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ModelSaberAssetProvider"/> class.
-        /// </summary>
-        public ModelSaberAssetProvider(ModelSaberModelInstaller modelSaberModelInstaller)
-        {
-            _modelSaberModelInstaller = modelSaberModelInstaller;
-        }
-
         /// <inheritdoc />
         public string Protocol => "modelsaber";
 
         /// <inheritdoc />
         public Task<bool> InstallAssetAsync(string installDir, Uri uri, IStatusProgress? progress = null)
-            => _modelSaberModelInstaller.InstallModelAsync(installDir, uri, progress);
+            => modelSaberModelInstaller.InstallModelAsync(installDir, uri, progress);
     }
 }

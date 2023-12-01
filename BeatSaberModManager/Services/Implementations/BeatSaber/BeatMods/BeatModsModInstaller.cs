@@ -16,20 +16,10 @@ using BeatSaberModManager.Utils;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 {
     /// <inheritdoc />
-    public class BeatModsModInstaller : IModInstaller
+    public class BeatModsModInstaller(IModProvider modProvider) : IModInstaller
     {
         private static readonly string[] _installIpaArgs = { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" };
         private static readonly string[] _uninstallIpaArgs = { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" };
-
-        private readonly IModProvider _modProvider;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BeatModsModInstaller"/> class.
-        /// </summary>
-        public BeatModsModInstaller(IModProvider modProvider)
-        {
-            _modProvider = modProvider;
-        }
 
         /// <inheritdoc />
         public async Task<bool> InstallModAsync(string installDir, IMod modification)
@@ -39,10 +29,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             string pendingDirPath = Path.Join(installDir, "IPA", "Pending");
             if (!IOUtils.TryCreateDirectory(pendingDirPath))
                 return false;
-            using ZipArchive? archive = await _modProvider.DownloadModAsync(beatModsMod).ConfigureAwait(false);
+            using ZipArchive? archive = await modProvider.DownloadModAsync(beatModsMod).ConfigureAwait(false);
             if (archive is null)
                 return false;
-            bool isModLoader = _modProvider.IsModLoader(beatModsMod);
+            bool isModLoader = modProvider.IsModLoader(beatModsMod);
             string extractDir = isModLoader ? installDir : pendingDirPath;
             bool success = IOUtils.TryExtractArchive(archive, extractDir, true);
             return isModLoader ? success && await InstallBsipaAsync(installDir).ConfigureAwait(false) : success;
@@ -53,7 +43,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         {
             if (modification is not BeatModsMod beatModsMod)
                 return;
-            bool isModLoader = _modProvider.IsModLoader(beatModsMod);
+            bool isModLoader = modProvider.IsModLoader(beatModsMod);
             if (isModLoader)
                 await UninstallBsipaAsync(installDir, beatModsMod).ConfigureAwait(false);
             else RemoveModFiles(installDir, beatModsMod);

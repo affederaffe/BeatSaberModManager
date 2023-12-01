@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -19,18 +18,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
     /// <summary>
     /// Download and install <see cref="BeatSaverMap"/>s from https://beatsaver.com.
     /// </summary>
-    public class BeatSaverMapInstaller
+    public class BeatSaverMapInstaller(HttpProgressClient httpClient)
     {
-        private readonly HttpProgressClient _httpClient;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BeatSaverMapInstaller"/> class.
-        /// </summary>
-        public BeatSaverMapInstaller(HttpProgressClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
         /// <summary>
         /// Asynchronously downloads and installs a beatmap from https://beatsaver.com by key.
         /// </summary>
@@ -96,7 +85,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             while (retries != 0)
             {
-                using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri(url)).ConfigureAwait(false);
+                using HttpResponseMessage response = await httpClient.TryGetAsync(new Uri(url)).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);
@@ -117,7 +106,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
         {
             while (retries != 0)
             {
-                HttpResponseMessage response = await _httpClient.TryGetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
+                HttpResponseMessage response = await httpClient.TryGetAsync(mapVersion.DownloadUrl, progress).ConfigureAwait(false);
                 if (!response.IsSuccessStatusCode)
                 {
                     await WaitForRateLimitAsync().ConfigureAwait(false);

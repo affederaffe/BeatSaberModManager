@@ -1,0 +1,81 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:sys="using:System"
+             xmlns:linq="using:System.Linq"
+             xmlns:vm="using:BeatSaberModManager.ViewModels"
+             xmlns:c="using:BeatSaberModManager.Views.Controls"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BeatSaberModManager.Views.Pages.LegacyGameVersionsPage"
+             x:DataType="vm:LegacyGameVersionsViewModel">
+
+    <Grid RowDefinitions="*, 33">
+        <TabControl Grid.Row="0" ItemsSource="{Binding LegacyGameVersions}" HorizontalAlignment="Stretch" Padding="0">
+            <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <DataTemplate.DataType>
+                        <x:Type TypeName="linq:IGrouping" x:TypeArguments="sys:Int32, vm:GameVersionViewModel" />
+                    </DataTemplate.DataType>
+
+                    <Label Content="{Binding Key}" />
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <DataTemplate.DataType>
+                        <x:Type TypeName="linq:IGrouping" x:TypeArguments="sys:Int32, vm:GameVersionViewModel" />
+                    </DataTemplate.DataType>
+
+                    <ListBox ItemsSource="{Binding .}" Background="{x:Null}" HorizontalAlignment="Stretch" SelectedValue="{Binding $parent[TabControl].((vm:LegacyGameVersionsViewModel)DataContext).SelectedLegacyGameVersion}">
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="CornerRadius" Value="7" />
+                                <Setter Property="Padding" Value="0" />
+                                <Setter Property="Margin" Value="10" />
+                                <Style Selector="^:pointerover">
+                                    <Setter Property="RenderTransform" Value="scale(1.025)" />
+                                </Style>
+                            </Style>
+                        </ListBox.Styles>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate DataType="vm:GameVersionViewModel">
+                                <c:CardControl Header="{Binding LegacyGameVersion.GameVersion}"
+                                               ScaleOnPointerOver="True"
+                                               ClipToBounds="True"
+                                               Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center">
+                                    <c:AsyncImage Source="{Binding LegacyGameVersion.ReleaseImage}" Stretch="Fill" PlaceholderSource="/Resources/Images/version_image_placeholder.jpg" PlaceholderStretch="Fill" ClipToBounds="True" />
+                                </c:CardControl>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <c:AlignableWrapPanel HorizontalAlignment="Center" VerticalAlignment="Top" HorizontalContentAlignment="Center" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                    </ListBox>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto">
+            <c:StatusBar Grid.Column="0"
+                         Text="{Binding StatusProgress.ProgressInfo^.Text}"
+                         StatusType="{Binding StatusProgress.ProgressInfo^.StatusType}"
+                         ProgressValue="{Binding StatusProgress.ProgressValue^}">
+            </c:StatusBar>
+            <Button Grid.Column="1" Margin="0, 0, 10, 0" Command="{Binding MoreInfoCommand}">
+                <c:IconHeader Padding="4, 0, 0, 0" IconPlacement="Left" Content="{DynamicResource LegacyGameVersionsView:MoreInfoButton}" IconData="{StaticResource Icons:Info}" />
+            </Button>
+            <Button Grid.Column="2" Margin="0, 0, 10, 0" Command="{Binding InstallCommand}">
+                <c:IconHeader IconPlacement="Left" Content="{DynamicResource LegacyGameVersionsView:InstallVersionButton}" IconData="{StaticResource Icons:Download}" />
+            </Button>
+        </Grid>
+    </Grid>
+
+</UserControl>

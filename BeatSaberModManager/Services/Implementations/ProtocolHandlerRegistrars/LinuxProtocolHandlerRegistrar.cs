@@ -13,18 +13,8 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
     [SupportedOSPlatform("linux")]
     public class LinuxProtocolHandlerRegistrar : IProtocolHandlerRegistrar
     {
-        private readonly object _lock;
-        private readonly string _localAppDataPath;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LinuxProtocolHandlerRegistrar"/> class.
-        /// </summary>
-        public LinuxProtocolHandlerRegistrar()
-        {
-            _lock = new object();
-            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            _localAppDataPath = Path.Join(appDataPath, "applications");
-        }
+        private readonly object _lock = new();
+        private readonly string _localAppDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "applications");
 
         /// <inheritdoc />
         public bool IsProtocolHandlerRegistered(string protocol)

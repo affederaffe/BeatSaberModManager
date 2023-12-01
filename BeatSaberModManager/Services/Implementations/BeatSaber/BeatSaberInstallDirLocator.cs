@@ -15,18 +15,8 @@ using Microsoft.Win32;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     /// <inheritdoc />
-    public partial class BeatSaberInstallDirLocator : IInstallDirLocator
+    public partial class BeatSaberInstallDirLocator(IInstallDirValidator installDirValidator) : IInstallDirLocator
     {
-        private readonly IInstallDirValidator _installDirValidator;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BeatSaberInstallDirLocator"/> class.
-        /// </summary>
-        public BeatSaberInstallDirLocator(IInstallDirValidator installDirValidator)
-        {
-            _installDirValidator = installDirValidator;
-        }
-
         /// <inheritdoc />
         public ValueTask<string?> LocateInstallDirAsync() =>
             OperatingSystem.IsWindows() ? LocateWindowsInstallDirAsync()
@@ -83,7 +73,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                 if (!match.Success)
                     continue;
                 string installDir = Path.Join(path, "common", match.Groups[1].Value);
-                if (_installDirValidator.ValidateInstallDir(installDir))
+                if (installDirValidator.ValidateInstallDir(installDir))
                     return installDir;
             }
 
@@ -98,7 +88,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             if (string.IsNullOrEmpty(oculusInstallDir))
                 return null;
             string finalPath = Path.Join(oculusInstallDir, "Software", "hyperbolic-magnetism-beat-saber");
-            string? installDir = _installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
+            string? installDir = installDirValidator.ValidateInstallDir(finalPath) ? finalPath : LocateInOculusLibrary();
             return installDir is null ? null : Path.GetFullPath(installDir);
         }
 
@@ -115,7 +105,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                 if (libraryPath is null)
                     continue;
                 string finalPath = Path.Join(libraryPath, "Software", "hyperbolic-magnetism-beat-saber");
-                if (_installDirValidator.ValidateInstallDir(finalPath))
+                if (installDirValidator.ValidateInstallDir(finalPath))
                     return finalPath;
             }
 

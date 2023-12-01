@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 
 using BeatSaberModManager.Models.Implementations;
 using BeatSaberModManager.Services.Interfaces;
@@ -9,24 +10,14 @@ using BeatSaberModManager.Utils;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     /// <inheritdoc />
-    public class BeatSaberGameLauncher : IGameLauncher
+    public class BeatSaberGameLauncher(IInstallDirLocator installDirLocator) : IGameLauncher
     {
-        private readonly IInstallDirLocator _installDirLocator;
-
-        /// <summary>
-        /// Initializes a new <see cref="BeatSaberGameLauncher"/> instance.
-        /// </summary>
-        public BeatSaberGameLauncher(IInstallDirLocator installDirLocator)
-        {
-            _installDirLocator = installDirLocator;
-        }
-
         /// <inheritdoc />
         public void LaunchGame(string installDir)
         {
-            switch (_installDirLocator.DetectPlatform(installDir))
+            switch (installDirLocator.DetectPlatform(installDir))
             {
-                case PlatformType.Steam:
+                case PlatformType.Steam when new DirectoryInfo(installDir).Parent?.Parent?.Name == "steamapps":
                     PlatformUtils.TryOpenUri(new Uri("steam://rungameid/620980"));
                     break;
                 case PlatformType.Oculus:

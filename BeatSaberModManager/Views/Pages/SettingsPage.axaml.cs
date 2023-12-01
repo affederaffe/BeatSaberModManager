@@ -38,8 +38,8 @@ namespace BeatSaberModManager.Views.Pages
 
         private static async Task<string?> SelectInstallDirAsync(TopLevel window)
         {
-            IReadOnlyList<IStorageFolder> folders = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()).ConfigureAwait(false);
-            return folders.Count == 1 ? folders[0].TryGetLocalPath() : null;
+            IReadOnlyList<IStorageFolder> directories = await window.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions()).ConfigureAwait(false);
+            return directories.Count == 1 ? directories[0].TryGetLocalPath() : null;
         }
     }
 }

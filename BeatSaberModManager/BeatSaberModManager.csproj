@@ -42,6 +42,8 @@
         <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.5" />
         <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.5" />
+        <PackageReference Include="Avalonia.Labs.Controls" Version="11.0.1" />
+        <PackageReference Include="Avalonia.Labs.Qr" Version="11.0.1" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.0.5" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
         <PackageReference Include="DynamicData" Version="8.1.1" />
@@ -51,6 +53,7 @@
         <PackageReference Include="StrongInject" Version="1.4.5-CI-20220524-023137" />
         <PackageReference Include="ThisAssembly.AssemblyInfo" Version="1.4.1" />
         <ProjectReference Include="../BSIPA-Linux/IPA-lib/IPA-lib.csproj" />
+        <ProjectReference Include="../LibDepotDownloader/LibDepotDownloader/LibDepotDownloader.csproj" />
     </ItemGroup>
 
 </Project>

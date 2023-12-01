@@ -9,6 +9,9 @@
                 <MergeResourceInclude Source="/Resources/Styles/HamburgerMenu.axaml" />
                 <MergeResourceInclude Source="/Resources/Styles/IconHeader.axaml" />
                 <MergeResourceInclude Source="/Resources/Styles/ProgressRing.axaml" />
+                <MergeResourceInclude Source="/Resources/Styles/CardControl.axaml" />
+                <MergeResourceInclude Source="/Resources/Styles/AsyncImage.axaml" />
+                <MergeResourceInclude Source="/Resources/Styles/StatusBar.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Styles.Resources>

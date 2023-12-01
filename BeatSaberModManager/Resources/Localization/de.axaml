@@ -6,9 +6,8 @@
     <sys:String x:Key="MainWindow:IntroHeader">Intro</sys:String>
     <sys:String x:Key="MainWindow:DashboardHeader">Übersicht</sys:String>
     <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
+    <sys:String x:Key="MainWindow:LegacyGameVersionsHeader">Alte Versionen</sys:String>
     <sys:String x:Key="MainWindow:SettingsHeader">Einstellungen</sys:String>
-    <sys:String x:Key="MainWindow:MoreInfoButton">Weitere Infos</sys:String>
-    <sys:String x:Key="MainWindow:UpdateModsButton">Mods aktualisieren</sys:String>
 
     <TextBlock x:Key="IntroView:IntroText" FontSize="17.5" LineHeight="30" TextAlignment="Center">
         <Span FontSize="30" FontWeight="Bold" >Beat Saber Mod Manager</Span><LineBreak />
@@ -45,6 +44,11 @@
     <sys:String x:Key="ModsView:FailedToLoad">Laden der Mods fehlgeschlagen</sys:String>
     <sys:String x:Key="ModsView:NoModsAvailable">Noch keine Mods für diese Version verfügbar</sys:String>
     <sys:String x:Key="ModsView:SearchWatermark">Suche...</sys:String>
+    <sys:String x:Key="ModsPage:MoreInfoButton">Weitere Infos</sys:String>
+    <sys:String x:Key="ModsPage:UpdateModsButton">Mods aktualisieren</sys:String>
+
+    <sys:String x:Key="LegacyGameVersionsView:MoreInfoButton">Weitere Infos</sys:String>
+    <sys:String x:Key="LegacyGameVersionsView:InstallVersionButton">Version installieren</sys:String>
 
     <sys:String x:Key="SettingsView:InstallationLabel">Installationsordner</sys:String>
     <sys:String x:Key="SettingsView:OpenFolderButton">Ordner öffnen</sys:String>
@@ -64,12 +68,19 @@
     <sys:String x:Key="Themes:Light">Hell</sys:String>
     <sys:String x:Key="Themes:Dark">Dunkel</sys:String>
 
-    <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
-    <sys:String x:Key="InstallDirDialogWindow:SelectButton">Auswählen</sys:String>
-    <sys:String x:Key="InstallDirDialogWindow:CancelButton">Abbrechen</sys:String>
+    <sys:String x:Key="PickInstallDirDialog:NoInstallDirText">Es sieht so aus, als hättest du noch keinen Installationsordner angegeben, möchtest du es jetzt tun?</sys:String>
+    <sys:String x:Key="PickInstallDirDialog:SelectButton">Auswählen</sys:String>
+    <sys:String x:Key="PickInstallDirDialog:CancelButton">Abbrechen</sys:String>
 
-    <sys:String x:Key="ExceptionWindow:Title">Anwendung abgestürzt</sys:String>
-    <sys:String x:Key="ExceptionWindow:Ok">Ok</sys:String>
+    <sys:String x:Key="ExceptionDialog:Title">Anwendung abgestürzt</sys:String>
+    <sys:String x:Key="ExceptionDialog:Ok">Ok</sys:String>
+
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:Title">Steam Authentifizierung erforderlich</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:ContinueButton">Weiter</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:CancelButton">Abbrechen</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:UsernameLabel">Benutzername</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:PasswordLabel">Passwort</sys:String>
+    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:RememberPasswordLabel">Passwort merken</sys:String>
 
     <sys:String x:Key="Status:Installing">Installiere:</sys:String>
     <sys:String x:Key="Status:Uninstalling">Deinstalliere:</sys:String>

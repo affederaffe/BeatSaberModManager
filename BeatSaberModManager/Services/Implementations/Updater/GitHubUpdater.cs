@@ -18,30 +18,18 @@ using BeatSaberModManager.Utils;
 namespace BeatSaberModManager.Services.Implementations.Updater
 {
     /// <inheritdoc />
-    public class GitHubUpdater : IUpdater
+    public class GitHubUpdater(IEnumerable<string> args, HttpProgressClient httpClient) : IUpdater
     {
-        private readonly IReadOnlyList<string> _args;
-        private readonly HttpProgressClient _httpClient;
-        private readonly Version _version;
+        private readonly Version _version = new(ThisAssembly.Info.Version);
 
         private Release? _release;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="GitHubUpdater"/> class.
-        /// </summary>
-        public GitHubUpdater(IReadOnlyList<string> args, HttpProgressClient httpClient)
-        {
-            _args = args;
-            _httpClient = httpClient;
-            _version = new Version(ThisAssembly.Info.Version);
-        }
 
         /// <inheritdoc />
         public async ValueTask<bool> NeedsUpdateAsync()
         {
             if (!Program.IsProduction || OperatingSystem.IsLinux())
                 return false;
-            using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
+            using HttpResponseMessage response = await httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return false;
 #pragma warning disable CA2007
@@ -57,7 +45,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             Asset? asset = _release?.Assets.FirstOrDefault(static x => x.Name.Contains("win-x64", StringComparison.Ordinal));
             if (asset is null)
                 return -1;
-            using HttpResponseMessage response = await _httpClient.TryGetAsync(asset.DownloadUrl).ConfigureAwait(false);
+            using HttpResponseMessage response = await httpClient.TryGetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return -1;
             string processPath = Environment.ProcessPath!;
@@ -72,7 +60,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true))
                 return -1;
             ProcessStartInfo processStartInfo = new(processPath);
-            foreach (string arg in _args)
+            foreach (string arg in args)
                 processStartInfo.ArgumentList.Add(arg);
             return PlatformUtils.TryStartProcess(processStartInfo, out _) ? 0 : -1;
         }

@@ -30,7 +30,7 @@
                 <Panel>
                     <c:ProgressRing Width="300"
                                     Height="300"
-                                    Value="{Binding ProgressValue}"
+                                    Value="{Binding StatusProgress.ProgressValue^}"
                                     IsVisible="{Binding IsExecuting}">
                     </c:ProgressRing>
                     <PathIcon Foreground="Green"

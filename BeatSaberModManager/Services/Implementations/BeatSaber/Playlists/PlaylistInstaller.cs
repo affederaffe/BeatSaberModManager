@@ -22,20 +22,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
     /// <summary>
     /// Download and install playlists of <see cref="BeatSaverMap"/>s.
     /// </summary>
-    public class PlaylistInstaller
+    public class PlaylistInstaller(HttpProgressClient httpClient, BeatSaverMapInstaller beatSaverMapInstaller)
     {
-        private readonly HttpProgressClient _httpClient;
-        private readonly BeatSaverMapInstaller _beatSaverMapInstaller;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PlaylistInstaller"/> class.
-        /// </summary>
-        public PlaylistInstaller(HttpProgressClient httpClient, BeatSaverMapInstaller beatSaverMapInstaller)
-        {
-            _httpClient = httpClient;
-            _beatSaverMapInstaller = beatSaverMapInstaller;
-        }
-
         /// <summary>
         /// Asynchronously downloads and installs a <see cref="Playlist"/> from an <see cref="Uri"/>.
         /// </summary>
@@ -46,7 +34,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
         public async Task<bool> InstallPlaylistAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
             ArgumentNullException.ThrowIfNull(uri);
-            using HttpResponseMessage response = await _httpClient.TryGetAsync(uri).ConfigureAwait(false);
+            using HttpResponseMessage response = await httpClient.TryGetAsync(uri).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return false;
             string playlistsDirPath = Path.Join(installDir, "Playlists");
@@ -101,13 +89,16 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             for (int i = 0; i < maps.Length; i++)
             {
                 progress?.Report(new ProgressInfo(StatusType.Installing, maps[i].Name));
-                if (maps[i].Versions.Count <= 0) continue;
-                HttpResponseMessage response = await _httpClient.TryGetAsync(maps[i].Versions[^1].DownloadUrl).ConfigureAwait(false);
-                if (!response.IsSuccessStatusCode) continue;
+                if (maps[i].Versions.Count <= 0)
+                    continue;
+                HttpResponseMessage response = await httpClient.TryGetAsync(maps[i].Versions[^1].DownloadUrl).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                    continue;
                 Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
                 using ZipArchive archive = new(stream);
                 bool success = BeatSaverMapInstaller.TryExtractBeatSaverMapToDir(installDir, maps[i], archive);
-                if (!success) progress?.Report(new ProgressInfo(StatusType.Failed, maps[i].Name));
+                if (!success)
+                    progress?.Report(new ProgressInfo(StatusType.Failed, maps[i].Name));
                 progress?.Report(((double)i + 1) / maps.Length);
             }
 
@@ -120,9 +111,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.Playlists
             for (int i = 0; i < maps.Length; i++)
             {
                 if (!string.IsNullOrEmpty(playlist.Songs[i].Id))
-                    maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByKeyAsync(playlist.Songs[i].Id!).ConfigureAwait(false);
+                    maps[i] = await beatSaverMapInstaller.GetBeatSaverMapByKeyAsync(playlist.Songs[i].Id!).ConfigureAwait(false);
                 else if (!string.IsNullOrEmpty(playlist.Songs[i].Hash))
-                    maps[i] = await _beatSaverMapInstaller.GetBeatSaverMapByHashAsync(playlist.Songs[i].Hash!).ConfigureAwait(false);
+                    maps[i] = await beatSaverMapInstaller.GetBeatSaverMapByHashAsync(playlist.Songs[i].Hash!).ConfigureAwait(false);
             }
 
             return maps.Where(static x => x?.Versions.Count > 0).ToArray()!;

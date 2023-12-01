@@ -8,113 +8,121 @@
              x:Class="BeatSaberModManager.Views.Pages.DashboardPage"
              x:DataType="vm:DashboardViewModel">
 
-    <ScrollViewer Margin="30" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Grid RowDefinitions="Auto, Auto, Auto">
-            <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
-                <UniformGrid Rows="1">
-                    <Grid RowDefinitions="3*, *">
-                        <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding AppVersion}" />
-                        <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:AppVersionLabel}" />
-                    </Grid>
-                    <Grid RowDefinitions="3*, *">
-                        <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding GameVersion}" />
-                        <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:GameVersionLabel}" />
-                    </Grid>
-                    <Grid RowDefinitions="3*, *">
-                        <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding ModsViewModel.InstalledModsCount}" />
-                        <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:InstalledModsLabel}" />
-                    </Grid>
-                </UniformGrid>
-            </Border>
+    <Grid RowDefinitions="*, 33">
+        <ScrollViewer Grid.Row="0" Margin="30" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <Grid RowDefinitions="Auto, Auto, Auto">
+                <Border Grid.Row="0" CornerRadius="10" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
+                    <UniformGrid Rows="1">
+                        <Grid RowDefinitions="3*, *">
+                            <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{x:Static vm:DashboardViewModel.AppVersion}" />
+                            <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:AppVersionLabel}" />
+                        </Grid>
+                        <Grid RowDefinitions="3*, *">
+                            <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding GameVersion}" />
+                            <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:GameVersionLabel}" />
+                        </Grid>
+                        <Grid RowDefinitions="3*, *">
+                            <Label Grid.Row="0" FontSize="21" HorizontalAlignment="Center" Content="{Binding ModsViewModel.InstalledModsCount}" />
+                            <Label Grid.Row="1" FontSize="14" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:InstalledModsLabel}" />
+                        </Grid>
+                    </UniformGrid>
+                </Border>
 
-            <Border Grid.Row="1" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
-                <Grid RowDefinitions="Auto, Auto">
-                    <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:ToolsLabel}" />
-                    <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" RowDefinitions="*, *, *, *, *">
-                        <Button x:Name="InstallPlaylistButton"
-                                Grid.Column="1"
-                                Grid.Row="1"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Content="{DynamicResource DashboardView:InstallPlaylistButton}"
-                                Command="{Binding InstallPlaylistCommand}">
-                        </Button>
-                        <Button Grid.Column="1"
-                                Grid.Row="3"
-                                Margin="0, 10, 0, 0"
-                                Background="Green"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Content="{DynamicResource DashboardView:PlayButton}"
-                                Command="{Binding LaunchGameCommand}">
-                        </Button>
-                        <Button Grid.Column="3"
-                                Grid.Row="1"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Content="{DynamicResource DashboardView:OpenAppData}"
-                                Command="{Binding OpenAppDataCommand}">
-                        </Button>
-                        <Button Grid.Column="3"
-                                Grid.Row="3"
-                                Margin="0, 10, 0, 0"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Content="{DynamicResource DashboardView:OpenLogs}"
-                                Command="{Binding OpenLogsCommand}">
-                        </Button>
-                        <Button Grid.Column="5"
-                                Grid.Row="1"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Content="{DynamicResource DashboardView:UninstallModLoaderButton}"
-                                Command="{Binding UninstallModLoaderCommand}">
-                        </Button>
-                        <Button Grid.Column="5"
-                                Grid.Row="3"
-                                Margin="0, 10, 0, 0"
-                                HorizontalAlignment="Stretch"
-                                HorizontalContentAlignment="Center"
-                                Background="{DynamicResource SystemErrorBrush}"
-                                Content="{DynamicResource DashboardView:UninstallAllModsButton}"
-                                Command="{Binding UninstallAllModsCommand}">
-                        </Button>
+                <Border Grid.Row="1" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
+                    <Grid RowDefinitions="Auto, Auto">
+                        <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:ToolsLabel}" />
+                        <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" RowDefinitions="*, *, *, *, *">
+                            <Button x:Name="InstallPlaylistButton"
+                                    Grid.Column="1"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{DynamicResource DashboardView:InstallPlaylistButton}"
+                                    Command="{Binding InstallPlaylistCommand}">
+                            </Button>
+                            <Button Grid.Column="1"
+                                    Grid.Row="3"
+                                    Margin="0, 10, 0, 0"
+                                    Background="Green"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{DynamicResource DashboardView:PlayButton}"
+                                    Command="{Binding LaunchGameCommand}">
+                            </Button>
+                            <Button Grid.Column="3"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{DynamicResource DashboardView:OpenAppData}"
+                                    Command="{Binding OpenAppDataCommand}">
+                            </Button>
+                            <Button Grid.Column="3"
+                                    Grid.Row="3"
+                                    Margin="0, 10, 0, 0"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{DynamicResource DashboardView:OpenLogs}"
+                                    Command="{Binding OpenLogsCommand}">
+                            </Button>
+                            <Button Grid.Column="5"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Content="{DynamicResource DashboardView:UninstallModLoaderButton}"
+                                    Command="{Binding UninstallModLoaderCommand}">
+                            </Button>
+                            <Button Grid.Column="5"
+                                    Grid.Row="3"
+                                    Margin="0, 10, 0, 0"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalContentAlignment="Center"
+                                    Background="{DynamicResource SystemErrorBrush}"
+                                    Content="{DynamicResource DashboardView:UninstallAllModsButton}"
+                                    Command="{Binding UninstallAllModsCommand}">
+                            </Button>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Border>
+                </Border>
 
-            <Border Grid.Row="2" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
-                <Grid RowDefinitions="Auto, Auto">
-                    <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:UsefulLinks}" />
-                    <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" Height="75">
-                        <c:HyperlinkButton Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://bsmg.wiki">
-                            <Grid RowDefinitions="*, Auto">
-                                <Viewbox Grid.Row="0">
-                                    <Image Source="/Resources/Images/bsmg.jpg" />
-                                </Viewbox>
-                                <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:BsmgWiki}" />
-                            </Grid>
-                        </c:HyperlinkButton>
-                        <c:HyperlinkButton Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://discord.gg/beatsabermods">
-                            <Grid RowDefinitions="*, Auto">
-                                <Viewbox Grid.Row="0">
-                                    <PathIcon Data="{StaticResource Icons:Discord}" />
-                                </Viewbox>
-                                <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:BsmgDiscord}" />
-                            </Grid>
-                        </c:HyperlinkButton>
-                        <c:HyperlinkButton Grid.Column="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://github.com/affederaffe/BeatSaberModManager">
-                            <Grid RowDefinitions="*, Auto">
-                                <Viewbox Grid.Row="0">
-                                    <PathIcon Data="{StaticResource Icons:GitHub}" />
-                                </Viewbox>
-                                <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:GitHub}" />
-                            </Grid>
-                        </c:HyperlinkButton>
+                <Border Grid.Row="2" CornerRadius="10" Margin="0, 30, 0, 0" Padding="10" Background="{DynamicResource SystemChromeBlackMediumLowColor}">
+                    <Grid RowDefinitions="Auto, Auto">
+                        <Label Grid.Row="0" FontSize="20" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:UsefulLinks}" />
+                        <Grid Grid.Row="1" ColumnDefinitions="*, 2*, *, 2*, *, 2*, *" Height="75">
+                            <c:HyperlinkButton Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://bsmg.wiki">
+                                <Grid RowDefinitions="*, Auto">
+                                    <Viewbox Grid.Row="0">
+                                        <Image Source="/Resources/Images/bsmg.jpg" />
+                                    </Viewbox>
+                                    <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:BsmgWiki}" />
+                                </Grid>
+                            </c:HyperlinkButton>
+                            <c:HyperlinkButton Grid.Column="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://discord.gg/beatsabermods">
+                                <Grid RowDefinitions="*, Auto">
+                                    <Viewbox Grid.Row="0">
+                                        <PathIcon Data="{StaticResource Icons:Discord}" />
+                                    </Viewbox>
+                                    <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:BsmgDiscord}" />
+                                </Grid>
+                            </c:HyperlinkButton>
+                            <c:HyperlinkButton Grid.Column="5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Uri="https://github.com/affederaffe/BeatSaberModManager">
+                                <Grid RowDefinitions="*, Auto">
+                                    <Viewbox Grid.Row="0">
+                                        <PathIcon Data="{StaticResource Icons:GitHub}" />
+                                    </Viewbox>
+                                    <Label Grid.Row="1" HorizontalAlignment="Center" Content="{DynamicResource DashboardView:GitHub}" />
+                                </Grid>
+                            </c:HyperlinkButton>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Border>
-        </Grid>
-    </ScrollViewer>
+                </Border>
+            </Grid>
+        </ScrollViewer>
+
+        <c:StatusBar Grid.Row="1"
+                     Text="{Binding StatusProgress.ProgressInfo^.Text}"
+                     StatusType="{Binding StatusProgress.ProgressInfo^.StatusType}"
+                     ProgressValue="{Binding StatusProgress.ProgressValue^}">
+        </c:StatusBar>
+    </Grid>
 
 </UserControl>

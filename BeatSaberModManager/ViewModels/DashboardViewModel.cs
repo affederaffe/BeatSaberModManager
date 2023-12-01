@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.Observables;
+using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 
@@ -20,7 +21,6 @@ namespace BeatSaberModManager.ViewModels
     public sealed class DashboardViewModel : ViewModelBase, IDisposable
     {
         private readonly SettingsViewModel _settingsViewModel;
-        private readonly IStatusProgress _statusProgress;
         private readonly PlaylistInstaller _playlistInstaller;
         private readonly ObservableAsPropertyHelper<string?> _gameVersion;
         private readonly DirectoryExistsObservable _appDataDirExistsObservable;
@@ -29,20 +29,16 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="DashboardViewModel"/> class.
         /// </summary>
-        public DashboardViewModel(ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IGamePathsProvider gamePathsProvider, IStatusProgress statusProgress, PlaylistInstaller playlistInstaller)
+        public DashboardViewModel(ModsViewModel modsViewModel, SettingsViewModel settingsViewModel, IGameVersionProvider gameVersionProvider, IGameLauncher gameLauncher, IGamePathsProvider gamePathsProvider, StatusProgress statusProgress, PlaylistInstaller playlistInstaller)
         {
             ArgumentNullException.ThrowIfNull(modsViewModel);
             ArgumentNullException.ThrowIfNull(settingsViewModel);
             ArgumentNullException.ThrowIfNull(gameVersionProvider);
-            ArgumentNullException.ThrowIfNull(gameLauncher);
             ArgumentNullException.ThrowIfNull(gamePathsProvider);
-            ArgumentNullException.ThrowIfNull(statusProgress);
-            ArgumentNullException.ThrowIfNull(playlistInstaller);
             _settingsViewModel = settingsViewModel;
-            _statusProgress = statusProgress;
             _playlistInstaller = playlistInstaller;
-            AppVersion = ThisAssembly.Info.Version;
             ModsViewModel = modsViewModel;
+            StatusProgress = statusProgress;
             PickPlaylistInteraction = new Interaction<Unit, string?>();
             settingsViewModel.ValidatedInstallDirObservable.SelectMany(gameVersionProvider.DetectGameVersionAsync).ToProperty(this, nameof(GameVersion), out _gameVersion);
             _appDataDirExistsObservable = new DirectoryExistsObservable();
@@ -51,8 +47,8 @@ namespace BeatSaberModManager.ViewModels
             _logsDirExistsObservable = new DirectoryExistsObservable();
             settingsViewModel.ValidatedInstallDirObservable.Select(gamePathsProvider.GetLogsPath).Subscribe(x => _logsDirExistsObservable.Path = x);
             OpenLogsCommand = ReactiveCommand.Create<Unit, bool>(_ => PlatformUtils.TryOpenUri(new Uri(_logsDirExistsObservable.Path!)), _logsDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
-            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallModLoaderAsync(settingsViewModel.InstallDir!), modsViewModel.IsSuccessObservable);
-            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallAllModsAsync(settingsViewModel.InstallDir!), modsViewModel.IsSuccessObservable);
+            UninstallModLoaderCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallModLoaderAsync(settingsViewModel.InstallDir!, statusProgress), modsViewModel.IsSuccessObservable);
+            UninstallAllModsCommand = ReactiveCommand.CreateFromTask(() => modsViewModel.UninstallAllModsAsync(settingsViewModel.InstallDir!, statusProgress), modsViewModel.IsSuccessObservable);
             LaunchGameCommand = ReactiveCommand.Create(() => gameLauncher.LaunchGame(settingsViewModel.InstallDir!), settingsViewModel.IsInstallDirValidObservable);
             InstallPlaylistCommand = ReactiveCommand.CreateFromObservable(() => PickPlaylistInteraction.Handle(Unit.Default)
                 .WhereNotNull()
@@ -61,20 +57,25 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<bool> InstallPlaylistAsync(string x)
         {
-            bool result = await _playlistInstaller.InstallPlaylistAsync(_settingsViewModel.InstallDir!, x, _statusProgress).ConfigureAwait(false);
-            _statusProgress.Report(new ProgressInfo(result ? StatusType.Completed : StatusType.Failed, null));
+            bool result = await _playlistInstaller.InstallPlaylistAsync(_settingsViewModel.InstallDir!, x, StatusProgress).ConfigureAwait(false);
+            StatusProgress.Report(new ProgressInfo(result ? StatusType.Completed : StatusType.Failed, null));
             return result;
         }
 
         /// <summary>
         /// The version of the application.
         /// </summary>
-        public string AppVersion { get; }
+        public static string AppVersion => ThisAssembly.Info.Version;
 
         /// <summary>
         /// The ViewModel for a mods view.
         /// </summary>
         public ModsViewModel ModsViewModel { get; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public StatusProgress StatusProgress { get; }
 
         /// <summary>
         /// Opens the game's AppData directory in the file explorer.

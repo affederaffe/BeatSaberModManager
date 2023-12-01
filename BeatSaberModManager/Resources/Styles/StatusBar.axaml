@@ -1,0 +1,32 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="using:BeatSaberModManager.Views.Controls"
+                    xmlns:h="using:BeatSaberModManager.Views.Helpers"
+                    xmlns:cv="using:BeatSaberModManager.Views.Converters">
+
+    <ControlTheme x:Key="{x:Type c:StatusBar}" TargetType="c:StatusBar">
+        <ControlTheme.Resources>
+            <cv:StatusTypeEnumConverter x:Key="StatusTypeEnumConverter" />
+        </ControlTheme.Resources>
+
+        <Setter Property="Template">
+            <ControlTemplate>
+                <Panel>
+                    <ProgressBar Margin="10, 0, 10, 0"
+                                 HorizontalAlignment="Stretch"
+                                 VerticalAlignment="Stretch"
+                                 Orientation="Horizontal"
+                                 Value="{TemplateBinding ProgressValue}">
+                    </ProgressBar>
+                    <Viewbox ZIndex="1" ClipToBounds="True">
+                        <StackPanel Margin="10, 0, 10, 0" Orientation="Horizontal">
+                            <Label h:ResourceKeyBindingHelper.SourceResourceKey="{TemplateBinding StatusType, Converter={StaticResource StatusTypeEnumConverter}}" />
+                            <Label Content="{TemplateBinding Text}" />
+                        </StackPanel>
+                    </Viewbox>
+                </Panel>
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+
+</ResourceDictionary>

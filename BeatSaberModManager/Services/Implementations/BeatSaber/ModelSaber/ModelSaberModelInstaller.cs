@@ -16,18 +16,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
     /// <summary>
     /// Download and install models from https://modelsaber.com.
     /// </summary>
-    public class ModelSaberModelInstaller
+    public class ModelSaberModelInstaller(HttpProgressClient httpClient)
     {
-        private readonly HttpProgressClient _httpClient;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ModelSaberModelInstaller"/> class.
-        /// </summary>
-        public ModelSaberModelInstaller(HttpProgressClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
         /// <summary>
         /// Asynchronously downloads and installs a model from https://modelsaber.com.
         /// </summary>
@@ -38,21 +28,21 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
         public async Task<bool> InstallModelAsync(string installDir, Uri uri, IStatusProgress? progress = null)
         {
             ArgumentNullException.ThrowIfNull(uri);
-            string? folderName = GetFolderName(uri);
-            if (folderName is null)
+            string? directoryName = GetDirectoryName(uri);
+            if (directoryName is null)
                 return false;
-            string folderPath = Path.Join(installDir, folderName);
-            if (!IOUtils.TryCreateDirectory(folderPath))
+            string assetDirectoryPath = Path.Join(installDir, directoryName);
+            if (!IOUtils.TryCreateDirectory(assetDirectoryPath))
                 return false;
             string modelName = WebUtility.UrlDecode(uri.Segments.Last());
             progress?.Report(new ProgressInfo(StatusType.Installing, modelName));
-            using HttpResponseMessage response = await _httpClient.TryGetAsync(new Uri($"https://modelsaber.com/files/{uri.Host}{uri.LocalPath}"), progress).ConfigureAwait(false);
+            using HttpResponseMessage response = await httpClient.TryGetAsync(new Uri($"https://modelsaber.com/files/{uri.Host}{uri.LocalPath}"), progress).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return false;
-            string filePath = Path.Join(folderPath, modelName);
+            string assetFilePath = Path.Join(assetDirectoryPath, modelName);
 #pragma warning disable CA2007
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-            await using Stream? writeStream = IOUtils.TryOpenFile(filePath, FileMode.Create, FileAccess.Write);
+            await using Stream? writeStream = IOUtils.TryOpenFile(assetFilePath, FileMode.Create, FileAccess.Write);
 #pragma warning restore CA2007
             if (writeStream is null)
                 return false;
@@ -65,7 +55,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber
         /// </summary>
         /// <param name="uri">The <see cref="Uri"/> to download the model from.</param>
         /// <returns>The name of the model types directory.</returns>
-        private static string? GetFolderName(Uri uri) => uri.Host switch
+        private static string? GetDirectoryName(Uri uri) => uri.Host switch
         {
             "avatar" => "CustomAvatars",
             "saber" => "CustomSabers",

@@ -38,78 +38,88 @@
                Content="{DynamicResource ModsView:NoModsAvailable}">
         </Label>
 
-        <c:SearchableDataGrid x:Name="ModsDataGrid"
-                  RowHeight="26"
-                  AreRowGroupHeadersFrozen="False"
-                  CanUserSortColumns="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  SelectedItem="{Binding SelectedGridItem}"
-                  Query="{Binding Query}"
-                  IsSearchEnabled="{Binding IsSearchEnabled}"
-                  IsVisible="{Binding IsSuccess}"
-                  Watermark="{DynamicResource ModsView:SearchWatermark}">
-            <c:SearchableDataGrid.SearchIcon>
-                <PathIcon Data="{StaticResource Icons:Search}" Foreground="{DynamicResource SearchIconBrush}" />
-            </c:SearchableDataGrid.SearchIcon>
+        <Grid RowDefinitions="*, 33">
+            <c:SearchableDataGrid Grid.Row="0"
+                                  x:Name="ModsDataGrid"
+                                  RowHeight="26"
+                                  AreRowGroupHeadersFrozen="False"
+                                  CanUserSortColumns="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  SelectedItem="{Binding SelectedGridItem}"
+                                  Query="{Binding Query}"
+                                  IsSearchEnabled="{Binding IsSearchEnabled}"
+                                  IsVisible="{Binding IsSuccess}"
+                                  Watermark="{DynamicResource ModsView:SearchWatermark}">
 
-            <c:SearchableDataGrid.Columns>
-                <DataGridTemplateColumn Width="25">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="vm:ModGridItemViewModel">
-                            <CheckBox VerticalAlignment="Center"
-                                      HorizontalAlignment="Center"
-                                      IsEnabled="{Binding IsCheckBoxEnabled}"
-                                      IsChecked="{Binding IsCheckBoxChecked}">
-                            </CheckBox>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                <c:SearchableDataGrid.Columns>
+                    <DataGridTemplateColumn Width="25">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:ModGridItemViewModel">
+                                <CheckBox VerticalAlignment="Center"
+                                          HorizontalAlignment="Center"
+                                          IsEnabled="{Binding IsCheckBoxEnabled}"
+                                          IsChecked="{Binding IsCheckBoxChecked}">
+                                </CheckBox>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="Auto" MinWidth="220" Header="{DynamicResource ModsView:ModNameHeader}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="vm:ModGridItemViewModel">
-                            <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Name}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="Auto" MinWidth="220" Header="{DynamicResource ModsView:ModNameHeader}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:ModGridItemViewModel">
+                                <Label VerticalAlignment="Center" Content="{Binding AvailableMod.Name}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="Auto" Header="{DynamicResource ModsView:InstalledVersionHeader}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="vm:ModGridItemViewModel">
-                            <Label VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   Content="{Binding InstalledMod.Version}"
-                                   Foreground="{Binding IsUpToDate, Converter={StaticResource IsUpToDateColorConverter}}">
-                            </Label>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="Auto" Header="{DynamicResource ModsView:InstalledVersionHeader}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:ModGridItemViewModel">
+                                <Label VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Content="{Binding InstalledMod.Version}"
+                                       Foreground="{Binding IsUpToDate, Converter={StaticResource IsUpToDateColorConverter}}">
+                                </Label>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="Auto" Header="{DynamicResource ModsView:LatestVersionHeader}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="vm:ModGridItemViewModel">
-                            <Label VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   Content="{Binding AvailableMod.Version}">
-                            </Label>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Width="Auto" Header="{DynamicResource ModsView:LatestVersionHeader}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:ModGridItemViewModel">
+                                <Label VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Content="{Binding AvailableMod.Version}">
+                                </Label>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
-                <DataGridTemplateColumn Width="*" Header="{DynamicResource ModsView:ModDescriptionHeader}">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate DataType="vm:ModGridItemViewModel">
-                            <TextBlock VerticalAlignment="Center"
-                                       TextTrimming="CharacterEllipsis"
-                                       Text="{Binding AvailableMod.Description}"
-                                       ToolTip.Tip="{Binding AvailableMod.Description}">
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </c:SearchableDataGrid.Columns>
-        </c:SearchableDataGrid>
+                    <DataGridTemplateColumn Width="*" Header="{DynamicResource ModsView:ModDescriptionHeader}">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="vm:ModGridItemViewModel">
+                                <TextBlock VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           Text="{Binding AvailableMod.Description}"
+                                           ToolTip.Tip="{Binding AvailableMod.Description}">
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </c:SearchableDataGrid.Columns>
+            </c:SearchableDataGrid>
+
+            <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto">
+                <c:StatusBar Grid.Column="0" ProgressValue="{Binding StatusProgress.ProgressValue^}" StatusType="{Binding StatusProgress.ProgressInfo^.StatusType}" Text="{Binding StatusProgress.ProgressInfo^.Text}" />
+                <Button Grid.Column="1" Margin="0, 0, 10, 0" Command="{Binding MoreInfoCommand}">
+                    <c:IconHeader Padding="4, 0, 0, 0" IconPlacement="Left" Content="{DynamicResource ModsView:MoreInfoButton}" IconData="{StaticResource Icons:Info}" />
+                </Button>
+                <Button Grid.Column="2" Margin="0, 0, 10, 0" Command="{Binding InstallCommand}">
+                    <c:IconHeader IconPlacement="Left" Content="{DynamicResource ModsView:UpdateModsButton}" IconData="{StaticResource Icons:Download}" />
+                </Button>
+            </Grid>
+        </Grid>
     </Panel>
 
 </UserControl>

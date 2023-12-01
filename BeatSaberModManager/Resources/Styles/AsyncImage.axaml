@@ -1,0 +1,39 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:c="using:BeatSaberModManager.Views.Controls">
+
+  <ControlTheme x:Key="{x:Type c:AsyncImage}" TargetType="c:AsyncImage">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="IsTabStop" Value="False" />
+    <Setter Property="Template">
+        <ControlTemplate>
+            <Border Margin="0"
+                    Padding="0"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="{TemplateBinding CornerRadius}">
+                <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                    <Image Name="PART_PlaceholderImage"
+                           HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                           VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                           Source="{TemplateBinding PlaceholderSource}"
+                           Stretch="{TemplateBinding PlaceholderStretch}">
+                    </Image>
+                    <Image Name="PART_Image"
+                           HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                           VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                           Stretch="{TemplateBinding Stretch}">
+                    </Image>
+                </Grid>                
+            </Border>
+        </ControlTemplate>
+    </Setter>
+      <Style Selector="^[State=Failed] /template/ Image#PART_Image">
+          <Setter Property="Opacity" Value="0.0" />
+      </Style>
+      <Style Selector="^[State=Failed] /template/ Image#PART_PlaceholderImage">
+          <Setter Property="Opacity" Value="1.0" />
+      </Style>
+  </ControlTheme>
+</ResourceDictionary>
