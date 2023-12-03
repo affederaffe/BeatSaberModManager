@@ -6,7 +6,7 @@ namespace BeatSaberModManager.Models.Interfaces
     /// <summary>
     /// 
     /// </summary>
-    public interface ILegacyGameVersion : IComparable<ILegacyGameVersion>
+    public interface IGameVersion : IComparable<IGameVersion>
     {
         /// <summary>
         /// 

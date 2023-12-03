@@ -23,7 +23,8 @@
                     <Image Name="PART_Image"
                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
                            VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                           Stretch="{TemplateBinding Stretch}">
+                           Stretch="{TemplateBinding Stretch}"
+                            >
                     </Image>
                 </Grid>                
             </Border>

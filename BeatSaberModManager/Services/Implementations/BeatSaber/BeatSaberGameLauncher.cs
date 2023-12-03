@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 
-using BeatSaberModManager.Models.Implementations;
+using BeatSaberModManager.Models.Implementations.Versions;
+using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 
@@ -10,18 +10,18 @@ using BeatSaberModManager.Utils;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     /// <inheritdoc />
-    public class BeatSaberGameLauncher(IInstallDirLocator installDirLocator) : IGameLauncher
+    public class BeatSaberGameLauncher : IGameLauncher
     {
         /// <inheritdoc />
-        public void LaunchGame(string installDir)
+        public void LaunchGame(IGameVersion gameVersion)
         {
-            switch (installDirLocator.DetectPlatform(installDir))
+            switch (gameVersion)
             {
-                case PlatformType.Steam when new DirectoryInfo(installDir).Parent?.Parent?.Name == "steamapps":
+                case SteamGameVersion steamGameVersion:
                     PlatformUtils.TryOpenUri(new Uri("steam://rungameid/620980"));
                     break;
-                case PlatformType.Oculus:
-                    PlatformUtils.TryStartProcess(new ProcessStartInfo("Beat Saber.exe") { WorkingDirectory = installDir }, out _);
+                case OculusGameVersion oculusGameVersion:
+                    PlatformUtils.TryStartProcess(new ProcessStartInfo("Beat Saber.exe") { WorkingDirectory = oculusGameVersion.InstallDir }, out _);
                     break;
                 default:
                     throw new InvalidOperationException("Could not detect platform.");

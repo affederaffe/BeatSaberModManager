@@ -6,6 +6,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Models.Implementations.Progress;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Interfaces;
@@ -30,7 +31,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// TODO
         /// </summary>
-        public LegacyGameVersionsViewModel(SettingsViewModel settingsViewModel, DashboardViewModel dashboardViewModel, ILegacyGameVersionProvider legacyGameVersionProvider, ILegacyGameVersionInstaller legacyGameVersionInstaller, StatusProgress statusProgress)
+        public LegacyGameVersionsViewModel(SettingsViewModel settingsViewModel, IInstallDirLocator installDirLocator, ILegacyGameVersionProvider legacyGameVersionProvider, ILegacyGameVersionInstaller legacyGameVersionInstaller, StatusProgress statusProgress)
         {
             _legacyGameVersionProvider = legacyGameVersionProvider;
             _legacyGameVersionInstaller = legacyGameVersionInstaller;
@@ -42,16 +43,16 @@ namespace BeatSaberModManager.ViewModels
                 .ToProperty(this, nameof(IsSuccess), out _isSuccess);
             IObservable<GameVersionViewModel[]> legacyGameVersions = InitializeCommand.WhereNotNull()
                 .Select(static x => x.ToArray());
-            legacyGameVersions.CombineLatest(dashboardViewModel.WhenAnyValue(static x => x.GameVersion))
-                .FirstAsync()
-                .Select(static x => x.First.FirstOrDefault(gameVersion => gameVersion.LegacyGameVersion.GameVersion == x.Second))
+            legacyGameVersions
+                .SelectMany(async gameVersions => (GameVersions: gameVersions, InstalledVersion: await installDirLocator.LocateInstallDirAsync().ConfigureAwait(false)))
+                .Select(static x => x.GameVersions.FirstOrDefault(gameVersion => gameVersion.GameVersion == x.InstalledVersion))
                 .WhereNotNull()
-                .Do(currentGameVersion => currentGameVersion.InstallDir = settingsViewModel.InstallDir)
+                .Do(currentGameVersion => currentGameVersion.InstallDir = "") //TODO
                 .Subscribe(currentGameVersion => SelectedLegacyGameVersion = currentGameVersion);
             legacyGameVersions
                 .Select(static gameVersions => gameVersions
-                    .OrderByDescending(static x => x.LegacyGameVersion.ReleaseDate)
-                    .GroupBy(static version => version.LegacyGameVersion.ReleaseDate.Year)
+                    .OrderByDescending(static x => x.GameVersion.ReleaseDate)
+                    .GroupBy(static version => version.GameVersion.ReleaseDate.Year)
                     .ToArray())
                 .ToProperty(this, nameof(LegacyGameVersions), out _legacyGameVersions);
             IObservable<GameVersionViewModel?> whenAnySelectedLegacyGameVersion = this.WhenAnyValue(static x => x.SelectedLegacyGameVersion);
@@ -59,8 +60,8 @@ namespace BeatSaberModManager.ViewModels
             InstallCommand = ReactiveCommand.CreateFromTask(InstallSelectedLegacyGameVersionAsync, canInstallVersion);
             IObservable<bool> canUninstallVersion = whenAnySelectedLegacyGameVersion.Select(static version => version is not null && version.IsInstalled);
             UninstallCommand = ReactiveCommand.CreateFromTask(UninstallSelectedLegacyGameVersionAsync, canUninstallVersion);
-            IObservable<bool> canViewMoreInfo = whenAnySelectedLegacyGameVersion.Select(static version => version?.LegacyGameVersion.ReleaseUrl is not null);
-            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(SelectedLegacyGameVersion!.LegacyGameVersion.ReleaseUrl!), canViewMoreInfo);
+            IObservable<bool> canViewMoreInfo = whenAnySelectedLegacyGameVersion.Select(static version => version?.GameVersion.ReleaseUrl is not null);
+            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(SelectedLegacyGameVersion!.GameVersion.ReleaseUrl!), canViewMoreInfo);
             whenAnySelectedLegacyGameVersion.Where(static version => version is not null && version.IsInstalled)
                 .Subscribe(version => settingsViewModel.InstallDir = version!.InstallDir);
         }
@@ -122,22 +123,23 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<IReadOnlyList<GameVersionViewModel>?> GetLegacyGameVersionsAsync()
         {
-            IReadOnlyList<ILegacyGameVersion>? availableGameVersions = await _legacyGameVersionProvider.GetAvailableGameVersionsAsync().ConfigureAwait(true);
+            IReadOnlyList<IGameVersion>? availableGameVersions = await _legacyGameVersionProvider.GetAvailableGameVersionsAsync().ConfigureAwait(true);
             if (availableGameVersions is null)
                 return null;
             GameVersionViewModel[] gameVersionViewModels = availableGameVersions.Select(static x => new GameVersionViewModel(x)).ToArray();
-            IReadOnlyList<(ILegacyGameVersion GameVersion, string InstallDir)>? installedGameVersions = await _legacyGameVersionProvider.GetInstalledLegacyGameVersionsAsync().ConfigureAwait(true);
+            IReadOnlyList<(IGameVersion GameVersion, string InstallDir)>? installedGameVersions = await _legacyGameVersionProvider.GetInstalledLegacyGameVersionsAsync().ConfigureAwait(true);
             if (installedGameVersions is null)
                 return gameVersionViewModels;
             foreach (GameVersionViewModel gameVersionViewModel in gameVersionViewModels)
-                gameVersionViewModel.InstallDir = installedGameVersions.FirstOrDefault(x => x.GameVersion == gameVersionViewModel.LegacyGameVersion).InstallDir;
+                gameVersionViewModel.InstallDir = installedGameVersions.FirstOrDefault(x => x.GameVersion == gameVersionViewModel.GameVersion).InstallDir;
             return gameVersionViewModels;
         }
 
         private async Task<bool> InstallSelectedLegacyGameVersionAsync()
         {
             GameVersionViewModel selectedGameVersion = SelectedLegacyGameVersion!;
-            string? installDir = await _legacyGameVersionInstaller.InstallLegacyGameVersionAsync(selectedGameVersion.LegacyGameVersion, CancellationToken.None, StatusProgress).ConfigureAwait(true);
+            StatusProgress.Report(new ProgressInfo(StatusType.Installing, selectedGameVersion.GameVersion.GameVersion));
+            string? installDir = await _legacyGameVersionInstaller.InstallLegacyGameVersionAsync(selectedGameVersion.GameVersion, CancellationToken.None, StatusProgress).ConfigureAwait(true);
             selectedGameVersion.InstallDir = installDir;
             return installDir is not null;
         }
@@ -145,7 +147,7 @@ namespace BeatSaberModManager.ViewModels
         private async Task<bool> UninstallSelectedLegacyGameVersionAsync()
         {
             GameVersionViewModel selectedGameVersion = SelectedLegacyGameVersion!;
-            bool success = await _legacyGameVersionInstaller.UninstallLegacyGameVersionAsync(selectedGameVersion.LegacyGameVersion).ConfigureAwait(true);
+            bool success = await _legacyGameVersionInstaller.UninstallLegacyGameVersionAsync(selectedGameVersion.GameVersion).ConfigureAwait(true);
             if (success)
                 selectedGameVersion.InstallDir = null;
             return success;

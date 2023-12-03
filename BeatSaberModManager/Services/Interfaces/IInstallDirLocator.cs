@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations;
+using BeatSaberModManager.Models.Interfaces;
 
 
 namespace BeatSaberModManager.Services.Interfaces
@@ -14,13 +15,6 @@ namespace BeatSaberModManager.Services.Interfaces
         /// Asynchronously locates a game's installation directory, optionally asynchronously.
         /// </summary>
         /// <returns>The installation directory of the game if found, null otherwise.</returns>
-        ValueTask<string?> LocateInstallDirAsync();
-
-        /// <summary>
-        /// Detects the <see cref="PlatformType"/> of an installation.
-        /// </summary>
-        /// <param name="installDir">The game's installation directory.</param>
-        /// <returns>The detected <see cref="PlatformType"/>.</returns>
-        PlatformType DetectPlatform(string installDir);
+        ValueTask<IGameVersion?> LocateInstallDirAsync();
     }
 }

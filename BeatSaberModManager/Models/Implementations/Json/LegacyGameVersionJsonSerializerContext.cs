@@ -1,10 +1,10 @@
 using System.Text.Json.Serialization;
 
-using BeatSaberModManager.Models.Implementations.LegacyVersions;
+using BeatSaberModManager.Models.Implementations.Versions;
 
 
 namespace BeatSaberModManager.Models.Implementations.Json
 {
-    [JsonSerializable(typeof(SteamLegacyGameVersion[]))]
+    [JsonSerializable(typeof(SteamGameVersion[]))]
     internal sealed partial class LegacyGameVersionJsonSerializerContext : JsonSerializerContext;
 }

@@ -14,7 +14,7 @@
             <Label Grid.Row="0" Content="{DynamicResource SteamAuthenticationLoginDetailsDialog:UsernameLabel}" />
             <TextBox Grid.Row="1" x:Name="UsernameTextBox" />
             <Label Grid.Row="2" Content="{DynamicResource SteamAuthenticationLoginDetailsDialog:PasswordLabel}" />
-            <TextBox Grid.Row="3" x:Name="PasswordTextBox" PasswordChar="*" />
+                <TextBox Grid.Row="3" x:Name="PasswordTextBox" PasswordChar="*" Classes="revealPasswordButton" />
             <Grid Grid.Row="4" ColumnDefinitions="*, 20">
                 <Label Grid.Column="0" Content="{DynamicResource SteamAuthenticationLoginDetailsDialog:RememberPasswordLabel}" />
                 <CheckBox Grid.Column="1" x:Name="RememberPasswordCheckBox" />

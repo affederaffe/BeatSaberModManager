@@ -42,13 +42,17 @@
 
                         <ListBox.ItemTemplate>
                             <DataTemplate DataType="vm:GameVersionViewModel">
-                                <c:CardControl Header="{Binding LegacyGameVersion.GameVersion}"
+                                <c:CardControl Header="{Binding GameVersion.GameVersion}"
                                                ScaleOnPointerOver="True"
                                                ClipToBounds="True"
                                                Background="{DynamicResource SystemControlForegroundBaseLowBrush}"
                                                HorizontalAlignment="Center"
                                                VerticalAlignment="Center">
-                                    <c:AsyncImage Source="{Binding LegacyGameVersion.ReleaseImage}" Stretch="Fill" PlaceholderSource="/Resources/Images/version_image_placeholder.jpg" PlaceholderStretch="Fill" ClipToBounds="True" />
+                                    <Panel>
+                                        <PathIcon ZIndex="1" Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Top" Data="{StaticResource Icons:Checkmark}" IsVisible="{Binding IsInstalled}" Foreground="Green" />
+                                        <c:AsyncImage Source="{Binding GameVersion.ReleaseImage}" Stretch="UniformToFill" PlaceholderSource="/Resources/Images/version_image_placeholder.jpg" PlaceholderStretch="UniformToFill" ClipToBounds="True" />
+                                    </Panel>
+                                    
                                 </c:CardControl>
                             </DataTemplate>
                         </ListBox.ItemTemplate>

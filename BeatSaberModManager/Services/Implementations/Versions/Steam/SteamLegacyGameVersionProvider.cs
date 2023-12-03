@@ -12,17 +12,17 @@ using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
 
 
-namespace BeatSaberModManager.Services.Implementations.LegacyVersions.Steam
+namespace BeatSaberModManager.Services.Implementations.Versions.Steam
 {
     /// <summary>
     /// TODO
     /// </summary>
     public class SteamLegacyGameVersionProvider(HttpProgressClient httpClient, IGameVersionProvider gameVersionProvider) : ILegacyGameVersionProvider
     {
-        private IReadOnlyList<ILegacyGameVersion>? _availableGameVersions;
+        private IReadOnlyList<IGameVersion>? _availableGameVersions;
 
         /// <inheritdoc />
-        public async Task<IReadOnlyList<ILegacyGameVersion>?> GetAvailableGameVersionsAsync()
+        public async Task<IReadOnlyList<IGameVersion>?> GetAvailableGameVersionsAsync()
         {
             if (_availableGameVersions is not null)
                 return _availableGameVersions;
@@ -32,19 +32,19 @@ namespace BeatSaberModManager.Services.Implementations.LegacyVersions.Steam
 #pragma warning disable CA2007
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #pragma warning restore CA2007
-            _availableGameVersions = await JsonSerializer.DeserializeAsync(contentStream, LegacyGameVersionJsonSerializerContext.Default.SteamLegacyGameVersionArray).ConfigureAwait(false);
+            _availableGameVersions = await JsonSerializer.DeserializeAsync(contentStream, LegacyGameVersionJsonSerializerContext.Default.SteamGameVersionArray).ConfigureAwait(false);
             return _availableGameVersions;
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyList<(ILegacyGameVersion GameVersion, string InstallDir)>?> GetInstalledLegacyGameVersionsAsync()
+        public async Task<IReadOnlyList<(IGameVersion GameVersion, string InstallDir)>?> GetInstalledLegacyGameVersionsAsync()
         {
-            IReadOnlyList<ILegacyGameVersion>? availableGameVersions = await GetAvailableGameVersionsAsync().ConfigureAwait(false);
+            IReadOnlyList<IGameVersion>? availableGameVersions = await GetAvailableGameVersionsAsync().ConfigureAwait(false);
             if (availableGameVersions is null)
                 return null;
             string appDataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string legacyGameVersionsDirPath = Path.Join(appDataDirPath, ThisAssembly.Info.Product, "LegacyGameVersions");
-            List<(ILegacyGameVersion GameVersion, string InstallDir)> installedGameVersions = [];
+            List<(IGameVersion GameVersion, string InstallDir)> installedGameVersions = [];
             try
             {
                 foreach (string dir in Directory.EnumerateDirectories(legacyGameVersionsDirPath))
@@ -52,7 +52,7 @@ namespace BeatSaberModManager.Services.Implementations.LegacyVersions.Steam
                     string? installedVersion = await gameVersionProvider.DetectGameVersionAsync(dir).ConfigureAwait(false);
                     if (installedVersion is null)
                         continue;
-                    ILegacyGameVersion? legacyGameVersion = availableGameVersions.FirstOrDefault(version => version.GameVersion == installedVersion);
+                    IGameVersion? legacyGameVersion = availableGameVersions.FirstOrDefault(version => version.GameVersion == installedVersion);
                     if (legacyGameVersion is not null)
                         installedGameVersions.Add((legacyGameVersion, dir));
                 }

@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Models.Implementations.LegacyVersions;
+using BeatSaberModManager.Models.Implementations.Versions;
 using BeatSaberModManager.Models.Interfaces;
 using BeatSaberModManager.Services.Interfaces;
 
@@ -15,19 +15,19 @@ using Serilog;
 using SteamKit2;
 
 
-namespace BeatSaberModManager.Services.Implementations.LegacyVersions.Steam
+namespace BeatSaberModManager.Services.Implementations.Versions.Steam
 {
     /// <inheritdoc />
     public class SteamLegacyGameVersionInstaller(ISteamAuthenticator steamAuthenticator, ILogger logger) : ILegacyGameVersionInstaller
     {
         /// <inheritdoc />
-        public async Task<string?> InstallLegacyGameVersionAsync(ILegacyGameVersion legacyGameVersion, CancellationToken cancellationToken, IProgress<double>? progress = null)
+        public async Task<string?> InstallLegacyGameVersionAsync(IGameVersion gameVersion, CancellationToken cancellationToken, IProgress<double>? progress = null)
         {
-            ArgumentNullException.ThrowIfNull(legacyGameVersion);
-            if (legacyGameVersion is not SteamLegacyGameVersion steamLegacyGameVersion)
+            ArgumentNullException.ThrowIfNull(gameVersion);
+            if (gameVersion is not SteamGameVersion steamLegacyGameVersion)
                 return null;
             string appDataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            string legacyGameVersionsDirPath = Path.Join(appDataDirPath, ThisAssembly.Info.Product, "LegacyGameVersions", legacyGameVersion.GameVersion);
+            string legacyGameVersionsDirPath = Path.Join(appDataDirPath, ThisAssembly.Info.Product, "LegacyGameVersions", gameVersion.GameVersion);
             (string? username, string? password, bool rememberLogin) = await steamAuthenticator.ProvideLoginDetailsAsync().ConfigureAwait(false);
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 return null;
@@ -50,6 +50,6 @@ namespace BeatSaberModManager.Services.Implementations.LegacyVersions.Steam
         }
 
         /// <inheritdoc />
-        public Task<bool> UninstallLegacyGameVersionAsync(ILegacyGameVersion legacyGameVersion) => throw new NotImplementedException();
+        public Task<bool> UninstallLegacyGameVersionAsync(IGameVersion gameVersion) => throw new NotImplementedException();
     }
 }

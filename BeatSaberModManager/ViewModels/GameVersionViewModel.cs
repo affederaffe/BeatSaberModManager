@@ -17,10 +17,10 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="legacyGameVersion"></param>
-        public GameVersionViewModel(ILegacyGameVersion legacyGameVersion)
+        /// <param name="gameVersion"></param>
+        public GameVersionViewModel(IGameVersion gameVersion)
         {
-            LegacyGameVersion = legacyGameVersion;
+            GameVersion = gameVersion;
             this.WhenAnyValue(static x => x.InstallDir)
                 .Select(static x => x is not null)
                 .ToProperty(this, nameof(IsInstalled), out _isInstalled);
@@ -29,7 +29,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// 
         /// </summary>
-        public ILegacyGameVersion LegacyGameVersion { get; }
+        public IGameVersion GameVersion { get; }
 
         /// <summary>
         /// The directory the version is installed at.

@@ -3,14 +3,14 @@
                     xmlns:c="using:BeatSaberModManager.Views.Controls">
 
     <ControlTheme x:Key="{x:Type c:CardControl}" TargetType="c:CardControl">
-        <Setter Property="Padding" Value="10" />
+        <Setter Property="Padding" Value="0" />
         <Setter Property="Width" Value="200"/>
         <Setter Property="Height" Value="260"/>
         <Setter Property="BoxShadow" Value="0 0 7 0 #000000" />
         <Setter Property="InternalBoxShadow" Value="0 0 5 0 #000000" />
         <Setter Property="InternalCornerRadius" Value="7" />
         <Setter Property="CornerRadius" Value="7" />
-        <Setter Property="InternalPadding" Value="20" />
+        <Setter Property="InternalPadding" Value="0" />
         <Setter Property="ScaleOnPointerOver" Value="True"/>
         <Setter Property="Background" Value="{DynamicResource ThemeControlHighBrush}" />
         <Setter Property="SecondaryBackground" Value="{DynamicResource ThemeControlMidBrush}" />

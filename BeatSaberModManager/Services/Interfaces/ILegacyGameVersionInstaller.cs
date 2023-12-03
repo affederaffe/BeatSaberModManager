@@ -15,17 +15,17 @@ namespace BeatSaberModManager.Services.Interfaces
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="legacyGameVersion"></param>
+        /// <param name="gameVersion"></param>
         /// <param name="cancellationToken"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        Task<string?> InstallLegacyGameVersionAsync(ILegacyGameVersion legacyGameVersion, CancellationToken cancellationToken, IProgress<double>? progress = null);
+        Task<string?> InstallLegacyGameVersionAsync(IGameVersion gameVersion, CancellationToken cancellationToken, IProgress<double>? progress = null);
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="legacyGameVersion"></param>
+        /// <param name="gameVersion"></param>
         /// <returns></returns>
-        Task<bool> UninstallLegacyGameVersionAsync(ILegacyGameVersion legacyGameVersion);
+        Task<bool> UninstallLegacyGameVersionAsync(IGameVersion gameVersion);
     }
 }

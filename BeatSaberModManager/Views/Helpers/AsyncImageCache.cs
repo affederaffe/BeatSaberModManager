@@ -20,7 +20,7 @@ namespace BeatSaberModManager.Views.Helpers
         private static readonly HttpClient _httpClient = new();
         private static readonly Dictionary<Uri, Task<Bitmap>> _loadingQueue = [];
         private static readonly Dictionary<Uri, Bitmap> _cache = [];
-        private static readonly PixelSize _imageSize = new(200, 200);
+        private static readonly PixelSize _imageSize = new(512, 512);
 
         /// <summary>
         /// 
