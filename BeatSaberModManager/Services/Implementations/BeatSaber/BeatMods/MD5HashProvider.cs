@@ -4,17 +4,22 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 
-using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.Utils;
 
 
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 {
-    /// <inheritdoc />
-    public class MD5HashProvider : IHashProvider
+    /// <summary>
+    /// Provides methods to calculate hashes using MD5.
+    /// </summary>
+    public static class MD5HashProvider
     {
-        /// <inheritdoc />
-        public async Task<string?> CalculateHashForFileAsync(string path)
+        /// <summary>
+        /// Asynchronously calculates the hash for a file.
+        /// </summary>
+        /// <param name="path">The path of the file.</param>
+        /// <returns>The string representation of the hash, or null when failed to read the file.</returns>
+        public static async Task<string?> CalculateHashForFileAsync(string path)
         {
 #pragma warning disable CA2007
             await using FileStream? fileStream = IOUtils.TryOpenFile(path, FileMode.Open, FileAccess.Read);
@@ -22,9 +27,13 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             return fileStream is null ? null : await CalculateHashForStreamAsync(fileStream).ConfigureAwait(false);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Asynchronously calculates the hash for a <see cref="Stream"/>.
+        /// </summary>
+        /// <param name="stream">The <see cref="Stream"/> to calculate the hash from.</param>
+        /// <returns>The string representation of the hash.</returns>
         [SuppressMessage("Security", "CA5351:Do Not Use Broken Cryptographic Algorithms")]
-        public async Task<string> CalculateHashForStreamAsync(Stream stream)
+        public static async Task<string> CalculateHashForStreamAsync(Stream stream)
         {
             using MD5 md5 = MD5.Create();
             byte[] hash = await md5.ComputeHashAsync(stream).ConfigureAwait(false);
