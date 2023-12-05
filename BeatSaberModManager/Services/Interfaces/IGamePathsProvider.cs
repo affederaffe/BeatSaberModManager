@@ -1,3 +1,6 @@
+using BeatSaberModManager.Models.Interfaces;
+
+
 namespace BeatSaberModManager.Services.Interfaces
 {
     /// <summary>
@@ -8,15 +11,15 @@ namespace BeatSaberModManager.Services.Interfaces
         /// <summary>
         /// Gets the AppData directory of a game.
         /// </summary>
-        /// <param name="installDir">The game's installation directory.</param>
+        /// <param name="gameVersion">The targeted installation of the game.</param>
         /// <returns>The path of the game's AppData directory.</returns>
-        string GetAppDataPath(string installDir);
+        string GetAppDataPath(IGameVersion gameVersion);
 
         /// <summary>
         /// Gets the Logs directory of a game.
         /// </summary>
-        /// <param name="installDir">The game's installation directory.</param>
+        /// <param name="gameVersion">The targeted installation of the game.</param>
         /// <returns>The path of the game's Logs directory.</returns>
-        string GetLogsPath(string installDir);
+        string GetLogsPath(IGameVersion gameVersion);
     }
 }

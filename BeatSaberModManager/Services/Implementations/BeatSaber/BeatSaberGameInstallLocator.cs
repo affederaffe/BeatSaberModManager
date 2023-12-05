@@ -16,30 +16,41 @@ using Microsoft.Win32;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber
 {
     /// <inheritdoc />
-    public partial class BeatSaberInstallDirLocator(IInstallDirValidator installDirValidator, IGameVersionProvider gameVersionProvider) : IInstallDirLocator
+    public partial class BeatSaberGameInstallLocator(IInstallDirValidator installDirValidator, IGameVersionProvider gameVersionProvider) : IGameInstallLocator
     {
         /// <inheritdoc />
-        public ValueTask<IGameVersion?> LocateInstallDirAsync() =>
+        public Task<IGameVersion?> LocateGameInstallAsync() =>
             OperatingSystem.IsWindows() ? LocateWindowsInstallDirAsync()
                 : OperatingSystem.IsLinux() ? LocateLinuxSteamInstallDirAsync()
                     : throw new PlatformNotSupportedException();
 
+        /// <inheritdoc />
+        public async Task<IGameVersion?> DetectLocalInstallTypeAsync(string installDir)
+        {
+            string? gameVersion = await gameVersionProvider.DetectGameVersionAsync(installDir).ConfigureAwait(false);
+            if (gameVersion is null)
+                return null;
+            string pluginsDir = Path.Join(installDir, "Beat Saber_Data", "Plugins");
+            bool isSteam = File.Exists(Path.Join(pluginsDir, "steam_api64.dll")) || File.Exists(Path.Join(pluginsDir, "x86_64", "steam_api64.dll"));
+            return isSteam ? new SteamGameVersion { GameVersion = gameVersion, InstallDir = installDir } : new OculusGameVersion { GameVersion = gameVersion, InstallDir = installDir };
+        }
+
         [SupportedOSPlatform("windows")]
-        private ValueTask<IGameVersion?> LocateWindowsInstallDirAsync()
+        private Task<IGameVersion?> LocateWindowsInstallDirAsync()
         {
             string? steamInstallDir = LocateWindowsSteamInstallDir();
             return steamInstallDir is null ? LocateOculusBeatSaberInstallDirAsync() : LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
         [SupportedOSPlatform("linux")]
-        private ValueTask<IGameVersion?> LocateLinuxSteamInstallDirAsync()
+        private Task<IGameVersion?> LocateLinuxSteamInstallDirAsync()
         {
             string homeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string steamInstallDir = Path.Join(homeDir, ".steam", "root");
+            string steamInstallDir = Path.Join(homeDir, ".steam", "root", "steamapps");
             return LocateSteamBeatSaberInstallDirAsync(steamInstallDir);
         }
 
-        private async ValueTask<IGameVersion?> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
+        private async Task<IGameVersion?> LocateSteamBeatSaberInstallDirAsync(string steamInstallDir)
         {
             await foreach (string libPath in EnumerateSteamLibraryPathsAsync(steamInstallDir).ConfigureAwait(false))
             {
@@ -81,7 +92,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         }
 
         [SupportedOSPlatform("windows")]
-        private async ValueTask<IGameVersion?> LocateOculusBeatSaberInstallDirAsync()
+        private async Task<IGameVersion?> LocateOculusBeatSaberInstallDirAsync()
         {
             using RegistryKey? oculusInstallDirKey = Registry.LocalMachine.OpenSubKey("Software")?.OpenSubKey("Wow6432Node")?.OpenSubKey("Oculus VR, LLC")?.OpenSubKey("Oculus")?.OpenSubKey("Config");
             string? oculusInstallDir = oculusInstallDirKey?.GetValue("InitialAppLibrary")?.ToString();

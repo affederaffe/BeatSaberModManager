@@ -21,6 +21,6 @@ namespace BeatSaberModManager.Services.Interfaces
         /// 
         /// </summary>
         /// <returns></returns>
-        Task<IReadOnlyList<(IGameVersion GameVersion, string InstallDir)>?> GetInstalledLegacyGameVersionsAsync();
+        Task<IReadOnlyList<IGameVersion>?> GetInstalledLegacyGameVersionsAsync();
     }
 }

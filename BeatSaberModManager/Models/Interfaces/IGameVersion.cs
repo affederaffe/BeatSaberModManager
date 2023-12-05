@@ -27,5 +27,10 @@ namespace BeatSaberModManager.Models.Interfaces
         /// 
         /// </summary>
         Uri? ReleaseImage { get; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        string? InstallDir { get; set; }
     }
 }

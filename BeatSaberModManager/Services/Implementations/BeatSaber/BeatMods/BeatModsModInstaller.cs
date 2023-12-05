@@ -22,40 +22,45 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         private static readonly string[] _uninstallIpaArgs = { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" };
 
         /// <inheritdoc />
-        public async Task<bool> InstallModAsync(string installDir, IMod modification)
+        public async Task<bool> InstallModAsync(IGameVersion gameVersion, IMod modification)
         {
-            if (modification is not BeatModsMod beatModsMod)
+            ArgumentNullException.ThrowIfNull(gameVersion);
+            if (modification is not BeatModsMod beatModsMod || gameVersion.InstallDir is null)
                 return false;
-            string pendingDirPath = Path.Join(installDir, "IPA", "Pending");
+            string pendingDirPath = Path.Join(gameVersion.InstallDir, "IPA", "Pending");
             if (!IOUtils.TryCreateDirectory(pendingDirPath))
                 return false;
             using ZipArchive? archive = await modProvider.DownloadModAsync(beatModsMod).ConfigureAwait(false);
             if (archive is null)
                 return false;
             bool isModLoader = modProvider.IsModLoader(beatModsMod);
-            string extractDir = isModLoader ? installDir : pendingDirPath;
+            string extractDir = isModLoader ? gameVersion.InstallDir : pendingDirPath;
             bool success = IOUtils.TryExtractArchive(archive, extractDir, true);
-            return isModLoader ? success && await InstallBsipaAsync(installDir).ConfigureAwait(false) : success;
+            return isModLoader ? success && await InstallBsipaAsync(gameVersion.InstallDir).ConfigureAwait(false) : success;
         }
 
         /// <inheritdoc />
-        public async Task UninstallModAsync(string installDir, IMod modification)
+        public async Task UninstallModAsync(IGameVersion gameVersion, IMod modification)
         {
-            if (modification is not BeatModsMod beatModsMod)
+            ArgumentNullException.ThrowIfNull(gameVersion);
+            if (modification is not BeatModsMod beatModsMod || gameVersion.InstallDir is null)
                 return;
             bool isModLoader = modProvider.IsModLoader(beatModsMod);
             if (isModLoader)
-                await UninstallBsipaAsync(installDir, beatModsMod).ConfigureAwait(false);
-            else RemoveModFiles(installDir, beatModsMod);
+                await UninstallBsipaAsync(gameVersion.InstallDir, beatModsMod).ConfigureAwait(false);
+            else RemoveModFiles(gameVersion.InstallDir, beatModsMod);
         }
 
         /// <inheritdoc />
-        public void RemoveAllModFiles(string installDir)
+        public void RemoveAllModFiles(IGameVersion gameVersion)
         {
-            string pluginsDirPath = Path.Join(installDir, "Plugins");
-            string libsDirPath = Path.Join(installDir, "Libs");
-            string ipaDirPath = Path.Join(installDir, "IPA");
-            string winhttpPath = Path.Join(installDir, "winhttp.dll");
+            ArgumentNullException.ThrowIfNull(gameVersion);
+            if (gameVersion.InstallDir is null)
+                return;
+            string pluginsDirPath = Path.Join(gameVersion.InstallDir, "Plugins");
+            string libsDirPath = Path.Join(gameVersion.InstallDir, "Libs");
+            string ipaDirPath = Path.Join(gameVersion.InstallDir, "IPA");
+            string winhttpPath = Path.Join(gameVersion.InstallDir, "winhttp.dll");
             IOUtils.TryDeleteDirectory(pluginsDirPath, true);
             IOUtils.TryDeleteDirectory(libsDirPath, true);
             IOUtils.TryDeleteDirectory(ipaDirPath, true);

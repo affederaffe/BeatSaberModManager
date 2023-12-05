@@ -17,7 +17,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
         {
             switch (gameVersion)
             {
-                case SteamGameVersion steamGameVersion:
+                case SteamGameVersion:
                     PlatformUtils.TryOpenUri(new Uri("steam://rungameid/620980"));
                     break;
                 case OculusGameVersion oculusGameVersion:
