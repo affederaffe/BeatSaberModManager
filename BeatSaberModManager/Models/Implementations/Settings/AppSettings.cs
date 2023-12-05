@@ -47,7 +47,7 @@ namespace BeatSaberModManager.Models.Implementations.Settings
         /// <summary>
         /// A collection of all selected mods.
         /// </summary>
-        public HashSet<string> SelectedMods => _selectedMods ??= new HashSet<string>();
+        public HashSet<string> SelectedMods => _selectedMods ??= [];
         private HashSet<string>? _selectedMods;
     }
 }
