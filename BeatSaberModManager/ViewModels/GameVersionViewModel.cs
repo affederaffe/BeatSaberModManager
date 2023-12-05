@@ -10,7 +10,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// TODO
     /// </summary>
-    public class GameVersionViewModel : ViewModelBase
+    public sealed class GameVersionViewModel : ViewModelBase
     {
         private readonly ObservableAsPropertyHelper<bool> _isInstalled;
 
@@ -21,8 +21,8 @@ namespace BeatSaberModManager.ViewModels
         public GameVersionViewModel(IGameVersion gameVersion)
         {
             GameVersion = gameVersion;
-            this.WhenAnyValue(static x => x.InstallDir)
-                .Select(static x => x is not null)
+            this.WhenAnyValue(static x => x.GameVersion)
+                .Select(static x => x is { InstallDir: not null })
                 .ToProperty(this, nameof(IsInstalled), out _isInstalled);
         }
 
@@ -36,8 +36,8 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public string? InstallDir
         {
-            get => _installDir;
-            set => this.RaiseAndSetIfChanged(ref _installDir, value);
+            get => _installDir ??= GameVersion.InstallDir;
+            set => GameVersion.InstallDir = this.RaiseAndSetIfChanged(ref _installDir, value);
         }
 
         private string? _installDir;

@@ -37,7 +37,7 @@
                     Margin="10, 0, 0, 0"
                     HorizontalAlignment="Center"
                     Content="{DynamicResource SettingsView:SelectFolderButton}"
-                    Command="{Binding PickInstallDirCommand}">
+                    Command="{Binding PickGameVersionCommand}">
             </Button>
 
             <Label Grid.Column="1"

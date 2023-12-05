@@ -12,7 +12,7 @@ using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Interfaces;
 
 
-namespace BeatSaberModManager.Services.Implementations.Versions.Steam
+namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
 {
     /// <summary>
     /// TODO
@@ -32,19 +32,19 @@ namespace BeatSaberModManager.Services.Implementations.Versions.Steam
 #pragma warning disable CA2007
             await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #pragma warning restore CA2007
-            _availableGameVersions = await JsonSerializer.DeserializeAsync(contentStream, LegacyGameVersionJsonSerializerContext.Default.SteamGameVersionArray).ConfigureAwait(false);
+            _availableGameVersions = await JsonSerializer.DeserializeAsync(contentStream, GameVersionJsonSerializerContext.Default.SteamGameVersionArray).ConfigureAwait(false);
             return _availableGameVersions;
         }
 
         /// <inheritdoc />
-        public async Task<IReadOnlyList<(IGameVersion GameVersion, string InstallDir)>?> GetInstalledLegacyGameVersionsAsync()
+        public async Task<IReadOnlyList<IGameVersion>?> GetInstalledLegacyGameVersionsAsync()
         {
             IReadOnlyList<IGameVersion>? availableGameVersions = await GetAvailableGameVersionsAsync().ConfigureAwait(false);
             if (availableGameVersions is null)
                 return null;
             string appDataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string legacyGameVersionsDirPath = Path.Join(appDataDirPath, ThisAssembly.Info.Product, "LegacyGameVersions");
-            List<(IGameVersion GameVersion, string InstallDir)> installedGameVersions = [];
+            List<IGameVersion> installedGameVersions = [];
             try
             {
                 foreach (string dir in Directory.EnumerateDirectories(legacyGameVersionsDirPath))
@@ -52,9 +52,11 @@ namespace BeatSaberModManager.Services.Implementations.Versions.Steam
                     string? installedVersion = await gameVersionProvider.DetectGameVersionAsync(dir).ConfigureAwait(false);
                     if (installedVersion is null)
                         continue;
-                    IGameVersion? legacyGameVersion = availableGameVersions.FirstOrDefault(version => version.GameVersion == installedVersion);
-                    if (legacyGameVersion is not null)
-                        installedGameVersions.Add((legacyGameVersion, dir));
+                    IGameVersion? installedGameVersion = availableGameVersions.FirstOrDefault(version => version.GameVersion == installedVersion);
+                    if (installedGameVersion is null)
+                        continue;
+                    installedGameVersion.InstallDir = dir;
+                    installedGameVersions.Add(installedGameVersion);
                 }
             }
             catch (Exception e) when(e is DirectoryNotFoundException or IOException)

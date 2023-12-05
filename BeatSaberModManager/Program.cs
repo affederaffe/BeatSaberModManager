@@ -17,12 +17,12 @@ using BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver;
 using BeatSaberModManager.Services.Implementations.BeatSaber.ModelSaber;
 using BeatSaberModManager.Services.Implementations.BeatSaber.Playlists;
 using BeatSaberModManager.Services.Implementations.DependencyManagement;
+using BeatSaberModManager.Services.Implementations.GameVersions.Steam;
 using BeatSaberModManager.Services.Implementations.Http;
 using BeatSaberModManager.Services.Implementations.Progress;
 using BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars;
 using BeatSaberModManager.Services.Implementations.Settings;
 using BeatSaberModManager.Services.Implementations.Updater;
-using BeatSaberModManager.Services.Implementations.Versions.Steam;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views;
@@ -129,7 +129,7 @@ namespace BeatSaberModManager
         [Register<BeatSaberGameVersionProvider, IGameVersionProvider>(Scope.SingleInstance)]
         [Register<BeatSaberGamePathsProvider, IGamePathsProvider>(Scope.SingleInstance)]
         [Register<BeatSaberGameLauncher, IGameLauncher>(Scope.SingleInstance)]
-        [Register<BeatSaberInstallDirLocator, IInstallDirLocator>(Scope.SingleInstance)]
+        [Register<BeatSaberGameInstallLocator, IGameInstallLocator>(Scope.SingleInstance)]
         [Register<BeatSaberInstallDirValidator, IInstallDirValidator>(Scope.SingleInstance)]
         internal static class GameServicesModule;
 
@@ -138,7 +138,6 @@ namespace BeatSaberModManager
         [Register<DialogSteamAuthenticator, ISteamAuthenticator>(Scope.SingleInstance)]
         internal static class LegacyGameVersionsModule;
 
-        [Register<MD5HashProvider, IHashProvider>(Scope.SingleInstance)]
         [Register<SimpleDependencyResolver, IDependencyResolver>(Scope.SingleInstance)]
         [Register<BeatModsModProvider, IModProvider>(Scope.SingleInstance)]
         [Register<BeatModsModInstaller, IModInstaller>(Scope.SingleInstance)]

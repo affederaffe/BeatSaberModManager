@@ -24,16 +24,16 @@ namespace BeatSaberModManager.ViewModels
             LegacyGameVersionsViewModel = legacyGameVersionsViewModel;
             SettingsViewModel = settingsViewModel;
             Activator = new ViewModelActivator();
-            PickInstallDirInteraction = new Interaction<Unit, string?>();
             this.WhenActivated(disposable =>
             {
-                settingsViewModel.WhenAnyValue(static x => x.InstallDir)
+                settingsViewModel.WhenAnyValue(static x => x.GameVersion)
+                    .Skip(1)
                     .FirstAsync()
-                    .Where(static x => x is null)
-                    .SelectMany(PickInstallDirInteraction.Handle(Unit.Default))
-                    .Subscribe(x => settingsViewModel.InstallDir = x)
+                    .Where(static x => x?.InstallDir is null)
+                    .Select(static _ => Unit.Default)
+                    .InvokeCommand(settingsViewModel.PickGameVersionCommand)
                     .DisposeWith(disposable);
-                settingsViewModel.ValidatedInstallDirObservable.InvokeCommand(modsViewModel.InitializeCommand).DisposeWith(disposable);
+                settingsViewModel.ValidatedGameVersionObservable.InvokeCommand(modsViewModel.InitializeCommand).DisposeWith(disposable);
                 legacyGameVersionsViewModel.InitializeCommand.Execute().Subscribe().DisposeWith(disposable);
             });
         }
@@ -60,10 +60,5 @@ namespace BeatSaberModManager.ViewModels
         /// The ViewModel for a settings view.
         /// </summary>
         public SettingsViewModel SettingsViewModel { get; }
-
-        /// <summary>
-        /// Ask the user to pick an installation directory.
-        /// </summary>
-        public Interaction<Unit, string?> PickInstallDirInteraction { get; }
     }
 }

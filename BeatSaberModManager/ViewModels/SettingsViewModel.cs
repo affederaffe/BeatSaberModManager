@@ -20,6 +20,7 @@ namespace BeatSaberModManager.ViewModels
     {
         private readonly ISettings<AppSettings> _appSettings;
         private readonly IProtocolHandlerRegistrar _protocolHandlerRegistrar;
+        private readonly ObservableAsPropertyHelper<string?> _installDir;
         private readonly DirectoryExistsObservable _installDirExistsObservable;
 
         private const string BeatSaverScheme = "beatsaver";
@@ -29,8 +30,9 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="SettingsViewModel"/> class.
         /// </summary>
-        public SettingsViewModel(ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IProtocolHandlerRegistrar protocolHandlerRegistrar)
+        public SettingsViewModel(ISettings<AppSettings> appSettings, IGameInstallLocator gameInstallLocator, IProtocolHandlerRegistrar protocolHandlerRegistrar)
         {
+            ArgumentNullException.ThrowIfNull(appSettings);
             ArgumentNullException.ThrowIfNull(protocolHandlerRegistrar);
             _appSettings = appSettings;
             _protocolHandlerRegistrar = protocolHandlerRegistrar;
@@ -38,14 +40,20 @@ namespace BeatSaberModManager.ViewModels
             _modelSaberOneClickCheckboxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(ModelSaberScheme);
             _playlistOneClickCheckBoxChecked = protocolHandlerRegistrar.IsProtocolHandlerRegistered(BSPlaylistScheme);
             PickInstallDirInteraction = new Interaction<Unit, string?>();
-            _installDirExistsObservable = new DirectoryExistsObservable();
-            IsInstallDirValidObservable = _installDirExistsObservable.Select(_ => installDirValidator.ValidateInstallDir(_installDirExistsObservable.Path));
-            ValidatedInstallDirObservable = IsInstallDirValidObservable.Where(static x => x).Select(_ => _installDirExistsObservable.Path!);
+            _installDirExistsObservable = new DirectoryExistsObservable { Path = appSettings.Value.InstallDir };
+            IObservable<IGameVersion?> gameVersionObservable = _installDirExistsObservable.SelectMany(_ => gameInstallLocator.DetectLocalInstallTypeAsync(_installDirExistsObservable.Path!));
+            gameVersionObservable.FirstAsync().Subscribe(x => GameVersion = x);
+            IsGameVersionValidObservable = gameVersionObservable.Select(static gameVersion => gameVersion is not null);
+            ValidatedGameVersionObservable = gameVersionObservable.WhereNotNull();
+            ValidatedGameVersionObservable.Select(static gameVersion => gameVersion.InstallDir)
+                .ToProperty(this, nameof(InstallDir), out _installDir);
             OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(new Uri(_installDirExistsObservable.Path!)), _installDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
-            PickInstallDirCommand = ReactiveCommand.CreateFromObservable(() => PickInstallDirInteraction.Handle(Unit.Default)
-                .Where(installDirValidator.ValidateInstallDir));
-            PickInstallDirCommand.Subscribe(x => InstallDir = x);
-            this.WhenAnyValue(static x => x.InstallDir).Subscribe(x => _installDirExistsObservable.Path = x);
+            PickGameVersionCommand = ReactiveCommand.CreateFromObservable(() => PickInstallDirInteraction.Handle(Unit.Default)
+                .WhereNotNull()
+                .SelectMany(gameInstallLocator.DetectLocalInstallTypeAsync)
+                .WhereNotNull());
+            PickGameVersionCommand.Subscribe(x => GameVersion = x);
+            this.WhenAnyValue(static x => x.GameVersion).WhereNotNull().Subscribe(x => _installDirExistsObservable.Path = x.InstallDir);
             this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, BeatSaverScheme));
             this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, ModelSaberScheme));
             this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, BSPlaylistScheme));
@@ -54,22 +62,22 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Signals when a valid installation directory is provided.
         /// </summary>
-        public IObservable<bool> IsInstallDirValidObservable { get; }
+        public IObservable<bool> IsGameVersionValidObservable { get; }
 
         /// <summary>
         /// Signals when a valid installation directory is provided.
         /// </summary>
-        public IObservable<string> ValidatedInstallDirObservable { get; }
+        public IObservable<IGameVersion> ValidatedGameVersionObservable { get; }
 
         /// <summary>
-        /// Opens the <see cref="InstallDir"/> in the file explorer.
+        /// Opens the <see cref="GameVersion"/> in the file explorer.
         /// </summary>
         public ReactiveCommand<Unit, bool> OpenInstallDirCommand { get; }
 
         /// <summary>
         /// Select a new installation directory.
         /// </summary>
-        public ReactiveCommand<Unit, string?> PickInstallDirCommand { get; }
+        public ReactiveCommand<Unit, IGameVersion> PickGameVersionCommand { get; }
 
         /// <summary>
         /// Ask the user to pick an installation directory.
@@ -105,15 +113,24 @@ namespace BeatSaberModManager.ViewModels
         }
 
         /// <summary>
-        /// The game's installation directory.
+        /// The game's installation.
         /// </summary>
-        public string? InstallDir
+        public IGameVersion? GameVersion
         {
-            get => _installDir ??= _appSettings.Value.InstallDir;
-            set => _appSettings.Value.InstallDir = this.RaiseAndSetIfChanged(ref _installDir, value);
+            get => _gameVersion;
+            set
+            {
+                _appSettings.Value.InstallDir = this.RaiseAndSetIfChanged(ref _gameVersion, value)?.InstallDir;
+                _ = _appSettings.SaveAsync();
+            }
         }
 
-        private string? _installDir;
+        private IGameVersion? _gameVersion;
+
+        /// <summary>
+        /// The game's installation directory.
+        /// </summary>
+        public string? InstallDir => _installDir.Value;
 
         /// <summary>
         /// Checks or unchecks the checkbox control.
@@ -161,7 +178,7 @@ namespace BeatSaberModManager.ViewModels
         {
             _installDirExistsObservable.Dispose();
             OpenInstallDirCommand.Dispose();
-            PickInstallDirCommand.Dispose();
+            PickGameVersionCommand.Dispose();
         }
     }
 }

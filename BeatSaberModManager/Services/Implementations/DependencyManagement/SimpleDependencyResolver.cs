@@ -17,7 +17,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
         /// <inheritdoc />
         public IEnumerable<IMod> ResolveDependencies(IMod modification)
         {
-            HashSet<IMod> dependencies = new();
+            HashSet<IMod> dependencies = [];
             ResolveDependencies(modification, dependencies);
             return dependencies;
         }
@@ -25,7 +25,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
         /// <inheritdoc />
         public IEnumerable<IMod> UnresolveDependencies(IMod modification)
         {
-            HashSet<IMod> dependencies = new();
+            HashSet<IMod> dependencies = [];
             UnresolveDependencies(modification, dependencies);
             return dependencies;
         }
@@ -37,7 +37,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
                 if (_dependencyRegistry.TryGetValue(dependency, out HashSet<IMod>? dependents))
                     dependents.Add(modification);
                 else
-                    _dependencyRegistry.Add(dependency, new HashSet<IMod> { modification });
+                    _dependencyRegistry.Add(dependency, [modification]);
                 dependencies.Add(dependency);
                 ResolveDependencies(dependency, dependencies);
             }

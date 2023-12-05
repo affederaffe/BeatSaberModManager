@@ -82,7 +82,7 @@ namespace BeatSaberModManager.Models.Implementations.Versions
                 return true;
             if (obj is not SteamGameVersion steamLegacyGameVersion)
                 return false;
-            return ManifestId == steamLegacyGameVersion.ManifestId;
+            return Version == steamLegacyGameVersion.Version;
         }
 
         /// <summary>
@@ -91,12 +91,7 @@ namespace BeatSaberModManager.Models.Implementations.Versions
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator ==(SteamGameVersion? left, SteamGameVersion? right)
-        {
-            if (left is null)
-                return right is null;
-            return left.Equals(right);
-        }
+        public static bool operator ==(SteamGameVersion? left, SteamGameVersion? right) => left?.Equals(right) ?? right is null;
 
         /// <summary>
         /// 
@@ -112,12 +107,7 @@ namespace BeatSaberModManager.Models.Implementations.Versions
         /// <param name="left"></param>
         /// <param name="right"></param>
         /// <returns></returns>
-        public static bool operator <(SteamGameVersion? left, SteamGameVersion? right)
-        {
-            if (left is null)
-                return right is not null;
-            return left.CompareTo(right) < 0;
-        }
+        public static bool operator <(SteamGameVersion? left, SteamGameVersion? right) => left is null ? right is not null : left.CompareTo(right) < 0;
 
         /// <summary>
         /// 

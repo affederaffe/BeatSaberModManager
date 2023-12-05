@@ -15,40 +15,18 @@ namespace BeatSaberModManager
     /// <summary>
     /// Handles the applications start, e.g. updating and configuring Avalonia.
     /// </summary>
-    public class Startup
+    public class Startup(string[] args, Lazy<Application> application, ISettings<AppSettings> appSettings, IUpdater updater)
     {
-        private readonly string[] _args;
-        private readonly Lazy<Application> _application;
-        private readonly ISettings<AppSettings> _appSettings;
-        private readonly IInstallDirValidator _installDirValidator;
-        private readonly IInstallDirLocator _installDirLocator;
-        private readonly IUpdater _updater;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Startup"/> class.
-        /// </summary>
-        public Startup(string[] args, Lazy<Application> application, ISettings<AppSettings> appSettings, IInstallDirValidator installDirValidator, IInstallDirLocator installDirLocator, IUpdater updater)
-        {
-            _args = args;
-            _application = application;
-            _appSettings = appSettings;
-            _installDirValidator = installDirValidator;
-            _installDirLocator = installDirLocator;
-            _updater = updater;
-        }
-
         /// <summary>
         /// Asynchronously starts the application.
         /// </summary>
         public async Task<int> RunAsync()
         {
-            if (await _updater.NeedsUpdateAsync().ConfigureAwait(false))
-                return await _updater.UpdateAsync().ConfigureAwait(false);
-            await _appSettings.LoadAsync().ConfigureAwait(false);
-            if (_args is ["--path", { } installDir])
-                _appSettings.Value.InstallDir = installDir;
-            if (!_installDirValidator.ValidateInstallDir(_appSettings.Value.InstallDir))
-                _appSettings.Value.InstallDir = await _installDirLocator.LocateInstallDirAsync().ConfigureAwait(false);
+            if (await updater.NeedsUpdateAsync().ConfigureAwait(false))
+                return await updater.UpdateAsync().ConfigureAwait(false);
+            await appSettings.LoadAsync().ConfigureAwait(false);
+            if (args is ["--path", { } installDir])
+                appSettings.Value.InstallDir = installDir;
             return RunAvaloniaApp();
         }
 
@@ -56,7 +34,7 @@ namespace BeatSaberModManager
 
         private AppBuilder BuildAvaloniaApp()
         {
-            AppBuilder appBuilder = AppBuilder.Configure(() => _application.Value)
+            AppBuilder appBuilder = AppBuilder.Configure(() => application.Value)
                 .UsePlatformDetect()
                 .UseReactiveUI()
                 .WithInterFont();

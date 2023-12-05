@@ -20,8 +20,9 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// TODO
     /// </summary>
-    public class LegacyGameVersionsViewModel : ViewModelBase
+    public sealed class LegacyGameVersionsViewModel : ViewModelBase
     {
+        private readonly IGameInstallLocator _gameInstallLocator;
         private readonly ILegacyGameVersionProvider _legacyGameVersionProvider;
         private readonly ILegacyGameVersionInstaller _legacyGameVersionInstaller;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
@@ -31,8 +32,10 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// TODO
         /// </summary>
-        public LegacyGameVersionsViewModel(SettingsViewModel settingsViewModel, IInstallDirLocator installDirLocator, ILegacyGameVersionProvider legacyGameVersionProvider, ILegacyGameVersionInstaller legacyGameVersionInstaller, StatusProgress statusProgress)
+        public LegacyGameVersionsViewModel(SettingsViewModel settingsViewModel, IGameInstallLocator gameInstallLocator, ILegacyGameVersionProvider legacyGameVersionProvider, ILegacyGameVersionInstaller legacyGameVersionInstaller, StatusProgress statusProgress)
         {
+            ArgumentNullException.ThrowIfNull(settingsViewModel);
+            _gameInstallLocator = gameInstallLocator;
             _legacyGameVersionProvider = legacyGameVersionProvider;
             _legacyGameVersionInstaller = legacyGameVersionInstaller;
             StatusProgress = statusProgress;
@@ -41,29 +44,31 @@ namespace BeatSaberModManager.ViewModels
             InitializeCommand.CombineLatest(InitializeCommand.IsExecuting)
                 .Select(static x => x is (not null, false))
                 .ToProperty(this, nameof(IsSuccess), out _isSuccess);
-            IObservable<GameVersionViewModel[]> legacyGameVersions = InitializeCommand.WhereNotNull()
-                .Select(static x => x.ToArray());
-            legacyGameVersions
-                .SelectMany(async gameVersions => (GameVersions: gameVersions, InstalledVersion: await installDirLocator.LocateInstallDirAsync().ConfigureAwait(false)))
-                .Select(static x => x.GameVersions.FirstOrDefault(gameVersion => gameVersion.GameVersion == x.InstalledVersion))
-                .WhereNotNull()
-                .Do(currentGameVersion => currentGameVersion.InstallDir = "") //TODO
-                .Subscribe(currentGameVersion => SelectedLegacyGameVersion = currentGameVersion);
-            legacyGameVersions
+            InitializeCommand.WhereNotNull()
                 .Select(static gameVersions => gameVersions
                     .OrderByDescending(static x => x.GameVersion.ReleaseDate)
                     .GroupBy(static version => version.GameVersion.ReleaseDate.Year)
                     .ToArray())
                 .ToProperty(this, nameof(LegacyGameVersions), out _legacyGameVersions);
-            IObservable<GameVersionViewModel?> whenAnySelectedLegacyGameVersion = this.WhenAnyValue(static x => x.SelectedLegacyGameVersion);
-            IObservable<bool> canInstallVersion = whenAnySelectedLegacyGameVersion.Select(static version => version is not null && !version.IsInstalled);
+            settingsViewModel.IsGameVersionValidObservable.FirstAsync()
+                .Where(static isValid => !isValid)
+                .CombineLatest(InitializeCommand.WhereNotNull())
+                .Select(static x => x.Second.FirstOrDefault(static gameVersion => gameVersion.IsInstalled))
+                .WhereNotNull()
+                .Subscribe(installedVersion => settingsViewModel.GameVersion = installedVersion.GameVersion);
+            settingsViewModel.ValidatedGameVersionObservable.FirstAsync()
+                .CombineLatest(InitializeCommand.WhereNotNull())
+                .Select(static x => x.Second.FirstOrDefault(gameVersion => gameVersion.GameVersion.GameVersion == x.First.GameVersion))
+                .Subscribe(gameVersion => SelectedGameVersion = gameVersion);
+            IObservable<(GameVersionViewModel? GameVersion, bool IsInstalled)> whenAnySelectedGameVersion = this.WhenAnyValue(static x => x.SelectedGameVersion, static x => x.SelectedGameVersion!.IsInstalled, static (gameVersion, _) => (gameVersion, gameVersion?.IsInstalled ?? false));
+            IObservable<bool> canInstallVersion = whenAnySelectedGameVersion.Select(static x => x.GameVersion is not null && !x.IsInstalled);
             InstallCommand = ReactiveCommand.CreateFromTask(InstallSelectedLegacyGameVersionAsync, canInstallVersion);
-            IObservable<bool> canUninstallVersion = whenAnySelectedLegacyGameVersion.Select(static version => version is not null && version.IsInstalled);
+            IObservable<bool> canUninstallVersion = whenAnySelectedGameVersion.Select(static version => version is { GameVersion.InstallDir: not null });
             UninstallCommand = ReactiveCommand.CreateFromTask(UninstallSelectedLegacyGameVersionAsync, canUninstallVersion);
-            IObservable<bool> canViewMoreInfo = whenAnySelectedLegacyGameVersion.Select(static version => version?.GameVersion.ReleaseUrl is not null);
-            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(SelectedLegacyGameVersion!.GameVersion.ReleaseUrl!), canViewMoreInfo);
-            whenAnySelectedLegacyGameVersion.Where(static version => version is not null && version.IsInstalled)
-                .Subscribe(version => settingsViewModel.InstallDir = version!.InstallDir);
+            IObservable<bool> canViewMoreInfo = whenAnySelectedGameVersion.Select(static x => x.GameVersion?.GameVersion.ReleaseUrl is not null);
+            MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(SelectedGameVersion!.GameVersion.ReleaseUrl!), canViewMoreInfo);
+            whenAnySelectedGameVersion.Where(static version => version is { GameVersion.InstallDir: not null })
+                .Subscribe(x => settingsViewModel.GameVersion = x.GameVersion!.GameVersion);
         }
 
         /// <summary>
@@ -109,45 +114,48 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// TODO
         /// </summary>
-        public GameVersionViewModel? SelectedLegacyGameVersion
+        public GameVersionViewModel? SelectedGameVersion
         {
-            get => _selectedLegacyGameVersion;
+            get => _selectedGameVersion;
             set
             {
                 if (value is not null)
-                    this.RaiseAndSetIfChanged(ref _selectedLegacyGameVersion, value);
+                    this.RaiseAndSetIfChanged(ref _selectedGameVersion, value);
             }
         }
 
-        private GameVersionViewModel? _selectedLegacyGameVersion;
+        private GameVersionViewModel? _selectedGameVersion;
 
         private async Task<IReadOnlyList<GameVersionViewModel>?> GetLegacyGameVersionsAsync()
         {
-            IReadOnlyList<IGameVersion>? availableGameVersions = await _legacyGameVersionProvider.GetAvailableGameVersionsAsync().ConfigureAwait(true);
+            IReadOnlyList<IGameVersion>? availableGameVersions = await _legacyGameVersionProvider.GetAvailableGameVersionsAsync().ConfigureAwait(false);
             if (availableGameVersions is null)
                 return null;
-            GameVersionViewModel[] gameVersionViewModels = availableGameVersions.Select(static x => new GameVersionViewModel(x)).ToArray();
-            IReadOnlyList<(IGameVersion GameVersion, string InstallDir)>? installedGameVersions = await _legacyGameVersionProvider.GetInstalledLegacyGameVersionsAsync().ConfigureAwait(true);
-            if (installedGameVersions is null)
-                return gameVersionViewModels;
-            foreach (GameVersionViewModel gameVersionViewModel in gameVersionViewModels)
-                gameVersionViewModel.InstallDir = installedGameVersions.FirstOrDefault(x => x.GameVersion == gameVersionViewModel.GameVersion).InstallDir;
-            return gameVersionViewModels;
+            IReadOnlyList<IGameVersion>? installedLegacyGameVersions = await _legacyGameVersionProvider.GetInstalledLegacyGameVersionsAsync().ConfigureAwait(false);
+            IGameVersion? installedStoreVersion = await _gameInstallLocator.LocateGameInstallAsync().ConfigureAwait(false);
+            List<IGameVersion>? allInstalledGameVersions = installedLegacyGameVersions?.ToList();
+            if (installedStoreVersion is not null)
+                allInstalledGameVersions?.Insert(0, installedStoreVersion);
+            if (allInstalledGameVersions is null)
+                return availableGameVersions.Select(static gameVersion => new GameVersionViewModel(gameVersion)).ToArray();
+            foreach (IGameVersion gameVersion in availableGameVersions)
+                gameVersion.InstallDir = allInstalledGameVersions.FirstOrDefault(x => x.GameVersion == gameVersion.GameVersion)?.InstallDir;
+            return availableGameVersions.Select(static gameVersion => new GameVersionViewModel(gameVersion)).ToArray();
         }
 
         private async Task<bool> InstallSelectedLegacyGameVersionAsync()
         {
-            GameVersionViewModel selectedGameVersion = SelectedLegacyGameVersion!;
+            GameVersionViewModel selectedGameVersion = SelectedGameVersion!;
             StatusProgress.Report(new ProgressInfo(StatusType.Installing, selectedGameVersion.GameVersion.GameVersion));
-            string? installDir = await _legacyGameVersionInstaller.InstallLegacyGameVersionAsync(selectedGameVersion.GameVersion, CancellationToken.None, StatusProgress).ConfigureAwait(true);
+            string? installDir = await _legacyGameVersionInstaller.InstallLegacyGameVersionAsync(selectedGameVersion.GameVersion, CancellationToken.None, StatusProgress).ConfigureAwait(false);
             selectedGameVersion.InstallDir = installDir;
             return installDir is not null;
         }
 
         private async Task<bool> UninstallSelectedLegacyGameVersionAsync()
         {
-            GameVersionViewModel selectedGameVersion = SelectedLegacyGameVersion!;
-            bool success = await _legacyGameVersionInstaller.UninstallLegacyGameVersionAsync(selectedGameVersion.GameVersion).ConfigureAwait(true);
+            GameVersionViewModel selectedGameVersion = SelectedGameVersion!;
+            bool success = await _legacyGameVersionInstaller.UninstallLegacyGameVersionAsync(selectedGameVersion.GameVersion).ConfigureAwait(false);
             if (success)
                 selectedGameVersion.InstallDir = null;
             return success;

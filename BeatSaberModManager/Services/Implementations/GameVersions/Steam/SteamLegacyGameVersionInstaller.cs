@@ -15,7 +15,7 @@ using Serilog;
 using SteamKit2;
 
 
-namespace BeatSaberModManager.Services.Implementations.Versions.Steam
+namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
 {
     /// <inheritdoc />
     public class SteamLegacyGameVersionInstaller(ISteamAuthenticator steamAuthenticator, ILogger logger) : ILegacyGameVersionInstaller

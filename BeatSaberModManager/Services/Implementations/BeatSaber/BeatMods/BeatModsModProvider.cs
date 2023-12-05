@@ -18,7 +18,7 @@ using BeatSaberModManager.Services.Interfaces;
 namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
 {
     /// <inheritdoc />
-    public class BeatModsModProvider(HttpProgressClient httpClient, IHashProvider hashProvider, IGameVersionProvider gameVersionProvider) : IModProvider
+    public class BeatModsModProvider(HttpProgressClient httpClient) : IModProvider
     {
         private static readonly string[] _installedModsLocations = { Path.Join("IPA", "Pending"), "Plugins", "Libs" };
 
@@ -57,7 +57,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             Dictionary<string, BeatModsMod>? fileHashModPairs = await GetMappedModHashesAsync().ConfigureAwait(false);
             if (fileHashModPairs is null)
                 return;
-            HashSet<IMod> installedMods = new();
+            HashSet<IMod> installedMods = [];
             IMod? bsipa = await GetInstalledModLoaderAsync(installDir, fileHashModPairs).ConfigureAwait(false);
             if (bsipa is not null)
                 installedMods.Add(bsipa);
@@ -65,7 +65,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
                 .Where(Directory.Exists)
                 .SelectMany(static x => Directory.EnumerateFiles(x, string.Empty, SearchOption.AllDirectories))
                 .Where(IsModFile);
-            string?[] rawHashes = await Task.WhenAll(files.Select(hashProvider.CalculateHashForFileAsync)).ConfigureAwait(false);
+            string?[] rawHashes = await Task.WhenAll(files.Select(MD5HashProvider.CalculateHashForFileAsync)).ConfigureAwait(false);
             HashSet<string> hashes = rawHashes.Where(static x => x is not null).ToHashSet(StringComparer.OrdinalIgnoreCase)!;
             foreach (string hash in hashes)
             {
@@ -78,14 +78,6 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             }
 
             InstalledMods = installedMods;
-        }
-
-        /// <inheritdoc />
-        public async Task LoadAvailableModsForCurrentVersionAsync(string installDir)
-        {
-            string? version = await gameVersionProvider.DetectGameVersionAsync(installDir).ConfigureAwait(false);
-            if (version is not null)
-                await LoadAvailableModsForVersionAsync(version).ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -176,17 +168,17 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <param name="installDir">The game's installation directory.</param>
         /// <param name="fileHashModPairs">A map of all hashes and their corresponding <see cref="BeatModsMod"/>.</param>
         /// <returns>The <see cref="IMod"/> of BSIPA if found, null otherwise.</returns>
-        private async Task<IMod?> GetInstalledModLoaderAsync(string installDir, Dictionary<string, BeatModsMod> fileHashModPairs)
+        private static async Task<IMod?> GetInstalledModLoaderAsync(string installDir, Dictionary<string, BeatModsMod> fileHashModPairs)
         {
             string injectorPath = Path.Join(installDir, "Beat Saber_Data", "Managed", "IPA.Injector.dll");
-            string? injectorHash = await hashProvider.CalculateHashForFileAsync(injectorPath).ConfigureAwait(false);
+            string? injectorHash = await MD5HashProvider.CalculateHashForFileAsync(injectorPath).ConfigureAwait(false);
             if (injectorHash is null || !fileHashModPairs.TryGetValue(injectorHash, out BeatModsMod? bsipa))
                 return null;
             foreach (BeatModsHash beatModsHash in bsipa.Downloads[0].Hashes.Where(IsMod))
             {
                 string fileName = beatModsHash.File.Replace("IPA/Data", "Beat Saber_Data", StringComparison.Ordinal).Replace("IPA/", null, StringComparison.Ordinal);
                 string path = Path.Join(installDir, fileName);
-                string? hash = await hashProvider.CalculateHashForFileAsync(path).ConfigureAwait(false);
+                string? hash = await MD5HashProvider.CalculateHashForFileAsync(path).ConfigureAwait(false);
                 if (!beatModsHash.Hash.Equals(hash, StringComparison.OrdinalIgnoreCase))
                     return null;
             }

@@ -55,7 +55,7 @@ namespace BeatSaberModManager.ViewModels
             _modInstaller = modInstaller;
             _gridItemsSourceCache = new SourceCache<ModGridItemViewModel, IMod>(static x => x.AvailableMod);
             StatusProgress = statusProgress;
-            InitializeCommand = ReactiveCommand.CreateFromTask<string, bool>(FetchModsAsync);
+            InitializeCommand = ReactiveCommand.CreateFromTask<IGameVersion, bool>(FetchModsAsync);
             InitializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
             InitializeCommand.CombineLatest(InitializeCommand.IsExecuting)
                 .Select(static x => x is (false, false))
@@ -63,7 +63,7 @@ namespace BeatSaberModManager.ViewModels
             InitializeCommand.CombineLatest(InitializeCommand.IsExecuting)
                 .Select(x => x is (true, false) && _gridItemsSourceCache.Count == 0)
                 .ToProperty(this, nameof(IsEmpty), out _isEmpty);
-            IsSuccessObservable = InitializeCommand.CombineLatest(InitializeCommand.IsExecuting, settingsViewModel.IsInstallDirValidObservable)
+            IsSuccessObservable = InitializeCommand.CombineLatest(InitializeCommand.IsExecuting, settingsViewModel.IsGameVersionValidObservable)
                 .Select(x => x is (true, false, true) && _gridItemsSourceCache.Count != 0);
             IsSuccessObservable.ToProperty(this, nameof(IsSuccess), out _isSuccess);
             IObservable<IChangeSet<ModGridItemViewModel, IMod>> connection = _gridItemsSourceCache.Connect();
@@ -107,7 +107,7 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Initializes the grid items.
         /// </summary>
-        public ReactiveCommand<string, bool> InitializeCommand { get; }
+        public ReactiveCommand<IGameVersion, bool> InitializeCommand { get; }
 
         /// <summary>
         /// Updates all mods.
@@ -185,47 +185,47 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Asynchronously installs selected mods and uninstalls unselected ones.
         /// </summary>
-        public async Task UpdateModsAsync()
+        private async Task UpdateModsAsync()
         {
             IMod[] install = _gridItemsSourceCache.Items.Where(x => x.IsCheckBoxChecked && (!x.IsUpToDate || _appSettings.Value.ForceReinstallMods))
                 .Select(static x => x.AvailableMod)
                 .ToArray();
-            await InstallModsAsync(_settingsViewModel.InstallDir!, install).ConfigureAwait(false);
+            await InstallModsAsync(_settingsViewModel.GameVersion!, install).ConfigureAwait(false);
             IMod[] uninstall = _gridItemsSourceCache.Items.Where(static x => x is { IsCheckBoxChecked: false, InstalledMod: not null })
                 .Select(static x => x.AvailableMod)
                 .ToArray();
-            await UninstallModsAsync(_settingsViewModel.InstallDir!, uninstall, StatusProgress).ConfigureAwait(false);
+            await UninstallModsAsync(_settingsViewModel.GameVersion!, uninstall, StatusProgress).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Asynchronously uninstalls the mod loader.
         /// </summary>
-        public Task UninstallModLoaderAsync(string installDir, IStatusProgress statusProgress)
+        public Task UninstallModLoaderAsync(IGameVersion gameVersion, IStatusProgress statusProgress)
         {
             ArgumentNullException.ThrowIfNull(statusProgress);
             IMod? modLoader = _gridItemsSourceCache.Items.FirstOrDefault(x => _modProvider.IsModLoader(x.InstalledMod))?.AvailableMod;
-            return modLoader is not null ? UninstallModsAsync(installDir, new[] { modLoader }, statusProgress) : Task.CompletedTask;
+            return modLoader is not null ? UninstallModsAsync(gameVersion, new[] { modLoader }, statusProgress) : Task.CompletedTask;
         }
 
         /// <summary>
         /// Asynchronously uninstalls all installed mods.
         /// </summary>
-        public async Task UninstallAllModsAsync(string installDir, IStatusProgress statusProgress)
+        public async Task UninstallAllModsAsync(IGameVersion gameVersion, IStatusProgress statusProgress)
         {
             ArgumentNullException.ThrowIfNull(statusProgress);
             IMod[] mods = _gridItemsSourceCache.Items.Where(static x => x.InstalledMod is not null)
                 .Select(static x => x.AvailableMod)
                 .ToArray();
-            await UninstallModsAsync(installDir, mods, statusProgress).ConfigureAwait(false);
-            _modInstaller.RemoveAllModFiles(installDir);
+            await UninstallModsAsync(gameVersion, mods, statusProgress).ConfigureAwait(false);
+            _modInstaller.RemoveAllModFiles(gameVersion);
         }
 
-        private async Task<bool> FetchModsAsync(string installDir)
+        private async Task<bool> FetchModsAsync(IGameVersion gameVersion)
         {
-            await _modProvider.LoadAvailableModsForCurrentVersionAsync(installDir).ConfigureAwait(false);
+            await _modProvider.LoadAvailableModsForVersionAsync(gameVersion.GameVersion).ConfigureAwait(false);
             if (_modProvider.AvailableMods is null)
                 return false;
-            await _modProvider.LoadInstalledModsAsync(installDir).ConfigureAwait(false);
+            await _modProvider.LoadInstalledModsAsync(gameVersion.InstallDir!).ConfigureAwait(false);
             if (_modProvider.InstalledMods is null)
                 return false;
             _gridItemsSourceCache.Edit(innerCache => innerCache.Load(_modProvider.AvailableMods.Select(x => new ModGridItemViewModel(x, _modProvider.InstalledMods.FirstOrDefault(y => y.Name == x.Name), _appSettings))));
@@ -235,15 +235,15 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Asynchronously installs a collection of <see cref="IMod"/>s/>.
         /// </summary>
-        /// <param name="installDir">The game's installation directory.</param>
+        /// <param name="gameVersion">The targeted installation of the game.</param>
         /// <param name="mods">The mods to install.</param>
-        private async Task InstallModsAsync(string installDir, IReadOnlyList<IMod> mods)
+        private async Task InstallModsAsync(IGameVersion gameVersion, IReadOnlyList<IMod> mods)
         {
             StatusProgress.Report(0);
             for (int i = 0; i < mods.Count; i++)
             {
                 StatusProgress.Report(new ProgressInfo(StatusType.Installing, mods[i].Name));
-                bool success = await _modInstaller.InstallModAsync(installDir, mods[i]).ConfigureAwait(false);
+                bool success = await _modInstaller.InstallModAsync(gameVersion, mods[i]).ConfigureAwait(false);
                 if (!success)
                     continue;
                 StatusProgress.Report(((double)i + 1) / mods.Count);
@@ -259,16 +259,16 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// Asynchronously uninstalls a collection of <see cref="IMod"/>s/>.
         /// </summary>
-        /// <param name="installDir">The game's installation directory.</param>
+        /// <param name="gameVersion">The targeted installation of the game.</param>
         /// <param name="mods">The mods to uninstall.</param>
         /// <param name="statusProgress">The progress to report to.</param>
-        private async Task UninstallModsAsync(string installDir, IReadOnlyList<IMod> mods, IStatusProgress statusProgress)
+        private async Task UninstallModsAsync(IGameVersion gameVersion, IReadOnlyList<IMod> mods, IStatusProgress statusProgress)
         {
             statusProgress.Report(0);
             for (int i = 0; i < mods.Count; i++)
             {
                 statusProgress.Report(new ProgressInfo(StatusType.Uninstalling, mods[i].Name));
-                await _modInstaller.UninstallModAsync(installDir, mods[i]).ConfigureAwait(false);
+                await _modInstaller.UninstallModAsync(gameVersion, mods[i]).ConfigureAwait(false);
                 statusProgress.Report(((double)i + 1) / mods.Count);
                 Optional<ModGridItemViewModel> gridItem = _gridItemsSourceCache.Lookup(mods[i]);
                 if (gridItem.HasValue)

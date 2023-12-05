@@ -43,12 +43,6 @@ namespace BeatSaberModManager.Services.Interfaces
         Task LoadInstalledModsAsync(string installDir);
 
         /// <summary>
-        /// Asynchronously loads all available mods for the current version of the game.
-        /// </summary>
-        /// <param name="installDir">The game's installation directory</param>
-        Task LoadAvailableModsForCurrentVersionAsync(string installDir);
-
-        /// <summary>
         /// Asynchronously loads all available mods for the specified version of the game
         /// </summary>
         /// <param name="version">The version of the game</param>
