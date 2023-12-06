@@ -53,7 +53,7 @@ namespace BeatSaberModManager.ViewModels
             settingsViewModel.IsGameVersionValidObservable.FirstAsync()
                 .Where(static isValid => !isValid)
                 .CombineLatest(InitializeCommand.WhereNotNull())
-                .Select(static x => x.Second.FirstOrDefault(static gameVersion => gameVersion.IsInstalled))
+                .Select(static x => x.Second.LastOrDefault(static gameVersion => gameVersion.IsInstalled))
                 .WhereNotNull()
                 .Subscribe(installedVersion => settingsViewModel.GameVersion = installedVersion.GameVersion);
             settingsViewModel.ValidatedGameVersionObservable.FirstAsync()
@@ -135,7 +135,7 @@ namespace BeatSaberModManager.ViewModels
             IGameVersion? installedStoreVersion = await _gameInstallLocator.LocateGameInstallAsync().ConfigureAwait(false);
             List<IGameVersion>? allInstalledGameVersions = installedLegacyGameVersions?.ToList();
             if (installedStoreVersion is not null)
-                allInstalledGameVersions?.Insert(0, installedStoreVersion);
+                allInstalledGameVersions?.Add(installedStoreVersion);
             if (allInstalledGameVersions is null)
                 return availableGameVersions.Select(static gameVersion => new GameVersionViewModel(gameVersion)).ToArray();
             foreach (IGameVersion gameVersion in availableGameVersions)
