@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -17,7 +16,7 @@ namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
     /// <summary>
     /// TODO
     /// </summary>
-    public class SteamLegacyGameVersionProvider(HttpProgressClient httpClient, IGameVersionProvider gameVersionProvider) : ILegacyGameVersionProvider
+    public class SteamLegacyGameVersionProvider(HttpProgressClient httpClient, IGameInstallLocator gameInstallLocator) : ILegacyGameVersionProvider
     {
         private IReadOnlyList<IGameVersion>? _availableGameVersions;
 
@@ -39,23 +38,16 @@ namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
         /// <inheritdoc />
         public async Task<IReadOnlyList<IGameVersion>?> GetInstalledLegacyGameVersionsAsync()
         {
-            IReadOnlyList<IGameVersion>? availableGameVersions = await GetAvailableGameVersionsAsync().ConfigureAwait(false);
-            if (availableGameVersions is null)
-                return null;
             string appDataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string legacyGameVersionsDirPath = Path.Join(appDataDirPath, ThisAssembly.Info.Product, "LegacyGameVersions");
             List<IGameVersion> installedGameVersions = [];
             try
             {
-                foreach (string dir in Directory.EnumerateDirectories(legacyGameVersionsDirPath))
+                foreach (string installDir in Directory.EnumerateDirectories(legacyGameVersionsDirPath))
                 {
-                    string? installedVersion = await gameVersionProvider.DetectGameVersionAsync(dir).ConfigureAwait(false);
-                    if (installedVersion is null)
-                        continue;
-                    IGameVersion? installedGameVersion = availableGameVersions.FirstOrDefault(version => version.GameVersion == installedVersion);
+                    IGameVersion? installedGameVersion = await gameInstallLocator.DetectLocalInstallTypeAsync(installDir).ConfigureAwait(false);
                     if (installedGameVersion is null)
                         continue;
-                    installedGameVersion.InstallDir = dir;
                     installedGameVersions.Add(installedGameVersion);
                 }
             }
@@ -64,7 +56,7 @@ namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
                 return null;
             }
 
-            return installedGameVersions;
+            return installedGameVersions.Count == 0 ? null : installedGameVersions;
         }
     }
 }

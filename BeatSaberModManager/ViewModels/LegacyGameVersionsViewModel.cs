@@ -52,8 +52,8 @@ namespace BeatSaberModManager.ViewModels
                 .ToProperty(this, nameof(LegacyGameVersions), out _legacyGameVersions);
             settingsViewModel.IsGameVersionValidObservable.FirstAsync()
                 .Where(static isValid => !isValid)
-                .CombineLatest(InitializeCommand.WhereNotNull())
-                .Select(static x => x.Second.LastOrDefault(static gameVersion => gameVersion.IsInstalled))
+                .CombineLatest(InitializeCommand)
+                .Select(static x => x.Second?.LastOrDefault(static gameVersion => gameVersion.IsInstalled))
                 .WhereNotNull()
                 .Subscribe(installedVersion => settingsViewModel.GameVersion = installedVersion.GameVersion);
             settingsViewModel.ValidatedGameVersionObservable.FirstAsync()
@@ -129,17 +129,21 @@ namespace BeatSaberModManager.ViewModels
         private async Task<IReadOnlyList<GameVersionViewModel>?> GetLegacyGameVersionsAsync()
         {
             IReadOnlyList<IGameVersion>? availableGameVersions = await _legacyGameVersionProvider.GetAvailableGameVersionsAsync().ConfigureAwait(false);
-            if (availableGameVersions is null)
-                return null;
             IReadOnlyList<IGameVersion>? installedLegacyGameVersions = await _legacyGameVersionProvider.GetInstalledLegacyGameVersionsAsync().ConfigureAwait(false);
             IGameVersion? installedStoreVersion = await _gameInstallLocator.LocateGameInstallAsync().ConfigureAwait(false);
-            List<IGameVersion>? allInstalledGameVersions = installedLegacyGameVersions?.ToList();
+            List<IGameVersion> allInstalledGameVersions = installedLegacyGameVersions?.ToList() ?? [];
             if (installedStoreVersion is not null)
-                allInstalledGameVersions?.Add(installedStoreVersion);
-            if (allInstalledGameVersions is null)
+                allInstalledGameVersions.Insert(0, installedStoreVersion);
+
+            if (availableGameVersions is not null && allInstalledGameVersions.Count == 0)
                 return availableGameVersions.Select(static gameVersion => new GameVersionViewModel(gameVersion)).ToArray();
+
+            if (availableGameVersions is null)
+                return allInstalledGameVersions.Select(static gameVersion => new GameVersionViewModel(gameVersion)).ToArray();
+
             foreach (IGameVersion gameVersion in availableGameVersions)
                 gameVersion.InstallDir = allInstalledGameVersions.FirstOrDefault(x => x.GameVersion == gameVersion.GameVersion)?.InstallDir;
+
             return availableGameVersions.Select(static gameVersion => new GameVersionViewModel(gameVersion)).ToArray();
         }
 
