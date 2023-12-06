@@ -23,6 +23,12 @@
                 </DataTemplate>
             </TabControl.ItemTemplate>
 
+            <TabControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"  HorizontalAlignment="Center" />
+                </ItemsPanelTemplate>
+            </TabControl.ItemsPanel>
+
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <DataTemplate.DataType>
