@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -27,12 +27,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             SearchForKey(reader, key);
             if (fileStream.Position == fileStream.Length)
                 return null; // we went through the entire stream without finding the key
-            SearchForDigit(reader);
+            (long startIndex, long endIndex) = SearchForVersion(reader);
 
-            const int rewind = -sizeof(int) - sizeof(byte);
-            fileStream.Seek(rewind, SeekOrigin.Current); // rewind to the string length
-
-            int length = reader.ReadInt32();
+            int length = (int)(endIndex - startIndex);
+            _ = fileStream.Seek(-length, SeekOrigin.Current); // rewind to the string length
             byte[] bytes = reader.ReadBytes(length);
             string str = Encoding.UTF8.GetString(bytes);
             Regex regex = VersionRegex();
@@ -50,14 +48,44 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
             }
         }
 
-        private static void SearchForDigit(BinaryReader reader)
+        private static (long, long) SearchForVersion(BinaryReader reader)
         {
-            while (reader.BaseStream.Position < reader.BaseStream.Length)
+            long startIndex = 0;
+            long endIndex = 0;
+            Stream stream = reader.BaseStream;
+            long streamLength = stream.Length;
+            while (stream.Position < streamLength && endIndex == 0)
             {
                 char current = (char)reader.ReadByte();
                 if (char.IsDigit(current))
-                    break;
+                {
+                    startIndex = stream.Position - 1;
+                    int dotCount = 0;
+
+                    while (stream.Position < streamLength)
+                    {
+                        current = (char)reader.ReadByte();
+                        if (char.IsDigit(current))
+                        {
+                            if (dotCount == 2 && stream.Position < streamLength && !char.IsDigit((char)reader.PeekChar()))
+                            {
+                                endIndex = stream.Position;
+                                break;
+                            }
+                        }
+                        else if (current == '.')
+                        {
+                            dotCount++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
             }
+
+            return (startIndex, endIndex);
         }
 
         [GeneratedRegex(@"[\d]+.[\d]+.[\d]+")]
