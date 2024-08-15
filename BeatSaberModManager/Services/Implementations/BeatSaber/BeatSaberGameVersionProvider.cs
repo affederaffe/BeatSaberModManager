@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,74 +22,79 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
 #pragma warning restore CA2007
             if (fileStream is null)
                 return null;
+
             using BinaryReader reader = new(fileStream, Encoding.UTF8);
             const string key = "public.app-category.games";
 
-            SearchForKey(reader, key);
-            if (fileStream.Position == fileStream.Length)
-                return null; // we went through the entire stream without finding the key
-            (long startIndex, long endIndex) = SearchForVersion(reader);
+            if (!TrySeekToKey(reader, key))
+                return null;
 
-            int length = (int)(endIndex - startIndex);
-            _ = fileStream.Seek(-length, SeekOrigin.Current); // rewind to the string length
-            byte[] bytes = reader.ReadBytes(length);
-            string str = Encoding.UTF8.GetString(bytes);
+            if (!TryFindVersion(reader, out string? version))
+                return null;
+
             Regex regex = VersionRegex();
-            Match match = regex.Match(str);
+            Match match = regex.Match(version);
             return !match.Success ? null : match.Value;
         }
 
-        private static void SearchForKey(BinaryReader reader, string key)
+        private static bool TrySeekToKey(BinaryReader reader, string key)
         {
             int pos = 0;
-            while (reader.BaseStream.Position < reader.BaseStream.Length && pos < key.Length)
+            Stream stream = reader.BaseStream;
+            while (stream.Position < stream.Length && pos < key.Length)
             {
-                if (reader.ReadByte() == key[pos]) pos++;
-                else pos = 0;
+                if (reader.ReadByte() == key[pos])
+                    pos++;
+                else
+                    pos = 0;
             }
+
+            return stream.Position == stream.Length; // we went through the entire stream without finding the key
         }
 
-        private static (long, long) SearchForVersion(BinaryReader reader)
+        private static bool TryFindVersion(BinaryReader reader, [NotNullWhen(true)] out string? version)
         {
-            long startIndex = 0;
-            long endIndex = 0;
             Stream stream = reader.BaseStream;
             long streamLength = stream.Length;
-            while (stream.Position < streamLength && endIndex == 0)
+            while (stream.Position < streamLength)
             {
                 char current = (char)reader.ReadByte();
-                if (char.IsDigit(current))
-                {
-                    startIndex = stream.Position - 1;
-                    int dotCount = 0;
+                if (!char.IsDigit(current))
+                    continue;
 
-                    while (stream.Position < streamLength)
+                long startPos = stream.Position - 1;
+                int dotCount = 0;
+
+                // for each first occurrence of a digit, try if it is a version of the form Major.Minor.Patch, i.e. with 2 dots
+                while (stream.Position < streamLength)
+                {
+                    current = (char)reader.ReadByte();
+                    if (char.IsDigit(current))
                     {
-                        current = (char)reader.ReadByte();
-                        if (char.IsDigit(current))
-                        {
-                            if (dotCount == 2 && stream.Position < streamLength && !char.IsDigit((char)reader.PeekChar()))
-                            {
-                                endIndex = stream.Position;
-                                break;
-                            }
-                        }
-                        else if (current == '.')
-                        {
-                            dotCount++;
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        if (dotCount != 2 || stream.Position >= streamLength || char.IsDigit((char)reader.PeekChar()))
+                            continue;
+
+                        // found a version of the form Major.Minor.Patch
+                        int length = (int)(stream.Position - startPos);
+                        stream.Seek(-length, SeekOrigin.Current); // rewind to the string length
+                        byte[] bytes = reader.ReadBytes(length);
+                        version = Encoding.UTF8.GetString(bytes);
+                        return true;
                     }
+
+                    if (current == '.')
+                        dotCount++;
+                    else
+                        break; // digit occurence is only a numeral literal, no version
                 }
             }
 
-            return (startIndex, endIndex);
+            version = null;
+            return false;
         }
 
-        [GeneratedRegex(@"[\d]+.[\d]+.[\d]+")]
+        // There is one version ending in "p1" on BeatMods
+        [GeneratedRegex(@"[\d]+.[\d]+.[\d]+(p1)?")]
         private static partial Regex VersionRegex();
     }
 }
