@@ -23,7 +23,6 @@ namespace BeatSaberModManager.ViewModels
             ModsViewModel = modsViewModel;
             LegacyGameVersionsViewModel = legacyGameVersionsViewModel;
             SettingsViewModel = settingsViewModel;
-            Activator = new ViewModelActivator();
             this.WhenActivated(disposable =>
             {
                 settingsViewModel.WhenAnyValue(static x => x.GameVersion)
@@ -39,7 +38,7 @@ namespace BeatSaberModManager.ViewModels
         }
 
         /// <inheritdoc />
-        public ViewModelActivator Activator { get; }
+        public ViewModelActivator Activator { get; } = new();
 
         /// <summary>
         /// The ViewModel for a dashboard view.

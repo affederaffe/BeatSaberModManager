@@ -73,6 +73,7 @@ namespace BeatSaberModManager.ViewModels
                 .Select(_gridItemsSourceCache.Lookup)
                 .Where(static x => x.HasValue)
                 .Select(static x => x.Value)
+                .ObserveOn(RxApp.MainThreadScheduler)
                 .Subscribe(UpdateGridItemState);
             IObservable<Func<ModGridItemViewModel, bool>> filter = this.WhenAnyValue(static x => x.IsSearchEnabled, static x => x.Query)
                 .Select(static x => new Func<ModGridItemViewModel, bool>(gridItem => Filter(x.Item1, x.Item2, gridItem)));
@@ -80,9 +81,8 @@ namespace BeatSaberModManager.ViewModels
                 .ThenBy(static x => x.AvailableMod.Category)
                 .ThenBy(static x => x.AvailableMod.Name);
             connection.Filter(filter)
-                .Sort(comparer)
                 .ObserveOn(RxApp.MainThreadScheduler)
-                .Bind(out _gridItemsList)
+                .SortAndBind(out _gridItemsList, comparer)
                 .DisposeMany()
                 .Subscribe();
             connection.AutoRefresh(static x => x.InstalledMod)
@@ -204,7 +204,7 @@ namespace BeatSaberModManager.ViewModels
         {
             ArgumentNullException.ThrowIfNull(statusProgress);
             IMod? modLoader = _gridItemsSourceCache.Items.FirstOrDefault(x => _modProvider.IsModLoader(x.InstalledMod))?.AvailableMod;
-            return modLoader is not null ? UninstallModsAsync(gameVersion, new[] { modLoader }, statusProgress) : Task.CompletedTask;
+            return modLoader is not null ? UninstallModsAsync(gameVersion, [modLoader], statusProgress) : Task.CompletedTask;
         }
 
         /// <summary>

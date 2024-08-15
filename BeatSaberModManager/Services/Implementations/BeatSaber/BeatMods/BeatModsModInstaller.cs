@@ -18,8 +18,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
     /// <inheritdoc />
     public class BeatModsModInstaller(IModProvider modProvider) : IModInstaller
     {
-        private static readonly string[] _installIpaArgs = { "-n", "-f", "--relativeToPwd", "Beat Saber.exe" };
-        private static readonly string[] _uninstallIpaArgs = { "--revert", "-n", "--relativeToPwd", "Beat Saber.exe" };
+        private static readonly string[] _installIpaArgs = ["-n", "-f", "--relativeToPwd", "Beat Saber.exe"];
+        private static readonly string[] _uninstallIpaArgs = ["--revert", "-n", "--relativeToPwd", "Beat Saber.exe"];
 
         /// <inheritdoc />
         public async Task<bool> InstallModAsync(IGameVersion gameVersion, IMod modification)
@@ -48,7 +48,8 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             bool isModLoader = modProvider.IsModLoader(beatModsMod);
             if (isModLoader)
                 await UninstallBsipaAsync(gameVersion.InstallDir, beatModsMod).ConfigureAwait(false);
-            else RemoveModFiles(gameVersion.InstallDir, beatModsMod);
+            else
+                RemoveModFiles(gameVersion.InstallDir, beatModsMod);
         }
 
         /// <inheritdoc />

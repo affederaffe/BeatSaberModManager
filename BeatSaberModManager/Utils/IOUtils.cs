@@ -67,15 +67,17 @@ namespace BeatSaberModManager.Utils
         /// </summary>
         /// <param name="path">The name of the directory to remove.</param>
         /// <param name="recursive">True to remove directories, subdirectories, and files in path, false otherwise.</param>
-        public static void TryDeleteDirectory(string path, bool recursive)
+        public static bool TryDeleteDirectory(string path, bool recursive)
         {
             try
             {
                 Directory.Delete(path, recursive);
+                return true;
             }
             catch (ArgumentException) { }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
+            return false;
         }
 
         /// <summary>

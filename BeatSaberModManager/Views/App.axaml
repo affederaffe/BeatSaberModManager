@@ -1,5 +1,6 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="using:Avalonia.Labs.Controls"
              x:Class="BeatSaberModManager.Views.App">
 
     <Application.Resources>
@@ -9,6 +10,18 @@
                 <MergeResourceInclude Source="/Resources/Icons/Icons.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+        
+        <controls:ContentDialog x:Key="ExceptionDialog"
+                                Title="{DynamicResource ExceptionDialog:Title}"
+                                PrimaryButtonText="{DynamicResource ExceptionDialog:Ok}"
+                                IsSecondaryButtonEnabled="False">
+            <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                <TextBlock Name="ExceptionTextBlock"
+                           TextWrapping="WrapWithOverflow"
+                           HorizontalAlignment="Center">
+                </TextBlock>
+            </ScrollViewer>
+        </controls:ContentDialog>
     </Application.Resources>
 
     <Application.Styles>

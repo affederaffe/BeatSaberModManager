@@ -51,7 +51,7 @@ namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
                     installedGameVersions.Add(installedGameVersion);
                 }
             }
-            catch (Exception e) when(e is DirectoryNotFoundException or IOException)
+            catch (Exception e) when (e is DirectoryNotFoundException or IOException)
             {
                 return null;
             }

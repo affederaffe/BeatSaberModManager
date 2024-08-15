@@ -49,6 +49,7 @@
 
     <sys:String x:Key="LegacyGameVersionsView:MoreInfoButton">Weitere Infos</sys:String>
     <sys:String x:Key="LegacyGameVersionsView:InstallVersionButton">Version installieren</sys:String>
+    <sys:String x:Key="LegacyGameVersionsView:UninstallVersionButton">Version deinstallieren</sys:String>
 
     <sys:String x:Key="SettingsView:InstallationLabel">Installationsordner</sys:String>
     <sys:String x:Key="SettingsView:OpenFolderButton">Ordner öffnen</sys:String>

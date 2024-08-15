@@ -7,11 +7,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Templates;
+using Avalonia.Labs.Controls;
 using Avalonia.Markup.Xaml;
 
-using BeatSaberModManager.Views.Dialogs;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Theming;
+
 
 using ReactiveUI;
 
@@ -57,12 +58,13 @@ namespace BeatSaberModManager.Views
 
         private async Task ShowExceptionAsync(Exception e)
         {
-            _logger.Fatal(e, "Application crashed");
             if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime { MainWindow: not null } lifetime)
                 return;
+            _logger.Fatal(e, "Application crashed");
             lifetime.MainWindow.Show();
-            ExceptionDialog exceptionDialog = new() { ExceptionTextBlock = { Text = e.ToString() } };
-            await exceptionDialog.Dialog.ShowAsync(lifetime.MainWindow).ConfigureAwait(true);
+            ContentDialog exceptionDialog = (ContentDialog)Resources["ExceptionDialog"]!;
+            exceptionDialog.FindControl<TextBlock>("ExceptionTextBlock")!.Text = e.ToString();
+            await exceptionDialog.ShowAsync(lifetime.MainWindow).ConfigureAwait(true);
             lifetime.Shutdown(-1);
         }
     }

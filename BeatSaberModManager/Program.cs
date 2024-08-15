@@ -26,7 +26,6 @@ using BeatSaberModManager.Services.Implementations.Updater;
 using BeatSaberModManager.Services.Interfaces;
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views;
-using BeatSaberModManager.Views.Helpers;
 using BeatSaberModManager.Views.Localization;
 using BeatSaberModManager.Views.Pages;
 using BeatSaberModManager.Views.Theming;
@@ -135,7 +134,8 @@ namespace BeatSaberModManager
 
         [Register<SteamLegacyGameVersionProvider, ILegacyGameVersionProvider>(Scope.SingleInstance)]
         [Register<SteamLegacyGameVersionInstaller, ILegacyGameVersionInstaller>(Scope.SingleInstance)]
-        [Register<DialogSteamAuthenticator, ISteamAuthenticator>(Scope.SingleInstance)]
+        [Register<Steam3Session>(Scope.SingleInstance)]
+        [Register<SessionConfig>(Scope.SingleInstance)]
         internal static class LegacyGameVersionsModule;
 
         [Register<SimpleDependencyResolver, IDependencyResolver>(Scope.SingleInstance)]
@@ -156,6 +156,7 @@ namespace BeatSaberModManager
         [Register<ModsViewModel>(Scope.SingleInstance)]
         [Register<LegacyGameVersionsViewModel>(Scope.SingleInstance)]
         [Register<SettingsViewModel>(Scope.SingleInstance)]
+        [Register(typeof(SteamAuthenticationViewModel), Scope.SingleInstance, typeof(SteamAuthenticationViewModel), typeof(ISteamAuthenticator))]
         [Register<AssetInstallWindowViewModel>(Scope.SingleInstance)]
         internal static class ViewModelModule;
 

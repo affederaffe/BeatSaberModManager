@@ -43,9 +43,9 @@ namespace BeatSaberModManager.Views.Controls
         /// <inheritdoc />
         protected override Size MeasureOverride(Size constraint)
         {
-            UVSize curLineSize = new(Orientation);
-            UVSize panelSize = new(Orientation);
-            UVSize uvConstraint = new(Orientation, constraint.Width, constraint.Height);
+            UvSize curLineSize = new(Orientation);
+            UvSize panelSize = new(Orientation);
+            UvSize uvConstraint = new(Orientation, constraint.Width, constraint.Height);
             double itemWidth = ItemWidth;
             double itemHeight = ItemHeight;
             bool itemWidthSet = !double.IsNaN(itemWidth);
@@ -55,17 +55,15 @@ namespace BeatSaberModManager.Views.Controls
                     itemWidthSet ? itemWidth : constraint.Width,
                     itemHeightSet ? itemHeight : constraint.Height);
 
-            Avalonia.Controls.Controls children = Children;
-
-            for (int i = 0, count = children.Count; i < count; i++)
+            for (int i = 0, count = Children.Count; i < count; i++)
             {
-                Control child = children[i];
+                Control child = Children[i];
 
                 //Flow passes its own constraint to children
                 child.Measure(childConstraint);
 
                 //this is the size of the child in UV space
-                UVSize sz = new(
+                UvSize sz = new(
                         Orientation,
                         itemWidthSet ? itemWidth : child.DesiredSize.Width,
                         itemHeightSet ? itemHeight : child.DesiredSize.Height);
@@ -83,7 +81,7 @@ namespace BeatSaberModManager.Views.Controls
                     //the element is wider then the constraint - give it a separate line
                     panelSize.Width = Math.Max(sz.Width, panelSize.Width);
                     panelSize.Height += sz.Height;
-                    curLineSize = new UVSize(Orientation);
+                    curLineSize = new UvSize(Orientation);
                 }
                 else
                 {
@@ -109,19 +107,17 @@ namespace BeatSaberModManager.Views.Controls
             double itemHeight = ItemHeight;
             double accumulatedV = 0;
             double itemU = Orientation == Orientation.Horizontal ? itemWidth : itemHeight;
-            UVSize curLineSize = new(Orientation);
-            UVSize uvFinalSize = new(Orientation, finalSize.Width, finalSize.Height);
+            UvSize curLineSize = new(Orientation);
+            UvSize uvFinalSize = new(Orientation, finalSize.Width, finalSize.Height);
             bool itemWidthSet = !double.IsNaN(itemWidth);
             bool itemHeightSet = !double.IsNaN(itemHeight);
             bool useItemU = Orientation == Orientation.Horizontal ? itemWidthSet : itemHeightSet;
 
-            Avalonia.Controls.Controls children = Children;
-
-            for (int i = 0, count = children.Count; i < count; i++)
+            for (int i = 0, count = Children.Count; i < count; i++)
             {
-                Control child = children[i];
+                Control child = Children[i];
 
-                UVSize sz = new(
+                UvSize sz = new(
                         Orientation,
                         itemWidthSet ? itemWidth : child.DesiredSize.Width,
                         itemHeightSet ? itemHeight : child.DesiredSize.Height);
@@ -141,7 +137,7 @@ namespace BeatSaberModManager.Views.Controls
                         ArrangeLine(finalSize, accumulatedV, sz, i, ++i, useItemU, itemU);
 
                         accumulatedV += sz.Height;
-                        curLineSize = new UVSize(Orientation);
+                        curLineSize = new UvSize(Orientation);
                     }
 
                     firstInLine = i;
@@ -155,13 +151,13 @@ namespace BeatSaberModManager.Views.Controls
             }
 
             //arrange the last line, if any
-            if (firstInLine < children.Count)
-                ArrangeLine(finalSize, accumulatedV, curLineSize, firstInLine, children.Count, useItemU, itemU);
+            if (firstInLine < Children.Count)
+                ArrangeLine(finalSize, accumulatedV, curLineSize, firstInLine, Children.Count, useItemU, itemU);
 
             return finalSize;
         }
 
-        private void ArrangeLine(Size finalSize, double v, UVSize line, int start, int end, bool useItemU, double itemU)
+        private void ArrangeLine(Size finalSize, double v, UvSize line, int start, int end, bool useItemU, double itemU)
         {
             bool isHorizontal = Orientation == Orientation.Horizontal;
             double u = isHorizontal
@@ -180,11 +176,10 @@ namespace BeatSaberModManager.Views.Controls
                     _ => 0
                 };
 
-            Avalonia.Controls.Controls children = Children;
             for (int i = start; i < end; i++)
             {
-                Control child = children[i];
-                UVSize childSize = new(Orientation, child.DesiredSize.Width, child.DesiredSize.Height);
+                Control child = Children[i];
+                UvSize childSize = new(Orientation, child.DesiredSize.Width, child.DesiredSize.Height);
                 double layoutSlotU = useItemU ? itemU : childSize.Width;
                 child.Arrange(new Rect(
                         isHorizontal ? u : v,
@@ -195,13 +190,13 @@ namespace BeatSaberModManager.Views.Controls
             }
         }
 
-        private struct UVSize
+        private struct UvSize
         {
             private readonly Orientation _orientation;
             private double _u;
             private double _v;
 
-            internal UVSize(Orientation orientation, double width, double height)
+            internal UvSize(Orientation orientation, double width, double height)
             {
                 _u = _v = 0d;
                 _orientation = orientation;
@@ -209,7 +204,7 @@ namespace BeatSaberModManager.Views.Controls
                 Height = height;
             }
 
-            internal UVSize(Orientation orientation)
+            internal UvSize(Orientation orientation)
             {
                 _u = _v = 0d;
                 _orientation = orientation;

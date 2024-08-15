@@ -78,6 +78,6 @@ namespace BeatSaberModManager.Views.Localization
             return new Language(cultureInfo, (application.Resources[languageCode] as MergeResourceInclude)!);
         }
 
-        private static readonly string[] _supportedLanguageCodes = { "en", "de" };
+        private static readonly string[] _supportedLanguageCodes = ["en", "de"];
     }
 }

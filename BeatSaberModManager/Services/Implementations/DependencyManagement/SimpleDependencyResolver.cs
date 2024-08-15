@@ -9,7 +9,7 @@ namespace BeatSaberModManager.Services.Implementations.DependencyManagement
     /// <inheritdoc />
     public class SimpleDependencyResolver(IModProvider modProvider) : IDependencyResolver
     {
-        private readonly Dictionary<IMod, HashSet<IMod>> _dependencyRegistry = new();
+        private readonly Dictionary<IMod, HashSet<IMod>> _dependencyRegistry = [];
 
         /// <inheritdoc />
         public bool IsDependency(IMod modification) => _dependencyRegistry.TryGetValue(modification, out HashSet<IMod>? dependents) && dependents.Count != 0;

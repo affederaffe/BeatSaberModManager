@@ -38,7 +38,7 @@ namespace BeatSaberModManager.Services.Implementations.Observables
                     _fileSystemWatcher.EnableRaisingEvents = false;
                     _subject.OnNext(false);
                 }
-                else
+                else if (value != _path)
                 {
                     DirectoryInfo directoryInfo = new(value);
                     _path = System.IO.Path.TrimEndingDirectorySeparator(directoryInfo.FullName);

@@ -14,6 +14,8 @@ using BeatSaberModManager.Utils;
 
 using ReactiveUI;
 
+using SteamKit2.Authentication;
+
 
 namespace BeatSaberModManager.ViewModels
 {
@@ -27,17 +29,20 @@ namespace BeatSaberModManager.ViewModels
         private readonly ILegacyGameVersionInstaller _legacyGameVersionInstaller;
         private readonly ObservableAsPropertyHelper<bool> _isExecuting;
         private readonly ObservableAsPropertyHelper<bool> _isSuccess;
+        private readonly ObservableAsPropertyHelper<bool> _canInstall;
+        private readonly ObservableAsPropertyHelper<bool> _canUninstall;
         private readonly ObservableAsPropertyHelper<IReadOnlyList<IGrouping<int, GameVersionViewModel>>> _legacyGameVersions;
 
         /// <summary>
         /// TODO
         /// </summary>
-        public LegacyGameVersionsViewModel(SettingsViewModel settingsViewModel, IGameInstallLocator gameInstallLocator, ILegacyGameVersionProvider legacyGameVersionProvider, ILegacyGameVersionInstaller legacyGameVersionInstaller, StatusProgress statusProgress)
+        public LegacyGameVersionsViewModel(SettingsViewModel settingsViewModel, SteamAuthenticationViewModel steamAuthenticationViewModel, IGameInstallLocator gameInstallLocator, ILegacyGameVersionProvider legacyGameVersionProvider, ILegacyGameVersionInstaller legacyGameVersionInstaller, StatusProgress statusProgress)
         {
             ArgumentNullException.ThrowIfNull(settingsViewModel);
             _gameInstallLocator = gameInstallLocator;
             _legacyGameVersionProvider = legacyGameVersionProvider;
             _legacyGameVersionInstaller = legacyGameVersionInstaller;
+            SteamAuthenticationViewModel = steamAuthenticationViewModel;
             StatusProgress = statusProgress;
             InitializeCommand = ReactiveCommand.CreateFromTask(GetLegacyGameVersionsAsync);
             InitializeCommand.IsExecuting.ToProperty(this, nameof(IsExecuting), out _isExecuting);
@@ -62,14 +67,26 @@ namespace BeatSaberModManager.ViewModels
                 .Subscribe(gameVersion => SelectedGameVersion = gameVersion);
             IObservable<(GameVersionViewModel? GameVersion, bool IsInstalled)> whenAnySelectedGameVersion = this.WhenAnyValue(static x => x.SelectedGameVersion, static x => x.SelectedGameVersion!.IsInstalled, static (gameVersion, _) => (gameVersion, gameVersion?.IsInstalled ?? false));
             IObservable<bool> canInstallVersion = whenAnySelectedGameVersion.Select(static x => x.GameVersion is not null && !x.IsInstalled);
+            canInstallVersion.ToProperty(this, nameof(CanInstall), out _canInstall);
             InstallCommand = ReactiveCommand.CreateFromTask(InstallSelectedLegacyGameVersionAsync, canInstallVersion);
             IObservable<bool> canUninstallVersion = whenAnySelectedGameVersion.Select(static version => version is { GameVersion.InstallDir: not null });
+            canUninstallVersion.ToProperty(this, nameof(CanUninstall), out _canUninstall);
             UninstallCommand = ReactiveCommand.CreateFromTask(UninstallSelectedLegacyGameVersionAsync, canUninstallVersion);
             IObservable<bool> canViewMoreInfo = whenAnySelectedGameVersion.Select(static x => x.GameVersion?.GameVersion.ReleaseUrl is not null);
             MoreInfoCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(SelectedGameVersion!.GameVersion.ReleaseUrl!), canViewMoreInfo);
             whenAnySelectedGameVersion.Where(static version => version is { GameVersion.InstallDir: not null })
                 .Subscribe(x => settingsViewModel.GameVersion = x.GameVersion!.GameVersion);
         }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public SteamAuthenticationViewModel SteamAuthenticationViewModel { get; }
+
+        /// <summary>
+        /// TODO
+        /// </summary>
+        public Interaction<Unit, AuthPollResult?> AuthenticateSteamInteraction { get; } = new();
 
         /// <summary>
         /// TODO
@@ -105,6 +122,16 @@ namespace BeatSaberModManager.ViewModels
         /// TODO
         /// </summary>
         public bool IsSuccess => _isSuccess.Value;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool CanInstall => _canInstall.Value;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool CanUninstall => _canUninstall.Value;
 
         /// <summary>
         /// TODO

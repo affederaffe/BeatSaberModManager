@@ -20,7 +20,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
     /// <inheritdoc />
     public class BeatModsModProvider(HttpProgressClient httpClient) : IModProvider
     {
-        private static readonly string[] _installedModsLocations = { Path.Join("IPA", "Pending"), "Plugins", "Libs" };
+        private static readonly string[] _installedModsLocations = [Path.Join("IPA", "Pending"), "Plugins", "Libs"];
 
         /// <inheritdoc />
         public IReadOnlyCollection<IMod>? InstalledMods { get; private set; }

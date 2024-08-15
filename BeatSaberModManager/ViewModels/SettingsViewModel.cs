@@ -42,18 +42,17 @@ namespace BeatSaberModManager.ViewModels
             PickInstallDirInteraction = new Interaction<Unit, string?>();
             _installDirExistsObservable = new DirectoryExistsObservable { Path = appSettings.Value.InstallDir };
             IObservable<IGameVersion?> gameVersionObservable = _installDirExistsObservable.SelectMany(_ => gameInstallLocator.DetectLocalInstallTypeAsync(_installDirExistsObservable.Path!));
-            gameVersionObservable.FirstAsync().Subscribe(x => GameVersion = x);
             IsGameVersionValidObservable = gameVersionObservable.Select(static gameVersion => gameVersion is not null);
             ValidatedGameVersionObservable = gameVersionObservable.WhereNotNull();
             ValidatedGameVersionObservable.Select(static gameVersion => gameVersion.InstallDir)
                 .ToProperty(this, nameof(InstallDir), out _installDir);
-            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(new Uri(_installDirExistsObservable.Path!)), _installDirExistsObservable.ObserveOn(RxApp.MainThreadScheduler));
+            OpenInstallDirCommand = ReactiveCommand.Create(() => PlatformUtils.TryOpenUri(new Uri(_installDirExistsObservable.Path!)), _installDirExistsObservable);
             PickGameVersionCommand = ReactiveCommand.CreateFromObservable(() => PickInstallDirInteraction.Handle(Unit.Default)
                 .WhereNotNull()
                 .SelectMany(gameInstallLocator.DetectLocalInstallTypeAsync)
                 .WhereNotNull());
             PickGameVersionCommand.Subscribe(x => GameVersion = x);
-            this.WhenAnyValue(static x => x.GameVersion).WhereNotNull().Subscribe(x => _installDirExistsObservable.Path = x.InstallDir);
+            this.WhenAnyValue(static x => x.GameVersion).WhereNotNull().DistinctUntilChanged().Subscribe(x => _installDirExistsObservable.Path = x.InstallDir);
             this.WhenAnyValue(static x => x.BeatSaverOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, BeatSaverScheme));
             this.WhenAnyValue(static x => x.ModelSaberOneClickCheckboxChecked).Subscribe(x => ToggleOneClickHandler(x, ModelSaberScheme));
             this.WhenAnyValue(static x => x.PlaylistOneClickCheckBoxChecked).Subscribe(x => ToggleOneClickHandler(x, BSPlaylistScheme));

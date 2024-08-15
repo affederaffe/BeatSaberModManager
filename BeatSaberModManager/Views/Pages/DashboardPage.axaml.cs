@@ -16,18 +16,6 @@ namespace BeatSaberModManager.Views.Pages
     /// </summary>
     public partial class DashboardPage : ReactiveUserControl<DashboardViewModel>
     {
-        private FilePickerOpenOptions? _filePickerOpenOptions;
-        private FilePickerOpenOptions FilePickerOpenOptions => _filePickerOpenOptions ??= new FilePickerOpenOptions
-        {
-            FileTypeFilter = new[]
-            {
-                new FilePickerFileType("BeatSaber Playlist")
-                {
-                    Patterns = new [] { "*.bplist" }
-                }
-            }
-        };
-
         /// <summary>
         /// [Required by Avalonia]
         /// </summary>
@@ -43,6 +31,18 @@ namespace BeatSaberModManager.Views.Pages
             ViewModel = viewModel;
             viewModel.PickPlaylistInteraction.RegisterHandler(async context => context.SetOutput(await SelectPlaylistFileAsync(window).ConfigureAwait(false)));
         }
+
+        private FilePickerOpenOptions? _filePickerOpenOptions;
+        private FilePickerOpenOptions FilePickerOpenOptions => _filePickerOpenOptions ??= new FilePickerOpenOptions
+        {
+            FileTypeFilter =
+            [
+                new FilePickerFileType("BeatSaber Playlist")
+                {
+                    Patterns = ["*.bplist"]
+                }
+            ]
+        };
 
         private async Task<string?> SelectPlaylistFileAsync(TopLevel window)
         {
