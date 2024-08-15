@@ -49,7 +49,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber
                     pos = 0;
             }
 
-            return stream.Position == stream.Length; // we went through the entire stream without finding the key
+            return stream.Position != stream.Length; // we went through the entire stream without finding the key
         }
 
         private static bool TryFindVersion(BinaryReader reader, [NotNullWhen(true)] out string? version)
