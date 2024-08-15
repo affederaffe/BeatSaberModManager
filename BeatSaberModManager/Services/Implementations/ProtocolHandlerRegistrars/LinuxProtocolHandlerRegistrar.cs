@@ -13,8 +13,18 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
     [SupportedOSPlatform("linux")]
     public class LinuxProtocolHandlerRegistrar : IProtocolHandlerRegistrar
     {
-        private readonly object _lock = new();
-        private readonly string _localAppDataPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "applications");
+        private readonly object _lock;
+        private readonly string _localAppDataPath;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LinuxProtocolHandlerRegistrar"/> class.
+        /// </summary>
+        public LinuxProtocolHandlerRegistrar()
+        {
+            _lock = new object();
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            _localAppDataPath = Path.Join(appDataPath, "applications");
+        }
 
         /// <inheritdoc />
         public bool IsProtocolHandlerRegistered(string protocol)
@@ -26,7 +36,7 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
             using StreamReader streamReader = new(fileStream);
             while (streamReader.ReadLine() is { } line)
             {
-                if (line.StartsWith($"Exec={ThisAssembly.Info.Product}", StringComparison.Ordinal))
+                if (line.StartsWith($"Exec={Program.Product}", StringComparison.Ordinal))
                     return true;
             }
 
@@ -55,20 +65,18 @@ namespace BeatSaberModManager.Services.Implementations.ProtocolHandlerRegistrars
 
         private string GetHandlerPathForProtocol(string protocol) => Path.Join(_localAppDataPath, GetHandlerNameForProtocol(protocol));
 
-        private static string GetHandlerNameForProtocol(string protocol) => $"{ThisAssembly.Info.Product}-url-{protocol}.desktop";
+        private static string GetHandlerNameForProtocol(string protocol) => $"{Program.Product}-url-{protocol}.desktop";
 
         private static string GetDesktopFileContent(string protocol) =>
-            $"""
-             [Desktop Entry]
-             Name={ThisAssembly.Info.Product}
-             Comment=URL:{protocol} Protocol
-             Type=Application
-             Categories=Utility
-             Exec={ThisAssembly.Info.Product} --install %u
-             Terminal=false
-             NoDisplay=true
-             MimeType=x-scheme-handler/{protocol}
-
-             """;
+            @$"[Desktop Entry]
+Name={Program.Product}
+Comment=URL:{protocol} Protocol
+Type=Application
+Categories=Utility
+Exec='{Program.Product}' --install %u
+Terminal=false
+NoDisplay=true
+MimeType=x-scheme-handler/{protocol}
+";
     }
 }
