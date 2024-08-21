@@ -1,6 +1,8 @@
+using System;
 using System.Reactive.Linq;
 
 using BeatSaberModManager.Models.Interfaces;
+using BeatSaberModManager.Services.Interfaces;
 
 using ReactiveUI;
 
@@ -17,13 +19,14 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="gameVersion"></param>
-        public GameVersionViewModel(IGameVersion gameVersion)
+        public GameVersionViewModel(IGameVersion gameVersion, IInstallDirValidator installDirValidator)
         {
+            ArgumentNullException.ThrowIfNull(installDirValidator);
             GameVersion = gameVersion;
-            this.WhenAnyValue(static x => x.GameVersion)
-                .Select(static x => x is { InstallDir: not null })
-                .ToProperty(this, nameof(IsInstalled), out _isInstalled);
+            this.WhenAnyValue(static x => x.InstallDir)
+                .Select(installDirValidator.ValidateInstallDir)
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .ToProperty(this, static x => x.IsInstalled, out _isInstalled);
         }
 
         /// <summary>
@@ -36,11 +39,16 @@ namespace BeatSaberModManager.ViewModels
         /// </summary>
         public string? InstallDir
         {
-            get => _installDir ??= GameVersion.InstallDir;
-            set => GameVersion.InstallDir = this.RaiseAndSetIfChanged(ref _installDir, value);
+            get => GameVersion.InstallDir;
+            set
+            {
+                if (GameVersion.InstallDir == value)
+                    return;
+                this.RaisePropertyChanging();
+                GameVersion.InstallDir = value;
+                this.RaisePropertyChanged();
+            }
         }
-
-        private string? _installDir;
 
         /// <summary>
         /// 

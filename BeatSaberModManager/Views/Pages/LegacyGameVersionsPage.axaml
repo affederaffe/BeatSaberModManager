@@ -2,51 +2,22 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:sys="using:System"
-             xmlns:linq="using:System.Linq"
              xmlns:vm="using:BeatSaberModManager.ViewModels"
              xmlns:c="using:BeatSaberModManager.Views.Controls"
              xmlns:asyncImageLoader="using:AsyncImageLoader"
-             xmlns:labs="using:Avalonia.Labs.Controls"
-             xmlns:qr="clr-namespace:Avalonia.Labs.Qr;assembly=Avalonia.Labs.Qr"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Pages.LegacyGameVersionsPage"
-             x:DataType="vm:LegacyGameVersionsViewModel"
-             x:Name="LegacyGameVersionsPageControl">
-
-    <UserControl.Resources>
-        <labs:ContentDialog x:Key="LoginDialog"
-                            DataContext="{Binding SteamAuthenticationViewModel}"
-                            Title="{DynamicResource SteamAuthenticationLoginDetailsDialog:Title}"
-                            PrimaryButtonText="{DynamicResource SteamAuthenticationLoginDetailsDialog:ContinueButton}"
-                            PrimaryButtonCommand="{Binding LoginCommand}"
-                            SecondaryButtonText="{DynamicResource SteamAuthenticationLoginDetailsDialog:CancelButton}">
-            <Grid ColumnDefinitions="3*, 2*, 3*">
-                <Grid Grid.Column="0" RowDefinitions="*, Auto, Auto, Auto, Auto, *">
-                    <Label Grid.Row="1" Content="{DynamicResource SteamAuthenticationLoginDetailsDialog:UsernameLabel}" />
-                    <TextBox Grid.Row="2" Text="{Binding Username}" />
-                    <Label Grid.Row="3" Content="{DynamicResource SteamAuthenticationLoginDetailsDialog:PasswordLabel}" />
-                    <TextBox Grid.Row="4" Text="{Binding Password}" PasswordChar="*" Classes="revealPasswordButton" />
-                    <Grid Grid.Row="5" ColumnDefinitions="*, 20">
-                        <Label Grid.Column="0" VerticalAlignment="Center" Content="{DynamicResource SteamAuthenticationLoginDetailsDialog:RememberPasswordLabel}" />
-                        <CheckBox Grid.Column="1" IsChecked="{Binding RememberPassword}" />
-                    </Grid>
-                </Grid>
-
-                <qr:QrCode Margin="20,0,0,0" Grid.Column="2" Width="150" Height="150" CornerRadius="0" Background="White" Foreground="Black"  Data="{Binding LoginChallenge}" />
-            </Grid>
-        </labs:ContentDialog>
-    </UserControl.Resources>
+             x:DataType="vm:LegacyGameVersionsViewModel">
 
     <Grid RowDefinitions="*, 33">
-        <TabControl Grid.Row="0" ItemsSource="{Binding LegacyGameVersions}" HorizontalAlignment="Stretch" Padding="0">
+        <TabControl Grid.Row="0" ItemsSource="{Binding LegacyGameVersions}" HorizontalAlignment="Stretch" Padding="0" SelectionChanged="OnSelectionChanged">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <DataTemplate.DataType>
-                        <x:Type TypeName="linq:IGrouping" x:TypeArguments="sys:Int32, vm:GameVersionViewModel" />
+                        <x:Type TypeName="vm:LegacyGameVersionsTab" />
                     </DataTemplate.DataType>
 
-                    <Label Content="{Binding Key}" />
+                    <Label Content="{Binding Year}" />
                 </DataTemplate>
             </TabControl.ItemTemplate>
 
@@ -59,10 +30,10 @@
             <TabControl.ContentTemplate>
                 <DataTemplate>
                     <DataTemplate.DataType>
-                        <x:Type TypeName="linq:IGrouping" x:TypeArguments="sys:Int32, vm:GameVersionViewModel" />
+                        <x:Type TypeName="vm:LegacyGameVersionsTab" />
                     </DataTemplate.DataType>
 
-                    <ListBox ItemsSource="{Binding .}" Background="{x:Null}" HorizontalAlignment="Stretch" SelectedValue="{Binding #LegacyGameVersionsPageControl.((vm:LegacyGameVersionsViewModel)DataContext).SelectedGameVersion}">
+                    <ListBox ItemsSource="{Binding Versions}" Background="{x:Null}" HorizontalAlignment="Stretch" SelectedItem="{Binding LegacyGameVersionsViewModel.SelectedGameVersion}">
                         <ListBox.Styles>
                             <Style Selector="ListBoxItem">
                                 <Setter Property="CornerRadius" Value="7" />
@@ -84,7 +55,7 @@
                                                VerticalAlignment="Center">
                                     <Panel>
                                         <PathIcon ZIndex="1" Width="40" Height="40" HorizontalAlignment="Right" VerticalAlignment="Top" Data="{StaticResource Icons:Checkmark}" IsVisible="{Binding IsInstalled}" Foreground="Green" />
-                                        <Image asyncImageLoader:ImageLoader.Source="{Binding GameVersion.ReleaseImage, FallbackValue=/Resources/Images/version_image_placeholder.jpg}" ClipToBounds="True" Stretch="UniformToFill" />
+                                        <Image asyncImageLoader:ImageLoader.Source="{Binding GameVersion.ReleaseImage}" ClipToBounds="True" Stretch="UniformToFill" />
                                     </Panel>
                                 </c:CardControl>
                             </DataTemplate>

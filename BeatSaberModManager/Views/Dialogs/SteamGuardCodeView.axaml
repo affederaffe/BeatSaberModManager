@@ -1,0 +1,18 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:BeatSaberModManager.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="BeatSaberModManager.Views.Dialogs.SteamGuardCodeView"
+             x:DataType="vm:SteamAuthenticationViewModel">
+
+    <Grid>
+        <Grid ColumnDefinitions="*, *">
+            <Label Grid.Column="0" Content="{DynamicResource SteamLoginView:AccountNameLabel}" />
+            <Label Grid.Column="1" Content="{Binding Username}" />
+        </Grid>
+        <TextBox Text="{Binding SteamGuardCode}" MaxLength="5" BorderBrush="Red" />
+    </Grid>
+
+</UserControl>

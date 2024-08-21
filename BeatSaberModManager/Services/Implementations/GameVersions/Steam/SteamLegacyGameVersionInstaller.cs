@@ -26,14 +26,20 @@ namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
                 return null;
             string appDataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string legacyGameVersionsDirPath = Path.Join(appDataDirPath, ThisAssembly.Info.Product, "LegacyGameVersions", gameVersion.GameVersion);
-            DownloadConfig downloadConfig = new() { InstallDirectory = legacyGameVersionsDirPath };
+            DownloadConfig downloadConfig = new() { InstallDirectory = legacyGameVersionsDirPath, MaxDownloads = 3 };
             await steam3Session.LoginAsync(steamAuthenticator, cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested)
+                return null;
             ContentDownloader contentDownloader = new(downloadConfig, steam3Session);
             List<(uint DepotId, ulong ManifestId)> depotManifestIds = [(620981, steamLegacyGameVersion.ManifestId)];
             try
             {
                 string[]? installDirs = await contentDownloader.DownloadAppAsync(620980, depotManifestIds, SteamConstants.DefaultBranch, null, null, null, false, false, cancellationToken, progress).ConfigureAwait(false);
                 return installDirs is { Length: 1 } ? installDirs[0] : null;
+            }
+            catch (TaskCanceledException)
+            {
+                return null;
             }
             catch (InvalidOperationException e)
             {

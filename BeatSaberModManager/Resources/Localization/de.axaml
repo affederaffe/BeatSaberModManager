@@ -76,12 +76,16 @@
     <sys:String x:Key="ExceptionDialog:Title">Anwendung abgestürzt</sys:String>
     <sys:String x:Key="ExceptionDialog:Ok">Ok</sys:String>
 
-    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:Title">Steam Authentifizierung erforderlich</sys:String>
-    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:ContinueButton">Weiter</sys:String>
-    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:CancelButton">Abbrechen</sys:String>
-    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:UsernameLabel">Benutzername</sys:String>
-    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:PasswordLabel">Passwort</sys:String>
-    <sys:String x:Key="SteamAuthenticationLoginDetailsDialog:RememberPasswordLabel">Passwort merken</sys:String>
+    <sys:String x:Key="SteamLoginView:Title">Steam Authentifizierung erforderlich</sys:String>
+    <sys:String x:Key="SteamLoginView:LoginButton">Login</sys:String>
+    <sys:String x:Key="SteamLoginView:CancelButton">Abbrechen</sys:String>
+    <sys:String x:Key="SteamLoginView:UsernameLabel">Benutzername</sys:String>
+    <sys:String x:Key="SteamLoginView:PasswordLabel">Passwort</sys:String>
+    <sys:String x:Key="SteamLoginView:RememberPasswordLabel">Passwort merken</sys:String>
+
+    <sys:String x:Key="SteamGuardCodeView:Title">Gib den Code deiner Steam Mobile App ein</sys:String>
+    <sys:String x:Key="SteamGuardCodeView:SubmitButton">Absenden</sys:String>
+    <sys:String x:Key="SteamGuardCodeView:CancelButton">Cancel</sys:String>
 
     <sys:String x:Key="Status:Installing">Installiere:</sys:String>
     <sys:String x:Key="Status:Uninstalling">Deinstalliere:</sys:String>
