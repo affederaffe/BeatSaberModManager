@@ -64,7 +64,7 @@ jobs:
                 uses: actions/upload-artifact@v4
                 with:
                     name: BeatSaberModManager-win-x64-self-contained
-                    path: BeatSaberModManager/bin/Release/win10-x64/publish/BeatSaberModManager.exe
+                    path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe
 
             -   name: Build Framework Dependent
                 run: dotnet publish ./BeatSaberModManager/BeatSaberModManager.csproj -c Release -r win-x64 --no-self-contained -p:PublishSingleFile=true
@@ -72,4 +72,4 @@ jobs:
                 uses: actions/upload-artifact@v4
                 with:
                     name: BeatSaberModManager-win-x64-framework-dependent
-                    path: BeatSaberModManager/bin/Release/win10-x64/publish/BeatSaberModManager.exe
+                    path: BeatSaberModManager/bin/Release/win-x64/publish/BeatSaberModManager.exe
