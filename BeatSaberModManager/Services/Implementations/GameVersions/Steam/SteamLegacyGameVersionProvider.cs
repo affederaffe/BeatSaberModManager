@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.Json;
@@ -28,10 +28,7 @@ namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
             using HttpResponseMessage response = await httpClient.TryGetAsync(new Uri("https://raw.githubusercontent.com/Zagrios/bs-manager/master/assets/jsons/bs-versions.json")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return null;
-#pragma warning disable CA2007
-            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning restore CA2007
-            _availableGameVersions = await JsonSerializer.DeserializeAsync(contentStream, GameVersionJsonSerializerContext.Default.SteamGameVersionArray).ConfigureAwait(false);
+            _availableGameVersions = await response.Content.ReadFromJsonAsync(GameVersionJsonSerializerContext.Default.SteamGameVersionArray).ConfigureAwait(false);
             return _availableGameVersions;
         }
 

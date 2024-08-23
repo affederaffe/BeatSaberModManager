@@ -2,7 +2,7 @@
 using System.IO;
 using System.IO.Compression;
 using System.Net.Http;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatSaver;
@@ -86,17 +86,10 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatSaver
             while (retries != 0)
             {
                 using HttpResponseMessage response = await httpClient.TryGetAsync(new Uri(url)).ConfigureAwait(false);
-                if (!response.IsSuccessStatusCode)
-                {
-                    await WaitForRateLimitAsync().ConfigureAwait(false);
-                    retries--;
-                    continue;
-                }
-
-#pragma warning disable CA2007
-                await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning restore CA2007
-                return await JsonSerializer.DeserializeAsync(contentStream, BeatSaverJsonSerializerContext.Default.BeatSaverMap).ConfigureAwait(false);
+                if (response.IsSuccessStatusCode)
+                    return await response.Content.ReadFromJsonAsync(BeatSaverJsonSerializerContext.Default.BeatSaverMap).ConfigureAwait(false);
+                await WaitForRateLimitAsync().ConfigureAwait(false);
+                retries--;
             }
 
             return null;

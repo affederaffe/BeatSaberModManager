@@ -4,8 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.BeatSaber.BeatMods;
@@ -105,10 +104,7 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage response = await httpClient.TryGetAsync(new Uri($"https://beatmods.com/api/v1/{args}")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return null;
-#pragma warning disable CA2007
-            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning restore CA2007
-            return await JsonSerializer.DeserializeAsync(contentStream, BeatModsModJsonSerializerContext.Default.HashSetBeatModsMod).ConfigureAwait(false);
+            return await response.Content.ReadFromJsonAsync(BeatModsModJsonSerializerContext.Default.HashSetBeatModsMod).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -121,20 +117,14 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
             using HttpResponseMessage versionsResponse = await httpClient.TryGetAsync(new Uri("https://versions.beatmods.com/versions.json")).ConfigureAwait(false);
             if (!versionsResponse.IsSuccessStatusCode)
                 return null;
-#pragma warning disable CA2007
-            await using Stream versionsStream = await versionsResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning restore CA2007
-            string[]? versions = await JsonSerializer.DeserializeAsync(versionsStream, CommonJsonSerializerContext.Default.StringArray).ConfigureAwait(false);
+            string[]? versions = await versionsResponse.Content.ReadFromJsonAsync(CommonJsonSerializerContext.Default.StringArray).ConfigureAwait(false);
             if (versions is null)
                 return null;
             if (versions.Contains(gameVersion)) return gameVersion;
             using HttpResponseMessage aliasResponse = await httpClient.TryGetAsync(new Uri("https://alias.beatmods.com/aliases.json")).ConfigureAwait(false);
             if (!aliasResponse.IsSuccessStatusCode)
                 return null;
-#pragma warning disable CA2007
-            await using Stream aliasesStream = await aliasResponse.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning restore CA2007
-            Dictionary<string, string[]>? aliases = await JsonSerializer.DeserializeAsync(aliasesStream, CommonJsonSerializerContext.Default.DictionaryStringStringArray).ConfigureAwait(false);
+            Dictionary<string, string[]>? aliases = await aliasResponse.Content.ReadFromJsonAsync(CommonJsonSerializerContext.Default.DictionaryStringStringArray).ConfigureAwait(false);
             return aliases?.FirstOrDefault(x => x.Value.Any(alias => alias == gameVersion)).Key;
         }
 
@@ -144,10 +134,9 @@ namespace BeatSaberModManager.Services.Implementations.BeatSaber.BeatMods
         /// <returns>A map of all hashes and their corresponding <see cref="BeatModsMod"/>.</returns>
         private async Task<Dictionary<string, BeatModsMod>?> GetMappedModHashesAsync()
         {
-            ConfiguredTaskAwaitable<HashSet<BeatModsMod>?> approvedTask = GetModsAsync("mod?status=approved").ConfigureAwait(false);
-            ConfiguredTaskAwaitable<HashSet<BeatModsMod>?> inactiveTask = GetModsAsync("mod?status=inactive").ConfigureAwait(false);
-            HashSet<BeatModsMod>? approved = await approvedTask;
-            HashSet<BeatModsMod>? inactive = await inactiveTask;
+            HashSet<BeatModsMod>?[] results = await Task.WhenAll(GetModsAsync("mod?status=approved"), GetModsAsync("mod?status=inactive")).ConfigureAwait(false);
+            HashSet<BeatModsMod>? approved = results[0];
+            HashSet<BeatModsMod>? inactive = results[1];
             if (approved is null || inactive is null)
                 return null;
             approved.UnionWith(inactive);

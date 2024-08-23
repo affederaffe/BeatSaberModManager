@@ -5,7 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 using BeatSaberModManager.Models.Implementations.GitHub;
@@ -32,10 +32,7 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             using HttpResponseMessage response = await httpClient.TryGetAsync(new Uri("https://api.github.com/repos/affederaffe/BeatSaberModManager/releases/latest")).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return false;
-#pragma warning disable CA2007
-            await using Stream contentStream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-#pragma warning restore CA2007
-            _release = await JsonSerializer.DeserializeAsync(contentStream, GitHubJsonSerializerContext.Default.Release).ConfigureAwait(false);
+            _release = await response.Content.ReadFromJsonAsync(GitHubJsonSerializerContext.Default.Release).ConfigureAwait(false);
             return _release is not null && Version.TryParse(_release.TagName.AsSpan(1, 5), out Version? version) && version > _version;
         }
 
