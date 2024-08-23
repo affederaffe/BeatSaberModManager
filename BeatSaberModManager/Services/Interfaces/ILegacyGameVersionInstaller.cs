@@ -16,10 +16,11 @@ namespace BeatSaberModManager.Services.Interfaces
         /// 
         /// </summary>
         /// <param name="gameVersion"></param>
+        /// <param name="authenticator"></param>
         /// <param name="cancellationToken"></param>
         /// <param name="progress"></param>
         /// <returns></returns>
-        Task<string?> InstallLegacyGameVersionAsync(IGameVersion gameVersion, CancellationToken cancellationToken, IProgress<double>? progress = null);
+        Task<string?> InstallLegacyGameVersionAsync(IGameVersion gameVersion, ILegacyGameVersionAuthenticator authenticator, CancellationToken cancellationToken, IProgress<double>? progress = null);
 
         /// <summary>
         /// 

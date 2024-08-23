@@ -87,6 +87,9 @@
     <sys:String x:Key="SteamGuardCodeView:SubmitButton">Submit</sys:String>
     <sys:String x:Key="SteamGuardCodeView:CancelButton">Cancel</sys:String>
 
+    <sys:String x:Key="SteamDeviceConfirmationView:ConfirmLogin">Use the Steam mobile app to confirm your sign in</sys:String>
+    <sys:String x:Key="SteamDeviceConfirmationView:Title">Confirm Login</sys:String>
+
     <sys:String x:Key="Status:Installing">Installing:</sys:String>
     <sys:String x:Key="Status:Uninstalling">Uninstalling:</sys:String>
     <sys:String x:Key="Status:Completed">Installation completed</sys:String>

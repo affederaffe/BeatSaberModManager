@@ -7,12 +7,12 @@
              x:Class="BeatSaberModManager.Views.Dialogs.SteamGuardCodeView"
              x:DataType="vm:SteamAuthenticationViewModel">
 
-    <Grid>
-        <Grid ColumnDefinitions="*, *">
+    <Grid RowDefinitions="*, *">
+        <Grid Grid.Row="0" ColumnDefinitions="*, *">
             <Label Grid.Column="0" Content="{DynamicResource SteamLoginView:AccountNameLabel}" />
             <Label Grid.Column="1" Content="{Binding Username}" />
         </Grid>
-        <TextBox Text="{Binding SteamGuardCode}" MaxLength="5" BorderBrush="Red" />
+        <TextBox Grid.Row="1" Text="{Binding SteamGuardCode}" MaxLength="5" MaxLines="1" />
     </Grid>
 
 </UserControl>

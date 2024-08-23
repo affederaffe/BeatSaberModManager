@@ -20,7 +20,7 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// TODO
     /// </summary>
-    public sealed class LegacyGameVersionsViewModel : ViewModelBase
+    public sealed class LegacyGameVersionsViewModel : ViewModelBase, IDisposable
     {
         private readonly IGameInstallLocator _gameInstallLocator;
         private readonly IInstallDirValidator _installDirValidator;
@@ -31,6 +31,8 @@ namespace BeatSaberModManager.ViewModels
         private readonly ObservableAsPropertyHelper<bool> _canInstall;
         private readonly ObservableAsPropertyHelper<bool> _canUninstall;
         private readonly ObservableAsPropertyHelper<LegacyGameVersionsTab[]> _legacyGameVersions;
+
+        private CancellationTokenSource? _installLegacyVersionCts;
 
         /// <summary>
         /// TODO
@@ -145,9 +147,12 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<IReadOnlyList<GameVersionViewModel>?> GetLegacyGameVersionsAsync()
         {
-            IReadOnlyList<IGameVersion>? availableGameVersions = await _legacyGameVersionProvider.GetAvailableGameVersionsAsync().ConfigureAwait(false);
-            IReadOnlyList<IGameVersion>? installedLegacyGameVersions = await _legacyGameVersionProvider.GetInstalledLegacyGameVersionsAsync().ConfigureAwait(false);
-            IGameVersion? installedStoreVersion = await _gameInstallLocator.LocateGameInstallAsync().ConfigureAwait(false);
+            Task<IReadOnlyList<IGameVersion>?> t1 = _legacyGameVersionProvider.GetAvailableGameVersionsAsync();
+            Task<IReadOnlyList<IGameVersion>?> t2 = _legacyGameVersionProvider.GetInstalledLegacyGameVersionsAsync();
+            Task<IGameVersion?> t3 = _gameInstallLocator.LocateGameInstallAsync();
+            IReadOnlyList<IGameVersion>? availableGameVersions = await t1.ConfigureAwait(false);
+            IReadOnlyList<IGameVersion>? installedLegacyGameVersions = await t2.ConfigureAwait(false);
+            IGameVersion? installedStoreVersion = await t3.ConfigureAwait(false);
             List<IGameVersion> allInstalledGameVersions = installedLegacyGameVersions?.ToList() ?? [];
             if (installedStoreVersion is not null)
                 allInstalledGameVersions.Insert(0, installedStoreVersion);
@@ -166,11 +171,12 @@ namespace BeatSaberModManager.ViewModels
 
         private async Task<bool> InstallSelectedLegacyGameVersionAsync()
         {
+            _installLegacyVersionCts?.Dispose();
+            _installLegacyVersionCts = new CancellationTokenSource();
             GameVersionViewModel selectedGameVersion = SelectedGameVersion!;
             StatusProgress.Report(new ProgressInfo(StatusType.Installing, selectedGameVersion.GameVersion.GameVersion));
-            using CancellationTokenSource cts = new();
-            using IDisposable subscription = SteamAuthenticationViewModel.CancelCommand.Subscribe(_ => cts.Cancel());
-            string? installDir = await _legacyGameVersionInstaller.InstallLegacyGameVersionAsync(selectedGameVersion.GameVersion, cts.Token, StatusProgress).ConfigureAwait(false);
+            using IDisposable subscription = SteamAuthenticationViewModel.CancelCommand.Subscribe(_ => _installLegacyVersionCts.Cancel());
+            string? installDir = await Task.Run(() => _legacyGameVersionInstaller.InstallLegacyGameVersionAsync(selectedGameVersion.GameVersion, SteamAuthenticationViewModel, _installLegacyVersionCts.Token, StatusProgress)).ConfigureAwait(false);
             if (installDir is null)
             {
                 StatusProgress.Report(new ProgressInfo(StatusType.Failed, null));
@@ -204,6 +210,13 @@ namespace BeatSaberModManager.ViewModels
                 SelectedGameVersion = storeInstalledVersion;
                 break;
             }
+        }
+
+        /// <inheritdoc />
+        public void Dispose()
+        {
+            _installLegacyVersionCts?.Cancel();
+            _installLegacyVersionCts?.Dispose();
         }
     }
 }

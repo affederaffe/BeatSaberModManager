@@ -87,6 +87,9 @@
     <sys:String x:Key="SteamGuardCodeView:SubmitButton">Absenden</sys:String>
     <sys:String x:Key="SteamGuardCodeView:CancelButton">Cancel</sys:String>
 
+    <sys:String x:Key="SteamDeviceConfirmationView:ConfirmLogin">Benutze die Steam App, um deine Anmeldung zu bestätigen</sys:String>
+    <sys:String x:Key="SteamDeviceConfirmationView:Title">Anmeldung Bestätigen</sys:String>
+
     <sys:String x:Key="Status:Installing">Installiere:</sys:String>
     <sys:String x:Key="Status:Uninstalling">Deinstalliere:</sys:String>
     <sys:String x:Key="Status:Completed">Installation abgeschlossen</sys:String>

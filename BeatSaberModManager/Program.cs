@@ -156,7 +156,7 @@ namespace BeatSaberModManager
         [Register<ModsViewModel>(Scope.SingleInstance)]
         [Register<LegacyGameVersionsViewModel>(Scope.SingleInstance)]
         [Register<SettingsViewModel>(Scope.SingleInstance)]
-        [Register(typeof(SteamAuthenticationViewModel), Scope.SingleInstance, typeof(SteamAuthenticationViewModel), typeof(ISteamAuthenticator))]
+        [Register<SteamAuthenticationViewModel>(Scope.SingleInstance)]
         [Register<AssetInstallWindowViewModel>(Scope.SingleInstance)]
         internal static class ViewModelModule;
 

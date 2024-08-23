@@ -4,16 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:BeatSaberModManager.ViewModels"
              xmlns:qr="using:Avalonia.Labs.Qr"
+             xmlns:converters="using:BeatSaberModManager.Views.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="BeatSaberModManager.Views.Dialogs.SteamLoginView"
              x:DataType="vm:SteamAuthenticationViewModel">
+
+    <UserControl.Resources>
+        <converters:IsPasswordInvalidColorConverter x:Key="IsPasswordValidColorConverter" />
+    </UserControl.Resources>
 
     <Grid ColumnDefinitions="3*, 2*, 3*">
         <Grid Grid.Column="0" RowDefinitions="*, Auto, Auto, Auto, Auto, *">
             <Label Grid.Row="1" Content="{DynamicResource SteamLoginView:UsernameLabel}" />
             <TextBox Grid.Row="2" Text="{Binding Username}" />
             <Label Grid.Row="3" Content="{DynamicResource SteamLoginView:PasswordLabel}" />
-            <TextBox Grid.Row="4" Text="{Binding Password}" PasswordChar="*" Classes="revealPasswordButton" />
+            <TextBox Grid.Row="4" Text="{Binding Password}" PasswordChar="*" Classes="revealPasswordButton" BorderBrush="{Binding IsPasswordInvalid, Converter={StaticResource IsPasswordValidColorConverter}}" />
             <Grid Grid.Row="5" ColumnDefinitions="*, 20">
                 <Label Grid.Column="0" VerticalAlignment="Center" Content="{DynamicResource SteamLoginView:RememberPasswordLabel}" />
                 <CheckBox Grid.Column="1" IsChecked="{Binding RememberPassword}" />

@@ -5,6 +5,8 @@ using System.Reactive.Threading.Tasks;
 using System.Threading;
 using System.Threading.Tasks;
 
+using BeatSaberModManager.Services.Interfaces;
+
 using LibDepotDownloader;
 
 using ReactiveUI;
@@ -17,11 +19,13 @@ namespace BeatSaberModManager.ViewModels
     /// <summary>
     /// 
     /// </summary>
-    public sealed class SteamAuthenticationViewModel : ViewModelBase, ISteamAuthenticator, IDisposable
+    public sealed class SteamAuthenticationViewModel : ViewModelBase, ILegacyGameVersionAuthenticator, ISteamAuthenticator, IDisposable
     {
         private readonly Steam3Session _session;
 
-        private CancellationTokenSource? _cancellationTokenSource;
+        private CancellationTokenSource? _credentialsAuthSessionCts;
+        private CancellationTokenSource? _qrAuthSessionCts;
+        private CancellationTokenSource? _deviceConfirmationCts;
 
         /// <summary>
         /// 
@@ -32,27 +36,32 @@ namespace BeatSaberModManager.ViewModels
             _session = session;
             IObservable<bool> canLogin = this.WhenAnyValue(static x => x.Username, static x => x.Password)
                 .Select(static x => !string.IsNullOrWhiteSpace(x.Item1) && !string.IsNullOrWhiteSpace(x.Item2));
-            LoginCommand = ReactiveCommand.CreateFromTask(LoginWithCredentialsAsync, canLogin);
-            CancelCommand = ReactiveCommand.Create(() => _cancellationTokenSource?.Cancel());
+            LoginCommand = ReactiveCommand.Create(() => { _qrAuthSessionCts?.Cancel(); }, canLogin);
+            CancelCommand = ReactiveCommand.Create(() => { _credentialsAuthSessionCts?.Cancel(); _qrAuthSessionCts?.Cancel(); });
             IObservable<bool> canSubmitSteamGuardCode = this.WhenAnyValue(static x => x.SteamGuardCode)
                 .Select(static code => code is not null && code.Length == 5);
             SubmitSteamGuardCodeCommand = ReactiveCommand.Create(() => SteamGuardCode!, canSubmitSteamGuardCode);
         }
 
         /// <summary>
-        /// TODO
+        /// 
         /// </summary>
-        public Interaction<Unit, AuthPollResult?> AuthenticateSteamInteraction { get; } = new(RxApp.MainThreadScheduler);
+        public Interaction<CancellationToken, Unit> AuthenticateInteraction { get; } = new(RxApp.MainThreadScheduler);
 
         /// <summary>
         /// 
         /// </summary>
-        public Interaction<bool, string> GetSteamGuardCodeInteraction { get; } = new(RxApp.MainThreadScheduler);
+        public Interaction<CancellationToken, Unit> DeviceConfirmationInteraction { get; } = new(RxApp.MainThreadScheduler);
 
         /// <summary>
         /// 
         /// </summary>
-        public ReactiveCommand<Unit, AuthPollResult?> LoginCommand { get; }
+        public Interaction<Unit, string?> GetDeviceCodeInteraction { get; } = new(RxApp.MainThreadScheduler);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public ReactiveCommand<Unit, Unit> LoginCommand { get; }
 
         /// <summary>
         /// 
@@ -111,6 +120,17 @@ namespace BeatSaberModManager.ViewModels
         /// <summary>
         /// 
         /// </summary>
+        public bool IsPasswordInvalid
+        {
+            get => _isPasswordInvalid;
+            set => this.RaiseAndSetIfChanged(ref _isPasswordInvalid, value);
+        }
+
+        private bool _isPasswordInvalid;
+
+        /// <summary>
+        /// 
+        /// </summary>
         public string? SteamGuardCode
         {
             get => _steamGuardCode;
@@ -120,81 +140,73 @@ namespace BeatSaberModManager.ViewModels
         private string? _steamGuardCode;
 
         /// <inheritdoc />
-        public Task<string> GetDeviceCodeAsync(bool previousCodeWasIncorrect) => GetSteamGuardCodeInteraction.Handle(previousCodeWasIncorrect).ToTask();
-
-        /// <inheritdoc />
-        public Task<string> GetEmailCodeAsync(string email, bool previousCodeWasIncorrect) => throw new System.NotImplementedException();
-
-        /// <inheritdoc />
-        public Task<bool> AcceptDeviceConfirmationAsync() => Task.FromResult(false);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Task<AuthPollResult?> AuthenticateAsync() => AuthenticateSteamInteraction.Handle(Unit.Default).ToTask();
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public Task<AuthPollResult?> StartAuthenticationAsync()
-        {
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = new CancellationTokenSource();
-
-            return Observable.StartAsync(LoginWithQrCodeAsync)
-                .Merge(LoginCommand)
-                .FirstAsync()
-                .ToTask();
-        }
-
-        /// <inheritdoc />
         public void Dispose()
         {
-            _cancellationTokenSource?.Dispose();
+            _credentialsAuthSessionCts?.Dispose();
+            _qrAuthSessionCts?.Dispose();
+            _deviceConfirmationCts?.Dispose();
         }
 
-        private async Task<AuthPollResult?> LoginWithCredentialsAsync()
-        {
-            AuthSessionDetails details = new()
-            {
-                Authenticator = this,
-                Username = Username,
-                Password = Password,
-                IsPersistentSession = RememberPassword
-            };
+        /// <inheritdoc />
+        public Task<string> GetDeviceCodeAsync(bool previousCodeWasIncorrect) => GetDeviceCodeInteraction.Handle(Unit.Default).ToTask()!;
 
-            CredentialsAuthSession authSession = await _session.SteamClient.Authentication.BeginAuthSessionViaCredentialsAsync(details).ConfigureAwait(false);
+        /// <inheritdoc />
+        public Task<string> GetEmailCodeAsync(string email, bool previousCodeWasIncorrect) => throw new NotImplementedException();
+
+        /// <inheritdoc />
+        public Task<bool> AcceptDeviceConfirmationAsync()
+        {
+            if (_qrAuthSessionCts!.IsCancellationRequested)
+                DeviceConfirmationInteraction.Handle(_deviceConfirmationCts!.Token).Subscribe();
+
+            return Task.FromResult(true);
+        }
+
+        /// <inheritdoc />
+        public async Task<AuthPollResult?> AuthenticateAsync()
+        {
+            _credentialsAuthSessionCts?.Dispose();
+            _qrAuthSessionCts?.Dispose();
+            _deviceConfirmationCts?.Dispose();
+            _credentialsAuthSessionCts = new CancellationTokenSource();
+            _qrAuthSessionCts = new CancellationTokenSource();
+            _deviceConfirmationCts = new CancellationTokenSource();
+
+            IsPasswordInvalid = false;
+
+            AuthenticateInteraction.Handle(_deviceConfirmationCts.Token).Subscribe();
+
+            AuthSessionDetails details = new() { Authenticator = this };
 
             try
             {
-                AuthPollResult result = await authSession.PollingWaitForResultAsync(_cancellationTokenSource!.Token).ConfigureAwait(false);
-                await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+                QrAuthSession authSession = await _session.SteamClient.Authentication.BeginAuthSessionViaQRAsync(details).ConfigureAwait(false);
+                LoginChallenge = authSession.ChallengeURL;
+                authSession.ChallengeURLChanged += () => LoginChallenge = authSession.ChallengeURL;
+                AuthPollResult result = await authSession.PollingWaitForResultAsync(_qrAuthSessionCts.Token).ConfigureAwait(false);
+                await _deviceConfirmationCts.CancelAsync().ConfigureAwait(false);
                 return result;
             }
-            catch (TaskCanceledException)
-            {
+            catch (TaskCanceledException) { }
+
+            if (_credentialsAuthSessionCts.IsCancellationRequested)
                 return null;
-            }
-        }
 
-        private async Task<AuthPollResult?> LoginWithQrCodeAsync()
-        {
-            AuthSessionDetails details = new()
-            {
-                Authenticator = this
-            };
-
-            QrAuthSession authSession = await _session.SteamClient.Authentication.BeginAuthSessionViaQRAsync(details).ConfigureAwait(false);
-            LoginChallenge = authSession.ChallengeURL;
-            authSession.ChallengeURLChanged += () => LoginChallenge = authSession.ChallengeURL;
+            details.Username = Username;
+            details.Password = Password;
+            details.IsPersistentSession = RememberPassword;
 
             try
             {
-                AuthPollResult result = await authSession.PollingWaitForResultAsync(_cancellationTokenSource!.Token).ConfigureAwait(false);
-                await _cancellationTokenSource.CancelAsync().ConfigureAwait(false);
+                CredentialsAuthSession authSession = await _session.SteamClient.Authentication.BeginAuthSessionViaCredentialsAsync(details).ConfigureAwait(false);
+                AuthPollResult result = await authSession.PollingWaitForResultAsync(_credentialsAuthSessionCts.Token).ConfigureAwait(false);
+                await _deviceConfirmationCts.CancelAsync().ConfigureAwait(false);
                 return result;
+            }
+            catch (AuthenticationException)
+            {
+                IsPasswordInvalid = true;
+                return null;
             }
             catch (TaskCanceledException)
             {

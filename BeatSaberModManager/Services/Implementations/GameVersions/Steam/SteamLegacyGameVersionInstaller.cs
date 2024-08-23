@@ -16,20 +16,26 @@ using Serilog;
 namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
 {
     /// <inheritdoc />
-    public class SteamLegacyGameVersionInstaller(Steam3Session steam3Session, ISteamAuthenticator steamAuthenticator, ILogger logger) : ILegacyGameVersionInstaller
+    public class SteamLegacyGameVersionInstaller(Steam3Session steam3Session, ILogger logger) : ILegacyGameVersionInstaller
     {
         /// <inheritdoc />
-        public async Task<string?> InstallLegacyGameVersionAsync(IGameVersion gameVersion, CancellationToken cancellationToken, IProgress<double>? progress = null)
+        public async Task<string?> InstallLegacyGameVersionAsync(IGameVersion gameVersion, ILegacyGameVersionAuthenticator authenticator, CancellationToken cancellationToken, IProgress<double>? progress = null)
         {
             ArgumentNullException.ThrowIfNull(gameVersion);
-            if (gameVersion is not SteamGameVersion steamLegacyGameVersion)
+            if (gameVersion is not SteamGameVersion steamLegacyGameVersion || authenticator is not ISteamAuthenticator steamAuthenticator)
                 return null;
             string appDataDirPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
             string legacyGameVersionsDirPath = Path.Join(appDataDirPath, ThisAssembly.Info.Product, "LegacyGameVersions", gameVersion.GameVersion);
             DownloadConfig downloadConfig = new() { InstallDirectory = legacyGameVersionsDirPath, MaxDownloads = 3 };
-            await steam3Session.LoginAsync(steamAuthenticator, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested)
+            try
+            {
+                await steam3Session.LoginAsync(steamAuthenticator, cancellationToken).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException)
+            {
                 return null;
+            }
+
             ContentDownloader contentDownloader = new(downloadConfig, steam3Session);
             List<(uint DepotId, ulong ManifestId)> depotManifestIds = [(620981, steamLegacyGameVersion.ManifestId)];
             try
@@ -51,7 +57,6 @@ namespace BeatSaberModManager.Services.Implementations.GameVersions.Steam
         /// <inheritdoc />
         public Task<bool> UninstallLegacyGameVersionAsync(IGameVersion gameVersion)
         {
-            // TODO: doesn't work
             ArgumentNullException.ThrowIfNull(gameVersion);
             if (gameVersion is not SteamGameVersion)
                 return Task.FromResult(false);

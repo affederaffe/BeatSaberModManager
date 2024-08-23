@@ -1,16 +1,16 @@
 using System;
-using System.Reactive.Threading.Tasks;
+using System.Reactive;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Avalonia.Controls;
 using Avalonia.Labs.Controls;
 using Avalonia.ReactiveUI;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 
 using BeatSaberModManager.ViewModels;
 using BeatSaberModManager.Views.Dialogs;
-
-using SteamKit2.Authentication;
 
 
 namespace BeatSaberModManager.Views.Pages
@@ -33,47 +33,60 @@ namespace BeatSaberModManager.Views.Pages
             ArgumentNullException.ThrowIfNull(viewModel);
             InitializeComponent();
             ViewModel = viewModel;
-            viewModel.SteamAuthenticationViewModel.AuthenticateSteamInteraction.RegisterHandler(async context =>
+            viewModel.SteamAuthenticationViewModel.AuthenticateInteraction.RegisterHandler(async context => context.SetOutput(await ShowAuthenticateSteamDialogAsync(context.Input).ConfigureAwait(false)));
+            viewModel.SteamAuthenticationViewModel.GetDeviceCodeInteraction.RegisterHandler(async context => context.SetOutput(await ShowSteamGuardCodeDialogAsync().ConfigureAwait(false)));
+            viewModel.SteamAuthenticationViewModel.DeviceConfirmationInteraction.RegisterHandler(async context => context.SetOutput(await ShowDeviceConfirmationDialogAsync(context.Input).ConfigureAwait(false)));
+        }
+
+        private async Task<string?> ShowSteamGuardCodeDialogAsync()
+        {
+            Window window = (VisualRoot as Window)!;
+            SteamGuardCodeView steamGuardCodeView = new() { DataContext = ViewModel!.SteamAuthenticationViewModel };
+            ContentDialog dialog = new()
             {
-                Window window = (VisualRoot as Window)!;
-                SteamLoginView steamLoginView = new() { DataContext = viewModel.SteamAuthenticationViewModel };
-                ContentDialog dialog = new()
-                {
-                    Content = steamLoginView,
-                    Title = this.FindResource("SteamLoginView:Title") as string,
-                    PrimaryButtonText = this.FindResource("SteamLoginView:LoginButton") as string,
-                    PrimaryButtonCommand = viewModel.SteamAuthenticationViewModel.LoginCommand,
-                    SecondaryButtonText = this.FindResource("SteamLoginView:CancelButton") as string,
-                    SecondaryButtonCommand = viewModel.SteamAuthenticationViewModel.CancelCommand
-                };
+                Content = steamGuardCodeView,
+                Title = this.FindResource("SteamGuardCodeView:Title") as string,
+                PrimaryButtonText = this.FindResource("SteamGuardCodeView:SubmitButton") as string,
+                PrimaryButtonCommand = ViewModel.SteamAuthenticationViewModel.SubmitSteamGuardCodeCommand,
+                SecondaryButtonText = this.FindResource("SteamGuardCodeView:CancelButton") as string,
+                SecondaryButtonCommand = ViewModel.SteamAuthenticationViewModel.CancelCommand
+            };
 
-                Task<ContentDialogResult> task = dialog.ShowAsync(window);
-                AuthPollResult? authenticationResult = await viewModel.SteamAuthenticationViewModel.StartAuthenticationAsync().ConfigureAwait(true);
-                context.SetOutput(authenticationResult);
-                dialog.Hide();
-                await task.ConfigureAwait(false);
-            });
+            ContentDialogResult result = await dialog.ShowAsync(window).ConfigureAwait(true);
+            return result == ContentDialogResult.Primary ? ViewModel.SteamAuthenticationViewModel.SteamGuardCode : null;
+        }
 
-            viewModel.SteamAuthenticationViewModel.GetSteamGuardCodeInteraction.RegisterHandler(async context =>
+        private async Task<Unit> ShowAuthenticateSteamDialogAsync(CancellationToken cancellationToken)
+        {
+            Window window = (VisualRoot as Window)!;
+            SteamLoginView steamLoginView = new() { DataContext = ViewModel!.SteamAuthenticationViewModel };
+            ContentDialog dialog = new()
             {
-                Window window = (VisualRoot as Window)!;
-                SteamGuardCodeView steamGuardCodeView = new() { DataContext = viewModel.SteamAuthenticationViewModel };
-                ContentDialog dialog = new()
-                {
-                    Content = steamGuardCodeView,
-                    Title = this.FindResource("SteamGuardView:Title") as string,
-                    PrimaryButtonText = this.FindResource("SteamGuardView:SubmitButton") as string,
-                    PrimaryButtonCommand = viewModel.SteamAuthenticationViewModel.LoginCommand,
-                    SecondaryButtonText = this.FindResource("SteamGuardView:CancelButton") as string,
-                    SecondaryButtonCommand = viewModel.SteamAuthenticationViewModel.CancelCommand
-                };
+                Content = steamLoginView,
+                Title = this.FindResource("SteamLoginView:Title") as string,
+                PrimaryButtonText = this.FindResource("SteamLoginView:LoginButton") as string,
+                PrimaryButtonCommand = ViewModel.SteamAuthenticationViewModel.LoginCommand,
+                SecondaryButtonText = this.FindResource("SteamLoginView:CancelButton") as string,
+                SecondaryButtonCommand = ViewModel.SteamAuthenticationViewModel.CancelCommand
+            };
 
-                Task<ContentDialogResult> task = dialog.ShowAsync(window);
-                string code = await viewModel.SteamAuthenticationViewModel.SubmitSteamGuardCodeCommand.ToTask().ConfigureAwait(true);
-                context.SetOutput(code);
-                dialog.Hide();
-                await task.ConfigureAwait(false);
-            });
+            using IDisposable subscription = cancellationToken.Register(() => Dispatcher.UIThread.Post(() => dialog.Hide()));
+            await dialog.ShowAsync(window).ConfigureAwait(true);
+            return Unit.Default;
+        }
+
+        private async Task<Unit> ShowDeviceConfirmationDialogAsync(CancellationToken cancellationToken)
+        {
+            Window window = (VisualRoot as Window)!;
+            ContentDialog dialog = new()
+            {
+                Content = this.FindResource("SteamDeviceConfirmationView:ConfirmLogin") as string,
+                Title = this.FindResource("SteamDeviceConfirmationView:Title") as string
+            };
+
+            using IDisposable subscription = cancellationToken.Register(() => Dispatcher.UIThread.Post(() => dialog.Hide()));
+            await dialog.ShowAsync(window).ConfigureAwait(true);
+            return Unit.Default;
         }
 
         // Hack that forces the selected item to become highlighted again after switching tabs
