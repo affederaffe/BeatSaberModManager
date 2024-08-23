@@ -28,9 +28,9 @@ namespace BeatSaberModManager.Views.Theming
             _appSettings = appSettings;
             Themes =
             [
-                new("Themes:System", ThemeVariant.Default),
-                new("Themes:Light", ThemeVariant.Light),
-                new("Themes:Dark", ThemeVariant.Dark)
+                new Theme("Themes:System", ThemeVariant.Default),
+                new Theme("Themes:Light", ThemeVariant.Light),
+                new Theme("Themes:Dark", ThemeVariant.Dark)
             ];
 
             _selectedTheme = Themes.FirstOrDefault(x => x.Name == appSettings.Value.ThemeName) ?? Themes[0];
