@@ -178,7 +178,7 @@ namespace BeatSaberModManager
             public static FuncDataTemplate CreateDashboardPageDataTemplate(Lazy<SettingsPage> view) => new(static t => t is SettingsViewModel, (_, _) => view.Value, true);
         }
 
-        internal const string Version = "0.0.5";
+        internal const string Version = "0.0.6";
 
         internal const string Product = nameof(BeatSaberModManager);
 
