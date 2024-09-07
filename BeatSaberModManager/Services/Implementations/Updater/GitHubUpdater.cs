@@ -60,16 +60,20 @@ namespace BeatSaberModManager.Services.Implementations.Updater
             using HttpResponseMessage response = await _httpClient.TryGetAsync(asset.DownloadUrl).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
                 return -1;
-            string processPath = Environment.ProcessPath!;
-            string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.Ordinal);
-            IOUtils.TryDeleteFile(oldPath);
-            if (!IOUtils.TryMoveFile(processPath, oldPath))
-                return -1;
 #pragma warning disable CA2007
             await using Stream stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 #pragma warning restore CA2007
             using ZipArchive archive = new(stream);
-            if (!IOUtils.TryExtractArchive(archive, Directory.GetCurrentDirectory(), true))
+            if (archive.Entries.Count != 1)
+                return -1;
+            string processPath = Environment.ProcessPath!;
+            string newPath = $"{processPath}.new";
+            archive.Entries[0].ExtractToFile(newPath, true);
+            string oldPath = processPath.Replace(".exe", ".old.exe", StringComparison.Ordinal);
+            IOUtils.TryDeleteFile(oldPath);
+            if (!IOUtils.TryMoveFile(processPath, oldPath))
+                return -1;
+            if (!IOUtils.TryMoveFile(newPath, processPath))
                 return -1;
             ProcessStartInfo processStartInfo = new(processPath);
             foreach (string arg in _args)
