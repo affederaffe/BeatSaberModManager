@@ -1,0 +1,79 @@
+﻿<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="using:System">
+
+    <sys:String x:Key="MainWindow:Title">BeatSaberModManager</sys:String>
+    <sys:String x:Key="MainWindow:IntroHeader">Introduction</sys:String>
+    <sys:String x:Key="MainWindow:DashboardHeader">Tableau de bord</sys:String>
+    <sys:String x:Key="MainWindow:ModsHeader">Mods</sys:String>
+    <sys:String x:Key="MainWindow:SettingsHeader">Paramètres</sys:String>
+    <sys:String x:Key="MainWindow:MoreInfoButton">Plus d'infos</sys:String>
+    <sys:String x:Key="MainWindow:UpdateModsButton">Mettre à jour les mods</sys:String>
+
+    <TextBlock x:Key="IntroView:IntroText" FontSize="17.5" LineHeight="30" TextAlignment="Center">
+        <Span FontSize="30" FontWeight="Bold" >Beat Saber Mod Manager</Span><LineBreak />
+        <LineBreak />
+        Veuillez lire cette page entièrement et attentivement<LineBreak />
+        En utilisant ce programme, vous attestez avoir lu et vous acceptez les termes suivants :<LineBreak />
+        Beat Saber ne supporte <Span FontWeight="Bold">pas</Span> nativement les mods. Ce que cela signifie :<LineBreak />
+        Les mods <Span FontWeight="Bold">seront cassés</Span> à chaque mise à jour du jeu. C'est normal, et ce n'est pas la faute de Beat Games.<LineBreak />
+        Les mods <Span FontWeight="Bold">peuvent provoquer des bugs</Span> et des problèmes de performances. Ce n'est pas la faute de Beat Games.<LineBreak />
+        Les mods sont créés <Span FontWeight="Bold">gratuitement</Span> par des gens sur leur <Span FontWeight="Bold">temps libre</Span>. Soyez patiens·e et compréhensif·ve.<LineBreak />
+        NE LAISSEZ PAS de retour négatifs au jeu pour des bugs provoqués par les mods. Ce n'est pas la faute de Beat Games.<LineBreak />
+        Ils n'essaient <Span FontWeight="Bold">pas</Span> de tuer le modding.<LineBreak />
+    </TextBlock>
+
+    <sys:String x:Key="DashboardView:AppVersionLabel">Version de l'application</sys:String>
+    <sys:String x:Key="DashboardView:GameVersionLabel">Version du jeu</sys:String>
+    <sys:String x:Key="DashboardView:InstalledModsLabel">Mods installés</sys:String>
+    <sys:String x:Key="DashboardView:ToolsLabel">Outils</sys:String>
+    <sys:String x:Key="DashboardView:InstallPlaylistButton">Installer une playlist</sys:String>
+    <sys:String x:Key="DashboardView:PlayButton">Jouer</sys:String>
+    <sys:String x:Key="DashboardView:OpenAppData">Ouvrir AppData</sys:String>
+    <sys:String x:Key="DashboardView:OpenLogs">Ouvrir les fichiers journaux</sys:String>
+    <sys:String x:Key="DashboardView:UninstallModLoaderButton">Désinstaller BSIPA</sys:String>
+    <sys:String x:Key="DashboardView:UninstallAllModsButton">Désinstaller tous les mods</sys:String>
+    <sys:String x:Key="DashboardView:UsefulLinks">Liens utils</sys:String>
+    <sys:String x:Key="DashboardView:BsmgWiki">Wiki BSMG</sys:String>
+    <sys:String x:Key="DashboardView:BsmgDiscord">Discord BSMG</sys:String>
+    <sys:String x:Key="DashboardView:GitHub">GitHub</sys:String>
+
+    <sys:String x:Key="ModsView:ModNameHeader">Nom</sys:String>
+    <sys:String x:Key="ModsView:InstalledVersionHeader">Version installée</sys:String>
+    <sys:String x:Key="ModsView:LatestVersionHeader">Dernière version</sys:String>
+    <sys:String x:Key="ModsView:ModDescriptionHeader">Description</sys:String>
+    <sys:String x:Key="ModsView:FailedToLoad">Échec du chargement des mods</sys:String>
+    <sys:String x:Key="ModsView:NoModsAvailable">Aucun mod disponible pour cette version</sys:String>
+    <sys:String x:Key="ModsView:SearchWatermark">Rechercher...</sys:String>
+
+    <sys:String x:Key="SettingsView:InstallationLabel">Répertoire d'installation</sys:String>
+    <sys:String x:Key="SettingsView:OpenFolderButton">Parcourir</sys:String>
+    <sys:String x:Key="SettingsView:SelectFolderButton">Selectionner</sys:String>
+    <sys:String x:Key="SettingsView:OneClickHandlerLabel">Support OneClick™</sys:String>
+    <sys:String x:Key="SettingsView:BeatSaverLabel">BeatSaver</sys:String>
+    <sys:String x:Key="SettingsView:ModelSaberLabel">ModelSaber</sys:String>
+    <sys:String x:Key="SettingsView:PlaylistLabel">Playlist</sys:String>
+    <sys:String x:Key="SettingsView:LanguageLabel">Langue</sys:String>
+    <sys:String x:Key="SettingsView:MiscLabel">Divers</sys:String>
+    <sys:String x:Key="SettingsView:ForceReinstallModsButton">Réinstaller les mods</sys:String>
+    <sys:String x:Key="SettingsView:CloseOneClickWindow">Fermer la fenêtre OneClick™ automatiquement</sys:String>
+    <sys:String x:Key="SettingsView:SaveSelectedMods">Enregistrer les mods sélectionnés</sys:String>
+    <sys:String x:Key="SettingsView:ThemesLabel">Thèmes</sys:String>
+
+    <sys:String x:Key="Themes:System">Système</sys:String>
+    <sys:String x:Key="Themes:Light">Clair</sys:String>
+    <sys:String x:Key="Themes:Dark">Sombre</sys:String>
+
+    <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Il semble que vous n'ayez pas encore réglé le répertoire d'installation.Voulez-vous le faire maintenant ?</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:SelectButton">Sélectionner</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:CancelButton">Annuler</sys:String>
+
+    <sys:String x:Key="ExceptionWindow:Title">L'application a planté</sys:String>
+    <sys:String x:Key="ExceptionWindow:Ok">OK</sys:String>
+
+    <sys:String x:Key="Status:Installing">Installation :</sys:String>
+    <sys:String x:Key="Status:Uninstalling">Désinstallation :</sys:String>
+    <sys:String x:Key="Status:Completed">Installation terminée</sys:String>
+    <sys:String x:Key="Status:Failed">L'installation a échoué</sys:String>
+
+</ResourceDictionary>

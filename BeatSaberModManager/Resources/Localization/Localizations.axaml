@@ -3,5 +3,6 @@
 
     <MergeResourceInclude x:Key="en" Source="/Resources/Localization/en.axaml" />
     <MergeResourceInclude x:Key="de" Source="/Resources/Localization/de.axaml" />
+    <MergeResourceInclude x:Key="de" Source="/Resources/Localization/fr.axaml" />
 
 </ResourceDictionary>
