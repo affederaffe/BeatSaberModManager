@@ -18,8 +18,8 @@
         Beat Saber ne supporte <Span FontWeight="Bold">pas</Span> nativement les mods. Ce que cela signifie :<LineBreak />
         Les mods <Span FontWeight="Bold">seront cassés</Span> à chaque mise à jour du jeu. C'est normal, et ce n'est pas la faute de Beat Games.<LineBreak />
         Les mods <Span FontWeight="Bold">peuvent provoquer des bugs</Span> et des problèmes de performances. Ce n'est pas la faute de Beat Games.<LineBreak />
-        Les mods sont créés <Span FontWeight="Bold">gratuitement</Span> par des gens sur leur <Span FontWeight="Bold">temps libre</Span>. Soyez patiens·e et compréhensif·ve.<LineBreak />
-        NE LAISSEZ PAS de retour négatifs au jeu pour des bugs provoqués par les mods. Ce n'est pas la faute de Beat Games.<LineBreak />
+        Les mods sont créés <Span FontWeight="Bold">gratuitement</Span> par des gens sur leur <Span FontWeight="Bold">temps libre</Span>. Soyez patient·e et compréhensif·ve.<LineBreak />
+        NE LAISSEZ PAS de retours négatifs au jeu pour des bugs provoqués par les mods. Ce n'est pas la faute de Beat Games.<LineBreak />
         Ils n'essaient <Span FontWeight="Bold">pas</Span> de tuer le modding.<LineBreak />
     </TextBlock>
 
@@ -33,7 +33,7 @@
     <sys:String x:Key="DashboardView:OpenLogs">Ouvrir les fichiers journaux</sys:String>
     <sys:String x:Key="DashboardView:UninstallModLoaderButton">Désinstaller BSIPA</sys:String>
     <sys:String x:Key="DashboardView:UninstallAllModsButton">Désinstaller tous les mods</sys:String>
-    <sys:String x:Key="DashboardView:UsefulLinks">Liens utils</sys:String>
+    <sys:String x:Key="DashboardView:UsefulLinks">Liens utiles</sys:String>
     <sys:String x:Key="DashboardView:BsmgWiki">Wiki BSMG</sys:String>
     <sys:String x:Key="DashboardView:BsmgDiscord">Discord BSMG</sys:String>
     <sys:String x:Key="DashboardView:GitHub">GitHub</sys:String>
@@ -48,7 +48,7 @@
 
     <sys:String x:Key="SettingsView:InstallationLabel">Répertoire d'installation</sys:String>
     <sys:String x:Key="SettingsView:OpenFolderButton">Parcourir</sys:String>
-    <sys:String x:Key="SettingsView:SelectFolderButton">Selectionner</sys:String>
+    <sys:String x:Key="SettingsView:SelectFolderButton">Sélectionner</sys:String>
     <sys:String x:Key="SettingsView:OneClickHandlerLabel">Support OneClick™</sys:String>
     <sys:String x:Key="SettingsView:BeatSaverLabel">BeatSaver</sys:String>
     <sys:String x:Key="SettingsView:ModelSaberLabel">ModelSaber</sys:String>
@@ -64,7 +64,7 @@
     <sys:String x:Key="Themes:Light">Clair</sys:String>
     <sys:String x:Key="Themes:Dark">Sombre</sys:String>
 
-    <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Il semble que vous n'ayez pas encore réglé le répertoire d'installation.Voulez-vous le faire maintenant ?</sys:String>
+    <sys:String x:Key="InstallDirDialogWindow:NoInstallDirText">Il semble que vous n'ayez pas encore configuré le répertoire d'installation. Voulez-vous le faire maintenant ?</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:SelectButton">Sélectionner</sys:String>
     <sys:String x:Key="InstallDirDialogWindow:CancelButton">Annuler</sys:String>
 
